@@ -137,6 +137,28 @@ prompt sensitivity = cycle-count spread ratio; trace-subset CV. \\
 \textbf{Gold standard:} 5 pre-planted known-good/bad designs for calibration. \\
 \textbf{Compute:} short-term funded GCP/Gemini credits (Sep 21--23).
 
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lllc}
+\toprule
+\textbf{ID} & \textbf{Kind} & \textbf{Planted defect} & \textbf{Expected} \\
+\midrule
+gold-01 & gold & none (exact match) & E0 \\
+gold-02 & gold & spurious prefetcher & E4 \\
+gold-03 & gold & FIFO vs.\ LRU & E2 \\
+gold-04 & gold & missing branch predictor & E3 \\
+gold-05 & gold & cache size $+$ associativity & E1 \\
+av-001 & adv & cache size 32K vs.\ 64K & E1 \\
+av-002 & adv & MRU vs.\ LRU & E2 \\
+av-003 & adv & missing branch predictor & E3 \\
+av-004 & adv & spurious pipeline stage & E4 \\
+av-005 & adv & ``always-passes'' output & E4 \\
+\bottomrule
+\end{tabular}
+\caption{Calibration (gold) and adversarial (adv) test cases released with the loop.}
+\label{tab:cases}
+\end{table}
+
 \section{Results}
 \label{sec:results}
 
@@ -157,12 +179,44 @@ the Axiom semantic-equivalence run ($\kappa{=}0.954$, human annotators,
 $N{=}100$). Publish gate: \textsc{PASS}.
 \end{itemize}
 
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{Pre-registered} & \textbf{Stub result} \\
+\midrule
+Cross-seed CV (max) & $<5\%$ & $3.53\%$ \\
+Trace-subset CV & report & $2.97\text{--}3.07\%$ \\
+Prompt sensitivity & report & $7.2\text{--}7.7\%$ \\
+Cohen's $\kappa$ & $\geq 0.7$ & $1.00$ (stub) \\
+Adversarial detection & $100\%$ & $100\%$ \\
+Gold calibration & report & $5/5$ \\
+\bottomrule
+\end{tabular}
+\caption{Pre-registered metrics vs.\ stub validation (config v3).}
+\label{tab:metrics}
+\end{table}
+
 \textbf{Real simulation results} (gem5/ChampSim on funded compute,
 Sep 21--23) will replace the stub numbers above before the Sep~24 submission.
 The backend is already parameterized (\texttt{sim/backends.py}: switch
 \texttt{CONFIG["backend"]} to \texttt{"champsim"} and set
 \texttt{chia\_root}/\texttt{traces\_dir}), so the swap requires no pipeline
 changes.
+
+\subsection{Artifact \& Reproducibility}
+The loop (\texttt{chia\_loop/loops/audit\_repro.py}), adversarial cases
+(\texttt{av-001..005}), gold standard (\texttt{gold-01..05} +
+\texttt{answer-key}), and raw logs are released as composable CHIA blocks
+(BSD-3-Clause). To reproduce the stub validation:
+\texttt{python3 chia\_loop/loops/audit\_repro.py --version 3}; outputs land
+in \texttt{results/} (scorecard, raw, dblind report) with the pinned git SHA
+and Python version. To switch to real simulation: set
+\texttt{CONFIG["backend"]="champsim"} and point \texttt{chia\_root} /
+\texttt{traces\_dir}; the pipeline requires no further changes. Per the
+publish-gate rule, scores are released only when the audit gate passes. The
+public repository URL will be provided at submission time (code is currently
+provenance-pinned in our internal VCS).
 
 \section{Discussion}
 \label{sec:discuss}
@@ -177,6 +231,19 @@ raw logs are released as composable CHIA blocks. Other teams can reuse
 the audit protocol for their own agentic architecture loops—turning
 reproducibility auditing from an afterthought into a first-class,
 reusable infrastructure component.
+
+\textbf{Self-audit case: the gate caught our own blind spot.} During
+development, the stub auditors were intentionally asymmetric: one auditor
+treated design keys prefixed \texttt{extra\_} as non-reportable, modeling
+annotator variation. Under that configuration the audit achieved only $60\%$
+adversarial detection and the publish gate returned \textsc{Blocked}—it
+missed E4 (spurious component) on cases \texttt{gold-02} and \texttt{av-004}.
+This is the audit working as intended: the same blind spot a human panel
+would carry silently was surfaced as a gate failure. Reverting to strict,
+symmetric auditors raised detection to $100\%$ (gold $5/5$) and the gate to
+\textsc{Pass}. We report the negative intermediate result deliberately: a
+double-blind audit's value is precisely that it can catch the evaluator's own
+confirmation bias before scores are published.
 
 \textbf{Limitations.} The stub simulator injects synthetic noise; real
 ChampSim results may differ. The error taxonomy (E0--E4) is adapted from NLP
@@ -212,7 +279,7 @@ infrastructure a first-class citizen of Architecture~2.0.
 \bibitem{autobench} Auto Benchmark Audit. arXiv:2605.26079. 2026.
 \bibitem{contamination} Nourbakhsh et al. GEM 2026 Outstanding Paper. \url{https://aclanthology.org/2026.gem-main.50/}.
 \bibitem{passk} Beyond Pass@k. arXiv:2608.14711. 2026.
-\bibitem{philschmid} Schmadl, P. Pass@k vs Pass^k: Understanding Agent Reliability. \url{https://www.philschmid.de/agents-pass-at-k-pass-power-k}. 2025.
+\bibitem{philschmid} Schmadl, P. Pass@k vs Pass\^{}$k$: Understanding Agent Reliability. \url{https://www.philschmid.de/agents-pass-at-k-pass-power-k}. 2025.
 \bibitem{taubench} Sierra AI. $\tau$-Bench: Benchmarking AI Agents for the Real World. \url{https://sierra.ai/es/blog/benchmarking-ai-agents}. 2026.
 \end{thebibliography}
 
