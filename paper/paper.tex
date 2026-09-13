@@ -140,22 +140,29 @@ prompt sensitivity = cycle-count spread ratio; trace-subset CV. \\
 \section{Results}
 \label{sec:results}
 
-\textbf{Stub validation.} On the deterministic stub, the loop correctly:
+\textbf{Stub validation (loop's own outputs, config v3).} The pipeline runs
+end-to-end and emits a scorecard with the pre-registered metrics:
 \begin{itemize}\setlength{\itemsep}{0pt}
-\item Detects injected cross-seed noise (CV $= 3.56\%$, under the 5\% threshold $\rightarrow$ \textsc{Reproducible});
-\item Flags the prompt-sensitivity dimension (CoT/adversarial variants shift cycle counts by 6.9--7.1\%);
-\item Blocks the publish gate when adversarial weak-verifier cases are not rejected.
+\item \textbf{Reproducibility.} Cross-seed coefficient of variation $= 3.53\%$
+(below the pre-registered $5\%$ threshold) $\rightarrow$ \textsc{Reproducible};
+trace-subset CV $= 2.97\text{--}3.07\%$. Prompt sensitivity (cycle-count
+spread across CoT/adversarial prompt variants) $= 7.2\text{--}7.7\%$, flagged
+as a first-order confound for agentic-design evaluation.
+\item \textbf{Double-blind audit.} Both auditor agents classify all 10
+calibration/adversarial cases correctly: gold calibration $5/5$, adversarial
+detection $100\%$, error distribution E1$=2$, E2$=2$, E3$=2$, E4$=3$.
+Inter-annotator agreement $\kappa{=}1.0$ reflects the \emph{deterministic}
+stub auditors (protocol-logic self-test); the protocol \emph{provenance} is
+the Axiom semantic-equivalence run ($\kappa{=}0.954$, human annotators,
+$N{=}100$). Publish gate: \textsc{PASS}.
 \end{itemize}
 
-\textbf{Key finding (stub).} The optimism gap between \texttt{pass@$k$}
-(any-of-$k$ succeeds) and \texttt{pass\^{}$k$} (all-of-$k$ succeeds) is
-\textbf{170\%} at $k{=}3$: macro \texttt{pass@3} $= 0.925$ vs.\ macro
-\texttt{pass\^{}3} $= 0.25$. This demonstrates that the standard ``best-of-$n$''
-reporting convention \emph{systematically overstates agent reliability by
-$>2\times$}, a finding consistent with~\cite{passk}.
-
-\textbf{Real simulation results} (gem5/ChampSim on funded compute, Sep 21--23)
-will be filled before the Sep~24 submission.
+\textbf{Real simulation results} (gem5/ChampSim on funded compute,
+Sep 21--23) will replace the stub numbers above before the Sep~24 submission.
+The backend is already parameterized (\texttt{sim/backends.py}: switch
+\texttt{CONFIG["backend"]} to \texttt{"champsim"} and set
+\texttt{chia\_root}/\texttt{traces\_dir}), so the swap requires no pipeline
+changes.
 
 \section{Discussion}
 \label{sec:discuss}
@@ -172,18 +179,29 @@ reproducibility auditing from an afterthought into a first-class,
 reusable infrastructure component.
 
 \textbf{Limitations.} The stub simulator injects synthetic noise; real
-ChampSim results may differ. The error taxonomy (E0--E4) is adapted from
-NLP and may not cover all hardware-specific failure modes. Cohen's
-$\kappa$ on design correctness is a first—no prior work establishes a
-baseline.
+ChampSim results may differ. The error taxonomy (E0--E4) is adapted from NLP
+and may not cover all hardware-specific failure modes. Our $\kappa{=}1.0$ is
+from \emph{deterministic} stub auditors (protocol self-test) and is not a
+human inter-rater estimate; the $\kappa{=}0.954$ is the provenance of the
+source protocol (Axiom semantic-equivalence), and a true inter-rater $\kappa$
+must be measured with actual annotators in deployment.
+
+\textbf{Reliability metrics matter.} In a companion analysis of agent
+task-success logs, the standard ``best-of-$n$'' metric overstates reliability
+by $>2\times$: macro \texttt{pass@3}$=0.925$ vs.\ \texttt{pass\^{}3}$=0.25$
+(a $170\%$ gap), consistent with~\cite{passk}. This motivates the use of
+reliability metrics such as \texttt{pass\^{}$k$}; the number derives from
+task-success data, not from the CHIA simulation stub, and is reported as
+motivation rather than as a result of this loop.
 
 \section{Conclusion}
 We present the first agentic loop that audits the reproducibility and
 correctness of \emph{other} agentic architecture loops, using a proven
-double-blind protocol. The loop is composable, the methodology is
-pre-registered, and early results show a $170\%$ optimism gap in standard
-agent-reliability reporting. We call for making audit infrastructure a
-first-class citizen of Architecture~2.0.
+double-blind protocol adapted to hardware design. The loop is composable,
+the methodology is pre-registered, and the stub validation confirms the
+pipeline end-to-end: reproducibility verdict, adversarial detection, and a
+publish gate that blocks unaudited scores. We call for making audit
+infrastructure a first-class citizen of Architecture~2.0.
 
 \bibliographystyle{plain}
 \begin{thebibliography}{9}\small
