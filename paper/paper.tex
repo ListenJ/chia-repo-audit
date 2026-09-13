@@ -190,7 +190,8 @@ must be measured with actual annotators in deployment.
 task-success logs, the standard ``best-of-$n$'' metric overstates reliability
 by $>2\times$: macro \texttt{pass@3}$=0.925$ vs.\ \texttt{pass\^{}3}$=0.25$
 (a $170\%$ gap), consistent with~\cite{passk}. This motivates the use of
-reliability metrics such as \texttt{pass\^{}$k$}; the number derives from
+reliability metrics such as \texttt{pass\^{}$k$}~\cite{philschmid,taubench};
+the number derives from
 task-success data, not from the CHIA simulation stub, and is reported as
 motivation rather than as a result of this loop.
 
@@ -211,6 +212,8 @@ infrastructure a first-class citizen of Architecture~2.0.
 \bibitem{autobench} Auto Benchmark Audit. arXiv:2605.26079. 2026.
 \bibitem{contamination} Nourbakhsh et al. GEM 2026 Outstanding Paper. \url{https://aclanthology.org/2026.gem-main.50/}.
 \bibitem{passk} Beyond Pass@k. arXiv:2608.14711. 2026.
+\bibitem{philschmid} Schmadl, P. Pass@k vs Pass^k: Understanding Agent Reliability. \url{https://www.philschmid.de/agents-pass-at-k-pass-power-k}. 2025.
+\bibitem{taubench} Sierra AI. $\tau$-Bench: Benchmarking AI Agents for the Real World. \url{https://sierra.ai/es/blog/benchmarking-ai-agents}. 2026.
 \end{thebibliography}
 
 \end{document}

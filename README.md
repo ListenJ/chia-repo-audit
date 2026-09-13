@@ -2,8 +2,9 @@
 
 > **项目**：*Does Agentic Architecture Discovery Reproduce? Auditing Variance and Evaluation Fairness in LLM-Driven Microarchitecture Search*
 > **Hackathon**：CHIA Hackathon @ A³ (MICRO 2026)
-> **提交截止**：2026-09-24 (AoE) ｜ **算力资助登记**：2026-09-13（已登记）
+> **提交截止**：2026-09-24 (AoE) ｜ **算力资助申请**：2026-09-13 已提交（Google Forms 回执确认，总额 $800）
 > **交付物**：4 页论文 + 开源 CHIA loop + 结果
+> **仓库**：`ssh://git@192.168.0.10:2222/agent/chia-repo-audit.git`（内网 Gitea）
 
 ## 一句话
 

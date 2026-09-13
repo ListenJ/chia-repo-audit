@@ -20,10 +20,7 @@ CHIA 依赖可选：装了用 CHIA 编排，没装退化到直跑。
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import math
-import random
 import statistics
 import subprocess
 import sys
