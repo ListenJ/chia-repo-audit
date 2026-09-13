@@ -1,0 +1,10 @@
+{
+  "id": "av-003",
+  "category": "E3",
+  "variant": "missing-component-bp",
+  "design": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": null},
+  "reference": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare"},
+  "expected_verdict": "not_equivalent",
+  "expected_errors": ["E3"],
+  "rationale": "branch_predictor missing — required component omitted"
+}

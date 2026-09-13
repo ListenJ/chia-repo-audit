@@ -1,0 +1,8 @@
+{
+  "id": "gold-01",
+  "design": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare"},
+  "reference": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare"},
+  "expected_verdict": "equivalent",
+  "expected_errors": [],
+  "planting": "exact match — tests basic E0 correct detection"
+}

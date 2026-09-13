@@ -1,0 +1,9 @@
+{
+  "config_version": 3,
+  "timestamp": 1789314915.6422398,
+  "git_sha": "unknown",
+  "python": "3.12.3",
+  "cwd": "/home/listen/repos/chia-repro-audit",
+  "audit_protocol": "double-blind adapted from Axiom semantic-equivalence (kappa=0.954)",
+  "pre_registered": true
+}

@@ -1,0 +1,8 @@
+{
+  "id": "gold-05",
+  "design": {"cache_size": "128KB", "replacement": "LRU", "associativity": 16, "branch_predictor": "gshare"},
+  "reference": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare"},
+  "expected_verdict": "not_equivalent",
+  "expected_errors": ["E1"],
+  "planting": "cache_size+associativity both wrong — tests E1 parameter mislink (compound)"
+}

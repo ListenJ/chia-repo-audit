@@ -1,0 +1,8 @@
+{
+  "id": "gold-04",
+  "design": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8},
+  "reference": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare"},
+  "expected_verdict": "not_equivalent",
+  "expected_errors": ["E3"],
+  "planting": "branch_predictor omitted — tests E3 missing component"
+}

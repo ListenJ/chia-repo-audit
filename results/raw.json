@@ -1,0 +1,353 @@
+{
+  "0/default/spec_gcc": {
+    "cycles": 1023.7635634036172,
+    "ipc": 0.9988192129244723,
+    "l1_miss_rate": 0.05059109149095678,
+    "seed": 0,
+    "prompt": "default",
+    "trace": "spec_gcc",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "0/default/spec_mcf": {
+    "cycles": 1025.0091522183905,
+    "ipc": 0.9949795707943978,
+    "l1_miss_rate": 0.05252288054597637,
+    "seed": 0,
+    "prompt": "default",
+    "trace": "spec_mcf",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "0/default/web_cloud": {
+    "cycles": 1026.4173376668773,
+    "ipc": 0.997095151064677,
+    "l1_miss_rate": 0.051456655832806564,
+    "seed": 0,
+    "prompt": "default",
+    "trace": "web_cloud",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "0/cot/spec_gcc": {
+    "cycles": 1028.0719982293638,
+    "ipc": 0.9700638385310816,
+    "l1_miss_rate": 0.054929995573409565,
+    "seed": 0,
+    "prompt": "cot",
+    "trace": "spec_gcc",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "0/cot/spec_mcf": {
+    "cycles": 1026.6453917113288,
+    "ipc": 0.9768229620619768,
+    "l1_miss_rate": 0.05136347927832227,
+    "seed": 0,
+    "prompt": "cot",
+    "trace": "spec_mcf",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "0/cot/web_cloud": {
+    "cycles": 1029.359786963994,
+    "ipc": 0.9781874615531148,
+    "l1_miss_rate": 0.050649467409985334,
+    "seed": 0,
+    "prompt": "cot",
+    "trace": "web_cloud",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "0/adversarial/spec_gcc": {
+    "cycles": 1019.9271010202192,
+    "ipc": 0.9625894473343362,
+    "l1_miss_rate": 0.050932247449451885,
+    "seed": 0,
+    "prompt": "adversarial",
+    "trace": "spec_gcc",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "0/adversarial/spec_mcf": {
+    "cycles": 1021.5975658976081,
+    "ipc": 0.9583245455681291,
+    "l1_miss_rate": 0.05324391474402039,
+    "seed": 0,
+    "prompt": "adversarial",
+    "trace": "spec_mcf",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "0/adversarial/web_cloud": {
+    "cycles": 1023.3875027780811,
+    "ipc": 0.963913475858402,
+    "l1_miss_rate": 0.05021875694520277,
+    "seed": 0,
+    "prompt": "adversarial",
+    "trace": "web_cloud",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "1/default/spec_gcc": {
+    "cycles": 1060.1753473715605,
+    "ipc": 0.9958936683437706,
+    "l1_miss_rate": 0.052061631571098596,
+    "seed": 1,
+    "prompt": "default",
+    "trace": "spec_gcc",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "1/default/spec_mcf": {
+    "cycles": 1061.7696530324126,
+    "ipc": 0.9961664872116489,
+    "l1_miss_rate": 0.051924132581031394,
+    "seed": 1,
+    "prompt": "default",
+    "trace": "spec_mcf",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "1/default/web_cloud": {
+    "cycles": 1065.3147801961552,
+    "ipc": 0.9934690329499196,
+    "l1_miss_rate": 0.05328695049038822,
+    "seed": 1,
+    "prompt": "default",
+    "trace": "web_cloud",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "1/cot/spec_gcc": {
+    "cycles": 1061.6937016376314,
+    "ipc": 0.9727328471597322,
+    "l1_miss_rate": 0.053515745905921036,
+    "seed": 1,
+    "prompt": "cot",
+    "trace": "spec_gcc",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "1/cot/spec_mcf": {
+    "cycles": 1064.193636759228,
+    "ipc": 0.9742143164162634,
+    "l1_miss_rate": 0.05273409189807007,
+    "seed": 1,
+    "prompt": "cot",
+    "trace": "spec_mcf",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "1/cot/web_cloud": {
+    "cycles": 1066.8534477728062,
+    "ipc": 0.9758313518185007,
+    "l1_miss_rate": 0.051883619432015665,
+    "seed": 1,
+    "prompt": "cot",
+    "trace": "web_cloud",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "1/adversarial/spec_gcc": {
+    "cycles": 1057.1441585526188,
+    "ipc": 0.9635961031272796,
+    "l1_miss_rate": 0.05038960361845302,
+    "seed": 1,
+    "prompt": "adversarial",
+    "trace": "spec_gcc",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "1/adversarial/spec_mcf": {
+    "cycles": 1057.6419784034797,
+    "ipc": 0.9627327203534998,
+    "l1_miss_rate": 0.05085494600869933,
+    "seed": 1,
+    "prompt": "adversarial",
+    "trace": "spec_mcf",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "1/adversarial/web_cloud": {
+    "cycles": 1059.165969956393,
+    "ipc": 0.9590760796124139,
+    "l1_miss_rate": 0.052835075109017665,
+    "seed": 1,
+    "prompt": "adversarial",
+    "trace": "web_cloud",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "2/default/spec_gcc": {
+    "cycles": 1095.8812223836917,
+    "ipc": 0.9895171658897995,
+    "l1_miss_rate": 0.05529694404077059,
+    "seed": 2,
+    "prompt": "default",
+    "trace": "spec_gcc",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "2/default/spec_mcf": {
+    "cycles": 1097.8070286731022,
+    "ipc": 0.9990360734164708,
+    "l1_miss_rate": 0.05048242831724425,
+    "seed": 2,
+    "prompt": "default",
+    "trace": "spec_mcf",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "2/default/web_cloud": {
+    "cycles": 1101.1404841832234,
+    "ipc": 0.999298072132699,
+    "l1_miss_rate": 0.050351210458058356,
+    "seed": 2,
+    "prompt": "default",
+    "trace": "web_cloud",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "2/cot/spec_gcc": {
+    "cycles": 1100.575508604482,
+    "ipc": 0.9771564822955104,
+    "l1_miss_rate": 0.05118877151120481,
+    "seed": 2,
+    "prompt": "cot",
+    "trace": "spec_gcc",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "2/cot/spec_mcf": {
+    "cycles": 1097.5765276943503,
+    "ipc": 0.9674760092278796,
+    "l1_miss_rate": 0.05630868076412411,
+    "seed": 2,
+    "prompt": "cot",
+    "trace": "spec_mcf",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "2/cot/web_cloud": {
+    "cycles": 1104.745153016214,
+    "ipc": 0.9716041260599722,
+    "l1_miss_rate": 0.054112882540535465,
+    "seed": 2,
+    "prompt": "cot",
+    "trace": "web_cloud",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "2/adversarial/spec_gcc": {
+    "cycles": 1094.4257316137064,
+    "ipc": 0.9637359109389141,
+    "l1_miss_rate": 0.05031432903426622,
+    "seed": 2,
+    "prompt": "adversarial",
+    "trace": "spec_gcc",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "2/adversarial/spec_mcf": {
+    "cycles": 1096.018255393633,
+    "ipc": 0.9563966552012919,
+    "l1_miss_rate": 0.05429563848408224,
+    "seed": 2,
+    "prompt": "adversarial",
+    "trace": "spec_mcf",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  },
+  "2/adversarial/web_cloud": {
+    "cycles": 1098.2824712812487,
+    "ipc": 0.9597736257291286,
+    "l1_miss_rate": 0.05245617820312164,
+    "seed": 2,
+    "prompt": "adversarial",
+    "trace": "web_cloud",
+    "design": {
+      "llc_replacement": "lru",
+      "branch_predictor": "bimodal"
+    },
+    "backend": "stub"
+  }
+}

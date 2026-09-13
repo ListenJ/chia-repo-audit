@@ -1,0 +1,8 @@
+{
+  "id": "gold-03",
+  "design": {"cache_size": "64KB", "replacement": "FIFO", "associativity": 8, "branch_predictor": "gshare"},
+  "reference": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare"},
+  "expected_verdict": "not_equivalent",
+  "expected_errors": ["E2"],
+  "planting": "FIFO instead of LRU — tests E2 direction error"
+}

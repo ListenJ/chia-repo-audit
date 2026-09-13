@@ -1,0 +1,10 @@
+{
+  "id": "av-001",
+  "category": "E1",
+  "variant": "parameter-mislink-cache-size",
+  "design": {"cache_size": "32KB", "replacement": "LRU", "associativity": 8},
+  "reference": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8},
+  "expected_verdict": "not_equivalent",
+  "expected_errors": ["E1"],
+  "rationale": "cache_size 32KB != 64KB — parameter mislink"
+}

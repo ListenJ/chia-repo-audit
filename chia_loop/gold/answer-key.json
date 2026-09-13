@@ -1,0 +1,17 @@
+{
+  "_notice": "预埋答案 key —— 仅限 audit runner / 仲裁人使用；标注员禁止阅读",
+  "_coverage": {
+    "E0_equivalent": ["gold-01"],
+    "E1_parameter_mislink": ["gold-05"],
+    "E2_direction_error": ["gold-03"],
+    "E3_missing_component": ["gold-04"],
+    "E4_added_component": ["gold-02"]
+  },
+  "adversarial_coverage": {
+    "E1": ["av-001"],
+    "E2": ["av-002"],
+    "E3": ["av-003"],
+    "E4": ["av-004"],
+    "V1_weak_verifier_trap": ["av-005"]
+  }
+}

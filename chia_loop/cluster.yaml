@@ -1,0 +1,32 @@
+# cluster.yaml — CHIA 复现性审计 loop 的集群配置
+# 说明：当前本地跑桩（不需要集群）；拿到短期算力资助后，把 head_ip 换成 GCP 节点，
+#       并启用 chipyard/gem5/verilator 三种 node type 跑真实仿真。
+
+provider:
+    head_ip: ${THIS_MACHINE}
+
+auth:
+    ssh_user: ${USER}
+    # ssh_private_key: ~/.ssh/<ssh_key_name>
+
+available_node_types:
+    audit_champ:
+        resources: {"champ_run": 1}
+        num_workers: 1
+        compatible_ips: ["${THIS_MACHINE}"]
+        worker_setup_commands: ["source /opt/champ-sim/env.sh"]
+        docker:
+            image: "ghcr.io/ucb-bar/chia-champ-build:latest"
+            container_name: "chia-champ-${USER}"
+            pull_timeout: 3600
+
+    audit_verilator:
+        resources: {"verilator_run": 1}
+        num_workers: 1
+        compatible_ips: ["${THIS_MACHINE}"]
+        docker:
+            image: "ghcr.io/ucb-bar/chia-verilator-run:latest"
+            container_name: "chia-verilator-${USER}"
+            run_options:
+                - --shm-size=10.24gb
+            pull_timeout: 3600

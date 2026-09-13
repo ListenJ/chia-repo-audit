@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# 编辑器/系统
+.DS_Store
+*.swp
+
+# CHIA 构建产物（真实 ChampSim 二进制不入库）
+chia_loop/sim/champsim-build/
+*.champsimtrace.xz
+
+# 注意：results/ 是 hackathon 交付物的一部分（「the results it produced」），
+#       故不忽略——提交生成的 scorecard / raw / dblind 报告。

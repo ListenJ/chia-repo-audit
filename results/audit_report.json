@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "max_seed_cv": 0.0353,
+  "verdict": "REPRODUCIBLE",
+  "trace_cv": {
+    "spec_gcc": 0.03,
+    "spec_mcf": 0.0297,
+    "web_cloud": 0.0307
+  },
+  "cohen_kappa": 1.0,
+  "publish_gate": "PASS",
+  "adversarial_detection": 1.0,
+  "gold_calibration": "5/5",
+  "error_distribution": {
+    "E0": 0,
+    "E1": 2,
+    "E2": 2,
+    "E3": 2,
+    "E4": 3
+  }
+}

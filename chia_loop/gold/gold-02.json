@@ -1,0 +1,8 @@
+{
+  "id": "gold-02",
+  "design": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare", "extra_prefetcher": "next-line"},
+  "reference": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare"},
+  "expected_verdict": "not_equivalent",
+  "expected_errors": ["E4"],
+  "planting": "spurious prefetcher — tests E4 added component"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "av-002",
+  "category": "E2",
+  "variant": "direction-error-replacement",
+  "design": {"cache_size": "64KB", "replacement": "MRU", "associativity": 8},
+  "reference": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8},
+  "expected_verdict": "not_equivalent",
+  "expected_errors": ["E2"],
+  "rationale": "MRU != LRU — replacement direction error"
+}

@@ -1,0 +1,169 @@
+{
+  "version": 3,
+  "n_cases": 10,
+  "n_gold": 5,
+  "n_adversarial": 5,
+  "cohen_kappa": 1.0,
+  "kappa_gate": 0.7,
+  "kappa_passed": true,
+  "adversarial_detection_rate": 1.0,
+  "adversarial_passed": true,
+  "gold_calibration_correct": "5/5",
+  "error_distribution": {
+    "E0": 0,
+    "E1": 2,
+    "E2": 2,
+    "E3": 2,
+    "E4": 3
+  },
+  "publish_gate": "PASS",
+  "per_case": [
+    {
+      "id": "gold-01",
+      "auditor_a": "E0",
+      "auditor_b": "E0",
+      "agreed": true,
+      "arbitrated_verdict": "equivalent",
+      "arbitrated_errors": [],
+      "expected_verdict": "equivalent",
+      "expected_errors": [],
+      "correct": true
+    },
+    {
+      "id": "gold-02",
+      "auditor_a": "E4",
+      "auditor_b": "E4",
+      "agreed": true,
+      "arbitrated_verdict": "not_equivalent",
+      "arbitrated_errors": [
+        "E4"
+      ],
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E4"
+      ],
+      "correct": true
+    },
+    {
+      "id": "gold-03",
+      "auditor_a": "E2",
+      "auditor_b": "E2",
+      "agreed": true,
+      "arbitrated_verdict": "not_equivalent",
+      "arbitrated_errors": [
+        "E2"
+      ],
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E2"
+      ],
+      "correct": true
+    },
+    {
+      "id": "gold-04",
+      "auditor_a": "E3",
+      "auditor_b": "E3",
+      "agreed": true,
+      "arbitrated_verdict": "not_equivalent",
+      "arbitrated_errors": [
+        "E3"
+      ],
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E3"
+      ],
+      "correct": true
+    },
+    {
+      "id": "gold-05",
+      "auditor_a": "E1",
+      "auditor_b": "E1",
+      "agreed": true,
+      "arbitrated_verdict": "not_equivalent",
+      "arbitrated_errors": [
+        "E1"
+      ],
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E1"
+      ],
+      "correct": true
+    },
+    {
+      "id": "av-001",
+      "auditor_a": "E1",
+      "auditor_b": "E1",
+      "agreed": true,
+      "arbitrated_verdict": "not_equivalent",
+      "arbitrated_errors": [
+        "E1"
+      ],
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E1"
+      ],
+      "correct": true
+    },
+    {
+      "id": "av-002",
+      "auditor_a": "E2",
+      "auditor_b": "E2",
+      "agreed": true,
+      "arbitrated_verdict": "not_equivalent",
+      "arbitrated_errors": [
+        "E2"
+      ],
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E2"
+      ],
+      "correct": true
+    },
+    {
+      "id": "av-003",
+      "auditor_a": "E3",
+      "auditor_b": "E3",
+      "agreed": true,
+      "arbitrated_verdict": "not_equivalent",
+      "arbitrated_errors": [
+        "E3"
+      ],
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E3"
+      ],
+      "correct": true
+    },
+    {
+      "id": "av-004",
+      "auditor_a": "E4",
+      "auditor_b": "E4",
+      "agreed": true,
+      "arbitrated_verdict": "not_equivalent",
+      "arbitrated_errors": [
+        "E4"
+      ],
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E4"
+      ],
+      "correct": true
+    },
+    {
+      "id": "av-005",
+      "auditor_a": "E4",
+      "auditor_b": "E4",
+      "agreed": true,
+      "arbitrated_verdict": "not_equivalent",
+      "arbitrated_errors": [
+        "E4"
+      ],
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E4"
+      ],
+      "correct": true
+    }
+  ],
+  "protocol_source": "adapted from Axiom semantic-equivalence (kappa=0.954, N=100, 20% re-audit)"
+}

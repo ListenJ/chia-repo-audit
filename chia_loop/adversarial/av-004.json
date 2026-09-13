@@ -1,0 +1,10 @@
+{
+  "id": "av-004",
+  "category": "E4",
+  "variant": "added-spurious-stage",
+  "design": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare", "extra_stage": "post-fetch_optimize"},
+  "reference": {"cache_size": "64KB", "replacement": "LRU", "associativity": 8, "branch_predictor": "gshare"},
+  "expected_verdict": "not_equivalent",
+  "expected_errors": ["E4"],
+  "rationale": "extra_stage not in spec — spurious component added"
+}
