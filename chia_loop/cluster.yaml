@@ -16,6 +16,8 @@ available_node_types:
         compatible_ips: ["${THIS_MACHINE}"]
         worker_setup_commands: ["source /opt/champ-sim/env.sh"]
         docker:
+            # ⚠️ 待核验：此镜像名为推测值，真实 ChampSim 运行须按 CHIA 文档/环境核对
+            # （CHIA 示例中已确认存在的镜像：chia-chisel-build / chia-verilator-run）。
             image: "ghcr.io/ucb-bar/chia-champ-build:latest"
             container_name: "chia-champ-${USER}"
             pull_timeout: 3600
