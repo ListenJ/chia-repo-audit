@@ -23,4 +23,4 @@
   intentionally used the public artifact repository `ListenJ/chia-repo-audit`
   per the user's submission request. No force push or history rewrite was
   performed.
-- Commit: `0712041`
+- Commit: `72480ca`
