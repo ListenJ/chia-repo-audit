@@ -17,22 +17,27 @@ As of 2026-09-18, this repository contains:
 
 - A CHIA audit loop with separate run, audit, and action stages.
 - A deterministic stub backend for local protocol validation.
-- A scaffold for a real ChampSim backend; it has not yet passed a smoke run.
+- A pinned ChampSim source-build smoke that completed with identical repeated
+  metrics; the official CHIA Docker/Ray path still needs its own smoke.
 - Five gold and five adversarial design-classification cases.
 - Machine-readable repeatability, seed, prompt, and trace sensitivity metrics.
 - A three-page paper draft whose measured numbers need to be refreshed.
+- Public artifact: <https://github.com/ListenJ/chia-repo-audit>.
+- Registered HotCRP submission `#27`, currently saved as a draft with the
+  public artifact URL.
 
 The most important external blockers are not code:
 
 1. Receive the new GCP account details on Sep 20 evening PDT. Funding is
    already confirmed; no confirmation action is required.
-2. Register the HotCRP title, authors, and abstract as soon as possible.
-3. Publish the artifact to a public URL. The internal Gitea URL cannot be the
-   final artifact link.
+2. Run the official ChampSim image smoke test before the experiment grid.
+3. Finish the paper with real measurements and mark HotCRP `#27` ready.
 
 See [ROADMAP.md](ROADMAP.md) for the 6-day execution plan, acceptance gates,
 and claim boundaries. See [COMPUTE_WINDOW.md](COMPUTE_WINDOW.md) for the
-new-account migration and 72-hour runbook.
+new-account migration and 72-hour runbook. See
+[KAGGLE_VALIDATION.md](KAGGLE_VALIDATION.md) for the CPU-only preliminary
+validation decision.
 
 ## Current Stub Validation
 
@@ -55,6 +60,24 @@ The nonzero repeated-run CV comes only from the synthetic stub. A real
 deterministic ChampSim run should be bit-identical unless the executable,
 trace, or environment changes.
 
+## Preliminary Real Smoke
+
+On 2026-09-18, the pinned DPC4-ChampSim revision
+`164fdb1ed01185a21a39c292937bf26bb7f4c694` built successfully and ran the
+upstream smoke trace twice:
+
+```text
+Simulation instructions: 5003
+Simulation cycles: 40459
+IPC: 0.123656
+Repeated runs identical: true
+```
+
+Machine-readable evidence:
+`results/kaggle_champsim_smoke_result.json`. This validates source build,
+trace resolution, JSON parsing, and repeated-run stability. It does not
+validate CHIA's Docker/Ray worker or justify a performance claim.
+
 ## Run
 
 No third-party Python dependencies are needed for the stub:
@@ -72,6 +95,7 @@ results/raw.json
 results/dblind_report.json
 results/audit_report.json
 results/scorecard.txt
+results/kaggle_champsim_smoke_result.json
 ```
 
 Use a separate output directory without touching the checked-in evidence:
@@ -86,6 +110,16 @@ CHIA execution is explicit and requires a running CHIA/Ray cluster:
 
 ```bash
 python3 chia_loop/loops/audit_repro.py --execution chia --version 4
+```
+
+Optional CPU-only source-build smoke test for Kaggle or another Linux
+container:
+
+```bash
+python3 scripts/kaggle_champsim_smoke.py --dry-run
+python3 scripts/kaggle_champsim_smoke.py \
+  --work-dir /kaggle/temp/champsim-smoke \
+  --output /kaggle/working/kaggle_champsim_smoke_result.json
 ```
 
 ## Metric Definitions
@@ -109,6 +143,7 @@ an LLM architecture-discovery loop reproduces.
 README.md
 ROADMAP.md
 COMPUTE_WINDOW.md
+KAGGLE_VALIDATION.md
 proposal.md
 paper/
   paper.tex
@@ -124,6 +159,7 @@ chia_loop/
   README.md
 scripts/
   preflight_compute.sh
+  kaggle_champsim_smoke.py
 results/
 research-notes/
 ```

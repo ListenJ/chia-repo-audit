@@ -179,6 +179,14 @@ the Axiom semantic-equivalence run ($\kappa{=}0.954$, human annotators,
 $N{=}100$). Publish gate: \textsc{PASS}.
 \end{itemize}
 
+\textbf{Pinned source-build smoke.} Before funded execution, we built CHIA's
+pinned DPC4-ChampSim revision (\texttt{164fdb1e...}) on a generic Linux host
+and ran the upstream smoke trace twice. Both runs retired 5,003 instructions
+in 40,459 cycles (IPC 0.123656) with identical parsed metrics. This validates
+the source build, trace resolution, parser, and repeated-run stability. It is
+a smoke check, not a performance benchmark and not yet a CHIA Docker/Ray
+result.
+
 \begin{table}[h]
 \centering\small
 \begin{tabular}{lcc}
@@ -198,12 +206,11 @@ Gold calibration & report & $5/5$ \\
 \label{tab:metrics}
 \end{table}
 
-\textbf{Real simulation results} (gem5/ChampSim on funded compute,
-Sep 21--23) will replace the stub numbers above before the Sep~24 submission.
-The repository provides a backend boundary, but the hand-written ChampSim
-adapter remains a scaffold until it passes a smoke run against CHIA's official
-\texttt{chia-champsim} image and \texttt{ChampSimNode}. We therefore do not
-claim real-simulator results yet.
+\textbf{Funded cluster results} (Sep 21--23) will extend the stub and
+source-build evidence with official \texttt{chia-champsim} image and
+\texttt{ChampSimNode} runs. The hand-written backend adapter remains a
+scaffold until that image-level smoke passes; the direct source-build result
+does not validate cluster scheduling or GCP execution.
 
 \subsection{Artifact \& Reproducibility}
 The loop (\texttt{chia\_loop/loops/audit\_repro.py}), adversarial cases
@@ -212,11 +219,12 @@ The loop (\texttt{chia\_loop/loops/audit\_repro.py}), adversarial cases
 (BSD-3-Clause). To reproduce the stub validation:
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 4}; outputs land
 in \texttt{results/} (scorecard, raw, dblind report) with the pinned git SHA
-and Python version. The real-simulation path requires the pending smoke run
-described above before results can be reported. Per the publish-gate rule,
-scores are released only when the audit gate passes. The public repository URL
-will be provided at submission time (the working copy is currently pinned in
-an internal VCS).
+and Python version. The public artifact also includes
+\texttt{scripts/kaggle\_champsim\_smoke.py} and the machine-readable
+\texttt{results/kaggle\_champsim\_smoke\_result.json}. The official
+image-level path still requires the pending smoke run described above. Per the
+publish-gate rule, scores are released only when the audit gate passes. The
+artifact is available at \url{https://github.com/ListenJ/chia-repo-audit}.
 
 \section{Discussion}
 \label{sec:discuss}

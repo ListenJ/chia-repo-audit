@@ -45,12 +45,25 @@ Complete these locally on Sep 18-20:
    docker pull ghcr.io/ucb-bar/chia-champsim:latest
    ```
 
+   If the image is still unavailable, Kaggle can validate the pinned
+   source-build path without Docker:
+
+   ```bash
+   python3 scripts/kaggle_champsim_smoke.py --dry-run
+   ```
+
+   See `KAGGLE_VALIDATION.md` for the supported and unsupported claims.
+
 4. Prepare one or more ChampSim traces and record their SHA-256 hashes.
 
 5. Prepare a clean CHIA Python environment. CHIA currently documents Python
    3.10 for its Docker-matched environment.
 
 6. Freeze the exact commands and expected outputs for one minimal smoke run.
+
+The checked-in source-build smoke already completed locally and is stored in
+`results/kaggle_champsim_smoke_result.json`. Kaggle is now an optional
+portability check, not a blocker for entering the GCP window.
 
 ## First 30 Minutes With the New Account
 
@@ -82,7 +95,17 @@ Do not start a distributed run before completing these checks:
 4. Check whether the requested machine types and disk quotas are available in
    the selected zone.
 
-5. Record the project ID, region, zone, service-account identity, and quota
+5. Run the official image smoke test before the grid:
+
+   ```bash
+   docker run --rm ghcr.io/ucb-bar/chia-champsim:latest \
+     python3 -c 'import chia; print(chia.__path__)'
+   ```
+
+   Then run the repository smoke path through CHIA and verify the parsed
+   cycles/IPC before scaling out.
+
+6. Record the project ID, region, zone, service-account identity, and quota
    limits in the run log. Never commit private keys or API keys.
 
 ## Environment Variables
@@ -109,7 +132,7 @@ previous stage has produced usable evidence.
 
 | Stage | Scope | Intended output | Abort condition |
 | --- | --- | --- | --- |
-| 0 | Local stub | Reproducible v4 scorecard | Tests fail |
+| 0 | Local stub; checked-in source smoke; optional Kaggle portability run | Reproducible v4 scorecard and pinned ChampSim smoke result | Tests/build fail |
 | 1 | One image build | ChampSim binary and build log | Build exceeds 20 minutes |
 | 2 | One trace, one run | Parsed cycles/IPC plus raw stdout | No structured metrics |
 | 3 | Three traces, one candidate | Per-trace result table | More than one trace fails |

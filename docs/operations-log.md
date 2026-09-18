@@ -24,3 +24,30 @@
   per the user's submission request. No force push or history rewrite was
   performed.
 - Commit: `72480ca`
+
+## 2026-09-18 - Kaggle review and pinned ChampSim smoke
+
+- Task: review Kaggle feasibility, add a CPU-only preliminary validation
+  path, and verify the pinned ChampSim source build before GCP availability.
+- Tools: official Kaggle documentation, DPC4-ChampSim, upstream CHIA smoke
+  trace, Python 3.12, vcpkg, g++, make, Tectonic.
+- Operations:
+  - Added `KAGGLE_VALIDATION.md` with platform facts and claim boundaries.
+  - Added `scripts/kaggle_champsim_smoke.py` with pinned source/trace inputs,
+    dependency retries, JSON parsing, and repeated-run comparison.
+  - Added `chia_loop/tests/test_kaggle_smoke.py`.
+  - Ran the pinned source build after one vcpkg download retry and executed the
+    smoke trace twice.
+  - Added the preliminary real-smoke paragraph to the four-page paper PDF.
+- Verification:
+  - Unit tests: 7 passed.
+  - Smoke result: 5,003 instructions, 40,459 cycles, IPC 0.123656.
+  - Repeated runs identical: true.
+  - Machine-readable evidence:
+    `results/kaggle_champsim_smoke_result.json`.
+  - Kaggle facts cited from official Kaggle notebooks, GPU, and TPU docs.
+- Deviation: Kaggle itself was not executed live in this run; the same
+  source-build smoke was validated on a generic Linux host. The document
+  explicitly keeps Kaggle as an optional portability check rather than a
+  substitute for the official CHIA image.
+- Commit: pending

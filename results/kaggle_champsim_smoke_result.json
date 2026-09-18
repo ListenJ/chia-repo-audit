@@ -1,0 +1,46 @@
+{
+  "dry_run": false,
+  "champsim_repo": "https://github.com/raghav-g13/DPC4-ChampSim.git",
+  "champsim_branch": "incremental-compilation",
+  "champsim_commit": "164fdb1ed01185a21a39c292937bf26bb7f4c694",
+  "trace_url": "https://raw.githubusercontent.com/ucb-bar/chia/16c35e92aaaf9511c6453bf94cd5cf589698f4e3/chia/simulators/tests/traces/smoke.champsimtrace.gz",
+  "trace_sha256": "3516e79d7523a1b2c88a5abd364be8704b4d7de117f4820724b15002bd8428e8",
+  "warmup_instructions": 1000,
+  "simulation_instructions": 5000,
+  "repetitions": 2,
+  "elapsed_seconds": 1.1173443794250488,
+  "metrics": {
+    "instructions": 5003,
+    "cycles": 40459,
+    "ipc": 0.12365604686225562,
+    "l2c_prefetch_requested": 1617,
+    "l2c_prefetch_issued": 1617,
+    "l2c_useful_prefetch": 0,
+    "l2c_useless_prefetch": 0
+  },
+  "all_metrics": [
+    {
+      "instructions": 5003,
+      "cycles": 40459,
+      "ipc": 0.12365604686225562,
+      "l2c_prefetch_requested": 1617,
+      "l2c_prefetch_issued": 1617,
+      "l2c_useful_prefetch": 0,
+      "l2c_useless_prefetch": 0
+    },
+    {
+      "instructions": 5003,
+      "cycles": 40459,
+      "ipc": 0.12365604686225562,
+      "l2c_prefetch_requested": 1617,
+      "l2c_prefetch_issued": 1617,
+      "l2c_useful_prefetch": 0,
+      "l2c_useless_prefetch": 0
+    }
+  ],
+  "repeated_runs_identical": true,
+  "commands": [
+    "/tmp/champsim-smoke-local/DPC4-ChampSim/bin/champsim --warmup-instructions 1000 --simulation-instructions 5000 --json /tmp/champsim-smoke-local/smoke_stats_1.json /tmp/champsim-smoke-local/smoke.champsimtrace.gz",
+    "/tmp/champsim-smoke-local/DPC4-ChampSim/bin/champsim --warmup-instructions 1000 --simulation-instructions 5000 --json /tmp/champsim-smoke-local/smoke_stats_2.json /tmp/champsim-smoke-local/smoke.champsimtrace.gz"
+  ]
+}

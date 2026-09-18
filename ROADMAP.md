@@ -75,8 +75,8 @@ simulator evidence.
 
 - Prepare for the new GCP account delivery on Sep 20 evening PDT. Do not reuse
   old projects, credentials, API keys, or billing configuration.
-- Register the HotCRP title, preliminary authors, and abstract immediately.
-- Create a public artifact mirror before spending time on new experiments.
+- HotCRP title, authors, abstract, and public artifact URL are registered as
+  draft submission `#27`.
 - Decide whether the paper reports the present audit-harness pilot or includes
   an actual candidate-generation loop. Do not claim the latter without data.
 
@@ -89,10 +89,15 @@ simulator evidence.
   because the local link was too slow; Docker preserved the partial layers, so
   resume with `docker pull ghcr.io/ucb-bar/chia-champsim:latest`.
 - Exercise CHIA's official `ChampSimNode` with the upstream smoke trace.
+- A direct pinned source-build smoke is already complete; it produced
+  identical metrics across two runs. This does not replace the official image
+  or `ChampSimNode` smoke.
+- Optionally run `scripts/kaggle_champsim_smoke.py` in a CPU-only Kaggle
+  notebook to catch source-build, trace, and parser failures before GCP.
 - Replace or clearly quarantine the legacy hand-written ChampSim command
   adapter until a real build/run is verified.
 - Define one candidate unit with a content digest and one reference unit.
-- Add an end-to-end smoke result that records gits SHA, image digest, trace
+- Add an end-to-end smoke result that records git SHA, image digest, trace
   digest, command, raw output, and parsed metrics.
 - Keep `python3 -m unittest discover -s chia_loop/tests -v` green.
 
@@ -101,6 +106,7 @@ Acceptance gate for P1:
 - One command reproduces the stub result.
 - One command runs one real ChampSim measurement in the official image.
 - The two commands and their outputs are documented in the public artifact.
+- Kaggle, when used, is reported only as a preliminary source-build check.
 
 ### P2 - Funded Runs, Sep 21-23
 
@@ -133,15 +139,14 @@ Required evidence:
 
 ## Current Gaps
 
-- The current simulator adapter is unverified against a real ChampSim build.
+- The official CHIA Docker image and `ChampSimNode` path are still unverified;
+  the direct pinned source-build smoke passed.
 - The stub `prompt` and `seed` axes do not generate different designs; the
   current numbers validate metric plumbing only.
-- The paper's earlier prompt-sensitivity values were not emitted by the audit
-  code and are being replaced.
-- The artifact currently lives on an internal Gitea instance and is not a
-  valid public submission URL.
-- The paper needs the required AI-assistance disclosure.
-- A real ChampSim run has not yet been observed on this machine.
+- The full trace grid has not yet run; only the 5,003-instruction smoke path
+  has.
+- The source-build smoke script has not yet run in a live Kaggle session.
+- The official ChampSim image has not finished downloading locally.
 
 ## Non-Negotiable Claims
 
@@ -159,7 +164,7 @@ Required evidence:
 
 Before any new experiment:
 
-1. Submit or confirm the HotCRP abstract registration.
+1. Confirm HotCRP draft `#27` before the final ready marker.
 2. Complete the new-account preflight in `COMPUTE_WINDOW.md`.
-3. Create the public artifact mirror.
+3. Verify the public GitHub artifact remains available.
 4. Run the official ChampSim smoke path locally.
