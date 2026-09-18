@@ -75,4 +75,4 @@
   - Non-reproducible synthetic evidence now blocks publication.
 - Deviation: the official CHIA image and a live agent-generated candidate set
   remain unverified; `PRECOMPUTE.md` classifies that as a NO-GO condition.
-- Commit: pending
+- Commit: `3af0f29`
