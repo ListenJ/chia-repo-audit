@@ -50,4 +50,4 @@
   source-build smoke was validated on a generic Linux host. The document
   explicitly keeps Kaggle as an optional portability check rather than a
   substitute for the official CHIA image.
-- Commit: pending
+- Commit: `2ac15e0`
