@@ -24,13 +24,15 @@ As of 2026-09-18, this repository contains:
 
 The most important external blockers are not code:
 
-1. Confirm short-term compute access before the funding window on Sep 21-23.
+1. Receive the new GCP account details on Sep 20 evening PDT. Funding is
+   already confirmed; no confirmation action is required.
 2. Register the HotCRP title, authors, and abstract as soon as possible.
 3. Publish the artifact to a public URL. The internal Gitea URL cannot be the
    final artifact link.
 
 See [ROADMAP.md](ROADMAP.md) for the 6-day execution plan, acceptance gates,
-and claim boundaries.
+and claim boundaries. See [COMPUTE_WINDOW.md](COMPUTE_WINDOW.md) for the
+new-account migration and 72-hour runbook.
 
 ## Current Stub Validation
 
@@ -106,6 +108,7 @@ an LLM architecture-discovery loop reproduces.
 ```text
 README.md
 ROADMAP.md
+COMPUTE_WINDOW.md
 proposal.md
 paper/
   paper.tex
@@ -117,7 +120,10 @@ chia_loop/
   adversarial/
   tests/
   cluster.yaml
+  cluster.gcp.yaml
   README.md
+scripts/
+  preflight_compute.sh
 results/
 research-notes/
 ```

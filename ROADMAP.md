@@ -33,7 +33,11 @@ deadline.
 
 ## Compute Window
 
-Assume short-term accounts are usable from:
+The organizers confirmed short-term funding on 2026-09-18. New account details
+will be sent on Sunday 2026-09-20 evening PDT. No additional confirmation
+action is required.
+
+The confirmed usage window is:
 
 - Start: 2026-09-21 00:00 PT = 2026-09-21 15:00 Shanghai.
 - End: 2026-09-23 23:59 PT = 2026-09-24 14:59 Shanghai.
@@ -69,8 +73,8 @@ simulator evidence.
 
 ### P0 - External Blockers
 
-- Confirm that the short-term compute request was submitted before the Sep 18
-  cutoff and record when credentials are expected.
+- Prepare for the new GCP account delivery on Sep 20 evening PDT. Do not reuse
+  old projects, credentials, API keys, or billing configuration.
 - Register the HotCRP title, preliminary authors, and abstract immediately.
 - Create a public artifact mirror before spending time on new experiments.
 - Decide whether the paper reports the present audit-harness pilot or includes
@@ -81,7 +85,9 @@ simulator evidence.
 - Run the official `ghcr.io/ucb-bar/chia-champsim:latest` image locally.
   The amd64 manifest was verified on 2026-09-18
   (`sha256:4e5c32c94717d97689188e6045afdc65020b0300f321f1b97a4c503afcaa285f`);
-  the compressed image is roughly 1.8 GB and has not been pulled yet.
+  the compressed image is roughly 1.8 GB. A prepull was started but stopped
+  because the local link was too slow; Docker preserved the partial layers, so
+  resume with `docker pull ghcr.io/ucb-bar/chia-champsim:latest`.
 - Exercise CHIA's official `ChampSimNode` with the upstream smoke trace.
 - Replace or clearly quarantine the legacy hand-written ChampSim command
   adapter until a real build/run is verified.
@@ -154,6 +160,6 @@ Required evidence:
 Before any new experiment:
 
 1. Submit or confirm the HotCRP abstract registration.
-2. Confirm short-term credit access.
+2. Complete the new-account preflight in `COMPUTE_WINDOW.md`.
 3. Create the public artifact mirror.
 4. Run the official ChampSim smoke path locally.

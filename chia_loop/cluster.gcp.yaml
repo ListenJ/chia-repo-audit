@@ -1,0 +1,96 @@
+# Template for the short-term funded window.
+#
+# This uses a local/on-premises CHIA head and provisions ChampSim workers on
+# the new GCP account. Verify the account's CPU, disk, and spot quotas before
+# bringing it up.
+#
+# Required environment variables:
+#   HEAD_IP
+#   GCP_PROJECT
+#   GCP_ZONE
+#   GCP_PRIVATE_KEY_PATH
+#   CHAMPSIM_TRACE_DIR
+#
+# CHIA syncs CHAMPSIM_TRACE_DIR to /opt/chia-traces on every worker before
+# starting the Docker containers.
+
+cluster_name: CHIA-Hackathon-Audit
+
+provider:
+    head_ip: ${HEAD_IP}
+
+auth:
+    ssh_user: ${USER}
+
+gcp_nodes:
+    project: ${GCP_PROJECT}
+    zone: ${GCP_ZONE}
+
+    champsim_build:
+        machine_type: e2-standard-8
+        count: 1
+        image: projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts
+        disk_size_gb: 200
+        spot: false
+        ssh_user: chia
+        ssh_private_key: ${GCP_PRIVATE_KEY_PATH}
+        setup_timeout: 3600
+
+    champsim_run:
+        machine_type: e2-standard-4
+        count: 3
+        image: projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts
+        disk_size_gb: 100
+        spot: false
+        ssh_user: chia
+        ssh_private_key: ${GCP_PRIVATE_KEY_PATH}
+        setup_timeout: 3600
+
+available_node_types:
+    champsim_build:
+        resources: {"champsim_build": 1}
+        num_workers: 1
+        compatible_ips: ["@champsim_build:0"]
+        docker:
+            image: "ghcr.io/ucb-bar/chia-champsim:latest"
+            container_name: "chia-champsim-build-${USER}"
+            pull_before_run: true
+            run_options:
+                - -v /opt/chia-traces:/traces:ro
+            pull_timeout: 3600
+
+    champsim:
+        resources: {"champsim": 1}
+        num_workers: 3
+        compatible_ips:
+            - "@champsim_run:0"
+            - "@champsim_run:1"
+            - "@champsim_run:2"
+        docker:
+            image: "ghcr.io/ucb-bar/chia-champsim:latest"
+            container_name: "chia-champsim-run-${USER}"
+            pull_before_run: true
+            run_options:
+                - -v /opt/chia-traces:/traces:ro
+            pull_timeout: 3600
+
+file_mounts:
+    /opt/chia-traces: ${CHAMPSIM_TRACE_DIR}/
+
+rsync_exclude:
+    - "**/.git"
+    - "**/.git/**"
+
+head_env_commands:
+    - "source ~/.bashrc && conda activate chia_env"
+
+head_setup_commands:
+    - "source ~/.bashrc && conda activate chia_env"
+
+head_start_ray_commands:
+    - "source ~/.bashrc && conda activate chia_env && ray stop"
+    - "source ~/.bashrc && conda activate chia_env && ray start --head --port=6379 --include-dashboard=True --dashboard-agent-listen-port=0"
+
+worker_start_ray_commands:
+    - ray stop
+    - ray start --address=$RAY_HEAD_IP:6379 --dashboard-agent-listen-port=0
