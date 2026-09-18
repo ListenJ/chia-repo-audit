@@ -19,6 +19,8 @@ As of 2026-09-18, this repository contains:
 - A deterministic stub backend for local protocol validation.
 - A pinned ChampSim source-build smoke that completed with identical repeated
   metrics; the official CHIA Docker/Ray path still needs its own smoke.
+- Candidate generation modes: an offline catalog fixture and a directory
+  interface for real LLM-generated candidates.
 - Five gold and five adversarial design-classification cases.
 - Machine-readable repeatability, seed, prompt, and trace sensitivity metrics.
 - A three-page paper draft whose measured numbers need to be refreshed.
@@ -37,7 +39,8 @@ See [ROADMAP.md](ROADMAP.md) for the 6-day execution plan, acceptance gates,
 and claim boundaries. See [COMPUTE_WINDOW.md](COMPUTE_WINDOW.md) for the
 new-account migration and 72-hour runbook. See
 [KAGGLE_VALIDATION.md](KAGGLE_VALIDATION.md) for the CPU-only preliminary
-validation decision.
+validation decision. [PRECOMPUTE.md](PRECOMPUTE.md) defines the strict GO/NO-GO
+gate and the real candidate contract for the funded window.
 
 ## Current Stub Validation
 
@@ -46,10 +49,12 @@ The stub run validates the audit plumbing, not ChampSim performance:
 ```text
 Backend: stub
 Verdict: REPRODUCIBLE
-Max cross-seed CV: 3.5339% (gate < 5%)
+Max cross-seed CV: 3.6502% (gate < 5%)
 Max repeated-run CV: 0.1964%
-Max prompt spread: 0.7610%
-Max trace CV: 0.2495%
+Max prompt spread: 0.7899%
+Max trace CV: 0.2427%
+Trace top-1 stability: 1.0
+Trace ranking Kendall tau: 1.0
 Cohen's kappa: 1.0 (deterministic protocol self-test)
 Adversarial detection: 100%
 Gold calibration: 5/5
@@ -83,7 +88,7 @@ validate CHIA's Docker/Ray worker or justify a performance claim.
 No third-party Python dependencies are needed for the stub:
 
 ```bash
-python3 chia_loop/loops/audit_repro.py --version 4
+python3 chia_loop/loops/audit_repro.py --version 5
 python3 -m unittest discover -s chia_loop/tests -v
 ```
 
@@ -102,14 +107,23 @@ Use a separate output directory without touching the checked-in evidence:
 
 ```bash
 python3 chia_loop/loops/audit_repro.py \
-  --version 4 \
+  --version 5 \
   --output-dir /tmp/chia-audit
 ```
 
 CHIA execution is explicit and requires a running CHIA/Ray cluster:
 
 ```bash
-python3 chia_loop/loops/audit_repro.py --execution chia --version 4
+python3 chia_loop/loops/audit_repro.py --execution chia --version 5
+```
+
+Real agent output can be loaded from a candidate directory:
+
+```bash
+python3 chia_loop/loops/audit_repro.py \
+  --version 5 \
+  --generator-mode directory \
+  --candidates-dir /path/to/generated/candidates
 ```
 
 Optional CPU-only source-build smoke test for Kaggle or another Linux
@@ -144,6 +158,7 @@ README.md
 ROADMAP.md
 COMPUTE_WINDOW.md
 KAGGLE_VALIDATION.md
+PRECOMPUTE.md
 proposal.md
 paper/
   paper.tex

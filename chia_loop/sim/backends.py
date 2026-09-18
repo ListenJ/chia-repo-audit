@@ -24,7 +24,7 @@ import re
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Protocol
+from typing import Callable, Protocol
 
 
 # ── 结果结构 ──────────────────────────────────────────────────
@@ -207,9 +207,128 @@ class ChampSimBackend:
         return float(m.group(1)) if m else float("nan")
 
 
+class ChampSimNodeBackend:
+    """Adapter for CHIA's official ChampSimNode build/run contract.
+
+    The runner callables are injected so the adapter can be unit-tested
+    without Ray. In a live CHIA cluster, the default callables dispatch
+    ``ChampSimNode.build_champsim`` and ``ChampSimNode.run_champsim``.
+    """
+
+    name = "champsim_node"
+
+    def __init__(
+        self,
+        champsim_root: str,
+        traces_dir: str,
+        warmup_instructions: int = 5_000_000,
+        simulation_instructions: int = 25_000_000,
+        cache_level: str = "L2C",
+        build_timeout_s: int = 1800,
+        run_timeout_s: int = 3600,
+        incremental: bool = True,
+        build_runner: Callable[..., object] | None = None,
+        run_runner: Callable[..., object] | None = None,
+    ):
+        self.champsim_root = champsim_root
+        self.traces_dir = Path(traces_dir)
+        self.warmup = warmup_instructions
+        self.sim = simulation_instructions
+        self.cache_level = cache_level
+        self.build_timeout_s = build_timeout_s
+        self.run_timeout_s = run_timeout_s
+        self.incremental = incremental
+        self.build_runner = build_runner or _default_build_runner
+        self.run_runner = run_runner or _default_run_runner
+
+    def run(
+        self,
+        seed: int,
+        prompt: str,
+        trace: str,
+        design: dict,
+        run_index: int = 0,
+    ) -> SimResult:
+        source = design.get("prefetcher_source")
+        module_name = design.get("module_name")
+        if not source or not module_name:
+            raise ValueError(
+                "ChampSimNodeBackend requires design.prefetcher_source and "
+                "design.module_name"
+            )
+
+        build = self.build_runner(
+            self.champsim_root,
+            source,
+            module_name,
+            cache_level=self.cache_level,
+            timeout_s=self.build_timeout_s,
+            incremental=self.incremental,
+        )
+        if not getattr(build, "success", False):
+            diagnostics = getattr(build, "build_diagnostics", "")
+            raise RuntimeError(f"CHIA ChampSim build failed: {diagnostics}")
+
+        result = self.run_runner(
+            getattr(build, "binary", b""),
+            self.traces_dir / trace,
+            warmup_instructions=self.warmup,
+            simulation_instructions=self.sim,
+            timeout_s=self.run_timeout_s,
+        )
+        if not getattr(result, "success", False):
+            diagnostics = getattr(result, "stdout_tail", "")
+            raise RuntimeError(f"CHIA ChampSim run failed: {diagnostics}")
+
+        return SimResult(
+            cycles=float(getattr(result, "cycles", float("nan"))),
+            ipc=float(getattr(result, "ipc", float("nan"))),
+            l1_miss_rate=float("nan"),
+            seed=seed,
+            prompt=prompt,
+            trace=trace,
+            design=design,
+            backend=self.name,
+        )
+
+
+def _default_build_runner(
+    champsim_root: str,
+    prefetcher_source: str,
+    module_name: str,
+    **kwargs,
+):
+    from chia.base.ChiaFunction import get
+    from chia.simulators.champsim import ChampSimNode
+
+    return get(
+        ChampSimNode.build_champsim.chia_remote(
+            champsim_root,
+            prefetcher_source,
+            module_name,
+            **kwargs,
+        )
+    )
+
+
+def _default_run_runner(binary: bytes, trace: Path, **kwargs):
+    from chia.base.ChiaFunction import get
+    from chia.simulators.champsim import ChampSimNode
+
+    return get(
+        ChampSimNode.run_champsim.chia_remote(
+            binary=binary,
+            trace=str(trace),
+            **kwargs,
+        )
+    )
+
+
 # ── 工厂 ─────────────────────────────────────────────────────
 def get_backend(cfg: dict) -> SimBackend:
     name = cfg.get("backend", "stub")
     if name == "champsim":
         return ChampSimBackend(**cfg.get("champsim", {}))
+    if name == "champsim_node":
+        return ChampSimNodeBackend(**cfg.get("champsim_node", {}))
     return StubBackend()

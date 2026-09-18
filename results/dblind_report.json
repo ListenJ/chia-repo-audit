@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "n_cases": 10,
   "n_gold": 5,
   "n_adversarial": 5,

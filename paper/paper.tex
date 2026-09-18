@@ -162,14 +162,18 @@ av-005 & adv & ``always-passes'' output & E4 \\
 \section{Results}
 \label{sec:results}
 
-\textbf{Stub validation (loop's own outputs, config v4).} The pipeline runs
-end-to-end and emits a scorecard with the pre-registered metrics:
+\textbf{Stub validation (loop's own outputs, config v5).} The pipeline maps
+each generation seed and prompt to a concrete candidate artifact, runs that
+candidate across the trace grid, and emits a scorecard with the
+pre-registered metrics:
 \begin{itemize}\setlength{\itemsep}{0pt}
-\item \textbf{Reproducibility.} Cross-seed coefficient of variation $= 3.53\%$
+\item \textbf{Reproducibility.} Cross-seed coefficient of variation $= 3.65\%$
 (below the pre-registered $5\%$ threshold) $\rightarrow$ \textsc{Reproducible};
-repeated-run CV $= 0.20\%$, and trace CV $= 0.25\%$. Prompt spread across
-CoT/adversarial prompt variants $= 0.76\%$. These values validate the metric
-plumbing only; the stub supplies the prompt and seed effects.
+repeated-run CV $= 0.20\%$, and trace CV $= 0.24\%$. Prompt spread across
+CoT/adversarial prompt variants $= 0.79\%$, trace top-1 stability $= 1.00$,
+and mean leave-one-trace-out Kendall $\tau = 1.00$. These values validate the
+candidate-to-simulation plumbing and ranking analysis; the default candidate
+catalog is a fixture, not real LLM output.
 \item \textbf{Double-blind audit.} Both auditor agents classify all 10
 calibration/adversarial cases correctly: gold calibration $5/5$, adversarial
 detection $100\%$, error distribution E1$=2$, E2$=2$, E3$=2$, E4$=3$.
@@ -193,16 +197,18 @@ result.
 \toprule
 \textbf{Metric} & \textbf{Pre-registered} & \textbf{Stub result} \\
 \midrule
-Cross-seed CV (max) & $<5\%$ & $3.53\%$ \\
+Cross-seed CV (max) & $<5\%$ & $3.65\%$ \\
 Repeated-run CV (max) & report & $0.20\%$ \\
-Prompt spread (max) & report & $0.76\%$ \\
-Trace CV (max) & report & $0.25\%$ \\
+Prompt spread (max) & report & $0.79\%$ \\
+Trace CV (max) & report & $0.24\%$ \\
+Trace top-1 stability & report & $1.00$ \\
+Mean Kendall $\tau$ & report & $1.00$ \\
 Cohen's $\kappa$ & $\geq 0.7$ & $1.00$ (stub) \\
 Adversarial detection & $100\%$ & $100\%$ \\
 Gold calibration & report & $5/5$ \\
 \bottomrule
 \end{tabular}
-\caption{Pre-registered metrics vs.\ stub validation (config v4).}
+\caption{Pre-registered metrics vs.\ stub validation (config v5).}
 \label{tab:metrics}
 \end{table}
 
@@ -217,7 +223,7 @@ The loop (\texttt{chia\_loop/loops/audit\_repro.py}), adversarial cases
 (\texttt{av-001..005}), gold standard (\texttt{gold-01..05} +
 \texttt{answer-key}), and raw logs are released as composable CHIA blocks
 (BSD-3-Clause). To reproduce the stub validation:
-\texttt{python3 chia\_loop/loops/audit\_repro.py --version 4}; outputs land
+\texttt{python3 chia\_loop/loops/audit\_repro.py --version 5}; outputs land
 in \texttt{results/} (scorecard, raw, dblind report) with the pinned git SHA
 and Python version. The public artifact also includes
 \texttt{scripts/kaggle\_champsim\_smoke.py} and the machine-readable
@@ -261,19 +267,11 @@ human inter-rater estimate; the $\kappa{=}0.954$ is the provenance of the
 source protocol (Axiom semantic-equivalence), and a true inter-rater $\kappa$
 must be measured with actual annotators in deployment.
 
-The current seed and prompt axes alter the synthetic backend directly. A real
-deployment must let those axes alter candidate generation; otherwise they do
-not measure agentic discovery variance. The same caveat applies to trace CV:
-it is a diagnostic over absolute cycle counts, not a ranking-stability metric.
-
-\textbf{Reliability metrics matter.} In a companion analysis of agent
-task-success logs, the standard ``best-of-$n$'' metric overstates reliability
-by $>2\times$: macro \texttt{pass@3}$=0.925$ vs.\ \texttt{pass\^{}3}$=0.25$
-(a $170\%$ gap), consistent with~\cite{passk}. This motivates the use of
-reliability metrics such as \texttt{pass\^{}$k$}~\cite{philschmid,taubench};
-the number derives from
-task-success data, not from the CHIA simulation stub, and is reported as
-motivation rather than as a result of this loop.
+The current seed and prompt axes select among fixture candidates rather than
+querying an LLM. Directory mode is the integration point for real generated
+candidates, but it has not yet been populated by an agent run. Trace CV is a
+diagnostic over cycle counts; the separate top-1 and Kendall-tau metrics
+measure ranking stability under trace removal.
 
 \section{Conclusion}
 We present an agentic audit loop and a pre-registered pilot for measuring the
@@ -296,9 +294,6 @@ code, measurements, citations, claims, and the final content.
 \bibitem{reprocrisis} NeurIPS 2026 Call for Reproducibility. \url{https://neurips.cc/Conferences/2026/CallForReproducibility}.
 \bibitem{autobench} Auto Benchmark Audit. arXiv:2605.26079. 2026.
 \bibitem{contamination} Nourbakhsh et al. GEM 2026 Outstanding Paper. \url{https://aclanthology.org/2026.gem-main.50/}.
-\bibitem{passk} Beyond Pass@k. arXiv:2608.14711. 2026.
-\bibitem{philschmid} Schmadl, P. Pass@k vs Pass\^{}$k$: Understanding Agent Reliability. \url{https://www.philschmid.de/agents-pass-at-k-pass-power-k}. 2025.
-\bibitem{taubench} Sierra AI. $\tau$-Bench: Benchmarking AI Agents for the Real World. \url{https://sierra.ai/es/blog/benchmarking-ai-agents}. 2026.
 \end{thebibliography}
 
 \end{document}

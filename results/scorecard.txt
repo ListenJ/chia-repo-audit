@@ -1,11 +1,13 @@
-CHIA reproducibility audit (config v4)
+CHIA reproducibility audit (config v5)
 ========================================================
 Backend: stub
 Verdict: REPRODUCIBLE
-Max cross-seed CV: 3.5339% (gate < 5%)
+Max cross-seed CV: 3.6502% (gate < 5%)
 Max repeated-run CV: 0.1964%
-Max prompt spread: 0.7610%
-Max trace CV: 0.2495%
+Max prompt spread: 0.7899%
+Max trace CV: 0.2427%
+Trace top-1 stability: 1.0
+Trace ranking Kendall tau: 1.0
 ========================================================
 Double-blind protocol self-test:
   Cohen's kappa: 1.0 (gate 0.7)
@@ -13,5 +15,6 @@ Double-blind protocol self-test:
   Gold calibration: 5/5
   Error distribution: {'E0': 0, 'E1': 2, 'E2': 2, 'E3': 2, 'E4': 3}
   Publish gate: PASS
+  Publish blockers: []
 ========================================================
 PUBLISHABLE

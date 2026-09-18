@@ -51,3 +51,28 @@
   explicitly keeps Kaggle as an optional portability check rather than a
   substitute for the official CHIA image.
 - Commit: `2ac15e0`
+
+## 2026-09-18 - Pre-compute hardening and no-go gate
+
+- Task: complete all optimization work possible without GCP and define a
+  strict stop condition for the funded window.
+- Tools: Python 3.12, unittest, CHIA ChampSimNode API, Tectonic, local
+  DPC4-ChampSim source build.
+- Operations:
+  - Added seed/prompt candidate generation with catalog and directory modes.
+  - Added leave-one-trace-out top-1 and Kendall-tau stability metrics.
+  - Combined reproducibility and audit results into the publish gate.
+  - Added an injectable official `ChampSimNode` backend adapter.
+  - Added `PRECOMPUTE.md` with GO/NO-GO criteria and real candidate contract.
+  - Updated public documentation and the paper to config v5.
+  - Removed the unsupported companion `pass@k` numbers from the paper.
+- Verification:
+  - Unit tests: 12 passed.
+  - Source smoke: five independent processes produced identical metrics.
+  - Stub v5: seed CV 3.6502%, prompt spread 0.7899%, trace top-1 stability
+    1.0, Kendall tau 1.0.
+  - Paper compiles to four pages.
+  - Non-reproducible synthetic evidence now blocks publication.
+- Deviation: the official CHIA image and a live agent-generated candidate set
+  remain unverified; `PRECOMPUTE.md` classifies that as a NO-GO condition.
+- Commit: pending

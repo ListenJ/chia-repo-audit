@@ -1,14 +1,41 @@
 {
   "schema_version": 2,
-  "version": 4,
+  "version": 5,
   "backend": "stub",
   "config": {
-    "version": 4,
+    "version": 5,
     "backend": "stub",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
-    },
+    "generator_mode": "catalog",
+    "candidate_catalog": [
+      {
+        "candidate_id": "lru_reference",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "mru_variant",
+        "design": {
+          "llc_replacement": "mru",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "fifo_variant",
+        "design": {
+          "llc_replacement": "fifo",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "srrip_variant",
+        "design": {
+          "llc_replacement": "srrip",
+          "branch_predictor": "bimodal"
+        }
+      }
+    ],
     "seeds": [
       0,
       1,
@@ -28,96 +55,101 @@
     "n_repeat": 5,
     "kappa_gate": 0.7,
     "re_audit_ratio": 0.2,
-    "champsim": {}
+    "champsim": {},
+    "champsim_node": {}
   },
-  "config_sha256": "2923e9835e86db37330baa45a31bbafbefc1e4256c87622ffbdccda393444b26",
-  "git_sha": "3d3fe67",
+  "config_sha256": "f4864a0a2c541d907584a82d80eae0120798aae3bfaf563ec27cd7e82c1466db",
+  "git_sha": "d2cedfa",
   "n_cells": 27,
+  "n_candidates": 4,
   "cells": {
     "0/default/spec_gcc": {
       "seed": 0,
       "prompt": "default",
       "trace": "spec_gcc",
+      "candidate_id": "mru_variant",
+      "candidate_sha256": "c124bfbc1c7a1a2e96b4ba9bde1c31b4ed40861fd37533bc536a185cf772806e",
+      "generator_seed": 0,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1024.500928178649,
-        "ipc": 0.9975016166598352,
-        "l1_miss_rate": 0.051252320446622805,
+        "cycles": 1028.5738517369311,
+        "ipc": 0.9588929692503112,
+        "l1_miss_rate": 0.051434629342327634,
         "seed": 0,
         "prompt": "default",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1023.0459826788924,
-          "ipc": 0.995252559098716,
-          "l1_miss_rate": 0.052385043302768906,
+          "cycles": 1028.7287335477554,
+          "ipc": 0.9581814472813901,
+          "l1_miss_rate": 0.05182183386938872,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1024.6765175476069,
-          "ipc": 0.9966288155890173,
-          "l1_miss_rate": 0.05169129386901702,
+          "cycles": 1028.0117952260443,
+          "ipc": 0.9614839378827632,
+          "l1_miss_rate": 0.050029488065110574,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1024.500928178649,
-          "ipc": 0.9975016166598352,
-          "l1_miss_rate": 0.051252320446622805,
+          "cycles": 1028.5252646506633,
+          "ipc": 0.9591163945292408,
+          "l1_miss_rate": 0.05131316162665839,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1024.9191351525415,
-          "ipc": 0.9954253478552775,
-          "l1_miss_rate": 0.05229783788135338,
+          "cycles": 1028.5738517369311,
+          "ipc": 0.9588929692503112,
+          "l1_miss_rate": 0.051434629342327634,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1024.18712567278,
-          "ipc": 0.999065246218252,
-          "l1_miss_rate": 0.050467814181949726,
+          "cycles": 1029.6842436998859,
+          "ipc": 0.9538151101436755,
+          "l1_miss_rate": 0.054210609249714846,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -128,86 +160,89 @@
       "seed": 0,
       "prompt": "default",
       "trace": "spec_mcf",
+      "candidate_id": "mru_variant",
+      "candidate_sha256": "c124bfbc1c7a1a2e96b4ba9bde1c31b4ed40861fd37533bc536a185cf772806e",
+      "generator_seed": 0,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1023.9019657812612,
-        "ipc": 0.9995100690562928,
-        "l1_miss_rate": 0.050245085546846875,
+        "cycles": 1028.805358878999,
+        "ipc": 0.9578298233040006,
+        "l1_miss_rate": 0.05201339719749741,
         "seed": 0,
         "prompt": "default",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1025.6676269745917,
-          "ipc": 0.9917308147092849,
-          "l1_miss_rate": 0.05416906743647926,
+          "cycles": 1028.8550545038706,
+          "ipc": 0.9576019142801907,
+          "l1_miss_rate": 0.05213763625967638,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1024.1882375978366,
-          "ipc": 0.9990596970126943,
-          "l1_miss_rate": 0.0504705939945918,
+          "cycles": 1027.6024630153981,
+          "ipc": 0.9597042407213178,
+          "l1_miss_rate": 0.05099384246150442,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1023.7844683674319,
-          "ipc": 0.9989235019340875,
-          "l1_miss_rate": 0.05053882908142024,
+          "cycles": 1028.2640219504897,
+          "ipc": 0.9603194931458,
+          "l1_miss_rate": 0.05066005487622409,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1023.3273169439041,
-          "ipc": 0.996647859360569,
-          "l1_miss_rate": 0.05168170764023996,
+          "cycles": 1028.805358878999,
+          "ipc": 0.9578298233040006,
+          "l1_miss_rate": 0.05201339719749741,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1023.9019657812612,
-          "ipc": 0.9995100690562928,
-          "l1_miss_rate": 0.050245085546846875,
+          "cycles": 1029.2698622319394,
+          "ipc": 0.9557037877644065,
+          "l1_miss_rate": 0.053174655579848504,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -218,86 +253,89 @@
       "seed": 0,
       "prompt": "default",
       "trace": "web_cloud",
+      "candidate_id": "mru_variant",
+      "candidate_sha256": "c124bfbc1c7a1a2e96b4ba9bde1c31b4ed40861fd37533bc536a185cf772806e",
+      "generator_seed": 0,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1027.7019271662118,
-        "ipc": 0.9965026386337064,
-        "l1_miss_rate": 0.0517548179155295,
+        "cycles": 1030.4634691080473,
+        "ipc": 0.9590645780121103,
+        "l1_miss_rate": 0.051341327229881675,
         "seed": 0,
         "prompt": "default",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1028.7987574335943,
-          "ipc": 0.9910863800329087,
-          "l1_miss_rate": 0.05449689358398575,
+          "cycles": 1031.5276609232797,
+          "ipc": 0.9591053729489777,
+          "l1_miss_rate": 0.051319152308198855,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1027.306501952105,
-          "ipc": 0.9984698352319171,
-          "l1_miss_rate": 0.050766254880262575,
+          "cycles": 1030.149736004143,
+          "ipc": 0.9576238792974062,
+          "l1_miss_rate": 0.052125659989642546,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1026.7145368383665,
-          "ipc": 0.9985747185186225,
-          "l1_miss_rate": 0.05071365790408354,
+          "cycles": 1032.5936432091084,
+          "ipc": 0.9542274132830589,
+          "l1_miss_rate": 0.053984108022771274,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1027.7019271662118,
-          "ipc": 0.9965026386337064,
-          "l1_miss_rate": 0.0517548179155295,
+          "cycles": 1030.4634691080473,
+          "ipc": 0.9590645780121103,
+          "l1_miss_rate": 0.051341327229881675,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1028.0137142659785,
-          "ipc": 0.9949569895284002,
-          "l1_miss_rate": 0.05253428566494629,
+          "cycles": 1029.8524001663645,
+          "ipc": 0.9562624680325671,
+          "l1_miss_rate": 0.05286899958408873,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -308,86 +346,89 @@
       "seed": 0,
       "prompt": "cot",
       "trace": "spec_gcc",
+      "candidate_id": "srrip_variant",
+      "candidate_sha256": "b1a4e1f9eba87191f8f5df995ea5c84b37a3c6157e524ef7d408b87b16712622",
+      "generator_seed": 0,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1025.1236962342573,
-        "ipc": 0.9747714347576287,
-        "l1_miss_rate": 0.05244075941435661,
+        "cycles": 1026.5227675079864,
+        "ipc": 0.9672244743275824,
+        "l1_miss_rate": 0.051443081230033647,
         "seed": 0,
         "prompt": "cot",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1025.9728938938972,
-          "ipc": 0.978822652615382,
-          "l1_miss_rate": 0.05031776526525658,
+          "cycles": 1026.479928204308,
+          "ipc": 0.9670241300253049,
+          "l1_miss_rate": 0.05155017948922965,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1026.6007651706211,
-          "ipc": 0.9770359179326803,
-          "l1_miss_rate": 0.05125191292655327,
+          "cycles": 1027.4812142667247,
+          "ipc": 0.9681422423133429,
+          "l1_miss_rate": 0.0509530356668118,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1024.3711772380216,
-          "ipc": 0.9712093592219913,
-          "l1_miss_rate": 0.05432205690494594,
+          "cycles": 1025.914857128569,
+          "ipc": 0.9643892384518155,
+          "l1_miss_rate": 0.05296285717857682,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1025.1236962342573,
-          "ipc": 0.9747714347576287,
-          "l1_miss_rate": 0.05244075941435661,
+          "cycles": 1027.5413843458916,
+          "ipc": 0.9678603375267032,
+          "l1_miss_rate": 0.05110346086472941,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1025.0786853171687,
-          "ipc": 0.9745576394396422,
-          "l1_miss_rate": 0.05255328670707808,
+          "cycles": 1026.5227675079864,
+          "ipc": 0.9672244743275824,
+          "l1_miss_rate": 0.051443081230033647,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -398,86 +439,89 @@
       "seed": 0,
       "prompt": "cot",
       "trace": "spec_mcf",
+      "candidate_id": "srrip_variant",
+      "candidate_sha256": "b1a4e1f9eba87191f8f5df995ea5c84b37a3c6157e524ef7d408b87b16712622",
+      "generator_seed": 0,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1025.7044465545437,
-        "ipc": 0.9775383513079066,
-        "l1_miss_rate": 0.050988883613640644,
+        "cycles": 1027.0745058062175,
+        "ipc": 0.9698121989324335,
+        "l1_miss_rate": 0.05006373548445623,
         "seed": 0,
         "prompt": "cot",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1026.4674691053456,
-          "ipc": 0.9776725540706893,
-          "l1_miss_rate": 0.05091867276336388,
+          "cycles": 1026.6858427506477,
+          "ipc": 0.967987879739674,
+          "l1_miss_rate": 0.051035393123380464,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1025.163650186474,
-          "ipc": 0.9749612888296249,
-          "l1_miss_rate": 0.05234087453381485,
+          "cycles": 1028.4125971047222,
+          "ipc": 0.9637969105994514,
+          "l1_miss_rate": 0.05328149276180576,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1025.112701887367,
-          "ipc": 0.9747192045494676,
-          "l1_miss_rate": 0.05246824528158226,
+          "cycles": 1025.281550466765,
+          "ipc": 0.9614531809499252,
+          "l1_miss_rate": 0.05454612383308689,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1025.7044465545437,
-          "ipc": 0.9775383513079066,
-          "l1_miss_rate": 0.050988883613640644,
+          "cycles": 1027.0745058062175,
+          "ipc": 0.9698121989324335,
+          "l1_miss_rate": 0.05006373548445623,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1027.0828064225827,
-          "ipc": 0.9747405422854558,
-          "l1_miss_rate": 0.05245701605645691,
+          "cycles": 1027.265925610634,
+          "ipc": 0.9691522445297236,
+          "l1_miss_rate": 0.050414814026585236,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -488,86 +532,89 @@
       "seed": 0,
       "prompt": "cot",
       "trace": "web_cloud",
+      "candidate_id": "srrip_variant",
+      "candidate_sha256": "b1a4e1f9eba87191f8f5df995ea5c84b37a3c6157e524ef7d408b87b16712622",
+      "generator_seed": 0,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1029.8239155024028,
-        "ipc": 0.9759719821362429,
-        "l1_miss_rate": 0.05180978875600701,
+        "cycles": 1029.8771837509978,
+        "ipc": 0.968885143775703,
+        "l1_miss_rate": 0.050557040622505524,
         "seed": 0,
         "prompt": "cot",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1029.8239155024028,
-          "ipc": 0.9759719821362429,
-          "l1_miss_rate": 0.05180978875600701,
+          "cycles": 1029.5746980597057,
+          "ipc": 0.9674674465236167,
+          "l1_miss_rate": 0.05131325485073526,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1030.4899850331217,
-          "ipc": 0.972810032394228,
-          "l1_miss_rate": 0.053474962582804306,
+          "cycles": 1029.8771837509978,
+          "ipc": 0.968885143775703,
+          "l1_miss_rate": 0.050557040622505524,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1028.9833401502226,
-          "ipc": 0.9788726976402652,
-          "l1_miss_rate": 0.05029164962444337,
+          "cycles": 1031.2388261737344,
+          "ipc": 0.9646046700023999,
+          "l1_miss_rate": 0.052847065434336,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1030.087292922374,
-          "ipc": 0.974719229205209,
-          "l1_miss_rate": 0.052468232305935475,
+          "cycles": 1029.9628097022267,
+          "ipc": 0.9692872124088352,
+          "l1_miss_rate": 0.05034297574443319,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1028.4043840494458,
-          "ipc": 0.9761067803825747,
-          "l1_miss_rate": 0.051739039876385555,
+          "cycles": 1029.2807334614781,
+          "ipc": 0.9660936556491199,
+          "l1_miss_rate": 0.05204816634630447,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -578,86 +625,89 @@
       "seed": 0,
       "prompt": "adversarial",
       "trace": "spec_gcc",
+      "candidate_id": "mru_variant",
+      "candidate_sha256": "653fd56afa4240dd88f40c84bcb2ac503041ca5ba5c4c54c27fc2dcc3c36ce03",
+      "generator_seed": 0,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1021.6821354823543,
-        "ipc": 0.957936365283051,
-        "l1_miss_rate": 0.0534553387058858,
+        "cycles": 1025.2117073655324,
+        "ipc": 0.9924981660604448,
+        "l1_miss_rate": 0.052279268413831244,
         "seed": 0,
         "prompt": "adversarial",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1021.7660279132741,
-          "ipc": 0.9575516037631764,
-          "l1_miss_rate": 0.05366506978318541,
+          "cycles": 1026.2154530311932,
+          "ipc": 0.9875789575879633,
+          "l1_miss_rate": 0.054788632577983214,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1019.1348284391116,
-          "ipc": 0.9589328769670069,
-          "l1_miss_rate": 0.05291292890222079,
+          "cycles": 1025.2117073655324,
+          "ipc": 0.9924981660604448,
+          "l1_miss_rate": 0.052279268413831244,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1021.0807833129847,
-          "ipc": 0.9607034655994853,
-          "l1_miss_rate": 0.05195195828246213,
+          "cycles": 1024.9067780664043,
+          "ipc": 0.9940022991372286,
+          "l1_miss_rate": 0.05151694516601082,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1021.6821354823543,
-          "ipc": 0.957936365283051,
-          "l1_miss_rate": 0.0534553387058858,
+          "cycles": 1025.5353374833805,
+          "ipc": 0.9909067584186957,
+          "l1_miss_rate": 0.05308834370845121,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1021.8200377217591,
-          "ipc": 0.957304058437712,
-          "l1_miss_rate": 0.05380009430439808,
+          "cycles": 1023.6892272005338,
+          "ipc": 0.9939825647373617,
+          "l1_miss_rate": 0.051526931998665586,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -668,86 +718,89 @@
       "seed": 0,
       "prompt": "adversarial",
       "trace": "spec_mcf",
+      "candidate_id": "mru_variant",
+      "candidate_sha256": "653fd56afa4240dd88f40c84bcb2ac503041ca5ba5c4c54c27fc2dcc3c36ce03",
+      "generator_seed": 0,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1019.5133236816725,
-        "ipc": 0.9606762715890157,
-        "l1_miss_rate": 0.05196669079581853,
+        "cycles": 1023.4451326029867,
+        "ipc": 0.9927781968447252,
+        "l1_miss_rate": 0.052137168492533116,
         "seed": 0,
         "prompt": "adversarial",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1021.2335137293853,
-          "ipc": 0.9599991687357121,
-          "l1_miss_rate": 0.052333784323463466,
+          "cycles": 1024.136497428473,
+          "ipc": 0.9961970051242005,
+          "l1_miss_rate": 0.05040875642881778,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1019.2658537344773,
-          "ipc": 0.9595356786945146,
-          "l1_miss_rate": 0.05258536566380661,
+          "cycles": 1025.8474512983753,
+          "ipc": 0.9893768074512813,
+          "l1_miss_rate": 0.0538686282459385,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1019.7599408361264,
-          "ipc": 0.9618156347757109,
-          "l1_miss_rate": 0.05135014790968408,
+          "cycles": 1022.6928938400705,
+          "ipc": 0.9890849228701994,
+          "l1_miss_rate": 0.054017765399823586,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1019.5133236816725,
-          "ipc": 0.9606762715890157,
-          "l1_miss_rate": 0.05196669079581853,
+          "cycles": 1022.1770671421714,
+          "ipc": 0.9865682050893663,
+          "l1_miss_rate": 0.05530733214457134,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1019.1719423168078,
-          "ipc": 0.9591035480887251,
-          "l1_miss_rate": 0.0528201442079806,
+          "cycles": 1023.4451326029867,
+          "ipc": 0.9927781968447252,
+          "l1_miss_rate": 0.052137168492533116,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -758,86 +811,89 @@
       "seed": 0,
       "prompt": "adversarial",
       "trace": "web_cloud",
+      "candidate_id": "mru_variant",
+      "candidate_sha256": "653fd56afa4240dd88f40c84bcb2ac503041ca5ba5c4c54c27fc2dcc3c36ce03",
+      "generator_seed": 0,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1022.0120542131269,
-        "ipc": 0.9583687224764492,
-        "l1_miss_rate": 0.05321986446718262,
+        "cycles": 1028.3587833935485,
+        "ipc": 0.9917743062531952,
+        "l1_miss_rate": 0.052646958483871485,
         "seed": 0,
         "prompt": "adversarial",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1022.9231252478793,
-          "ipc": 0.9625710283620421,
-          "l1_miss_rate": 0.050942186880301665,
+          "cycles": 1028.3587833935485,
+          "ipc": 0.9917743062531952,
+          "l1_miss_rate": 0.052646958483871485,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1022.0120542131269,
-          "ipc": 0.9583687224764492,
-          "l1_miss_rate": 0.05321986446718262,
+          "cycles": 1028.5092963312663,
+          "ipc": 0.9910346234580962,
+          "l1_miss_rate": 0.053023240828166215,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1021.151751815699,
-          "ipc": 0.9544341302443,
-          "l1_miss_rate": 0.055370620460752404,
+          "cycles": 1027.9646113613428,
+          "ipc": 0.9937166730266737,
+          "l1_miss_rate": 0.05166152840335699,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1021.0594649654299,
-          "ipc": 0.9540139742870802,
-          "l1_miss_rate": 0.055601337586424965,
+          "cycles": 1029.0240183335097,
+          "ipc": 0.9885133838648915,
+          "l1_miss_rate": 0.05431004583377427,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1024.5357393007364,
-          "ipc": 0.9586085330841211,
-          "l1_miss_rate": 0.05308934825184089,
+          "cycles": 1027.3413330196743,
+          "ipc": 0.9968035847348994,
+          "l1_miss_rate": 0.050103332549185545,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -848,86 +904,89 @@
       "seed": 1,
       "prompt": "default",
       "trace": "spec_gcc",
+      "candidate_id": "fifo_variant",
+      "candidate_sha256": "95a908b381015c48347a33334dc259bdaf3ee12bbeadd5339ab93ed5df15515c",
+      "generator_seed": 1,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1059.8918950700574,
-        "ipc": 0.9944900036210443,
-        "l1_miss_rate": 0.05277026232485653,
+        "cycles": 1062.8087614418403,
+        "ipc": 0.9794739549661626,
+        "l1_miss_rate": 0.050478096395399574,
         "seed": 1,
         "prompt": "default",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1059.6812384040588,
-          "ipc": 0.9934493855143617,
-          "l1_miss_rate": 0.05329690398985286,
+          "cycles": 1061.2512436528964,
+          "ipc": 0.972059338539061,
+          "l1_miss_rate": 0.054371890867759134,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1059.8799786721258,
-          "ipc": 0.994431079907016,
-          "l1_miss_rate": 0.05280005331968553,
+          "cycles": 1063.6160174584556,
+          "ipc": 0.9774405859531853,
+          "l1_miss_rate": 0.051540043646138865,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1061.2021131931403,
-          "ipc": 0.9989904542468774,
-          "l1_miss_rate": 0.05050528298285077,
+          "cycles": 1062.9901034055324,
+          "ipc": 0.9803445976817566,
+          "l1_miss_rate": 0.050024741486168714,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1061.518831061848,
-          "ipc": 0.997412556919964,
-          "l1_miss_rate": 0.051297077654619785,
+          "cycles": 1062.8087614418403,
+          "ipc": 0.9794739549661626,
+          "l1_miss_rate": 0.050478096395399574,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1059.8918950700574,
-          "ipc": 0.9944900036210443,
-          "l1_miss_rate": 0.05277026232485653,
+          "cycles": 1062.720525273136,
+          "ipc": 0.9790508824609723,
+          "l1_miss_rate": 0.050698686817159826,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -938,86 +997,89 @@
       "seed": 1,
       "prompt": "default",
       "trace": "spec_mcf",
+      "candidate_id": "fifo_variant",
+      "candidate_sha256": "95a908b381015c48347a33334dc259bdaf3ee12bbeadd5339ab93ed5df15515c",
+      "generator_seed": 1,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1062.0309014526874,
-        "ipc": 0.9948719254341595,
-        "l1_miss_rate": 0.05257725363171875,
+        "cycles": 1062.9632216270804,
+        "ipc": 0.9802154376034039,
+        "l1_miss_rate": 0.05009194593229867,
         "seed": 1,
         "prompt": "default",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1060.302293659849,
-          "ipc": 0.9965235958453439,
-          "l1_miss_rate": 0.05174426585037717,
+          "cycles": 1064.3032793093814,
+          "ipc": 0.9741685601553906,
+          "l1_miss_rate": 0.053258198273453336,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1062.0309014526874,
-          "ipc": 0.9948719254341595,
-          "l1_miss_rate": 0.05257725363171875,
+          "cycles": 1062.8944645026995,
+          "ipc": 0.9798852319840449,
+          "l1_miss_rate": 0.05026383874325124,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1059.9913587462413,
-          "ipc": 0.9949821000357618,
-          "l1_miss_rate": 0.052521603134396966,
+          "cycles": 1063.0038434639039,
+          "ipc": 0.9803736861231627,
+          "l1_miss_rate": 0.05000960865975945,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1062.6634523868183,
-          "ipc": 0.9917513442960026,
-          "l1_miss_rate": 0.054158630967045804,
+          "cycles": 1062.9632216270804,
+          "ipc": 0.9802154376034039,
+          "l1_miss_rate": 0.05009194593229867,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1063.849136484205,
-          "ipc": 0.9859544066413762,
-          "l1_miss_rate": 0.05712284121051278,
+          "cycles": 1062.8616349909971,
+          "ipc": 0.9797276469377995,
+          "l1_miss_rate": 0.05034591252250715,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -1028,86 +1090,89 @@
       "seed": 1,
       "prompt": "default",
       "trace": "web_cloud",
+      "candidate_id": "fifo_variant",
+      "candidate_sha256": "95a908b381015c48347a33334dc259bdaf3ee12bbeadd5339ab93ed5df15515c",
+      "generator_seed": 1,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1064.3642015867042,
-        "ipc": 0.9981823021087599,
-        "l1_miss_rate": 0.05091050396676043,
+        "cycles": 1065.3751808751679,
+        "ipc": 0.9773985426371431,
+        "l1_miss_rate": 0.05156204781208046,
         "seed": 1,
         "prompt": "default",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1062.1665148262734,
-          "ipc": 0.9909158523812412,
-          "l1_miss_rate": 0.05458371293431668,
+          "cycles": 1063.8028685611978,
+          "ipc": 0.9699455981974148,
+          "l1_miss_rate": 0.05549282859700567,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1064.3642015867042,
-          "ipc": 0.9981823021087599,
-          "l1_miss_rate": 0.05091050396676043,
+          "cycles": 1065.3751808751679,
+          "ipc": 0.9773985426371431,
+          "l1_miss_rate": 0.05156204781208046,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1063.9412993966414,
-          "ipc": 0.999706583101952,
-          "l1_miss_rate": 0.05014675150839634,
+          "cycles": 1063.9500274026107,
+          "ipc": 0.9706383236982483,
+          "l1_miss_rate": 0.055124931493473424,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1065.3157281706222,
-          "ipc": 0.9934643548093417,
-          "l1_miss_rate": 0.053289320426555514,
+          "cycles": 1066.3643641102105,
+          "ipc": 0.9786442018440309,
+          "l1_miss_rate": 0.050910910275526626,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1065.5875429321816,
-          "ipc": 0.9921247964577068,
-          "l1_miss_rate": 0.05396885733045422,
+          "cycles": 1067.1146268646833,
+          "ipc": 0.9750645434561938,
+          "l1_miss_rate": 0.05278656716170836,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -1118,6 +1183,9 @@
       "seed": 1,
       "prompt": "cot",
       "trace": "spec_gcc",
+      "candidate_id": "lru_reference",
+      "candidate_sha256": "06aa3666229ee7846534e0f936d851cb607e646b4b9a69d42f53691db0a9acb7",
+      "generator_seed": 1,
       "design": {
         "llc_replacement": "lru",
         "branch_predictor": "bimodal"
@@ -1208,6 +1276,9 @@
       "seed": 1,
       "prompt": "cot",
       "trace": "spec_mcf",
+      "candidate_id": "lru_reference",
+      "candidate_sha256": "06aa3666229ee7846534e0f936d851cb607e646b4b9a69d42f53691db0a9acb7",
+      "generator_seed": 1,
       "design": {
         "llc_replacement": "lru",
         "branch_predictor": "bimodal"
@@ -1298,6 +1369,9 @@
       "seed": 1,
       "prompt": "cot",
       "trace": "web_cloud",
+      "candidate_id": "lru_reference",
+      "candidate_sha256": "06aa3666229ee7846534e0f936d851cb607e646b4b9a69d42f53691db0a9acb7",
+      "generator_seed": 1,
       "design": {
         "llc_replacement": "lru",
         "branch_predictor": "bimodal"
@@ -1388,86 +1462,89 @@
       "seed": 1,
       "prompt": "adversarial",
       "trace": "spec_gcc",
+      "candidate_id": "fifo_variant",
+      "candidate_sha256": "6ca5aca6db8fff007b19d91a37abab85d1fcd6b5abc5917659e7bceeafa3ead8",
+      "generator_seed": 1,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1058.381655737846,
-        "ipc": 0.9593170166083526,
-        "l1_miss_rate": 0.05270413934461484,
+        "cycles": 1059.671723493801,
+        "ipc": 0.9814904471084985,
+        "l1_miss_rate": 0.05092930873450236,
         "seed": 1,
         "prompt": "adversarial",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1059.1235687751143,
-          "ipc": 0.9559152497535854,
-          "l1_miss_rate": 0.05455892193778619,
+          "cycles": 1058.799089975283,
+          "ipc": 0.980868599241445,
+          "l1_miss_rate": 0.0512522750617924,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1058.0220242415082,
-          "ipc": 0.9609747009183259,
-          "l1_miss_rate": 0.05180506060377071,
+          "cycles": 1058.3687523429692,
+          "ipc": 0.9788028130464861,
+          "l1_miss_rate": 0.05232811914257715,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1058.381655737846,
-          "ipc": 0.9593170166083526,
-          "l1_miss_rate": 0.05270413934461484,
+          "cycles": 1060.7954257679362,
+          "ipc": 0.9761076863986179,
+          "l1_miss_rate": 0.053738564419840665,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1058.4412305707574,
-          "ipc": 0.9590429645620636,
-          "l1_miss_rate": 0.05285307642689342,
+          "cycles": 1059.671723493801,
+          "ipc": 0.9814904471084985,
+          "l1_miss_rate": 0.05092930873450236,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1056.2857689329203,
-          "ipc": 0.9596273679393248,
-          "l1_miss_rate": 0.052535577667699396,
+          "cycles": 1060.1889790563505,
+          "ipc": 0.9790053331503145,
+          "l1_miss_rate": 0.052222447640876184,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -1478,86 +1555,89 @@
       "seed": 1,
       "prompt": "adversarial",
       "trace": "spec_mcf",
+      "candidate_id": "fifo_variant",
+      "candidate_sha256": "6ca5aca6db8fff007b19d91a37abab85d1fcd6b5abc5917659e7bceeafa3ead8",
+      "generator_seed": 1,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1056.6711104205751,
-        "ipc": 0.9614049298842243,
-        "l1_miss_rate": 0.051572223948562125,
+        "cycles": 1060.2404948994026,
+        "ipc": 0.9787585182196049,
+        "l1_miss_rate": 0.052351237248506544,
         "seed": 1,
         "prompt": "adversarial",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1059.55636213111,
-          "ipc": 0.9539419551452891,
-          "l1_miss_rate": 0.055640905327775464,
+          "cycles": 1059.2458163537895,
+          "ipc": 0.9830223021994128,
+          "l1_miss_rate": 0.050135459115526367,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1056.3402792075537,
-          "ipc": 0.9598784219874552,
-          "l1_miss_rate": 0.05239930198111552,
+          "cycles": 1058.967135494063,
+          "ipc": 0.9816776516886988,
+          "l1_miss_rate": 0.05083216126484233,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1059.0177370586848,
-          "ipc": 0.9563990257979593,
-          "l1_miss_rate": 0.05429434264671211,
+          "cycles": 1062.367302626719,
+          "ipc": 0.9686763834057953,
+          "l1_miss_rate": 0.05766825656679746,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1055.9908432324655,
-          "ipc": 0.9582713240644499,
-          "l1_miss_rate": 0.05327289191883596,
+          "cycles": 1060.5680025750462,
+          "ipc": 0.9771923186999655,
+          "l1_miss_rate": 0.05317000643761577,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1056.6711104205751,
-          "ipc": 0.9614049298842243,
-          "l1_miss_rate": 0.051572223948562125,
+          "cycles": 1060.2404948994026,
+          "ipc": 0.9787585182196049,
+          "l1_miss_rate": 0.052351237248506544,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -1568,86 +1648,89 @@
       "seed": 1,
       "prompt": "adversarial",
       "trace": "web_cloud",
+      "candidate_id": "fifo_variant",
+      "candidate_sha256": "6ca5aca6db8fff007b19d91a37abab85d1fcd6b5abc5917659e7bceeafa3ead8",
+      "generator_seed": 1,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1060.0267213226025,
-        "ipc": 0.9630511988529966,
-        "l1_miss_rate": 0.05068319669349349,
+        "cycles": 1062.3155735081002,
+        "ipc": 0.9832088888318856,
+        "l1_miss_rate": 0.05003893377025066,
         "seed": 1,
         "prompt": "adversarial",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1060.0267213226025,
-          "ipc": 0.9630511988529966,
-          "l1_miss_rate": 0.05068319669349349,
+          "cycles": 1061.5303953271768,
+          "ipc": 0.9795777403815584,
+          "l1_miss_rate": 0.05192401168205749,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1059.0699666086853,
-          "ipc": 0.9586347504669764,
-          "l1_miss_rate": 0.053075083478286954,
+          "cycles": 1063.5180294744075,
+          "ipc": 0.9774309747470946,
+          "l1_miss_rate": 0.053045073686019094,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1061.6173523543255,
-          "ipc": 0.9582336961637642,
-          "l1_miss_rate": 0.05329338088581369,
+          "cycles": 1062.782414092349,
+          "ipc": 0.9809575822925543,
+          "l1_miss_rate": 0.05120603523087235,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1059.3543165788114,
-          "ipc": 0.9599430941685647,
-          "l1_miss_rate": 0.05236420855297146,
+          "cycles": 1061.706687688632,
+          "ipc": 0.9804242979040764,
+          "l1_miss_rate": 0.05148328077842022,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1061.0175166168676,
-          "ipc": 0.9609955147033032,
-          "l1_miss_rate": 0.05179379154216918,
+          "cycles": 1062.3155735081002,
+          "ipc": 0.9832088888318856,
+          "l1_miss_rate": 0.05003893377025066,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -1658,86 +1741,89 @@
       "seed": 2,
       "prompt": "default",
       "trace": "spec_gcc",
+      "candidate_id": "srrip_variant",
+      "candidate_sha256": "9005a8e80276923e1f48092999ee4e016d25e59e3cb97e081b5788852bbc8df2",
+      "generator_seed": 2,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1097.8454303281774,
-        "ipc": 0.9992277484742118,
-        "l1_miss_rate": 0.05038642417955634,
+        "cycles": 1099.3870098680943,
+        "ipc": 0.9882057160207567,
+        "l1_miss_rate": 0.050967524670235506,
         "seed": 2,
         "prompt": "default",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1098.276491851715,
-          "ipc": 0.998619449296527,
-          "l1_miss_rate": 0.05069122962928753,
+          "cycles": 1099.7039277388196,
+          "ipc": 0.9866607037713466,
+          "l1_miss_rate": 0.051759819347049124,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1097.7053063732228,
-          "ipc": 0.9985286997801028,
-          "l1_miss_rate": 0.050736734066943255,
+          "cycles": 1099.3870098680943,
+          "ipc": 0.9882057160207567,
+          "l1_miss_rate": 0.050967524670235506,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1097.8454303281774,
-          "ipc": 0.9992277484742118,
-          "l1_miss_rate": 0.05038642417955634,
+          "cycles": 1098.1510682436224,
+          "ipc": 0.9859554017282223,
+          "l1_miss_rate": 0.05212232939094395,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1098.7310497494677,
-          "ipc": 0.9963580634367225,
-          "l1_miss_rate": 0.051827624373669105,
+          "cycles": 1099.7522673379467,
+          "ipc": 0.9864254670288873,
+          "l1_miss_rate": 0.05188066834486696,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1097.7641827307289,
-          "ipc": 0.9988223022609688,
-          "l1_miss_rate": 0.05058954317317773,
+          "cycles": 1099.2407269355413,
+          "ipc": 0.9889204960371036,
+          "l1_miss_rate": 0.05060181733885344,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -1748,86 +1834,89 @@
       "seed": 2,
       "prompt": "default",
       "trace": "spec_mcf",
+      "candidate_id": "srrip_variant",
+      "candidate_sha256": "9005a8e80276923e1f48092999ee4e016d25e59e3cb97e081b5788852bbc8df2",
+      "generator_seed": 2,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1098.2282321764935,
-        "ipc": 0.9988601398813115,
-        "l1_miss_rate": 0.050570580441233755,
+        "cycles": 1098.4232390092657,
+        "ipc": 0.9872800760653286,
+        "l1_miss_rate": 0.051441902476835576,
         "seed": 2,
         "prompt": "default",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1100.0273683782925,
-          "ipc": 0.9899648825079175,
-          "l1_miss_rate": 0.055068420945731056,
+          "cycles": 1099.0728118778527,
+          "ipc": 0.989742252514873,
+          "l1_miss_rate": 0.05018202969463147,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1098.0523059577374,
-          "ipc": 0.9997385385912593,
-          "l1_miss_rate": 0.0501307648943438,
+          "cycles": 1098.369698698745,
+          "ipc": 0.9870192104321831,
+          "l1_miss_rate": 0.05157575325313734,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1098.2282321764935,
-          "ipc": 0.9988601398813115,
-          "l1_miss_rate": 0.050570580441233755,
+          "cycles": 1098.1532640631192,
+          "ipc": 0.9859660747128481,
+          "l1_miss_rate": 0.052116839842202015,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1096.2628660261796,
-          "ipc": 0.9913891213798751,
-          "l1_miss_rate": 0.05434283493455109,
+          "cycles": 1098.4232390092657,
+          "ipc": 0.9872800760653286,
+          "l1_miss_rate": 0.051441902476835576,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1098.2864408282928,
-          "ipc": 0.9985698441336907,
-          "l1_miss_rate": 0.05071610207073205,
+          "cycles": 1101.0121746820146,
+          "ipc": 0.98033365073301,
+          "l1_miss_rate": 0.055030436705036635,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -1838,86 +1927,89 @@
       "seed": 2,
       "prompt": "default",
       "trace": "web_cloud",
+      "candidate_id": "srrip_variant",
+      "candidate_sha256": "9005a8e80276923e1f48092999ee4e016d25e59e3cb97e081b5788852bbc8df2",
+      "generator_seed": 2,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1101.4632653366352,
-        "ipc": 0.997689026286899,
-        "l1_miss_rate": 0.05115816334158836,
+        "cycles": 1102.102923008322,
+        "ipc": 0.9895947917179038,
+        "l1_miss_rate": 0.05025730752080505,
         "seed": 2,
         "prompt": "default",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1101.4632653366352,
-          "ipc": 0.997689026286899,
-          "l1_miss_rate": 0.05115816334158836,
+          "cycles": 1102.2982685916802,
+          "ipc": 0.9886392078010369,
+          "l1_miss_rate": 0.05074567147920025,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1101.1348023386304,
-          "ipc": 0.9993264422926187,
-          "l1_miss_rate": 0.05033700584657605,
+          "cycles": 1101.8004018045349,
+          "ipc": 0.9891216490285067,
+          "l1_miss_rate": 0.05049899548866299,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1101.8137037554532,
-          "ipc": 0.9959479669951012,
-          "l1_miss_rate": 0.05203425938863271,
+          "cycles": 1101.7074926246485,
+          "ipc": 0.988667363882648,
+          "l1_miss_rate": 0.050731268438379065,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1102.612078798033,
-          "ipc": 0.9920040564650491,
-          "l1_miss_rate": 0.05403019699508291,
+          "cycles": 1102.102923008322,
+          "ipc": 0.9895947917179038,
+          "l1_miss_rate": 0.05025730752080505,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1100.5714943488383,
-          "ipc": 0.9978620523574246,
-          "l1_miss_rate": 0.05107126412790446,
+          "cycles": 1102.7216797731337,
+          "ipc": 0.9865743033691338,
+          "l1_miss_rate": 0.051804199432834284,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -1928,86 +2020,89 @@
       "seed": 2,
       "prompt": "cot",
       "trace": "spec_gcc",
+      "candidate_id": "mru_variant",
+      "candidate_sha256": "a5bc94fe98f30432fa2a47939a471125581e2668700aa94b077fee3846c728e4",
+      "generator_seed": 2,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1100.2444606478473,
-        "ipc": 0.9787395232830204,
-        "l1_miss_rate": 0.050361151619618315,
+        "cycles": 1102.86296407554,
+        "ipc": 0.9370444971452117,
+        "l1_miss_rate": 0.05309258981114974,
         "seed": 2,
         "prompt": "cot",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1101.323686716135,
-          "ipc": 0.9735975592550346,
-          "l1_miss_rate": 0.0530592167903378,
+          "cycles": 1104.128129413931,
+          "ipc": 0.9423821458178084,
+          "l1_miss_rate": 0.050070323534827925,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1102.3696063675582,
-          "ipc": 0.9686655751353492,
-          "l1_miss_rate": 0.05567401591889572,
+          "cycles": 1102.2174420547408,
+          "ipc": 0.9342190317584861,
+          "l1_miss_rate": 0.05470639486314791,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1099.2252920245855,
-          "ipc": 0.9752543449871809,
-          "l1_miss_rate": 0.05218676993853564,
+          "cycles": 1102.6854283165944,
+          "ipc": 0.9362657164438041,
+          "l1_miss_rate": 0.053536429208513814,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1100.2444606478473,
-          "ipc": 0.9787395232830204,
-          "l1_miss_rate": 0.050361151619618315,
+          "cycles": 1104.4145398219096,
+          "ipc": 0.9411120771670634,
+          "l1_miss_rate": 0.05078634955477415,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1097.6477914620887,
-          "ipc": 0.9678096421762123,
-          "l1_miss_rate": 0.05613052134477839,
+          "cycles": 1102.86296407554,
+          "ipc": 0.9370444971452117,
+          "l1_miss_rate": 0.05309258981114974,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -2018,86 +2113,89 @@
       "seed": 2,
       "prompt": "cot",
       "trace": "spec_mcf",
+      "candidate_id": "mru_variant",
+      "candidate_sha256": "a5bc94fe98f30432fa2a47939a471125581e2668700aa94b077fee3846c728e4",
+      "generator_seed": 2,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1099.1288376824787,
-        "ipc": 0.9747958618593855,
-        "l1_miss_rate": 0.0524279057938031,
+        "cycles": 1103.6251600085773,
+        "ipc": 0.9404027293875764,
+        "l1_miss_rate": 0.05118709997855681,
         "seed": 2,
         "prompt": "cot",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1100.4883653840639,
-          "ipc": 0.9775726963972251,
-          "l1_miss_rate": 0.05097091346015969,
+          "cycles": 1103.603406759421,
+          "ipc": 0.9403065510023566,
+          "l1_miss_rate": 0.05124148310144753,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1099.1288376824787,
-          "ipc": 0.9747958618593855,
-          "l1_miss_rate": 0.0524279057938031,
+          "cycles": 1102.470543721015,
+          "ipc": 0.9353248307336034,
+          "l1_miss_rate": 0.05407364069746231,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1099.3396996250847,
-          "ipc": 0.9757987260662588,
-          "l1_miss_rate": 0.051900750937287986,
+          "cycles": 1104.1571000526583,
+          "ipc": 0.9422535215565582,
+          "l1_miss_rate": 0.0501427501316458,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1098.9352973000316,
-          "ipc": 0.9738771919933776,
-          "l1_miss_rate": 0.05291175674992096,
+          "cycles": 1104.2664951545876,
+          "ipc": 0.941768144049344,
+          "l1_miss_rate": 0.05041623788646918,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1098.8705183455595,
-          "ipc": 0.9735700951454797,
-          "l1_miss_rate": 0.05307370413610076,
+          "cycles": 1103.6251600085773,
+          "ipc": 0.9404027293875764,
+          "l1_miss_rate": 0.05118709997855681,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -2108,86 +2206,89 @@
       "seed": 2,
       "prompt": "cot",
       "trace": "web_cloud",
+      "candidate_id": "mru_variant",
+      "candidate_sha256": "a5bc94fe98f30432fa2a47939a471125581e2668700aa94b077fee3846c728e4",
+      "generator_seed": 2,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1103.4328959597738,
-        "ipc": 0.9778378146043303,
-        "l1_miss_rate": 0.050832239899434375,
+        "cycles": 1107.7093499489895,
+        "ipc": 0.939808331015249,
+        "l1_miss_rate": 0.05152337487247411,
         "seed": 2,
         "prompt": "cot",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1102.762910771289,
-          "ipc": 0.9778177676927939,
-          "l1_miss_rate": 0.05084272307177752,
+          "cycles": 1107.7093499489895,
+          "ipc": 0.939808331015249,
+          "l1_miss_rate": 0.05152337487247411,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1103.4328959597738,
-          "ipc": 0.9778378146043303,
-          "l1_miss_rate": 0.050832239899434375,
+          "cycles": 1106.0053640932026,
+          "ipc": 0.9376700879031644,
+          "l1_miss_rate": 0.05273658976699306,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1103.8671655214469,
-          "ipc": 0.9757660427766071,
-          "l1_miss_rate": 0.05191791380361718,
+          "cycles": 1108.1994715448955,
+          "ipc": 0.9376488303108794,
+          "l1_miss_rate": 0.05274867886223881,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1105.6183020847013,
-          "ipc": 0.9675002067211803,
-          "l1_miss_rate": 0.05629575521175355,
+          "cycles": 1106.9297421921844,
+          "ipc": 0.9417514583468186,
+          "l1_miss_rate": 0.05042564451953856,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1101.9098583745954,
-          "ipc": 0.9737565708716677,
-          "l1_miss_rate": 0.05297535406351114,
+          "cycles": 1107.7127940924845,
+          "ipc": 0.9397931212400867,
+          "l1_miss_rate": 0.051531985231211545,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -2198,86 +2299,89 @@
       "seed": 2,
       "prompt": "adversarial",
       "trace": "spec_gcc",
+      "candidate_id": "srrip_variant",
+      "candidate_sha256": "15b440c561fe7d8146c1039ccccf07bc9bdf7f73c07e3333c21c1c4de16dcfe1",
+      "generator_seed": 2,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1094.2650420042282,
-        "ipc": 0.9641576421466854,
-        "l1_miss_rate": 0.05008739498942933,
+        "cycles": 1095.006380226325,
+        "ipc": 0.9723199009286742,
+        "l1_miss_rate": 0.05073404943418747,
         "seed": 2,
         "prompt": "adversarial",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1092.866103751714,
-          "ipc": 0.95769893486169,
-          "l1_miss_rate": 0.05358474062071455,
+          "cycles": 1096.2208007607298,
+          "ipc": 0.9693642098255519,
+          "l1_miss_rate": 0.0523020019018246,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1095.7822243888675,
-          "ipc": 0.9574773563674244,
-          "l1_miss_rate": 0.05370556097216875,
+          "cycles": 1094.5028334324643,
+          "ipc": 0.9699454329528537,
+          "l1_miss_rate": 0.05199291641883901,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1094.04447951364,
-          "ipc": 0.9631335566305694,
-          "l1_miss_rate": 0.050638801215900066,
+          "cycles": 1095.006380226325,
+          "ipc": 0.9723199009286742,
+          "l1_miss_rate": 0.05073404943418747,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1094.2650420042282,
-          "ipc": 0.9641576421466854,
-          "l1_miss_rate": 0.05008739498942933,
+          "cycles": 1096.0429846028067,
+          "ipc": 0.9702003703175114,
+          "l1_miss_rate": 0.05185746150701649,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1095.84337008103,
-          "ipc": 0.9571971578827236,
-          "l1_miss_rate": 0.05385842520257499,
+          "cycles": 1094.261262305031,
+          "ipc": 0.9688104191739311,
+          "l1_miss_rate": 0.05259684423742226,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -2288,86 +2392,89 @@
       "seed": 2,
       "prompt": "adversarial",
       "trace": "spec_mcf",
+      "candidate_id": "srrip_variant",
+      "candidate_sha256": "15b440c561fe7d8146c1039ccccf07bc9bdf7f73c07e3333c21c1c4de16dcfe1",
+      "generator_seed": 2,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1094.1353154202666,
-        "ipc": 0.9635550498628899,
-        "l1_miss_rate": 0.05041171144933355,
+        "cycles": 1094.9571533954027,
+        "ipc": 0.97208725990054,
+        "l1_miss_rate": 0.05085711651149302,
         "seed": 2,
         "prompt": "adversarial",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1093.5100037339696,
-          "ipc": 0.9606609519529217,
-          "l1_miss_rate": 0.051974990665076166,
+          "cycles": 1094.8395097233747,
+          "ipc": 0.9715317384664236,
+          "l1_miss_rate": 0.051151225691563156,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1094.6776755859094,
-          "ipc": 0.9625673183416981,
-          "l1_miss_rate": 0.05094418896477323,
+          "cycles": 1095.728581916084,
+          "ipc": 0.9716823491576088,
+          "l1_miss_rate": 0.0510714547902105,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1094.3280320611257,
-          "ipc": 0.9641898349643662,
-          "l1_miss_rate": 0.050070080152814146,
+          "cycles": 1096.7570501256248,
+          "ipc": 0.9668512621568347,
+          "l1_miss_rate": 0.05364262531406216,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1094.1353154202666,
-          "ipc": 0.9635550498628899,
-          "l1_miss_rate": 0.05041171144933355,
+          "cycles": 1094.7495875170282,
+          "ipc": 0.9711075476313319,
+          "l1_miss_rate": 0.051376031207429534,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1093.209419380267,
-          "ipc": 0.95927595100702,
-          "l1_miss_rate": 0.05272645154933211,
+          "cycles": 1094.9571533954027,
+          "ipc": 0.97208725990054,
+          "l1_miss_rate": 0.05085711651149302,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
@@ -2378,86 +2485,89 @@
       "seed": 2,
       "prompt": "adversarial",
       "trace": "web_cloud",
+      "candidate_id": "srrip_variant",
+      "candidate_sha256": "15b440c561fe7d8146c1039ccccf07bc9bdf7f73c07e3333c21c1c4de16dcfe1",
+      "generator_seed": 2,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1096.2999799678378,
-        "ipc": 0.9596928060234076,
-        "l1_miss_rate": 0.05250005008040529,
+        "cycles": 1098.997224632544,
+        "ipc": 0.9704157848636005,
+        "l1_miss_rate": 0.05174306158136013,
         "seed": 2,
         "prompt": "adversarial",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
         "backend": "stub"
       },
       "trials": [
         {
-          "cycles": 1097.926085370364,
-          "ipc": 0.9614178897032334,
-          "l1_miss_rate": 0.05156521342590999,
+          "cycles": 1098.1882333834137,
+          "ipc": 0.9731802869133559,
+          "l1_miss_rate": 0.0502794165414656,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1096.804111849084,
-          "ipc": 0.962019988845647,
-          "l1_miss_rate": 0.05123972037728986,
+          "cycles": 1099.8183785927915,
+          "ipc": 0.9665646974433008,
+          "l1_miss_rate": 0.05379594648197912,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1095.5540602170129,
-          "ipc": 0.95627005815902,
-          "l1_miss_rate": 0.05436484945746784,
+          "cycles": 1098.997224632544,
+          "ipc": 0.9704157848636005,
+          "l1_miss_rate": 0.05174306158136013,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1096.2999799678378,
-          "ipc": 0.9596928060234076,
-          "l1_miss_rate": 0.05250005008040529,
+          "cycles": 1102.0211105609187,
+          "ipc": 0.9563835973496243,
+          "l1_miss_rate": 0.05930277640229694,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"
         },
         {
-          "cycles": 1096.1664182151185,
-          "ipc": 0.9590781412190746,
-          "l1_miss_rate": 0.0528339544622037,
+          "cycles": 1098.638675631976,
+          "ipc": 0.9721069671788819,
+          "l1_miss_rate": 0.050846689079940235,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
           "backend": "stub"

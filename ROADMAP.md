@@ -45,6 +45,8 @@ The confirmed usage window is:
 This leaves only 72 hours for funded runs. Local smoke tests and integration
 must therefore finish before the window opens.
 
+The pre-compute checklist and stop condition are frozen in `PRECOMPUTE.md`.
+
 ## Project Goal
 
 Ship a loop that answers four separate questions without conflating them:
@@ -141,8 +143,8 @@ Required evidence:
 
 - The official CHIA Docker image and `ChampSimNode` path are still unverified;
   the direct pinned source-build smoke passed.
-- The stub `prompt` and `seed` axes do not generate different designs; the
-  current numbers validate metric plumbing only.
+- Seed and prompt now select concrete candidates, but the default catalog is a
+  fixture; real agent output must be loaded through directory mode.
 - The full trace grid has not yet run; only the 5,003-instruction smoke path
   has.
 - The source-build smoke script has not yet run in a live Kaggle session.

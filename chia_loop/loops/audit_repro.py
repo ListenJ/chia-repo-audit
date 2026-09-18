@@ -53,9 +53,27 @@ from sim.backends import get_backend  # noqa: E402
 
 # Frozen before real measurements. CLI overrides are recorded in raw.json.
 CONFIG = {
-    "version": 4,
+    "version": 5,
     "backend": "stub",
-    "design": {"llc_replacement": "lru", "branch_predictor": "bimodal"},
+    "generator_mode": "catalog",
+    "candidate_catalog": [
+        {
+            "candidate_id": "lru_reference",
+            "design": {"llc_replacement": "lru", "branch_predictor": "bimodal"},
+        },
+        {
+            "candidate_id": "mru_variant",
+            "design": {"llc_replacement": "mru", "branch_predictor": "bimodal"},
+        },
+        {
+            "candidate_id": "fifo_variant",
+            "design": {"llc_replacement": "fifo", "branch_predictor": "bimodal"},
+        },
+        {
+            "candidate_id": "srrip_variant",
+            "design": {"llc_replacement": "srrip", "branch_predictor": "bimodal"},
+        },
+    ],
     "seeds": [0, 1, 2],
     "prompts": ["default", "cot", "adversarial"],
     "traces": ["spec_gcc", "spec_mcf", "web_cloud"],
@@ -87,6 +105,65 @@ def _canonical_digest(value: object) -> str:
 def _write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False))
+
+
+def _load_candidate_directory(directory: Path) -> list[dict]:
+    candidates = []
+    for path in sorted(directory.glob("*.json")):
+        if path.name == "answer-key.json":
+            continue
+        candidate = json.loads(path.read_text())
+        candidate.setdefault("candidate_id", candidate.get("id", path.stem))
+        if "design" not in candidate:
+            raise ValueError(f"Candidate {path} is missing 'design'")
+        candidates.append(candidate)
+    if not candidates:
+        raise ValueError(f"No candidate JSON files found in {directory}")
+    return candidates
+
+
+def generate_candidate(config: dict, *, seed: int, prompt: str) -> dict:
+    """Select or load the candidate artifact for one generation cell.
+
+    The catalog mode is an offline fixture generator. ``directory`` mode is
+    the pre-compute integration point for candidates emitted by Gemini or
+    another LLM agent.
+    """
+    mode = config.get("generator_mode", "catalog")
+    if mode == "catalog":
+        candidates = config.get("candidate_catalog", [])
+    elif mode == "directory":
+        candidates_dir = config.get("candidates_dir")
+        if not candidates_dir:
+            raise ValueError("directory generator requires candidates_dir")
+        candidates = _load_candidate_directory(Path(candidates_dir))
+    else:
+        raise ValueError(f"Unknown generator_mode: {mode}")
+
+    if not candidates:
+        raise ValueError("Candidate pool is empty")
+
+    matching = [
+        candidate
+        for candidate in candidates
+        if candidate.get("generator_seed") == seed
+        and candidate.get("prompt") == prompt
+    ]
+    pool = matching or candidates
+    prompt_offset = int(
+        hashlib.sha256(prompt.encode()).hexdigest()[:8],
+        16,
+    )
+    candidate = copy.deepcopy(pool[(seed + prompt_offset) % len(pool)])
+    candidate.setdefault("candidate_id", f"candidate-{seed}-{prompt}")
+    candidate.setdefault("generator_seed", seed)
+    candidate.setdefault("prompt", prompt)
+    candidate["candidate_sha256"] = _canonical_digest({
+        key: value
+        for key, value in candidate.items()
+        if key != "candidate_sha256"
+    })
+    return candidate
 
 
 def cohen_kappa(a: list[str], b: list[str]) -> float:
@@ -129,11 +206,12 @@ def stage_prepare(*, version: int, config: dict) -> dict:
 @ChiaFunction()
 def stage_run(*, version: int, config: dict) -> dict:
     backend = get_backend(config)
-    design = config.get("design", {})
     cells = {}
 
     for seed in config["seeds"]:
         for prompt in config["prompts"]:
+            candidate = generate_candidate(config, seed=seed, prompt=prompt)
+            design = candidate["design"]
             for trace in config["traces"]:
                 trials = [
                     backend.run(
@@ -150,6 +228,9 @@ def stage_run(*, version: int, config: dict) -> dict:
                     "seed": seed,
                     "prompt": prompt,
                     "trace": trace,
+                    "candidate_id": candidate["candidate_id"],
+                    "candidate_sha256": candidate["candidate_sha256"],
+                    "generator_seed": candidate["generator_seed"],
                     "design": design,
                     "design_sha256": _canonical_digest(design),
                     "median": ordered[len(ordered) // 2],
@@ -164,6 +245,9 @@ def stage_run(*, version: int, config: dict) -> dict:
         "config_sha256": _canonical_digest(config),
         "git_sha": _git_head(),
         "n_cells": len(cells),
+        "n_candidates": len({
+            cell["candidate_id"] for cell in cells.values()
+        }),
         "cells": cells,
     }
     _write_json(RESULTS_DIR / "raw.json", raw)
@@ -330,6 +414,123 @@ def _rounded_map(values: dict[str, float]) -> dict[str, float]:
     return {key: round(value, 6) for key, value in sorted(values.items())}
 
 
+def _rank_scores(scores: dict[str, float]) -> list[str]:
+    return sorted(scores, key=lambda candidate_id: (
+        scores[candidate_id],
+        candidate_id,
+    ))
+
+
+def _kendall_tau(left: list[str], right: list[str]) -> float:
+    if len(left) != len(right) or len(left) < 2:
+        return 1.0
+    right_position = {candidate_id: index for index, candidate_id in enumerate(right)}
+    concordant = 0
+    discordant = 0
+    for left_index, left_id in enumerate(left):
+        for right_id in left[left_index + 1:]:
+            delta = right_position[left_id] - right_position[right_id]
+            if delta < 0:
+                concordant += 1
+            elif delta > 0:
+                discordant += 1
+    total = concordant + discordant
+    return (concordant - discordant) / total if total else 1.0
+
+
+def _trace_ranking_stability(cells: dict) -> dict:
+    """Compare full-trace rankings with leave-one-trace-out rankings."""
+    observations = {}
+    for cell_id, cell in cells.items():
+        candidate_id = cell.get("candidate_id") or cell.get("design_sha256") or cell_id
+        trace = cell.get("trace")
+        if not trace:
+            continue
+        cycles = cell.get("median", {}).get("cycles")
+        if cycles is None or not math.isfinite(float(cycles)):
+            continue
+        observations.setdefault(candidate_id, {}).setdefault(trace, []).append(
+            float(cycles)
+        )
+
+    by_candidate_trace = {
+        candidate_id: {
+            trace: statistics.mean(values)
+            for trace, values in trace_map.items()
+        }
+        for candidate_id, trace_map in observations.items()
+    }
+
+    if len(by_candidate_trace) < 2:
+        return {
+            "n_candidates": len(by_candidate_trace),
+            "n_traces": 0,
+            "full_top_candidate": None,
+            "top1_stability": 0.0,
+            "mean_kendall_tau": 0.0,
+            "leave_one_out": [],
+        }
+
+    common_traces = set.intersection(*[
+        set(trace_map) for trace_map in by_candidate_trace.values()
+    ])
+    eligible = {
+        candidate_id: trace_map
+        for candidate_id, trace_map in by_candidate_trace.items()
+        if set(trace_map) == common_traces
+    }
+    if len(common_traces) < 2 or len(eligible) < 2:
+        return {
+            "n_candidates": len(eligible),
+            "n_traces": len(common_traces),
+            "full_top_candidate": None,
+            "top1_stability": 0.0,
+            "mean_kendall_tau": 0.0,
+            "leave_one_out": [],
+        }
+
+    full_scores = {
+        candidate_id: statistics.mean(trace_map.values())
+        for candidate_id, trace_map in eligible.items()
+    }
+    full_order = _rank_scores(full_scores)
+    leave_one_out = []
+    for held_out_trace in sorted(common_traces):
+        remaining_traces = sorted(common_traces - {held_out_trace})
+        subset_scores = {
+            candidate_id: statistics.mean(
+                trace_map[trace] for trace in remaining_traces
+            )
+            for candidate_id, trace_map in eligible.items()
+        }
+        subset_order = _rank_scores(subset_scores)
+        leave_one_out.append({
+            "held_out_trace": held_out_trace,
+            "ranking": subset_order,
+            "top_candidate": subset_order[0],
+            "top1_matches_full": subset_order[0] == full_order[0],
+            "kendall_tau": round(_kendall_tau(full_order, subset_order), 6),
+        })
+
+    return {
+        "n_candidates": len(eligible),
+        "n_traces": len(common_traces),
+        "full_ranking": full_order,
+        "full_top_candidate": full_order[0],
+        "full_scores": _rounded_map(full_scores),
+        "top1_stability": round(
+            sum(item["top1_matches_full"] for item in leave_one_out)
+            / len(leave_one_out),
+            6,
+        ),
+        "mean_kendall_tau": round(
+            statistics.mean(item["kendall_tau"] for item in leave_one_out),
+            6,
+        ),
+        "leave_one_out": leave_one_out,
+    }
+
+
 def _compute_audit(raw: dict, config: dict, dblind: dict) -> dict:
     """Compute repeatability and sensitivity metrics from raw measurements."""
     if "cells" not in raw:
@@ -375,6 +576,14 @@ def _compute_audit(raw: dict, config: dict, dblind: dict) -> dict:
     max_trace_cv = max(trace_cv.values(), default=0.0)
     threshold = config["acceptance_threshold"]
     reproducible = max_seed_cv < threshold and max_repeat_cv < threshold
+    audit_passed = dblind.get("publish_gate") == "PASS"
+    publish_blockers = []
+    if not reproducible:
+        publish_blockers.append("reproducibility_threshold")
+    if not audit_passed:
+        publish_blockers.append("audit_gate")
+    publish_gate = "PASS" if not publish_blockers else "BLOCKED"
+    ranking_stability = _trace_ranking_stability(cells)
 
     return {
         "version": raw.get("version", config["version"]),
@@ -389,9 +598,11 @@ def _compute_audit(raw: dict, config: dict, dblind: dict) -> dict:
         "repeatability_cv": _rounded_map(repeatability),
         "prompt_spread": _rounded_map(prompt_spread),
         "trace_cv": _rounded_map(trace_cv),
+        "ranking_stability": ranking_stability,
         "verdict": "REPRODUCIBLE" if reproducible else "NON-REPRODUCIBLE",
         "cohen_kappa": dblind.get("cohen_kappa", "N/A"),
-        "publish_gate": dblind.get("publish_gate", "N/A"),
+        "publish_gate": publish_gate,
+        "publish_blockers": publish_blockers,
         "adversarial_detection": dblind.get("adversarial_detection_rate", "N/A"),
         "gold_calibration": dblind.get("gold_calibration_correct", "N/A"),
         "error_distribution": dblind.get("error_distribution", {}),
@@ -406,8 +617,14 @@ def stage_audit(*, version: int, raw: dict, config: dict, dblind: dict) -> dict:
 
 
 def _format_scorecard(report: dict, config: dict) -> str:
-    gate = report.get("publish_gate", "N/A")
+    gate = (
+        "PASS"
+        if report.get("publish_gate") == "PASS"
+        and report.get("verdict") == "REPRODUCIBLE"
+        else "BLOCKED"
+    )
     threshold = report["acceptance_threshold"]
+    ranking_stability = report.get("ranking_stability", {})
     lines = [
         f"CHIA reproducibility audit (config v{report['version']})",
         "=" * 56,
@@ -417,6 +634,10 @@ def _format_scorecard(report: dict, config: dict) -> str:
         f"Max repeated-run CV: {report['max_repeat_cv']:.4%}",
         f"Max prompt spread: {report['max_prompt_spread']:.4%}",
         f"Max trace CV: {report['max_trace_cv']:.4%}",
+        f"Trace top-1 stability: "
+        f"{ranking_stability.get('top1_stability', 'N/A')}",
+        f"Trace ranking Kendall tau: "
+        f"{ranking_stability.get('mean_kendall_tau', 'N/A')}",
         "=" * 56,
         "Double-blind protocol self-test:",
         f"  Cohen's kappa: {report.get('cohen_kappa', 'N/A')} "
@@ -425,6 +646,7 @@ def _format_scorecard(report: dict, config: dict) -> str:
         f"  Gold calibration: {report.get('gold_calibration', 'N/A')}",
         f"  Error distribution: {report.get('error_distribution', {})}",
         f"  Publish gate: {gate}",
+        f"  Publish blockers: {report.get('publish_blockers', [])}",
         "=" * 56,
         "PUBLISHABLE" if gate == "PASS" else "BLOCKED",
     ]
@@ -434,7 +656,7 @@ def _format_scorecard(report: dict, config: dict) -> str:
 @ChiaFunction()
 def stage_act(*, version: int, report: dict, config: dict) -> str:
     scorecard = _format_scorecard(report, config)
-    (RESULTS_DIR / "scorecard.txt").write_text(scorecard)
+    (RESULTS_DIR / "scorecard.txt").write_text(scorecard + "\n")
     return scorecard
 
 
@@ -452,7 +674,15 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--config", type=Path)
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--execution", choices=["local", "chia"], default="local")
-    parser.add_argument("--backend", choices=["stub", "champsim"])
+    parser.add_argument(
+        "--backend",
+        choices=["stub", "champsim", "champsim_node"],
+    )
+    parser.add_argument(
+        "--generator-mode",
+        choices=["catalog", "directory"],
+    )
+    parser.add_argument("--candidates-dir")
     parser.add_argument("--chia-root")
     parser.add_argument("--traces-dir")
     parser.add_argument("--warmup-instructions", type=int)
@@ -464,8 +694,13 @@ def _apply_overrides(config: dict, args: argparse.Namespace) -> dict:
     config["version"] = args.version
     if args.backend:
         config["backend"] = args.backend
+    if args.generator_mode:
+        config["generator_mode"] = args.generator_mode
+    if args.candidates_dir:
+        config["candidates_dir"] = args.candidates_dir
 
     champsim = config.setdefault("champsim", {})
+    champsim_node = config.setdefault("champsim_node", {})
     if args.chia_root:
         champsim["chia_root"] = args.chia_root
     if args.traces_dir:
@@ -474,6 +709,11 @@ def _apply_overrides(config: dict, args: argparse.Namespace) -> dict:
         champsim["warmup_instructions"] = args.warmup_instructions
     if args.simulation_instructions is not None:
         champsim["simulation_instructions"] = args.simulation_instructions
+        champsim_node["simulation_instructions"] = args.simulation_instructions
+    if args.chia_root:
+        champsim_node["champsim_root"] = args.chia_root
+    if args.traces_dir:
+        champsim_node["traces_dir"] = args.traces_dir
     return config
 
 
@@ -522,6 +762,7 @@ def main(argv: list[str] | None = None) -> dict:
         "run": {
             "backend": raw["backend"],
             "n_cells": raw["n_cells"],
+            "n_candidates": raw["n_candidates"],
             "config_sha256": raw["config_sha256"],
         },
         "dblind": {

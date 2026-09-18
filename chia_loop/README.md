@@ -13,14 +13,15 @@ This directory contains the submitted audit loop and its calibration cases.
 | Classification agreement | A/B gold and adversarial audit cases | Cohen's kappa `>= 0.7` |
 | Adversarial detection | Known-bad design cases caught | `100%` |
 
-The current implementation switches prompt and seed labels in a synthetic
-stub. A real experiment must connect those axes to actual candidate generation;
-otherwise the resulting numbers are only a plumbing test.
+The catalog generator maps seed and prompt to concrete fixture candidates. The
+directory generator loads JSON candidates emitted by an external LLM agent.
+The real ChampSim backend must receive a candidate with generated
+`prefetcher_source`; otherwise the numbers remain a plumbing test.
 
 ## Run Locally
 
 ```bash
-python3 chia_loop/loops/audit_repro.py --version 4
+python3 chia_loop/loops/audit_repro.py --version 5
 python3 -m unittest discover -s chia_loop/tests -v
 ```
 
@@ -28,7 +29,7 @@ To keep generated evidence separate:
 
 ```bash
 python3 chia_loop/loops/audit_repro.py \
-  --version 4 \
+  --version 5 \
   --output-dir /tmp/chia-audit
 ```
 
@@ -40,7 +41,7 @@ cluster is already running:
 ```bash
 python3 chia_loop/loops/audit_repro.py \
   --execution chia \
-  --version 4 \
+  --version 5 \
   --output-dir /shared/results/chia-audit
 ```
 
@@ -62,4 +63,6 @@ validated against an official ChampSim build.
 - `raw.json`: every measured trial plus candidate and configuration digests.
 - `dblind_report.json`: per-case classification and publish gate.
 - `audit_report.json`: computed reproducibility and sensitivity metrics.
+- `ranking_stability`: top-1 and Kendall-tau stability across leave-one-trace-out
+  evaluations.
 - `scorecard.txt`: compact human-readable result.

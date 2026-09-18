@@ -29,7 +29,7 @@ Complete these locally on Sep 18-20:
 1. Run the stub audit and unit tests from the repository root:
 
    ```bash
-   python3 chia_loop/loops/audit_repro.py --version 4
+   python3 chia_loop/loops/audit_repro.py --version 5
    python3 -m unittest discover -s chia_loop/tests -v
    ```
 

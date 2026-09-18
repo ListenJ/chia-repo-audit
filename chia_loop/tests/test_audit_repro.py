@@ -72,6 +72,88 @@ class AuditMetricTests(unittest.TestCase):
         self.assertEqual(result["verdict"], "not_equivalent")
         self.assertEqual(result["error_classes"], ["E1", "E2"])
 
+    def test_candidate_generation_tracks_seed_and_prompt(self):
+        config = {
+            "generator_mode": "catalog",
+            "candidate_catalog": [
+                {"candidate_id": "a", "design": {"replacement": "LRU"}},
+                {"candidate_id": "b", "design": {"replacement": "MRU"}},
+            ],
+        }
+
+        first = audit_repro.generate_candidate(config, seed=0, prompt="default")
+        second = audit_repro.generate_candidate(config, seed=1, prompt="cot")
+
+        self.assertNotEqual(first["candidate_id"], second["candidate_id"])
+        self.assertEqual(first["generator_seed"], 0)
+        self.assertEqual(second["prompt"], "cot")
+        self.assertEqual(len(first["candidate_sha256"]), 64)
+
+    def test_directory_generator_loads_agent_candidate(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "candidate.json"
+            path.write_text(json.dumps({
+                "candidate_id": "agent-001",
+                "generator_seed": 3,
+                "prompt": "cot",
+                "design": {"prefetcher_source": "struct agent {};"},
+            }))
+
+            candidate = audit_repro.generate_candidate(
+                {
+                    "generator_mode": "directory",
+                    "candidates_dir": tmpdir,
+                },
+                seed=3,
+                prompt="cot",
+            )
+
+        self.assertEqual(candidate["candidate_id"], "agent-001")
+        self.assertIn("prefetcher_source", candidate["design"])
+
+    def test_non_reproducible_result_blocks_publish(self):
+        report = {
+            "version": 4,
+            "backend": "champsim",
+            "acceptance_threshold": 0.05,
+            "max_seed_cv": 0.50,
+            "max_repeat_cv": 0.0,
+            "max_prompt_spread": 0.0,
+            "max_trace_cv": 0.0,
+            "verdict": "NON-REPRODUCIBLE",
+            "cohen_kappa": 1.0,
+            "publish_gate": "BLOCKED",
+            "adversarial_detection": 1.0,
+            "gold_calibration": "5/5",
+            "error_distribution": {},
+        }
+
+        scorecard = audit_repro._format_scorecard(report, {"kappa_gate": 0.7})
+
+        self.assertIn("BLOCKED", scorecard)
+        self.assertNotIn("PUBLISHABLE", scorecard)
+
+    def test_ranking_stability_detects_trace_rank_flip(self):
+        cells = {}
+        for candidate_id, trace_values in {
+            "a": {"t1": 100, "t2": 400, "t3": 100},
+            "b": {"t1": 150, "t2": 200, "t3": 200},
+        }.items():
+            for trace, cycles in trace_values.items():
+                key = f"{candidate_id}/{trace}"
+                cells[key] = {
+                    "candidate_id": candidate_id,
+                    "trace": trace,
+                    "median": {"cycles": cycles},
+                    "trials": [{"cycles": cycles}],
+                }
+
+        result = audit_repro._trace_ranking_stability(cells)
+
+        self.assertEqual(result["n_candidates"], 2)
+        self.assertEqual(result["full_top_candidate"], "b")
+        self.assertLess(result["top1_stability"], 1.0)
+
 
 class AuditCliTests(unittest.TestCase):
     def test_stub_cli_emits_versioned_evidence(self):
