@@ -1,353 +1,2468 @@
 {
-  "0/default/spec_gcc": {
-    "cycles": 1023.7635634036172,
-    "ipc": 0.9988192129244723,
-    "l1_miss_rate": 0.05059109149095678,
-    "seed": 0,
-    "prompt": "default",
-    "trace": "spec_gcc",
+  "schema_version": 2,
+  "version": 4,
+  "backend": "stub",
+  "config": {
+    "version": 4,
+    "backend": "stub",
     "design": {
       "llc_replacement": "lru",
       "branch_predictor": "bimodal"
     },
-    "backend": "stub"
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "prompts": [
+      "default",
+      "cot",
+      "adversarial"
+    ],
+    "traces": [
+      "spec_gcc",
+      "spec_mcf",
+      "web_cloud"
+    ],
+    "acceptance_threshold": 0.05,
+    "n_repeat": 5,
+    "kappa_gate": 0.7,
+    "re_audit_ratio": 0.2,
+    "champsim": {}
   },
-  "0/default/spec_mcf": {
-    "cycles": 1025.0091522183905,
-    "ipc": 0.9949795707943978,
-    "l1_miss_rate": 0.05252288054597637,
-    "seed": 0,
-    "prompt": "default",
-    "trace": "spec_mcf",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+  "config_sha256": "2923e9835e86db37330baa45a31bbafbefc1e4256c87622ffbdccda393444b26",
+  "git_sha": "3d3fe67",
+  "n_cells": 27,
+  "cells": {
+    "0/default/spec_gcc": {
+      "seed": 0,
+      "prompt": "default",
+      "trace": "spec_gcc",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1024.500928178649,
+        "ipc": 0.9975016166598352,
+        "l1_miss_rate": 0.051252320446622805,
+        "seed": 0,
+        "prompt": "default",
+        "trace": "spec_gcc",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1023.0459826788924,
+          "ipc": 0.995252559098716,
+          "l1_miss_rate": 0.052385043302768906,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1024.6765175476069,
+          "ipc": 0.9966288155890173,
+          "l1_miss_rate": 0.05169129386901702,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1024.500928178649,
+          "ipc": 0.9975016166598352,
+          "l1_miss_rate": 0.051252320446622805,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1024.9191351525415,
+          "ipc": 0.9954253478552775,
+          "l1_miss_rate": 0.05229783788135338,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1024.18712567278,
+          "ipc": 0.999065246218252,
+          "l1_miss_rate": 0.050467814181949726,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "0/default/web_cloud": {
-    "cycles": 1026.4173376668773,
-    "ipc": 0.997095151064677,
-    "l1_miss_rate": 0.051456655832806564,
-    "seed": 0,
-    "prompt": "default",
-    "trace": "web_cloud",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "0/default/spec_mcf": {
+      "seed": 0,
+      "prompt": "default",
+      "trace": "spec_mcf",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1023.9019657812612,
+        "ipc": 0.9995100690562928,
+        "l1_miss_rate": 0.050245085546846875,
+        "seed": 0,
+        "prompt": "default",
+        "trace": "spec_mcf",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1025.6676269745917,
+          "ipc": 0.9917308147092849,
+          "l1_miss_rate": 0.05416906743647926,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1024.1882375978366,
+          "ipc": 0.9990596970126943,
+          "l1_miss_rate": 0.0504705939945918,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1023.7844683674319,
+          "ipc": 0.9989235019340875,
+          "l1_miss_rate": 0.05053882908142024,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1023.3273169439041,
+          "ipc": 0.996647859360569,
+          "l1_miss_rate": 0.05168170764023996,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1023.9019657812612,
+          "ipc": 0.9995100690562928,
+          "l1_miss_rate": 0.050245085546846875,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "0/cot/spec_gcc": {
-    "cycles": 1028.0719982293638,
-    "ipc": 0.9700638385310816,
-    "l1_miss_rate": 0.054929995573409565,
-    "seed": 0,
-    "prompt": "cot",
-    "trace": "spec_gcc",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "0/default/web_cloud": {
+      "seed": 0,
+      "prompt": "default",
+      "trace": "web_cloud",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1027.7019271662118,
+        "ipc": 0.9965026386337064,
+        "l1_miss_rate": 0.0517548179155295,
+        "seed": 0,
+        "prompt": "default",
+        "trace": "web_cloud",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1028.7987574335943,
+          "ipc": 0.9910863800329087,
+          "l1_miss_rate": 0.05449689358398575,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1027.306501952105,
+          "ipc": 0.9984698352319171,
+          "l1_miss_rate": 0.050766254880262575,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1026.7145368383665,
+          "ipc": 0.9985747185186225,
+          "l1_miss_rate": 0.05071365790408354,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1027.7019271662118,
+          "ipc": 0.9965026386337064,
+          "l1_miss_rate": 0.0517548179155295,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1028.0137142659785,
+          "ipc": 0.9949569895284002,
+          "l1_miss_rate": 0.05253428566494629,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "0/cot/spec_mcf": {
-    "cycles": 1026.6453917113288,
-    "ipc": 0.9768229620619768,
-    "l1_miss_rate": 0.05136347927832227,
-    "seed": 0,
-    "prompt": "cot",
-    "trace": "spec_mcf",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "0/cot/spec_gcc": {
+      "seed": 0,
+      "prompt": "cot",
+      "trace": "spec_gcc",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1025.1236962342573,
+        "ipc": 0.9747714347576287,
+        "l1_miss_rate": 0.05244075941435661,
+        "seed": 0,
+        "prompt": "cot",
+        "trace": "spec_gcc",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1025.9728938938972,
+          "ipc": 0.978822652615382,
+          "l1_miss_rate": 0.05031776526525658,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1026.6007651706211,
+          "ipc": 0.9770359179326803,
+          "l1_miss_rate": 0.05125191292655327,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1024.3711772380216,
+          "ipc": 0.9712093592219913,
+          "l1_miss_rate": 0.05432205690494594,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1025.1236962342573,
+          "ipc": 0.9747714347576287,
+          "l1_miss_rate": 0.05244075941435661,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1025.0786853171687,
+          "ipc": 0.9745576394396422,
+          "l1_miss_rate": 0.05255328670707808,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "0/cot/web_cloud": {
-    "cycles": 1029.359786963994,
-    "ipc": 0.9781874615531148,
-    "l1_miss_rate": 0.050649467409985334,
-    "seed": 0,
-    "prompt": "cot",
-    "trace": "web_cloud",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "0/cot/spec_mcf": {
+      "seed": 0,
+      "prompt": "cot",
+      "trace": "spec_mcf",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1025.7044465545437,
+        "ipc": 0.9775383513079066,
+        "l1_miss_rate": 0.050988883613640644,
+        "seed": 0,
+        "prompt": "cot",
+        "trace": "spec_mcf",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1026.4674691053456,
+          "ipc": 0.9776725540706893,
+          "l1_miss_rate": 0.05091867276336388,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1025.163650186474,
+          "ipc": 0.9749612888296249,
+          "l1_miss_rate": 0.05234087453381485,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1025.112701887367,
+          "ipc": 0.9747192045494676,
+          "l1_miss_rate": 0.05246824528158226,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1025.7044465545437,
+          "ipc": 0.9775383513079066,
+          "l1_miss_rate": 0.050988883613640644,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1027.0828064225827,
+          "ipc": 0.9747405422854558,
+          "l1_miss_rate": 0.05245701605645691,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "0/adversarial/spec_gcc": {
-    "cycles": 1019.9271010202192,
-    "ipc": 0.9625894473343362,
-    "l1_miss_rate": 0.050932247449451885,
-    "seed": 0,
-    "prompt": "adversarial",
-    "trace": "spec_gcc",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "0/cot/web_cloud": {
+      "seed": 0,
+      "prompt": "cot",
+      "trace": "web_cloud",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1029.8239155024028,
+        "ipc": 0.9759719821362429,
+        "l1_miss_rate": 0.05180978875600701,
+        "seed": 0,
+        "prompt": "cot",
+        "trace": "web_cloud",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1029.8239155024028,
+          "ipc": 0.9759719821362429,
+          "l1_miss_rate": 0.05180978875600701,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1030.4899850331217,
+          "ipc": 0.972810032394228,
+          "l1_miss_rate": 0.053474962582804306,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1028.9833401502226,
+          "ipc": 0.9788726976402652,
+          "l1_miss_rate": 0.05029164962444337,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1030.087292922374,
+          "ipc": 0.974719229205209,
+          "l1_miss_rate": 0.052468232305935475,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1028.4043840494458,
+          "ipc": 0.9761067803825747,
+          "l1_miss_rate": 0.051739039876385555,
+          "seed": 0,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "0/adversarial/spec_mcf": {
-    "cycles": 1021.5975658976081,
-    "ipc": 0.9583245455681291,
-    "l1_miss_rate": 0.05324391474402039,
-    "seed": 0,
-    "prompt": "adversarial",
-    "trace": "spec_mcf",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "0/adversarial/spec_gcc": {
+      "seed": 0,
+      "prompt": "adversarial",
+      "trace": "spec_gcc",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1021.6821354823543,
+        "ipc": 0.957936365283051,
+        "l1_miss_rate": 0.0534553387058858,
+        "seed": 0,
+        "prompt": "adversarial",
+        "trace": "spec_gcc",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1021.7660279132741,
+          "ipc": 0.9575516037631764,
+          "l1_miss_rate": 0.05366506978318541,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1019.1348284391116,
+          "ipc": 0.9589328769670069,
+          "l1_miss_rate": 0.05291292890222079,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1021.0807833129847,
+          "ipc": 0.9607034655994853,
+          "l1_miss_rate": 0.05195195828246213,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1021.6821354823543,
+          "ipc": 0.957936365283051,
+          "l1_miss_rate": 0.0534553387058858,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1021.8200377217591,
+          "ipc": 0.957304058437712,
+          "l1_miss_rate": 0.05380009430439808,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "0/adversarial/web_cloud": {
-    "cycles": 1023.3875027780811,
-    "ipc": 0.963913475858402,
-    "l1_miss_rate": 0.05021875694520277,
-    "seed": 0,
-    "prompt": "adversarial",
-    "trace": "web_cloud",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "0/adversarial/spec_mcf": {
+      "seed": 0,
+      "prompt": "adversarial",
+      "trace": "spec_mcf",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1019.5133236816725,
+        "ipc": 0.9606762715890157,
+        "l1_miss_rate": 0.05196669079581853,
+        "seed": 0,
+        "prompt": "adversarial",
+        "trace": "spec_mcf",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1021.2335137293853,
+          "ipc": 0.9599991687357121,
+          "l1_miss_rate": 0.052333784323463466,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1019.2658537344773,
+          "ipc": 0.9595356786945146,
+          "l1_miss_rate": 0.05258536566380661,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1019.7599408361264,
+          "ipc": 0.9618156347757109,
+          "l1_miss_rate": 0.05135014790968408,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1019.5133236816725,
+          "ipc": 0.9606762715890157,
+          "l1_miss_rate": 0.05196669079581853,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1019.1719423168078,
+          "ipc": 0.9591035480887251,
+          "l1_miss_rate": 0.0528201442079806,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "1/default/spec_gcc": {
-    "cycles": 1060.1753473715605,
-    "ipc": 0.9958936683437706,
-    "l1_miss_rate": 0.052061631571098596,
-    "seed": 1,
-    "prompt": "default",
-    "trace": "spec_gcc",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "0/adversarial/web_cloud": {
+      "seed": 0,
+      "prompt": "adversarial",
+      "trace": "web_cloud",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1022.0120542131269,
+        "ipc": 0.9583687224764492,
+        "l1_miss_rate": 0.05321986446718262,
+        "seed": 0,
+        "prompt": "adversarial",
+        "trace": "web_cloud",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1022.9231252478793,
+          "ipc": 0.9625710283620421,
+          "l1_miss_rate": 0.050942186880301665,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1022.0120542131269,
+          "ipc": 0.9583687224764492,
+          "l1_miss_rate": 0.05321986446718262,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1021.151751815699,
+          "ipc": 0.9544341302443,
+          "l1_miss_rate": 0.055370620460752404,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1021.0594649654299,
+          "ipc": 0.9540139742870802,
+          "l1_miss_rate": 0.055601337586424965,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1024.5357393007364,
+          "ipc": 0.9586085330841211,
+          "l1_miss_rate": 0.05308934825184089,
+          "seed": 0,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "1/default/spec_mcf": {
-    "cycles": 1061.7696530324126,
-    "ipc": 0.9961664872116489,
-    "l1_miss_rate": 0.051924132581031394,
-    "seed": 1,
-    "prompt": "default",
-    "trace": "spec_mcf",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "1/default/spec_gcc": {
+      "seed": 1,
+      "prompt": "default",
+      "trace": "spec_gcc",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1059.8918950700574,
+        "ipc": 0.9944900036210443,
+        "l1_miss_rate": 0.05277026232485653,
+        "seed": 1,
+        "prompt": "default",
+        "trace": "spec_gcc",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1059.6812384040588,
+          "ipc": 0.9934493855143617,
+          "l1_miss_rate": 0.05329690398985286,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1059.8799786721258,
+          "ipc": 0.994431079907016,
+          "l1_miss_rate": 0.05280005331968553,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1061.2021131931403,
+          "ipc": 0.9989904542468774,
+          "l1_miss_rate": 0.05050528298285077,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1061.518831061848,
+          "ipc": 0.997412556919964,
+          "l1_miss_rate": 0.051297077654619785,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1059.8918950700574,
+          "ipc": 0.9944900036210443,
+          "l1_miss_rate": 0.05277026232485653,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "1/default/web_cloud": {
-    "cycles": 1065.3147801961552,
-    "ipc": 0.9934690329499196,
-    "l1_miss_rate": 0.05328695049038822,
-    "seed": 1,
-    "prompt": "default",
-    "trace": "web_cloud",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "1/default/spec_mcf": {
+      "seed": 1,
+      "prompt": "default",
+      "trace": "spec_mcf",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1062.0309014526874,
+        "ipc": 0.9948719254341595,
+        "l1_miss_rate": 0.05257725363171875,
+        "seed": 1,
+        "prompt": "default",
+        "trace": "spec_mcf",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1060.302293659849,
+          "ipc": 0.9965235958453439,
+          "l1_miss_rate": 0.05174426585037717,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1062.0309014526874,
+          "ipc": 0.9948719254341595,
+          "l1_miss_rate": 0.05257725363171875,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1059.9913587462413,
+          "ipc": 0.9949821000357618,
+          "l1_miss_rate": 0.052521603134396966,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1062.6634523868183,
+          "ipc": 0.9917513442960026,
+          "l1_miss_rate": 0.054158630967045804,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1063.849136484205,
+          "ipc": 0.9859544066413762,
+          "l1_miss_rate": 0.05712284121051278,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "1/cot/spec_gcc": {
-    "cycles": 1061.6937016376314,
-    "ipc": 0.9727328471597322,
-    "l1_miss_rate": 0.053515745905921036,
-    "seed": 1,
-    "prompt": "cot",
-    "trace": "spec_gcc",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "1/default/web_cloud": {
+      "seed": 1,
+      "prompt": "default",
+      "trace": "web_cloud",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1064.3642015867042,
+        "ipc": 0.9981823021087599,
+        "l1_miss_rate": 0.05091050396676043,
+        "seed": 1,
+        "prompt": "default",
+        "trace": "web_cloud",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1062.1665148262734,
+          "ipc": 0.9909158523812412,
+          "l1_miss_rate": 0.05458371293431668,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1064.3642015867042,
+          "ipc": 0.9981823021087599,
+          "l1_miss_rate": 0.05091050396676043,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1063.9412993966414,
+          "ipc": 0.999706583101952,
+          "l1_miss_rate": 0.05014675150839634,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1065.3157281706222,
+          "ipc": 0.9934643548093417,
+          "l1_miss_rate": 0.053289320426555514,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1065.5875429321816,
+          "ipc": 0.9921247964577068,
+          "l1_miss_rate": 0.05396885733045422,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "1/cot/spec_mcf": {
-    "cycles": 1064.193636759228,
-    "ipc": 0.9742143164162634,
-    "l1_miss_rate": 0.05273409189807007,
-    "seed": 1,
-    "prompt": "cot",
-    "trace": "spec_mcf",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "1/cot/spec_gcc": {
+      "seed": 1,
+      "prompt": "cot",
+      "trace": "spec_gcc",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1063.4199156795896,
+        "ipc": 0.9778998751071715,
+        "l1_miss_rate": 0.05079978919897432,
+        "seed": 1,
+        "prompt": "cot",
+        "trace": "spec_gcc",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1064.2132235928707,
+          "ipc": 0.9741213765977071,
+          "l1_miss_rate": 0.052783058982176695,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1063.4199156795896,
+          "ipc": 0.9778998751071715,
+          "l1_miss_rate": 0.05079978919897432,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1061.8554452911023,
+          "ipc": 0.9734986662624758,
+          "l1_miss_rate": 0.053111386772243876,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1064.1233520169455,
+          "ipc": 0.974547964617037,
+          "l1_miss_rate": 0.05255838004236396,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1062.6924290704574,
+          "ipc": 0.9774809362693176,
+          "l1_miss_rate": 0.051018927323856184,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "1/cot/web_cloud": {
-    "cycles": 1066.8534477728062,
-    "ipc": 0.9758313518185007,
-    "l1_miss_rate": 0.051883619432015665,
-    "seed": 1,
-    "prompt": "cot",
-    "trace": "web_cloud",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "1/cot/spec_mcf": {
+      "seed": 1,
+      "prompt": "cot",
+      "trace": "spec_mcf",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1062.9078462978919,
+        "ipc": 0.9785111432970693,
+        "l1_miss_rate": 0.05048038425526996,
+        "seed": 1,
+        "prompt": "cot",
+        "trace": "spec_mcf",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1061.4750786251093,
+          "ipc": 0.9716996302683816,
+          "l1_miss_rate": 0.054062303437226795,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1065.2168348714772,
+          "ipc": 0.9693828432594347,
+          "l1_miss_rate": 0.05529208717869349,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1063.182674141454,
+          "ipc": 0.9790355488567346,
+          "l1_miss_rate": 0.05020668535363535,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1062.9078462978919,
+          "ipc": 0.9785111432970693,
+          "l1_miss_rate": 0.05048038425526996,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1060.8891240924556,
+          "ipc": 0.9689411913042029,
+          "l1_miss_rate": 0.05552718976886092,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "1/adversarial/spec_gcc": {
-    "cycles": 1057.1441585526188,
-    "ipc": 0.9635961031272796,
-    "l1_miss_rate": 0.05038960361845302,
-    "seed": 1,
-    "prompt": "adversarial",
-    "trace": "spec_gcc",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "1/cot/web_cloud": {
+      "seed": 1,
+      "prompt": "cot",
+      "trace": "web_cloud",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1065.2426918708284,
+        "ipc": 0.9753370988075887,
+        "l1_miss_rate": 0.05214327032292907,
+        "seed": 1,
+        "prompt": "cot",
+        "trace": "web_cloud",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1062.0008499036812,
+          "ipc": 0.960157542205616,
+          "l1_miss_rate": 0.06024787524079667,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1064.8631316110323,
+          "ipc": 0.9735350892388329,
+          "l1_miss_rate": 0.05309217097241917,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1065.7717867530278,
+          "ipc": 0.9778602023892699,
+          "l1_miss_rate": 0.05082053311743053,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1067.8151453425542,
+          "ipc": 0.9712738694732043,
+          "l1_miss_rate": 0.05428786335638584,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1065.2426918708284,
+          "ipc": 0.9753370988075887,
+          "l1_miss_rate": 0.05214327032292907,
+          "seed": 1,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "1/adversarial/spec_mcf": {
-    "cycles": 1057.6419784034797,
-    "ipc": 0.9627327203534998,
-    "l1_miss_rate": 0.05085494600869933,
-    "seed": 1,
-    "prompt": "adversarial",
-    "trace": "spec_mcf",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "1/adversarial/spec_gcc": {
+      "seed": 1,
+      "prompt": "adversarial",
+      "trace": "spec_gcc",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1058.381655737846,
+        "ipc": 0.9593170166083526,
+        "l1_miss_rate": 0.05270413934461484,
+        "seed": 1,
+        "prompt": "adversarial",
+        "trace": "spec_gcc",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1059.1235687751143,
+          "ipc": 0.9559152497535854,
+          "l1_miss_rate": 0.05455892193778619,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1058.0220242415082,
+          "ipc": 0.9609747009183259,
+          "l1_miss_rate": 0.05180506060377071,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1058.381655737846,
+          "ipc": 0.9593170166083526,
+          "l1_miss_rate": 0.05270413934461484,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1058.4412305707574,
+          "ipc": 0.9590429645620636,
+          "l1_miss_rate": 0.05285307642689342,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1056.2857689329203,
+          "ipc": 0.9596273679393248,
+          "l1_miss_rate": 0.052535577667699396,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "1/adversarial/web_cloud": {
-    "cycles": 1059.165969956393,
-    "ipc": 0.9590760796124139,
-    "l1_miss_rate": 0.052835075109017665,
-    "seed": 1,
-    "prompt": "adversarial",
-    "trace": "web_cloud",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "1/adversarial/spec_mcf": {
+      "seed": 1,
+      "prompt": "adversarial",
+      "trace": "spec_mcf",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1056.6711104205751,
+        "ipc": 0.9614049298842243,
+        "l1_miss_rate": 0.051572223948562125,
+        "seed": 1,
+        "prompt": "adversarial",
+        "trace": "spec_mcf",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1059.55636213111,
+          "ipc": 0.9539419551452891,
+          "l1_miss_rate": 0.055640905327775464,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1056.3402792075537,
+          "ipc": 0.9598784219874552,
+          "l1_miss_rate": 0.05239930198111552,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1059.0177370586848,
+          "ipc": 0.9563990257979593,
+          "l1_miss_rate": 0.05429434264671211,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1055.9908432324655,
+          "ipc": 0.9582713240644499,
+          "l1_miss_rate": 0.05327289191883596,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1056.6711104205751,
+          "ipc": 0.9614049298842243,
+          "l1_miss_rate": 0.051572223948562125,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "2/default/spec_gcc": {
-    "cycles": 1095.8812223836917,
-    "ipc": 0.9895171658897995,
-    "l1_miss_rate": 0.05529694404077059,
-    "seed": 2,
-    "prompt": "default",
-    "trace": "spec_gcc",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "1/adversarial/web_cloud": {
+      "seed": 1,
+      "prompt": "adversarial",
+      "trace": "web_cloud",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1060.0267213226025,
+        "ipc": 0.9630511988529966,
+        "l1_miss_rate": 0.05068319669349349,
+        "seed": 1,
+        "prompt": "adversarial",
+        "trace": "web_cloud",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1060.0267213226025,
+          "ipc": 0.9630511988529966,
+          "l1_miss_rate": 0.05068319669349349,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1059.0699666086853,
+          "ipc": 0.9586347504669764,
+          "l1_miss_rate": 0.053075083478286954,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1061.6173523543255,
+          "ipc": 0.9582336961637642,
+          "l1_miss_rate": 0.05329338088581369,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1059.3543165788114,
+          "ipc": 0.9599430941685647,
+          "l1_miss_rate": 0.05236420855297146,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1061.0175166168676,
+          "ipc": 0.9609955147033032,
+          "l1_miss_rate": 0.05179379154216918,
+          "seed": 1,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "2/default/spec_mcf": {
-    "cycles": 1097.8070286731022,
-    "ipc": 0.9990360734164708,
-    "l1_miss_rate": 0.05048242831724425,
-    "seed": 2,
-    "prompt": "default",
-    "trace": "spec_mcf",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "2/default/spec_gcc": {
+      "seed": 2,
+      "prompt": "default",
+      "trace": "spec_gcc",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1097.8454303281774,
+        "ipc": 0.9992277484742118,
+        "l1_miss_rate": 0.05038642417955634,
+        "seed": 2,
+        "prompt": "default",
+        "trace": "spec_gcc",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1098.276491851715,
+          "ipc": 0.998619449296527,
+          "l1_miss_rate": 0.05069122962928753,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1097.7053063732228,
+          "ipc": 0.9985286997801028,
+          "l1_miss_rate": 0.050736734066943255,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1097.8454303281774,
+          "ipc": 0.9992277484742118,
+          "l1_miss_rate": 0.05038642417955634,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1098.7310497494677,
+          "ipc": 0.9963580634367225,
+          "l1_miss_rate": 0.051827624373669105,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1097.7641827307289,
+          "ipc": 0.9988223022609688,
+          "l1_miss_rate": 0.05058954317317773,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "2/default/web_cloud": {
-    "cycles": 1101.1404841832234,
-    "ipc": 0.999298072132699,
-    "l1_miss_rate": 0.050351210458058356,
-    "seed": 2,
-    "prompt": "default",
-    "trace": "web_cloud",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "2/default/spec_mcf": {
+      "seed": 2,
+      "prompt": "default",
+      "trace": "spec_mcf",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1098.2282321764935,
+        "ipc": 0.9988601398813115,
+        "l1_miss_rate": 0.050570580441233755,
+        "seed": 2,
+        "prompt": "default",
+        "trace": "spec_mcf",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1100.0273683782925,
+          "ipc": 0.9899648825079175,
+          "l1_miss_rate": 0.055068420945731056,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1098.0523059577374,
+          "ipc": 0.9997385385912593,
+          "l1_miss_rate": 0.0501307648943438,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1098.2282321764935,
+          "ipc": 0.9988601398813115,
+          "l1_miss_rate": 0.050570580441233755,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1096.2628660261796,
+          "ipc": 0.9913891213798751,
+          "l1_miss_rate": 0.05434283493455109,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1098.2864408282928,
+          "ipc": 0.9985698441336907,
+          "l1_miss_rate": 0.05071610207073205,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "2/cot/spec_gcc": {
-    "cycles": 1100.575508604482,
-    "ipc": 0.9771564822955104,
-    "l1_miss_rate": 0.05118877151120481,
-    "seed": 2,
-    "prompt": "cot",
-    "trace": "spec_gcc",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "2/default/web_cloud": {
+      "seed": 2,
+      "prompt": "default",
+      "trace": "web_cloud",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1101.4632653366352,
+        "ipc": 0.997689026286899,
+        "l1_miss_rate": 0.05115816334158836,
+        "seed": 2,
+        "prompt": "default",
+        "trace": "web_cloud",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1101.4632653366352,
+          "ipc": 0.997689026286899,
+          "l1_miss_rate": 0.05115816334158836,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1101.1348023386304,
+          "ipc": 0.9993264422926187,
+          "l1_miss_rate": 0.05033700584657605,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1101.8137037554532,
+          "ipc": 0.9959479669951012,
+          "l1_miss_rate": 0.05203425938863271,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1102.612078798033,
+          "ipc": 0.9920040564650491,
+          "l1_miss_rate": 0.05403019699508291,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1100.5714943488383,
+          "ipc": 0.9978620523574246,
+          "l1_miss_rate": 0.05107126412790446,
+          "seed": 2,
+          "prompt": "default",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "2/cot/spec_mcf": {
-    "cycles": 1097.5765276943503,
-    "ipc": 0.9674760092278796,
-    "l1_miss_rate": 0.05630868076412411,
-    "seed": 2,
-    "prompt": "cot",
-    "trace": "spec_mcf",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "2/cot/spec_gcc": {
+      "seed": 2,
+      "prompt": "cot",
+      "trace": "spec_gcc",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1100.2444606478473,
+        "ipc": 0.9787395232830204,
+        "l1_miss_rate": 0.050361151619618315,
+        "seed": 2,
+        "prompt": "cot",
+        "trace": "spec_gcc",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1101.323686716135,
+          "ipc": 0.9735975592550346,
+          "l1_miss_rate": 0.0530592167903378,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1102.3696063675582,
+          "ipc": 0.9686655751353492,
+          "l1_miss_rate": 0.05567401591889572,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1099.2252920245855,
+          "ipc": 0.9752543449871809,
+          "l1_miss_rate": 0.05218676993853564,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1100.2444606478473,
+          "ipc": 0.9787395232830204,
+          "l1_miss_rate": 0.050361151619618315,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1097.6477914620887,
+          "ipc": 0.9678096421762123,
+          "l1_miss_rate": 0.05613052134477839,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "2/cot/web_cloud": {
-    "cycles": 1104.745153016214,
-    "ipc": 0.9716041260599722,
-    "l1_miss_rate": 0.054112882540535465,
-    "seed": 2,
-    "prompt": "cot",
-    "trace": "web_cloud",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "2/cot/spec_mcf": {
+      "seed": 2,
+      "prompt": "cot",
+      "trace": "spec_mcf",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1099.1288376824787,
+        "ipc": 0.9747958618593855,
+        "l1_miss_rate": 0.0524279057938031,
+        "seed": 2,
+        "prompt": "cot",
+        "trace": "spec_mcf",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1100.4883653840639,
+          "ipc": 0.9775726963972251,
+          "l1_miss_rate": 0.05097091346015969,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1099.1288376824787,
+          "ipc": 0.9747958618593855,
+          "l1_miss_rate": 0.0524279057938031,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1099.3396996250847,
+          "ipc": 0.9757987260662588,
+          "l1_miss_rate": 0.051900750937287986,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1098.9352973000316,
+          "ipc": 0.9738771919933776,
+          "l1_miss_rate": 0.05291175674992096,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1098.8705183455595,
+          "ipc": 0.9735700951454797,
+          "l1_miss_rate": 0.05307370413610076,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "2/adversarial/spec_gcc": {
-    "cycles": 1094.4257316137064,
-    "ipc": 0.9637359109389141,
-    "l1_miss_rate": 0.05031432903426622,
-    "seed": 2,
-    "prompt": "adversarial",
-    "trace": "spec_gcc",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "2/cot/web_cloud": {
+      "seed": 2,
+      "prompt": "cot",
+      "trace": "web_cloud",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1103.4328959597738,
+        "ipc": 0.9778378146043303,
+        "l1_miss_rate": 0.050832239899434375,
+        "seed": 2,
+        "prompt": "cot",
+        "trace": "web_cloud",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1102.762910771289,
+          "ipc": 0.9778177676927939,
+          "l1_miss_rate": 0.05084272307177752,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1103.4328959597738,
+          "ipc": 0.9778378146043303,
+          "l1_miss_rate": 0.050832239899434375,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1103.8671655214469,
+          "ipc": 0.9757660427766071,
+          "l1_miss_rate": 0.05191791380361718,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1105.6183020847013,
+          "ipc": 0.9675002067211803,
+          "l1_miss_rate": 0.05629575521175355,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1101.9098583745954,
+          "ipc": 0.9737565708716677,
+          "l1_miss_rate": 0.05297535406351114,
+          "seed": 2,
+          "prompt": "cot",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "2/adversarial/spec_mcf": {
-    "cycles": 1096.018255393633,
-    "ipc": 0.9563966552012919,
-    "l1_miss_rate": 0.05429563848408224,
-    "seed": 2,
-    "prompt": "adversarial",
-    "trace": "spec_mcf",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "2/adversarial/spec_gcc": {
+      "seed": 2,
+      "prompt": "adversarial",
+      "trace": "spec_gcc",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1094.2650420042282,
+        "ipc": 0.9641576421466854,
+        "l1_miss_rate": 0.05008739498942933,
+        "seed": 2,
+        "prompt": "adversarial",
+        "trace": "spec_gcc",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1092.866103751714,
+          "ipc": 0.95769893486169,
+          "l1_miss_rate": 0.05358474062071455,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1095.7822243888675,
+          "ipc": 0.9574773563674244,
+          "l1_miss_rate": 0.05370556097216875,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1094.04447951364,
+          "ipc": 0.9631335566305694,
+          "l1_miss_rate": 0.050638801215900066,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1094.2650420042282,
+          "ipc": 0.9641576421466854,
+          "l1_miss_rate": 0.05008739498942933,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1095.84337008103,
+          "ipc": 0.9571971578827236,
+          "l1_miss_rate": 0.05385842520257499,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_gcc",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
-  },
-  "2/adversarial/web_cloud": {
-    "cycles": 1098.2824712812487,
-    "ipc": 0.9597736257291286,
-    "l1_miss_rate": 0.05245617820312164,
-    "seed": 2,
-    "prompt": "adversarial",
-    "trace": "web_cloud",
-    "design": {
-      "llc_replacement": "lru",
-      "branch_predictor": "bimodal"
+    "2/adversarial/spec_mcf": {
+      "seed": 2,
+      "prompt": "adversarial",
+      "trace": "spec_mcf",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1094.1353154202666,
+        "ipc": 0.9635550498628899,
+        "l1_miss_rate": 0.05041171144933355,
+        "seed": 2,
+        "prompt": "adversarial",
+        "trace": "spec_mcf",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1093.5100037339696,
+          "ipc": 0.9606609519529217,
+          "l1_miss_rate": 0.051974990665076166,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1094.6776755859094,
+          "ipc": 0.9625673183416981,
+          "l1_miss_rate": 0.05094418896477323,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1094.3280320611257,
+          "ipc": 0.9641898349643662,
+          "l1_miss_rate": 0.050070080152814146,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1094.1353154202666,
+          "ipc": 0.9635550498628899,
+          "l1_miss_rate": 0.05041171144933355,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1093.209419380267,
+          "ipc": 0.95927595100702,
+          "l1_miss_rate": 0.05272645154933211,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "spec_mcf",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
     },
-    "backend": "stub"
+    "2/adversarial/web_cloud": {
+      "seed": 2,
+      "prompt": "adversarial",
+      "trace": "web_cloud",
+      "design": {
+        "llc_replacement": "lru",
+        "branch_predictor": "bimodal"
+      },
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "median": {
+        "cycles": 1096.2999799678378,
+        "ipc": 0.9596928060234076,
+        "l1_miss_rate": 0.05250005008040529,
+        "seed": 2,
+        "prompt": "adversarial",
+        "trace": "web_cloud",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        },
+        "backend": "stub"
+      },
+      "trials": [
+        {
+          "cycles": 1097.926085370364,
+          "ipc": 0.9614178897032334,
+          "l1_miss_rate": 0.05156521342590999,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1096.804111849084,
+          "ipc": 0.962019988845647,
+          "l1_miss_rate": 0.05123972037728986,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1095.5540602170129,
+          "ipc": 0.95627005815902,
+          "l1_miss_rate": 0.05436484945746784,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1096.2999799678378,
+          "ipc": 0.9596928060234076,
+          "l1_miss_rate": 0.05250005008040529,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        },
+        {
+          "cycles": 1096.1664182151185,
+          "ipc": 0.9590781412190746,
+          "l1_miss_rate": 0.0528339544622037,
+          "seed": 2,
+          "prompt": "adversarial",
+          "trace": "web_cloud",
+          "design": {
+            "llc_replacement": "lru",
+            "branch_predictor": "bimodal"
+          },
+          "backend": "stub"
+        }
+      ]
+    }
   }
 }

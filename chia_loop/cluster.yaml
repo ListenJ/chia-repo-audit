@@ -1,6 +1,10 @@
-# cluster.yaml — CHIA 复现性审计 loop 的集群配置
-# 说明：当前本地跑桩（不需要集群）；拿到短期算力资助后，把 head_ip 换成 GCP 节点，
-#       并启用 chipyard/gem5/verilator 三种 node type 跑真实仿真。
+# CHIA cluster for the reproducibility audit.
+#
+# Default target: the official ChampSim worker image documented by CHIA:
+#   https://docs.chialoops.ai/en/latest/case-studies/architectural-discovery-basic.html
+#
+# Set CHAMPSIM_TRACE_DIR on the host before `chia up`; the directory is mounted
+# read-only into every simulation worker.
 
 provider:
     head_ip: ${THIS_MACHINE}
@@ -10,25 +14,27 @@ auth:
     # ssh_private_key: ~/.ssh/<ssh_key_name>
 
 available_node_types:
-    audit_champ:
-        resources: {"champ_run": 1}
+    champsim_build:
+        resources: {"champsim_build": 1}
         num_workers: 1
         compatible_ips: ["${THIS_MACHINE}"]
-        worker_setup_commands: ["source /opt/champ-sim/env.sh"]
         docker:
-            # ⚠️ 待核验：此镜像名为推测值，真实 ChampSim 运行须按 CHIA 文档/环境核对
-            # （CHIA 示例中已确认存在的镜像：chia-chisel-build / chia-verilator-run）。
-            image: "ghcr.io/ucb-bar/chia-champ-build:latest"
-            container_name: "chia-champ-${USER}"
+            image: "ghcr.io/ucb-bar/chia-champsim:latest"
+            container_name: "chia-champsim-build-${USER}"
+            pull_before_run: true
+            run_options:
+                - --cpuset-cpus=0-7
+                - -v ${CHAMPSIM_TRACE_DIR}:/traces:ro
             pull_timeout: 3600
 
-    audit_verilator:
-        resources: {"verilator_run": 1}
-        num_workers: 1
+    champsim:
+        resources: {"champsim": 1}
+        num_workers: 3
         compatible_ips: ["${THIS_MACHINE}"]
         docker:
-            image: "ghcr.io/ucb-bar/chia-verilator-run:latest"
-            container_name: "chia-verilator-${USER}"
+            image: "ghcr.io/ucb-bar/chia-champsim:latest"
+            container_name: "chia-champsim-run-${USER}"
+            pull_before_run: true
             run_options:
-                - --shm-size=10.24gb
+                - -v ${CHAMPSIM_TRACE_DIR}:/traces:ro
             pull_timeout: 3600

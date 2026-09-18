@@ -1,58 +1,134 @@
-# CHIA Hackathon 提交项目：Agentic Architecture 复现性审计
+# CHIA Hackathon: Agentic Architecture Reproducibility Audit
 
-> **项目**：*Does Agentic Architecture Discovery Reproduce? Auditing Variance and Evaluation Fairness in LLM-Driven Microarchitecture Search*
-> **Hackathon**：CHIA Hackathon @ A³ (MICRO 2026)
-> **提交截止**：2026-09-24 (AoE) ｜ **算力资助申请**：2026-09-13 已提交（Google Forms 回执确认，总额 $800）
-> **交付物**：4 页论文 + 开源 CHIA loop + 结果
-> **仓库**：`ssh://git@192.168.0.10:2222/agent/chia-repo-audit.git`（内网 Gitea）
+**Project:** *Does Agentic Architecture Discovery Reproduce? Auditing Variance
+and Evaluation Fairness in LLM-Driven Microarchitecture Search*
 
-## 一句话
+**Hackathon:** CHIA Hackathon at the MICRO 2026 A3 Workshop
 
-用 CHIA/ChampSim 复现 AI 驱动的微架构搜索流程，测量其跨种子方差、提示词敏感性与轨迹子集敏感性——回答「agent 发现的东西，可复现、可信吗」这一 2026 年尚未被系统回答的问题。
+**Final deadline:** 2026-09-24 AoE (2026-09-25 19:59 Shanghai)
 
-## 背景（来自本团队 2026-09 15 路领域扫描）
+**Submission:** <https://a3-chia-hackathon-26.hotcrp.com/>
 
-ISCA 2026 首设 Architecture 2.0 workshop（无正式 proceedings、4 页 WIP、门槛极低）；CHIA 框架 2026-06 由 UC Berkeley SLICE lab 发布（BSD-3-Clause、开源、内置 Chipyard/gem5/ChampSim/FireSim）。**但 2026 检索未发现任何工作测量「AI 生成硬件设计的可复现性与评测公平性」**——Agent 基础设施、AI4Science、机器人、形式化方法、安全、体系结构共 6 个独立领域一致指向同一生态位：「审计/测量/验证」。本项目正是这一生态位在体系结构领域的具体落地。
+**Internal repository:** `ssh://git@192.168.0.10:2222/agent/chia-repo-audit.git`
 
-## 策略
+## Status
 
-1. **占位**（本周）：提交一个最小合规 CHIA loop，拿到短期算力资助（GCP/Gemini）与 office hours 支持
-2. **做深**（09-21 算力到账后）：接入真实 ChampSim，跑预注册的种子×提示词×轨迹审计网格
-3. **提交**（09-24）：4 页 A³ 论文 + 开源 loop + 原始日志
+As of 2026-09-18, this repository contains:
 
-## 内容
+- A CHIA audit loop with separate run, audit, and action stages.
+- A deterministic stub backend for local protocol validation.
+- A scaffold for a real ChampSim backend; it has not yet passed a smoke run.
+- Five gold and five adversarial design-classification cases.
+- Machine-readable repeatability, seed, prompt, and trace sensitivity metrics.
+- A three-page paper draft whose measured numbers need to be refreshed.
 
+The most important external blockers are not code:
+
+1. Confirm short-term compute access before the funding window on Sep 21-23.
+2. Register the HotCRP title, authors, and abstract as soon as possible.
+3. Publish the artifact to a public URL. The internal Gitea URL cannot be the
+   final artifact link.
+
+See [ROADMAP.md](ROADMAP.md) for the 6-day execution plan, acceptance gates,
+and claim boundaries.
+
+## Current Stub Validation
+
+The stub run validates the audit plumbing, not ChampSim performance:
+
+```text
+Backend: stub
+Verdict: REPRODUCIBLE
+Max cross-seed CV: 3.5339% (gate < 5%)
+Max repeated-run CV: 0.1964%
+Max prompt spread: 0.7610%
+Max trace CV: 0.2495%
+Cohen's kappa: 1.0 (deterministic protocol self-test)
+Adversarial detection: 100%
+Gold calibration: 5/5
+Publish gate: PASS
 ```
-├── README.md           ← 本文件
-├── proposal.md         ← 登记表单内容（已提交）
-├── paper/              ← 4 页论文（A³/ICLR 轨道）
-├── chia_loop/          ← 开源 CHIA loop（提交的核心交付物）
-│   ├── loops/audit_repro.py
-│   ├── cluster.yaml
-│   └── README.md
-├── research-notes/     ← 支撑证据（来自 15 路检索）
-├── scripts/            ← 构建/运行辅助
-└── results/            ← 运行输出（原始日志 + 记分卡）
-```
 
-## 资格与奖励
+The nonzero repeated-run CV comes only from the synthetic stub. A real
+deterministic ChampSim run should be bit-identical unless the executable,
+trace, or environment changes.
 
-- GPU 奖（RTX 5080）：**中国大陆不在资格名单** → 不认
-- **GCP/Gemini 算力补贴：不受居住地限制，提交提案即得** → 本项目登记的核心收益
-- UC Berkeley 附属机构不可参加：不适用，符合资格 ✅
+## Run
 
-## 运行
+No third-party Python dependencies are needed for the stub:
 
 ```bash
-cd ~/repos/chia-repro-audit
-python3 chia_loop/loops/audit_repro.py --version 1
-# → results/scorecard.txt 复现性记分卡
+python3 chia_loop/loops/audit_repro.py --version 4
+python3 -m unittest discover -s chia_loop/tests -v
 ```
 
-## 当前状态
+Outputs:
 
-- [x] 算力资助登记（2026-09-13）
-- [x] 最小合规 CHIA loop（桩仿真，本地可跑）
-- [ ] 真实 ChampSim 后端（09-21 算力到账后）
-- [ ] 4 页论文草稿
-- [ ] 09-24 提交
+```text
+results/env_pin.json
+results/raw.json
+results/dblind_report.json
+results/audit_report.json
+results/scorecard.txt
+```
+
+Use a separate output directory without touching the checked-in evidence:
+
+```bash
+python3 chia_loop/loops/audit_repro.py \
+  --version 4 \
+  --output-dir /tmp/chia-audit
+```
+
+CHIA execution is explicit and requires a running CHIA/Ray cluster:
+
+```bash
+python3 chia_loop/loops/audit_repro.py --execution chia --version 4
+```
+
+## Metric Definitions
+
+- **Repeated-run CV:** coefficient of variation across repeated executions of
+  the same candidate, trace, and environment.
+- **Cross-seed CV:** variation across generation seeds for the same
+  prompt/trace pair. With the current stub this is synthetic. In a real run,
+  the seed must actually change candidate generation.
+- **Prompt spread:** relative cycle-count spread across prompt variants for
+  the same seed/trace pair.
+- **Trace CV:** variation across traces for the same seed/prompt pair. This is
+  a diagnostic, not a ranking-stability metric.
+
+The current artifact is an audit-harness pilot. It does not yet establish that
+an LLM architecture-discovery loop reproduces.
+
+## Repository Layout
+
+```text
+README.md
+ROADMAP.md
+proposal.md
+paper/
+  paper.tex
+  paper.pdf
+chia_loop/
+  loops/audit_repro.py
+  sim/backends.py
+  gold/
+  adversarial/
+  tests/
+  cluster.yaml
+  README.md
+results/
+research-notes/
+```
+
+## Official Submission Requirements
+
+- A PDF of at most four pages in two-column ACM/IEEE style.
+- An open-source release of the loop and its results.
+- A public artifact URL in the HotCRP form.
+- An AI-assistance acknowledgment at the end of the paper.
+
+The final submission does not require prior registration or use of hackathon
+funding. The short-term funding request was a separate Sep 18 opportunity for
+GCP and Gemini credits.

@@ -1,13 +1,17 @@
-CHIA 复现性审计报告 (config v3)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-复现性判定: REPRODUCIBLE
-最大跨种子变异系数: 0.0353 (阈值 0.05)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-双盲审计 (Axiom 适配协议):
-  Cohen's κ: 1.0 (门禁 0.7)
-  对抗样本检测率: 1.0
-  Gold 校准: 5/5
-  错误分布: {'E0': 0, 'E1': 2, 'E2': 2, 'E3': 2, 'E4': 3}
-  发布门禁: PASS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✓ 可对外发布
+CHIA reproducibility audit (config v4)
+========================================================
+Backend: stub
+Verdict: REPRODUCIBLE
+Max cross-seed CV: 3.5339% (gate < 5%)
+Max repeated-run CV: 0.1964%
+Max prompt spread: 0.7610%
+Max trace CV: 0.2495%
+========================================================
+Double-blind protocol self-test:
+  Cohen's kappa: 1.0 (gate 0.7)
+  Adversarial detection: 1.0
+  Gold calibration: 5/5
+  Error distribution: {'E0': 0, 'E1': 2, 'E2': 2, 'E3': 2, 'E4': 3}
+  Publish gate: PASS
+========================================================
+PUBLISHABLE

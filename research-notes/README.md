@@ -3,6 +3,11 @@
 本项目不是一个从零开始的灵光一现，而是 15 路并行检索收敛结果的具体落地。
 以下是支撑本项目的关键证据。
 
+> **Claim boundary:** These notes are a dated literature snapshot, not proof
+> of an absolute "no existing work" claim. Before submission, each statement
+> used in the paper must be tied to a primary source and confined to the
+> search scope actually covered.
+
 ## 1. 生态位收敛（6 个独立领域一致指向「审计/测量/验证」）
 
 | 领域 | 各自独立结论 |

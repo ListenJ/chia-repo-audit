@@ -48,7 +48,14 @@ class SimResult:
 class SimBackend(Protocol):
     name: str
 
-    def run(self, seed: int, prompt: str, trace: str, design: dict) -> SimResult: ...
+    def run(
+        self,
+        seed: int,
+        prompt: str,
+        trace: str,
+        design: dict,
+        run_index: int = 0,
+    ) -> SimResult: ...
 
 
 # ── Stub 后端 ─────────────────────────────────────────────────
@@ -60,8 +67,21 @@ class StubBackend:
     """
     name = "stub"
 
-    def run(self, seed: int, prompt: str, trace: str, design: dict) -> SimResult:
-        key = json_dumps_stable({"seed": seed, "prompt": prompt, "trace": trace, "design": design})
+    def run(
+        self,
+        seed: int,
+        prompt: str,
+        trace: str,
+        design: dict,
+        run_index: int = 0,
+    ) -> SimResult:
+        key = json_dumps_stable({
+            "seed": seed,
+            "prompt": prompt,
+            "trace": trace,
+            "design": design,
+            "run_index": run_index,
+        })
         h = hashlib.sha256(key.encode()).hexdigest()
         rnd = random.Random(int(h[:8], 16))
         base = 1000 + seed * 37 + len(trace) * 3
@@ -146,13 +166,26 @@ class ChampSimBackend:
             raise RuntimeError("ChampSimBackend 需 traces_dir（轨迹目录）")
         return self.traces_dir / f"{trace}.champsimtrace.xz"
 
-    def run(self, seed: int, prompt: str, trace: str, design: dict) -> SimResult:
+    def run(
+        self,
+        seed: int,
+        prompt: str,
+        trace: str,
+        design: dict,
+        run_index: int = 0,
+    ) -> SimResult:
+        """Run one deterministic ChampSim measurement.
+
+        ChampSim does not consume Python's ``run_index``. It is accepted so the
+        backend conforms to the audit protocol; repeated simulations should be
+        bit-identical unless the executable, inputs, or environment changed.
+        """
         binary = self.build(design)
         trace_path = self._trace_path(trace)
         cmd = [
             str(binary),
-            "--warmup_instructions", str(self.warmup),
-            "--simulation_instructions", str(self.sim),
+            "--warmup-instructions", str(self.warmup),
+            "--simulation-instructions", str(self.sim),
             str(trace_path),
         ]
         out = subprocess.run(cmd, capture_output=True, text=True, check=True).stdout

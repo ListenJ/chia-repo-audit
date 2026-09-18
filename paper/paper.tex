@@ -34,8 +34,8 @@ loop, adversarial test cases, and raw logs as composable CHIA blocks.
 The Architecture 2.0 ecosystem—ArchAgent, CHIA~\cite{chia}, QuArch,
 HLS-Eval—is expanding rapidly: LLM agents now generate RTL, discover cache
 replacement policies, and make microarchitectural choices via simulation.
-Yet \emph{no existing work systematically measures whether such outputs are
-correct or reproducible}.
+Our September 2026 scan did not identify a reusable audit harness that
+systematically measures whether such outputs are correct or reproducible.
 
 This gap is alarming given the 2026 benchmark-integrity crisis in the
 software domain: the Meerkat audit~\cite{meerkat} found that all top-three
@@ -65,7 +65,7 @@ $\downarrow$ \\[2pt]
 $\downarrow$ \\[2pt]
 \textbf{Stage 3: Double-Blind Audit} \\ A/B annotators independently judge \\ candidate vs.\ reference design \\[2pt]
 $\downarrow$ \\[2pt]
-\textbf{Stage 4: Act} \\ scorecard: $\kappa$, error distribution, \\ reproducibility verdict, publish gate}}
+\textbf{Stage 4: Audit + Act} \\ scorecard: $\kappa$, error distribution, \\ reproducibility verdict, publish gate}}
 \caption{The four-stage CHIA audit loop. Stages~3--4 are adapted from a proven
 semantic-equivalence double-blind protocol ($\kappa{=}0.954$).}
 \label{fig:loop}
@@ -118,12 +118,12 @@ Disagreements are resolved by an arbitration agent. Inter-annotator
 agreement is measured by Cohen's $\kappa$ (gate: $\kappa \geq 0.7$).
 A 20\% re-audit sample detects gold-drift.
 
-\subsection{Stage 4: Act}
-Emits a reproducibility scorecard: strict/lenient equivalence rates, $\kappa$,
-error-class distribution, cross-seed CV, prompt sensitivity, trace-subset
-sensitivity, and a \emph{publish gate} (BLOCKED if $\kappa < 0.7$ or if
-adversarial cases are not all detected). Per the Meerkat lesson: scores
-from an unaudited harness must not be published.
+\subsection{Stage 4: Audit and Act}
+Computes a reproducibility scorecard: strict/lenient equivalence rates,
+$\kappa$, error-class distribution, repeated-run CV, cross-seed CV, prompt
+spread, trace CV, and a \emph{publish gate} (BLOCKED if $\kappa < 0.7$ or if
+adversarial cases are not all detected). Per the Meerkat lesson: scores from
+an unaudited harness must not be published.
 
 \section{Experimental Setup}
 \label{sec:setup}
@@ -162,14 +162,14 @@ av-005 & adv & ``always-passes'' output & E4 \\
 \section{Results}
 \label{sec:results}
 
-\textbf{Stub validation (loop's own outputs, config v3).} The pipeline runs
+\textbf{Stub validation (loop's own outputs, config v4).} The pipeline runs
 end-to-end and emits a scorecard with the pre-registered metrics:
 \begin{itemize}\setlength{\itemsep}{0pt}
 \item \textbf{Reproducibility.} Cross-seed coefficient of variation $= 3.53\%$
 (below the pre-registered $5\%$ threshold) $\rightarrow$ \textsc{Reproducible};
-trace-subset CV $= 2.97\text{--}3.07\%$. Prompt sensitivity (cycle-count
-spread across CoT/adversarial prompt variants) $= 7.2\text{--}7.7\%$, flagged
-as a first-order confound for agentic-design evaluation.
+repeated-run CV $= 0.20\%$, and trace CV $= 0.25\%$. Prompt spread across
+CoT/adversarial prompt variants $= 0.76\%$. These values validate the metric
+plumbing only; the stub supplies the prompt and seed effects.
 \item \textbf{Double-blind audit.} Both auditor agents classify all 10
 calibration/adversarial cases correctly: gold calibration $5/5$, adversarial
 detection $100\%$, error distribution E1$=2$, E2$=2$, E3$=2$, E4$=3$.
@@ -186,37 +186,37 @@ $N{=}100$). Publish gate: \textsc{PASS}.
 \textbf{Metric} & \textbf{Pre-registered} & \textbf{Stub result} \\
 \midrule
 Cross-seed CV (max) & $<5\%$ & $3.53\%$ \\
-Trace-subset CV & report & $2.97\text{--}3.07\%$ \\
-Prompt sensitivity & report & $7.2\text{--}7.7\%$ \\
+Repeated-run CV (max) & report & $0.20\%$ \\
+Prompt spread (max) & report & $0.76\%$ \\
+Trace CV (max) & report & $0.25\%$ \\
 Cohen's $\kappa$ & $\geq 0.7$ & $1.00$ (stub) \\
 Adversarial detection & $100\%$ & $100\%$ \\
 Gold calibration & report & $5/5$ \\
 \bottomrule
 \end{tabular}
-\caption{Pre-registered metrics vs.\ stub validation (config v3).}
+\caption{Pre-registered metrics vs.\ stub validation (config v4).}
 \label{tab:metrics}
 \end{table}
 
 \textbf{Real simulation results} (gem5/ChampSim on funded compute,
 Sep 21--23) will replace the stub numbers above before the Sep~24 submission.
-The backend is already parameterized (\texttt{sim/backends.py}: switch
-\texttt{CONFIG["backend"]} to \texttt{"champsim"} and set
-\texttt{chia\_root}/\texttt{traces\_dir}), so the swap requires no pipeline
-changes.
+The repository provides a backend boundary, but the hand-written ChampSim
+adapter remains a scaffold until it passes a smoke run against CHIA's official
+\texttt{chia-champsim} image and \texttt{ChampSimNode}. We therefore do not
+claim real-simulator results yet.
 
 \subsection{Artifact \& Reproducibility}
 The loop (\texttt{chia\_loop/loops/audit\_repro.py}), adversarial cases
 (\texttt{av-001..005}), gold standard (\texttt{gold-01..05} +
 \texttt{answer-key}), and raw logs are released as composable CHIA blocks
 (BSD-3-Clause). To reproduce the stub validation:
-\texttt{python3 chia\_loop/loops/audit\_repro.py --version 3}; outputs land
+\texttt{python3 chia\_loop/loops/audit\_repro.py --version 4}; outputs land
 in \texttt{results/} (scorecard, raw, dblind report) with the pinned git SHA
-and Python version. To switch to real simulation: set
-\texttt{CONFIG["backend"]="champsim"} and point \texttt{chia\_root} /
-\texttt{traces\_dir}; the pipeline requires no further changes. Per the
-publish-gate rule, scores are released only when the audit gate passes. The
-public repository URL will be provided at submission time (code is currently
-provenance-pinned in our internal VCS).
+and Python version. The real-simulation path requires the pending smoke run
+described above before results can be reported. Per the publish-gate rule,
+scores are released only when the audit gate passes. The public repository URL
+will be provided at submission time (the working copy is currently pinned in
+an internal VCS).
 
 \section{Discussion}
 \label{sec:discuss}
@@ -253,6 +253,11 @@ human inter-rater estimate; the $\kappa{=}0.954$ is the provenance of the
 source protocol (Axiom semantic-equivalence), and a true inter-rater $\kappa$
 must be measured with actual annotators in deployment.
 
+The current seed and prompt axes alter the synthetic backend directly. A real
+deployment must let those axes alter candidate generation; otherwise they do
+not measure agentic discovery variance. The same caveat applies to trace CV:
+it is a diagnostic over absolute cycle counts, not a ranking-stability metric.
+
 \textbf{Reliability metrics matter.} In a companion analysis of agent
 task-success logs, the standard ``best-of-$n$'' metric overstates reliability
 by $>2\times$: macro \texttt{pass@3}$=0.925$ vs.\ \texttt{pass\^{}3}$=0.25$
@@ -263,13 +268,18 @@ task-success data, not from the CHIA simulation stub, and is reported as
 motivation rather than as a result of this loop.
 
 \section{Conclusion}
-We present the first agentic loop that audits the reproducibility and
-correctness of \emph{other} agentic architecture loops, using a proven
-double-blind protocol adapted to hardware design. The loop is composable,
-the methodology is pre-registered, and the stub validation confirms the
-pipeline end-to-end: reproducibility verdict, adversarial detection, and a
-publish gate that blocks unaudited scores. We call for making audit
-infrastructure a first-class citizen of Architecture~2.0.
+We present an agentic audit loop and a pre-registered pilot for measuring the
+reproducibility and correctness of architecture-search outputs. The loop is
+composable, the methodology is explicit, and the stub validation confirms the
+pipeline end-to-end: repeatability and sensitivity metrics, adversarial
+detection, and a publish gate that blocks unaudited scores. Real ChampSim
+evidence and actual candidate-generation axes remain future work for this
+artifact revision.
+
+\section*{AI Assistance Disclosure}
+AI coding and writing tools assisted with implementation, experiment plumbing,
+and drafting and editing this paper. The human authors are responsible for all
+code, measurements, citations, claims, and the final content.
 
 \bibliographystyle{plain}
 \begin{thebibliography}{9}\small

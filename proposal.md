@@ -1,5 +1,9 @@
 # CHIA 算力资助提案（登记表单内容，2026-09-13 已提交）
 
+> **Historical record:** This is the proposal text submitted for compute
+> funding. It is not the current execution plan or evidence statement. See
+> `ROADMAP.md` for claim boundaries, blockers, and the Sep 18-24 plan.
+
 ## Project Description / Overview
 
 We propose an agentic architecture-design loop, built on the CHIA framework, that performs systematic reproducibility and correctness auditing of AI-generated hardware-design artifacts (RTL and microarchitectural decisions) using Chipyard/gem5/ChampSim simulation. The core hypothesis: as LLM agents increasingly generate RTL and make microarchitectural choices, the community lacks a verifiable, reproducible benchmark for measuring (a) whether such outputs are correct, and (b) how their performance claims generalize beyond the training distribution. We build a CHIA-based loop that takes a candidate AI-generated design, runs it through a standardized gem5/ChampSim simulation pipeline with pinned commit hashes, and emits a reproducibility scorecard (cycle-count deltas, sensitivity to flags, cross-iteration variance) — turning the hackathon's "agentic architecture" theme into a measurable, publishable audit of agent trustworthiness in HW/SW co-design.
