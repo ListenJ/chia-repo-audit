@@ -99,4 +99,4 @@
 - Deviation: local GPU check is supported by PyTorch, but the GPT-like 0.8B
   model remains only a portability check and not a production candidate
   generator.
-- Commit: pending
+- Commit: `1ca163b`
