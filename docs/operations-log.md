@@ -76,3 +76,27 @@
 - Deviation: the official CHIA image and a live agent-generated candidate set
   remain unverified; `PRECOMPUTE.md` classifies that as a NO-GO condition.
 - Commit: `3af0f29`
+
+## 2026-09-20 - Local GPU and official CHIA image gate
+
+- Task: validate the local GPU and official CHIA container path before the
+  funded compute window.
+- Tools: NVIDIA driver, CUDA PyTorch venv, local llama.cpp 0.8B model,
+  Docker, official `chia-champsim` image, Ray, and `ChampSimNode`.
+- Operations:
+  - Added `scripts/champsim_node_smoke.py`.
+  - Added `scripts/local_gate.py`.
+  - Pulled the official image and validated build/run through Ray.
+  - Recorded machine-readable gate outputs in `results/local_gate.json` and
+    `results/local_champsim_node_result.json`.
+- Verification:
+  - Official image: PASS, image ID
+    `sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4`.
+  - ChampSimNode: build and run success, 5,003 instructions, 40,459 cycles,
+    IPC 0.123656.
+  - CUDA PyTorch: PASS after bounded retry.
+  - Local 0.8B strategy model: WARNING, instruction following unstable.
+- Deviation: local GPU check is supported by PyTorch, but the GPT-like 0.8B
+  model remains only a portability check and not a production candidate
+  generator.
+- Commit: pending

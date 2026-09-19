@@ -21,6 +21,8 @@ As of 2026-09-18, this repository contains:
   metrics; the official CHIA Docker/Ray path still needs its own smoke.
 - Candidate generation modes: an offline catalog fixture and a directory
   interface for real LLM-generated candidates.
+- Local integration gate covering CUDA, the official CHIA image, Ray, and
+  `ChampSimNode`.
 - Five gold and five adversarial design-classification cases.
 - Machine-readable repeatability, seed, prompt, and trace sensitivity metrics.
 - A three-page paper draft whose measured numbers need to be refreshed.
@@ -136,6 +138,12 @@ python3 scripts/kaggle_champsim_smoke.py \
   --output /kaggle/working/kaggle_champsim_smoke_result.json
 ```
 
+Local GPU and official-image gate:
+
+```bash
+python3 scripts/local_gate.py
+```
+
 ## Metric Definitions
 
 - **Repeated-run CV:** coefficient of variation across repeated executions of
@@ -175,6 +183,8 @@ chia_loop/
 scripts/
   preflight_compute.sh
   kaggle_champsim_smoke.py
+  local_gate.py
+  champsim_node_smoke.py
 results/
 research-notes/
 ```

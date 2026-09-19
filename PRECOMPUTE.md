@@ -20,6 +20,9 @@ not keep polishing the submission. Leave HotCRP #27 as a draft or withdraw it.
 - Combined publish gate requiring both reproducibility and audit success.
 - Official CHIA `ChampSimNode` adapter with injectable runners.
 - Pinned DPC4-ChampSim source build and five repeated smoke runs.
+- Official `chia-champsim` image, local Ray, and `ChampSimNode` build/run
+  smoke.
+- CUDA PyTorch sanity check on the local RTX 3050.
 - Kaggle CPU feasibility review and a CPU-only smoke script.
 - Public GitHub artifact and HotCRP #27 registration.
 
@@ -58,11 +61,29 @@ python3 chia_loop/loops/audit_repro.py \
 The final backend is selected only after the official `chia-champsim` image
 smoke passes.
 
+Run the local gate:
+
+```bash
+python3 scripts/local_gate.py
+```
+
+Observed on 2026-09-20:
+
+```text
+Official image + Ray + ChampSimNode: PASS
+Local CUDA matmul: PASS
+Local 0.8B strategy model: WARNING (unstable instruction following)
+```
+
+The warning is retained. A 0.8B local model is only a portability check and
+must not be treated as the final candidate generator.
+
 ## GO Gate
 
 A submission is GO only if all conditions below are visible in the artifact:
 
-1. Official `ghcr.io/ucb-bar/chia-champsim:latest` container starts.
+1. Official `ghcr.io/ucb-bar/chia-champsim:latest` container starts. [Local
+   gate: PASS]
 2. Real `ChampSimNode.build_champsim` compiles at least three generated
    candidate modules.
 3. `ChampSimNode.run_champsim` completes on at least three traces.
@@ -80,8 +101,7 @@ A submission is GO only if all conditions below are visible in the artifact:
 
 Stop and do not claim a competitive submission if any of these remains true:
 
-1. The official image cannot build or run a candidate.
-2. No real LLM-generated candidate compiles.
+1. No real LLM-generated candidate compiles.
 3. Seed/prompt still do not change the candidate artifact.
 4. A/B auditors are still the same deterministic function.
 5. The only quantitative evidence is the synthetic stub or source smoke.

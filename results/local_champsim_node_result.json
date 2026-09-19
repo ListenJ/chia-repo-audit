@@ -1,0 +1,11 @@
+{
+  "build_success": true,
+  "run_success": true,
+  "module_name": "evolved_pf",
+  "cache_level": "L2C",
+  "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694",
+  "instructions": 5003,
+  "cycles": 40459,
+  "ipc": 0.12365604686225562,
+  "trace": "/home/ray/champsim/test/traces/smoke.champsimtrace.gz"
+}

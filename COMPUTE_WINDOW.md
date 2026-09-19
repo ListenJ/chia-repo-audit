@@ -45,6 +45,14 @@ Complete these locally on Sep 18-20:
    docker pull ghcr.io/ucb-bar/chia-champsim:latest
    ```
 
+   The local gate has already completed an official-image, Ray, and
+   `ChampSimNode` build/run smoke. Re-run it after any local environment
+   change:
+
+   ```bash
+   python3 scripts/local_gate.py
+   ```
+
    If the image is still unavailable, Kaggle can validate the pinned
    source-build path without Docker:
 

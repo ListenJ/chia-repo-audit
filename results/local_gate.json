@@ -1,0 +1,39 @@
+{
+  "timestamp": 1789842782.0853848,
+  "status": "PASS",
+  "failures": [],
+  "warnings": [
+    "local model did not return a valid strategy token"
+  ],
+  "image": {
+    "name": "ghcr.io/ucb-bar/chia-champsim:latest",
+    "image_id": "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+    "repo_digest": "ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4"
+  },
+  "gpu": {
+    "available": true,
+    "device": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "cuda_version": "12.8",
+    "matmul_5x_1024_seconds": 0.06723642349243164,
+    "checksum": -2938.64453125
+  },
+  "local_model": {
+    "status": "warning",
+    "selected_strategy": null,
+    "final_line": "context size exceeded",
+    "elapsed_seconds": 17.43891429901123,
+    "returncode": 0,
+    "output_tail": "Answer one token only\" is a strong constraint. It means I cannot write anything but a single character or a single word.\n    *   Wait, looking at the instruction: \"Answer one token only\". This is a meta-instruction for *me* to follow.\n    *   Wait, actually, often these prompts are asking for a specific answer format.\n    *   Is it asking me to choose between \"next_line\", \"stride\", or \"no_prefetch\"?\n    *   Is there a specific context where one is correct?\n    *   If the context is about \"next_line\" vs \"stride\" vs \"no_prefetch\" in memory or prefetching...\n    *   However, without specific context, \"next_line\", \"stride\", or \"no_prefetch\" is a set of options.\n    *   But the instruction is \"Answer one token only\".\n    *   So I need to output *just* one token.\n    *   Which token represents the answer?\n    *   If I choose \"next_line\" (as a placeholder), \"stride\", \"no_prefetch\"?\n    *   Actually, usually,\n..............................................................\ncontext size exceeded\n"
+  },
+  "champsim_node": {
+    "build_success": true,
+    "run_success": true,
+    "module_name": "evolved_pf",
+    "cache_level": "L2C",
+    "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694",
+    "instructions": 5003,
+    "cycles": 40459,
+    "ipc": 0.12365604686225562,
+    "trace": "/home/ray/champsim/test/traces/smoke.champsimtrace.gz"
+  }
+}
