@@ -37,6 +37,10 @@ The organizers confirmed short-term funding on 2026-09-18. New account details
 will be sent on Sunday 2026-09-20 evening PDT. No additional confirmation
 action is required.
 
+On 2026-09-21 the credentials arrived, but the Google login was rejected as
+unverifiable before reaching GCP. Current status:
+`BLOCKED_PENDING_ACCOUNT_ACCESS`. The organizers must reset or reissue access.
+
 The confirmed usage window is:
 
 - Start: 2026-09-21 00:00 PT = 2026-09-21 15:00 Shanghai.

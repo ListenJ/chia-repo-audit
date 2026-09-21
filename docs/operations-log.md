@@ -100,3 +100,18 @@
   model remains only a portability check and not a production candidate
   generator.
 - Commit: `1ca163b`
+
+## 2026-09-21 - GCP account login rejected
+
+- Task: verify the newly supplied short-term GCP account and begin setup.
+- Tools: in-app browser and Google account sign-in.
+- Operations:
+  - Received short-term account credentials through the organizer email.
+  - Attempted the first Google login in a clean in-app browser tab.
+  - Google rejected the login before GCP Console as unverifiable and
+    directed the user to the organization administrator or account recovery.
+  - Stopped further password attempts to avoid account lockout.
+- Verification: browser visibly shows the Google login rejection page.
+- Impact: GCP setup is `BLOCKED_PENDING_ACCOUNT_ACCESS`; local validation
+  remains available.
+- Commit: pending

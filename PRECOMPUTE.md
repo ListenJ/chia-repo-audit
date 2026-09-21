@@ -11,6 +11,11 @@ generating real candidates, collecting evidence, and updating the paper.
 If the pre-compute path cannot pass the GO gate after the account arrives, do
 not keep polishing the submission. Leave HotCRP #27 as a draft or withdraw it.
 
+Current access status: `BLOCKED_PENDING_ACCOUNT_ACCESS`. Credentials were
+received on 2026-09-21, but Google rejected the first login as unverifiable.
+The account must be reset, reissued, or have its login challenge adjusted
+before any GCP experiment can run.
+
 ## Completed Without GCP
 
 - Stub audit loop and unit tests.

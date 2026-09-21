@@ -8,6 +8,20 @@ The organizers confirmed by email that this project will receive a short-term
 funded account. No additional confirmation action is required. Account details
 will follow on Sunday, 2026-09-20 in the evening PDT.
 
+## Account Access Status
+
+Status: `BLOCKED_PENDING_ACCOUNT_ACCESS`
+
+The short-term credentials arrived on 2026-09-21, but the first Google login
+attempt was rejected before entering GCP. Google displayed a message saying it
+could not verify that the account belonged to the user and directed the user
+to the organization administrator or account recovery.
+
+No further password attempts were made, to avoid locking the account. The
+organizers must reset, reissue, or adjust the login challenge before the
+funded window can be used. Local validation work can continue while access is
+blocked.
+
 The account is new, so old GCP projects, credentials, API keys, and local
 `gcloud` configurations must not be reused.
 
