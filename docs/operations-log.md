@@ -114,4 +114,4 @@
 - Verification: browser visibly shows the Google login rejection page.
 - Impact: GCP setup is `BLOCKED_PENDING_ACCOUNT_ACCESS`; local validation
   remains available.
-- Commit: pending
+- Commit: `479399e`
