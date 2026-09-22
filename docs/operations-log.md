@@ -192,4 +192,4 @@
   - No build, no grid, and no candidate was run in this step.
 - Deviation: the browser bridge allows ~15 s per call, so long remote jobs must be
   detached and polled via the contents API; this constrains the plan's driver.
-- Commit: `0286c30`
+- Commit: `369c1c6` (amended after the placeholder was written; see record-maintenance history)
