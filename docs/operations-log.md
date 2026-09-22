@@ -352,4 +352,4 @@
     checker is not a rubber stamp.
   - A NaN instruction count is normalised to missing, because NaN comparisons
     would otherwise clear the smoke floor silently.
-- Commit: pending
+- Commit: `d1113e0` (hash backfill; record maintenance only)
