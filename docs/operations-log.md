@@ -320,3 +320,15 @@
 - Deviation: these two files were not in the frozen change list; the reason is
   recorded in `docs/plans/2026-09-22-modelscope-dsw-timing.md`.
 - Commit: `f69284c` (hash backfill; record maintenance only)
+
+## 2026-09-22 - Grid measurements now carry the binary digest they were taken with
+
+- Task: make gate 2 checkable from the grid artifact alone.
+- Tools: `chia_loop/sim/backends.py`, `chia_loop/tests/test_champsim_node_backend.py`.
+- Operations: `SimResult` gains `binary_sha256`, filled by `ChampSimNodeBackend`
+  from the binary it actually ran, and it is part of `asdict()` so it lands in
+  `raw.json` per trial.
+- Verification: test written first and observed red (`AttributeError:
+  'SimResult' object has no attribute 'binary_sha256'`), then
+  `python3 -m unittest discover -s chia_loop/tests` -> Ran 22 tests, OK.
+- Commit: pending

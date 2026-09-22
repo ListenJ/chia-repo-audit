@@ -38,10 +38,12 @@ class SimResult:
     trace: str
     design: dict = field(default_factory=dict)
     backend: str = "stub"
+    binary_sha256: str = ""
 
     def asdict(self) -> dict:
         return {k: getattr(self, k) for k in (
-            "cycles", "ipc", "l1_miss_rate", "seed", "prompt", "trace", "design", "backend")}
+            "cycles", "ipc", "l1_miss_rate", "seed", "prompt", "trace", "design",
+            "backend", "binary_sha256")}
 
 
 # ── 后端协议 ──────────────────────────────────────────────────
@@ -297,6 +299,7 @@ class ChampSimNodeBackend:
             trace=trace,
             design=design,
             backend=self.name,
+            binary_sha256=hashlib.sha256(binary).hexdigest()[:16],
         )
 
 

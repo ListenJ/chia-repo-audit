@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import math
 import unittest
 from pathlib import Path
@@ -67,13 +68,23 @@ class ChampSimNodeBackendTests(unittest.TestCase):
         )
         design_a = {"prefetcher_source": "struct a {};", "module_name": "a"}
         design_b = {"prefetcher_source": "struct b {};", "module_name": "b"}
+        results = []
         for trace in ("t1", "t2"):
-            backend.run(seed=0, prompt="default", trace=trace, design=design_a)
-        backend.run(seed=0, prompt="default", trace="t1", design=design_b)
+            results.append(
+                backend.run(seed=0, prompt="default", trace=trace, design=design_a))
+        results.append(
+            backend.run(seed=0, prompt="default", trace="t1", design=design_b))
 
         self.assertEqual([b["module"] for b in builds], ["a", "b"])
         self.assertEqual([b["incremental"] for b in builds], [False, False])
         self.assertEqual([binary for binary, _ in runs], [b"a", b"a", b"b"])
+        # Gate 2 is checked from the artifact itself, so every measurement has to
+        # name the binary it was taken with.
+        self.assertEqual(
+            [result.binary_sha256 for result in results],
+            [hashlib.sha256(b"a").hexdigest()[:16]] * 2
+            + [hashlib.sha256(b"b").hexdigest()[:16]],
+        )
 
 
 if __name__ == "__main__":
