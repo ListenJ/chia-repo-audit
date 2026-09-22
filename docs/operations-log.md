@@ -319,4 +319,4 @@
   against the regression it guards.
 - Deviation: these two files were not in the frozen change list; the reason is
   recorded in `docs/plans/2026-09-22-modelscope-dsw-timing.md`.
-- Commit: pending
+- Commit: `f69284c` (hash backfill; record maintenance only)
