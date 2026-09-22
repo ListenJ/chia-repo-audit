@@ -168,4 +168,4 @@
     egress/CDN reachability failure, not a browser or code failure.
 - Deviation: real-trace sourcing is unresolved; the documented
   `dpc4-all-traces` bucket is not anonymously listable (404). No grid started.
-- Commit: `PLAN-ONLY`
+- Commit: `475b8c3`
