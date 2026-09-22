@@ -297,3 +297,26 @@
   contract yields 3 cells; `stage_run` still aborts a whole stage on one build
   failure.
 - Commit: `7493c7d` (hash backfill; record maintenance only)
+
+## 2026-09-22 - Per-trace reference designs added; gate 2 requires a moved cycle count
+
+- Task: make the grid evidence readable, after the screening showed a candidate
+  that compiles, gets its own binary digest, and still equals the no-op control.
+- Tools: `scripts/baseline_probe.py` (new), `chia_loop/tests/test_baseline_probe.py`
+  (new), official image containers, `.tmp/run_baseline_chain.sh`.
+- Operations:
+  - `scripts/baseline_probe.py`: builds `probe_noop` and `probe_next_line` once
+    each and runs those binaries across every trace at 1M warmup + 4M simulation,
+    so the reference costs 2 cold builds plus 6 runs instead of 6 builds.
+  - Launcher waits for zero `chia-screen*`, at most one other `chia-*` container
+    and >= 6,000 MiB free before starting, because the host has 15.8 GiB and four
+    concurrent build containers measured 2.0-2.3 GiB each.
+  - `PRECOMPUTE.md` gate 2 now requires the cycle count to differ from a no-op
+    reference on the same trace and budget, and requires any compile rate to use
+    all generated candidates as the denominator.
+- Verification: `python3 -m unittest discover -s chia_loop/tests` -> Ran 22 tests,
+  OK. The build-per-trace variant records 4 builds, so the new test has teeth
+  against the regression it guards.
+- Deviation: these two files were not in the frozen change list; the reason is
+  recorded in `docs/plans/2026-09-22-modelscope-dsw-timing.md`.
+- Commit: pending

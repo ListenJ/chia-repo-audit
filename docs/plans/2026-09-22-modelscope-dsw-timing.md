@@ -58,6 +58,12 @@ measurement for one real candidate on one real trace.
 - Modify `docs/operations-log.md` with commands, outputs, cleanup, and the
   evidence boundary.
 - Modify `tests` for the two new scripts only where a real call seam exists.
+- Added after the screening, reason below: `scripts/baseline_probe.py` and
+  `chia_loop/tests/test_baseline_probe.py` - a per-trace no-op / next-line
+  reference. The screening showed a candidate can compile, produce its own
+  binary digest, and still reproduce the no-op cycle count exactly, so a
+  cycle-count comparison without a reference on the same trace and instruction
+  budget cannot support any claim.
 
 不做项:
 - Do not download the full multi-gigabyte SPEC17 trace set in this slice.
@@ -327,4 +333,14 @@ selected rectangle so the pool cannot leak a wrong design, and refuses to start
 below 3 cells. Under those rules the current evidence blocks the grid (2 compiled
 designs, 1 cell per contract), which is why contract v3 is being screened in
 three parallel containers at ~24 min each.
+
+Because a compiling design can still be behaviourally null, `scripts/
+baseline_probe.py` measures the no-op and next-line references on every trace in
+the grid at the same instruction budget (1M warmup + 4M simulation). A ChampSim
+binary is trace independent, so the script builds each reference once and runs
+that binary across all three traces: 2 cold builds and 6 runs instead of 6
+builds. Its unit test pins exactly that (1 build per design, the same binary for
+every trace) and fails against a build-per-trace variant. The launcher keeps a
+second cold build off the host until memory is free again, because the machine has
+15.8 GiB and each build container holds ~2.3 GiB while four ran at once.
 

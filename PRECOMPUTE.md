@@ -102,9 +102,14 @@ A submission is GO only if all conditions below are visible in the artifact:
    delivered binary's SHA-256 must differ per module and must not equal the
    digest of the binary the image ships. `success: true` alone is not evidence,
    because an incremental build returns whatever binary the tree already holds.
-   The simulated cycle count must also differ across those binaries; if every
-   candidate yields the same cycles, the backend is insensitive to the design and
-   no ranking claim may be made from it.
+   The simulated cycle count must also differ from a no-op reference design
+   measured on the same trace and the same instruction budget: a candidate that
+   reproduces the reference cycle count exactly compiles and does nothing (seen
+   on 2026-09-22, `gen_default_s0` at 1,138,748 cycles). If every candidate
+   yields the same cycles, the backend is insensitive to the design and no
+   ranking claim may be made from it. Any compile rate quoted in the paper takes
+   every generated candidate as the denominator, not only the designs that
+   entered a grid.
 3. `ChampSimNode.run_champsim` completes on at least three traces.
 4. Raw JSON, commands, image digest, commit SHA, and trace hashes are retained.
 5. Two genuinely different auditors or annotators produce labels for the
