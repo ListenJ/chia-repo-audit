@@ -583,3 +583,33 @@
   rollback point instead of re-creating a `.tmp/backups/` copy (rule 2).
 - Commit: `8698ea3`, plus one follow-up commit that adds the re-verification
   detail recorded above and backfills hashes (record maintenance).
+
+## 2026-09-22 - Session transcript and Qoder memory exported to Windows, redacted
+
+- Task: also migrate the current Qoder session transcript and the Qoder memory
+  directories to the Windows host, without carrying live credentials with them.
+- Tools: ssh/scp (key auth), `tar`/bsdtar, `python3` (redaction), PowerShell
+  `Get-FileHash`, `certutil`.
+- Rule 11 finding first, before anything left this host: the raw transcript
+  (7,855,147 B) contains the live LLM-provider API key verbatim 3 times - proved
+  by counting occurrences of the string read from `~/.axiom/axiom-secrets/`
+  (51 chars, value never printed) - plus 22 DSW `authCode` values. The Gitea
+  token appears 0 times. Copying it raw would have spread a live credential.
+- Operations: redacted copy built in `/tmp/qoder-export-20260922`
+  (`transcripts/…redacted.jsonl`, `session-state/`, `memory/user/` 11 files,
+  empty `memory/project/`, plus `REDACTION-NOTE.md` recording what was masked and
+  that the raw file stays on this host); packed 1,864,370 B
+  `qoder-export-20260922.tar.gz` (`d39771bc75828984...`); created
+  `D:\qoder-export-from-linux-20260922` and extracted there.
+- Verification: post-redaction scans all 0 hits (exact key substring, `authCode`
+  followed by a value, `sk-[A-Za-z0-9]{20,}`, private-key blocks, any
+  token/secret/cookie/authorization/password assignment carrying a 24+ char
+  value, `jsessionid`/`cf_clearance`/`_sec_`); archive sha256 equal on both
+  hosts; all 15 exported files hash-identical host to host; the temporary
+  hashing script was deleted from `D:`.
+- Owner action implied: rotate that API key (it sits in the raw transcript here)
+  and let the DSW instance address re-issue so its `authCode` expires.
+- Deviation: rollback point for this file was its committed blob `15b71b8` rather
+  than a `.tmp/backups/` copy, so the repo's `.tmp/` stayed in step with the
+  freshly verified `D:` copy.
+- Commit: `<pending>`
