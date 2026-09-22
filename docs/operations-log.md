@@ -169,3 +169,27 @@
 - Deviation: real-trace sourcing is unresolved; the documented
   `dpc4-all-traces` bucket is not anonymously listable (404). No grid started.
 - Commit: `475b8c3`
+
+## 2026-09-22 - DSW execution channel built, real trace source found, build blocker isolated
+
+- Task: make the ModelScope DSW instance drivable from this session and resolve
+  the two open blockers (real traces, previous build failure).
+- Tools: authenticated browser tab as same-origin REST broker, Jupyter kernel
+  websocket, DPC-4 public R2 bucket.
+- Operations:
+  - Recorded the probe results inside the plan document, including the corrected
+    API base path `/dsw-2201946/`.
+  - Established kernel-based remote execution and confirmed the instance is still
+    the same container as the interrupted session.
+- Verification:
+  - Traces: 92 SPEC17 objects, 25.3 MB - 1.33 GB, 31.2 GB total; manifest 74 KB
+    in 1.3 s; measured download rate ~182 KB/s, so only the small traces are
+    usable here.
+  - Previous failure confirmed as `curl (35)` reset on
+    `release-assets.githubusercontent.com` during vcpkg bootstrap;
+    `raw.githubusercontent.com` also times out now.
+  - `python3 -m unittest discover -s chia_loop/tests` -> OK (12 tests).
+  - No build, no grid, and no candidate was run in this step.
+- Deviation: the browser bridge allows ~15 s per call, so long remote jobs must be
+  detached and polled via the contents API; this constrains the plan's driver.
+- Commit: `0286c30`

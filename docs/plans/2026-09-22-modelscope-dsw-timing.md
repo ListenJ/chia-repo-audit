@@ -112,3 +112,32 @@ git diff --check && git status -sb
 7. Download the result JSON, verify hashes locally, and write the grid go/no-go
    statement from the measured rate.
 8. Update the operations log, commit, and push to both remotes.
+
+## Findings from the first probe (2026-09-22)
+
+These are measured facts, so later steps are constrained by them rather than by
+the assumptions above.
+
+- Channel: the gateway session cookie is httpOnly and cannot be exported, and
+  unauthenticated local requests return 302 to Aliyun login. Execution therefore
+  goes through the authenticated tab as a same-origin REST broker against base
+  path `/dsw-2201946/` (`/api/kernels` + websocket `execute_request`). The
+  browser bridge caps one call at ~15s, so anything long-running must be launched
+  detached and polled through `/api/contents`.
+- Persistent volume: intact. The earlier "probe files were lost to a container
+  rebuild" reading was an artifact of the wrong API base path returning 400.
+- Instance: same container, 8 vCPU, 30 GiB, `/mnt/workspace` NAS with ~1 PiB
+  free, tmux present, Docker CLI present but no daemon, so the official image
+  path stays out of scope here.
+- Previous job root cause: `curl (35) connection reset` to
+  `release-assets.githubusercontent.com` during vcpkg bootstrap, and
+  `raw.githubusercontent.com` now also stalls. Step 3's build must avoid GitHub
+  release assets.
+- Real traces (step 5 resolved): the DPC-4 collection is public on Cloudflare R2
+  (`pub-c31f67d79d1b4cd28ff320612b1a9f84.r2.dev`, manifest-indexed; the
+  documented `dpc4-all-traces` GCS bucket is not anonymously listable). 92
+  SPEC17 traces, 25.3 MB to 1.33 GB compressed, 31.2 GB in total. Measured
+  instance-side throughput is only ~182 KB/s, and the default Python user agent
+  is rejected with 403, so downloads must use curl and stay in the 25-50 MB
+  range. Consequence: the "large trace" grid is not feasible on this instance;
+  the timing probe must state which trace and instruction count it used.
