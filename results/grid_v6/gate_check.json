@@ -1,0 +1,16 @@
+{
+  "n_rows": 9,
+  "n_designs": 3,
+  "n_distinct_binaries": 3,
+  "reference_traces": [
+    "638.imagick_s-4128B.champsimtrace.xz",
+    "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+    "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz"
+  ],
+  "failures": {
+    "moves_cycles_vs_reference": [
+      "fill_only_conservative/2 on 638.imagick_s-4128B.champsimtrace.xz equals noop at 1.56132e+06"
+    ]
+  },
+  "passed": false
+}

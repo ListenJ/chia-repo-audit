@@ -1,0 +1,72 @@
+{
+ "schema_version": 1,
+ "purpose": "Provenance raw.json does not carry: image digest, container command, trace hashes, and the build timeline.",
+ "image": {
+  "requested": "ghcr.io/ucb-bar/chia-champsim:latest",
+  "image_id": "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "repo_digest": "ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "same_digest_as_local_gate": true
+ },
+ "container": {
+  "name": "chia-grid",
+  "created": "2026-09-22T11:10:11.256847+00:00",
+  "finished": "2026-09-22T13:35:57.962477+00:00",
+  "exit_code": 0,
+  "wall_clock_s": 8746.7,
+  "command": "bash .tmp/run_grid.sh",
+  "invocation": "python3 chia_loop/loops/audit_repro.py --version 6 --config /workspace/.tmp/cfg/grid.json --backend champsim_node --generator-mode directory --execution local --output-dir /workspace/results/grid_v6",
+  "ray_head": "ray start --head --port=6379 --resources='{\"champsim\":1}'",
+  "mounts": [
+   "/home/listen/CHIA/chia-repo-audit -> /workspace (rw)",
+   "/home/listen/下载 -> /traces (ro)"
+  ],
+  "resource_caps": {
+   "memory": "10 GiB",
+   "cpu": "no quota (host has 8 cores)"
+  }
+ },
+ "champsim": {
+  "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694",
+  "tree": "/home/ray/champsim",
+  "build_recipe": "make clean && python3 ./config.sh <tmp cfg> && make -j$(nproc)",
+  "incremental": false,
+  "python": "3.10.19",
+  "binary_builds": {
+   "11791ea33a696b76": {
+    "candidate_id": "gen_fill_only_conservative_s1",
+    "binary_ready_local": "2026-09-22T19:32:27+08:00"
+   },
+   "28e80600e04c016a": {
+    "candidate_id": "gen_fill_only_conservative_s2",
+    "binary_ready_local": "2026-09-22T20:30:50+08:00"
+   },
+   "46a3c00dde193bff": {
+    "candidate_id": "gen_fill_only_conservative_s3",
+    "binary_ready_local": "2026-09-22T20:59:51+08:00"
+   }
+  }
+ },
+ "traces": {
+  "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": {
+   "path": "/traces/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+   "bytes": 25294572,
+   "sha256": "ecdc1feb586b636273bc7f7572d181a2358c9f5680fbe97eb22002ed4763fa6e"
+  },
+  "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": {
+   "path": "/traces/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+   "bytes": 74092232,
+   "sha256": "3585b6c1a3f9d934f06c1e15199a58af6808e290408dc618de19b9dd34302a98"
+  },
+  "638.imagick_s-4128B.champsimtrace.xz": {
+   "path": "/traces/638.imagick_s-4128B.champsimtrace.xz",
+   "bytes": 50679132,
+   "sha256": "c9b081f75b8b1b7fda06d9db9254cf0c9d5ec1e2cb709207c0fc9ac8475f3825"
+  }
+ },
+ "artifact_notes": {
+  "git_sha_in_raw_json": "d3033f5",
+  "git_sha_caveat": "raw.json records HEAD at write time. The only commits made while the grid ran were documentation-only (e35e863, d3033f5); the executable code was that of 675abf8, so code identity is unchanged but the recorded sha is not the sha the run started on. stage_run should pin HEAD once at stage entry.",
+  "config_sha256": "680d37438caff1aa6aee4c6b51d54bd5d0d42def6452d738de6684538f7d378c",
+  "not_retained": "per-run wall seconds and champsim stdout for grid cells (the reference probe does retain run_s); cell cycles come from the --json stats file the adapter parses."
+ }
+}

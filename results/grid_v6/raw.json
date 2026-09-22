@@ -1,0 +1,651 @@
+{
+  "schema_version": 2,
+  "version": 6,
+  "backend": "champsim_node",
+  "config": {
+    "version": 6,
+    "backend": "champsim_node",
+    "generator_mode": "directory",
+    "candidate_catalog": [
+      {
+        "candidate_id": "lru_reference",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "mru_variant",
+        "design": {
+          "llc_replacement": "mru",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "fifo_variant",
+        "design": {
+          "llc_replacement": "fifo",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "srrip_variant",
+        "design": {
+          "llc_replacement": "srrip",
+          "branch_predictor": "bimodal"
+        }
+      }
+    ],
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "prompts": [
+      "fill_only_conservative"
+    ],
+    "traces": [
+      "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+      "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+      "638.imagick_s-4128B.champsimtrace.xz"
+    ],
+    "acceptance_threshold": 0.05,
+    "n_repeat": 2,
+    "kappa_gate": 0.7,
+    "re_audit_ratio": 0.2,
+    "candidates_dir": "/workspace/.tmp/grid_cand",
+    "champsim_node": {
+      "champsim_root": "/home/ray/champsim",
+      "traces_dir": "/traces",
+      "warmup_instructions": 1000000,
+      "simulation_instructions": 4000000,
+      "cache_level": "L2C",
+      "build_timeout_s": 3600,
+      "run_timeout_s": 1800,
+      "incremental": false
+    },
+    "champsim": {}
+  },
+  "config_sha256": "680d37438caff1aa6aee4c6b51d54bd5d0d42def6452d738de6684538f7d378c",
+  "git_sha": "d3033f5",
+  "n_cells": 9,
+  "n_candidates": 3,
+  "cells": {
+    "1/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": {
+      "seed": 1,
+      "prompt": "fill_only_conservative",
+      "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+      "candidate_id": "gen_fill_only_conservative_s1",
+      "candidate_sha256": "1e09694c0a39ebaf697427dc0bea5b8ffc080c999a47a37e98c345aa4337a2a0",
+      "generator_seed": 1,
+      "design": {
+        "module_name": "gen_fill_only_conservative_s1",
+        "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "fe657c63be72df20057747c47e32b6a44e7d2135646274438cb55e250e827d3e",
+      "median": {
+        "cycles": 2252142.0,
+        "ipc": 1.7760882750732414,
+        "l1_miss_rate": NaN,
+        "seed": 1,
+        "prompt": "fill_only_conservative",
+        "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_fill_only_conservative_s1",
+          "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node",
+        "binary_sha256": "11791ea33a696b76",
+        "instructions": 4000003.0
+      },
+      "trials": [
+        {
+          "cycles": 2252142.0,
+          "ipc": 1.7760882750732414,
+          "l1_miss_rate": NaN,
+          "seed": 1,
+          "prompt": "fill_only_conservative",
+          "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s1",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "11791ea33a696b76",
+          "instructions": 4000003.0
+        },
+        {
+          "cycles": 2252142.0,
+          "ipc": 1.7760882750732414,
+          "l1_miss_rate": NaN,
+          "seed": 1,
+          "prompt": "fill_only_conservative",
+          "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s1",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "11791ea33a696b76",
+          "instructions": 4000003.0
+        }
+      ]
+    },
+    "1/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": {
+      "seed": 1,
+      "prompt": "fill_only_conservative",
+      "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+      "candidate_id": "gen_fill_only_conservative_s1",
+      "candidate_sha256": "1e09694c0a39ebaf697427dc0bea5b8ffc080c999a47a37e98c345aa4337a2a0",
+      "generator_seed": 1,
+      "design": {
+        "module_name": "gen_fill_only_conservative_s1",
+        "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "fe657c63be72df20057747c47e32b6a44e7d2135646274438cb55e250e827d3e",
+      "median": {
+        "cycles": 95624440.0,
+        "ipc": 0.04183031032652322,
+        "l1_miss_rate": NaN,
+        "seed": 1,
+        "prompt": "fill_only_conservative",
+        "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_fill_only_conservative_s1",
+          "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node",
+        "binary_sha256": "11791ea33a696b76",
+        "instructions": 4000000.0
+      },
+      "trials": [
+        {
+          "cycles": 95624440.0,
+          "ipc": 0.04183031032652322,
+          "l1_miss_rate": NaN,
+          "seed": 1,
+          "prompt": "fill_only_conservative",
+          "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s1",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "11791ea33a696b76",
+          "instructions": 4000000.0
+        },
+        {
+          "cycles": 95624440.0,
+          "ipc": 0.04183031032652322,
+          "l1_miss_rate": NaN,
+          "seed": 1,
+          "prompt": "fill_only_conservative",
+          "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s1",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "11791ea33a696b76",
+          "instructions": 4000000.0
+        }
+      ]
+    },
+    "1/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": {
+      "seed": 1,
+      "prompt": "fill_only_conservative",
+      "trace": "638.imagick_s-4128B.champsimtrace.xz",
+      "candidate_id": "gen_fill_only_conservative_s1",
+      "candidate_sha256": "1e09694c0a39ebaf697427dc0bea5b8ffc080c999a47a37e98c345aa4337a2a0",
+      "generator_seed": 1,
+      "design": {
+        "module_name": "gen_fill_only_conservative_s1",
+        "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "fe657c63be72df20057747c47e32b6a44e7d2135646274438cb55e250e827d3e",
+      "median": {
+        "cycles": 1526689.0,
+        "ipc": 2.620050318041199,
+        "l1_miss_rate": NaN,
+        "seed": 1,
+        "prompt": "fill_only_conservative",
+        "trace": "638.imagick_s-4128B.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_fill_only_conservative_s1",
+          "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node",
+        "binary_sha256": "11791ea33a696b76",
+        "instructions": 4000002.0
+      },
+      "trials": [
+        {
+          "cycles": 1526689.0,
+          "ipc": 2.620050318041199,
+          "l1_miss_rate": NaN,
+          "seed": 1,
+          "prompt": "fill_only_conservative",
+          "trace": "638.imagick_s-4128B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s1",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "11791ea33a696b76",
+          "instructions": 4000002.0
+        },
+        {
+          "cycles": 1526689.0,
+          "ipc": 2.620050318041199,
+          "l1_miss_rate": NaN,
+          "seed": 1,
+          "prompt": "fill_only_conservative",
+          "trace": "638.imagick_s-4128B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s1",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "11791ea33a696b76",
+          "instructions": 4000002.0
+        }
+      ]
+    },
+    "2/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": {
+      "seed": 2,
+      "prompt": "fill_only_conservative",
+      "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+      "candidate_id": "gen_fill_only_conservative_s2",
+      "candidate_sha256": "02142cedf87119f042dd869e28d930e3c328883be28655904ddef6615ef069d8",
+      "generator_seed": 2,
+      "design": {
+        "module_name": "gen_fill_only_conservative_s2",
+        "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "858c80fcf77042a56ac8607b6a73e6ee0eb6ceaf11fd15bbf3fc0909c0b1cb65",
+      "median": {
+        "cycles": 2255590.0,
+        "ipc": 1.773373263758041,
+        "l1_miss_rate": NaN,
+        "seed": 2,
+        "prompt": "fill_only_conservative",
+        "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_fill_only_conservative_s2",
+          "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node",
+        "binary_sha256": "28e80600e04c016a",
+        "instructions": 4000003.0
+      },
+      "trials": [
+        {
+          "cycles": 2255590.0,
+          "ipc": 1.773373263758041,
+          "l1_miss_rate": NaN,
+          "seed": 2,
+          "prompt": "fill_only_conservative",
+          "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s2",
+            "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "28e80600e04c016a",
+          "instructions": 4000003.0
+        },
+        {
+          "cycles": 2255590.0,
+          "ipc": 1.773373263758041,
+          "l1_miss_rate": NaN,
+          "seed": 2,
+          "prompt": "fill_only_conservative",
+          "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s2",
+            "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "28e80600e04c016a",
+          "instructions": 4000003.0
+        }
+      ]
+    },
+    "2/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": {
+      "seed": 2,
+      "prompt": "fill_only_conservative",
+      "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+      "candidate_id": "gen_fill_only_conservative_s2",
+      "candidate_sha256": "02142cedf87119f042dd869e28d930e3c328883be28655904ddef6615ef069d8",
+      "generator_seed": 2,
+      "design": {
+        "module_name": "gen_fill_only_conservative_s2",
+        "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "858c80fcf77042a56ac8607b6a73e6ee0eb6ceaf11fd15bbf3fc0909c0b1cb65",
+      "median": {
+        "cycles": 6420195.0,
+        "ipc": 0.6230340355705707,
+        "l1_miss_rate": NaN,
+        "seed": 2,
+        "prompt": "fill_only_conservative",
+        "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_fill_only_conservative_s2",
+          "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node",
+        "binary_sha256": "28e80600e04c016a",
+        "instructions": 4000000.0
+      },
+      "trials": [
+        {
+          "cycles": 6420195.0,
+          "ipc": 0.6230340355705707,
+          "l1_miss_rate": NaN,
+          "seed": 2,
+          "prompt": "fill_only_conservative",
+          "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s2",
+            "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "28e80600e04c016a",
+          "instructions": 4000000.0
+        },
+        {
+          "cycles": 6420195.0,
+          "ipc": 0.6230340355705707,
+          "l1_miss_rate": NaN,
+          "seed": 2,
+          "prompt": "fill_only_conservative",
+          "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s2",
+            "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "28e80600e04c016a",
+          "instructions": 4000000.0
+        }
+      ]
+    },
+    "2/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": {
+      "seed": 2,
+      "prompt": "fill_only_conservative",
+      "trace": "638.imagick_s-4128B.champsimtrace.xz",
+      "candidate_id": "gen_fill_only_conservative_s2",
+      "candidate_sha256": "02142cedf87119f042dd869e28d930e3c328883be28655904ddef6615ef069d8",
+      "generator_seed": 2,
+      "design": {
+        "module_name": "gen_fill_only_conservative_s2",
+        "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "858c80fcf77042a56ac8607b6a73e6ee0eb6ceaf11fd15bbf3fc0909c0b1cb65",
+      "median": {
+        "cycles": 1561323.0,
+        "ipc": 2.5619311314827233,
+        "l1_miss_rate": NaN,
+        "seed": 2,
+        "prompt": "fill_only_conservative",
+        "trace": "638.imagick_s-4128B.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_fill_only_conservative_s2",
+          "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node",
+        "binary_sha256": "28e80600e04c016a",
+        "instructions": 4000002.0
+      },
+      "trials": [
+        {
+          "cycles": 1561323.0,
+          "ipc": 2.5619311314827233,
+          "l1_miss_rate": NaN,
+          "seed": 2,
+          "prompt": "fill_only_conservative",
+          "trace": "638.imagick_s-4128B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s2",
+            "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "28e80600e04c016a",
+          "instructions": 4000002.0
+        },
+        {
+          "cycles": 1561323.0,
+          "ipc": 2.5619311314827233,
+          "l1_miss_rate": NaN,
+          "seed": 2,
+          "prompt": "fill_only_conservative",
+          "trace": "638.imagick_s-4128B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s2",
+            "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "28e80600e04c016a",
+          "instructions": 4000002.0
+        }
+      ]
+    },
+    "3/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": {
+      "seed": 3,
+      "prompt": "fill_only_conservative",
+      "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+      "candidate_id": "gen_fill_only_conservative_s3",
+      "candidate_sha256": "ae5fcc1fa397e25c9f936a901012887009e455e794962db65ea6e9ee443aeb1e",
+      "generator_seed": 3,
+      "design": {
+        "module_name": "gen_fill_only_conservative_s3",
+        "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "94327c7d3d51379adb0fd4857d1bdd082a62b267973dc235c2eb9db4e0ed84ca",
+      "median": {
+        "cycles": 2252142.0,
+        "ipc": 1.7760882750732414,
+        "l1_miss_rate": NaN,
+        "seed": 3,
+        "prompt": "fill_only_conservative",
+        "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_fill_only_conservative_s3",
+          "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node",
+        "binary_sha256": "46a3c00dde193bff",
+        "instructions": 4000003.0
+      },
+      "trials": [
+        {
+          "cycles": 2252142.0,
+          "ipc": 1.7760882750732414,
+          "l1_miss_rate": NaN,
+          "seed": 3,
+          "prompt": "fill_only_conservative",
+          "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s3",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "46a3c00dde193bff",
+          "instructions": 4000003.0
+        },
+        {
+          "cycles": 2252142.0,
+          "ipc": 1.7760882750732414,
+          "l1_miss_rate": NaN,
+          "seed": 3,
+          "prompt": "fill_only_conservative",
+          "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s3",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "46a3c00dde193bff",
+          "instructions": 4000003.0
+        }
+      ]
+    },
+    "3/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": {
+      "seed": 3,
+      "prompt": "fill_only_conservative",
+      "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+      "candidate_id": "gen_fill_only_conservative_s3",
+      "candidate_sha256": "ae5fcc1fa397e25c9f936a901012887009e455e794962db65ea6e9ee443aeb1e",
+      "generator_seed": 3,
+      "design": {
+        "module_name": "gen_fill_only_conservative_s3",
+        "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "94327c7d3d51379adb0fd4857d1bdd082a62b267973dc235c2eb9db4e0ed84ca",
+      "median": {
+        "cycles": 95624440.0,
+        "ipc": 0.04183031032652322,
+        "l1_miss_rate": NaN,
+        "seed": 3,
+        "prompt": "fill_only_conservative",
+        "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_fill_only_conservative_s3",
+          "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node",
+        "binary_sha256": "46a3c00dde193bff",
+        "instructions": 4000000.0
+      },
+      "trials": [
+        {
+          "cycles": 95624440.0,
+          "ipc": 0.04183031032652322,
+          "l1_miss_rate": NaN,
+          "seed": 3,
+          "prompt": "fill_only_conservative",
+          "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s3",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "46a3c00dde193bff",
+          "instructions": 4000000.0
+        },
+        {
+          "cycles": 95624440.0,
+          "ipc": 0.04183031032652322,
+          "l1_miss_rate": NaN,
+          "seed": 3,
+          "prompt": "fill_only_conservative",
+          "trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s3",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "46a3c00dde193bff",
+          "instructions": 4000000.0
+        }
+      ]
+    },
+    "3/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": {
+      "seed": 3,
+      "prompt": "fill_only_conservative",
+      "trace": "638.imagick_s-4128B.champsimtrace.xz",
+      "candidate_id": "gen_fill_only_conservative_s3",
+      "candidate_sha256": "ae5fcc1fa397e25c9f936a901012887009e455e794962db65ea6e9ee443aeb1e",
+      "generator_seed": 3,
+      "design": {
+        "module_name": "gen_fill_only_conservative_s3",
+        "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "94327c7d3d51379adb0fd4857d1bdd082a62b267973dc235c2eb9db4e0ed84ca",
+      "median": {
+        "cycles": 1526689.0,
+        "ipc": 2.620050318041199,
+        "l1_miss_rate": NaN,
+        "seed": 3,
+        "prompt": "fill_only_conservative",
+        "trace": "638.imagick_s-4128B.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_fill_only_conservative_s3",
+          "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node",
+        "binary_sha256": "46a3c00dde193bff",
+        "instructions": 4000002.0
+      },
+      "trials": [
+        {
+          "cycles": 1526689.0,
+          "ipc": 2.620050318041199,
+          "l1_miss_rate": NaN,
+          "seed": 3,
+          "prompt": "fill_only_conservative",
+          "trace": "638.imagick_s-4128B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s3",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "46a3c00dde193bff",
+          "instructions": 4000002.0
+        },
+        {
+          "cycles": 1526689.0,
+          "ipc": 2.620050318041199,
+          "l1_miss_rate": NaN,
+          "seed": 3,
+          "prompt": "fill_only_conservative",
+          "trace": "638.imagick_s-4128B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_fill_only_conservative_s3",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s3 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node",
+          "binary_sha256": "46a3c00dde193bff",
+          "instructions": 4000002.0
+        }
+      ]
+    }
+  }
+}

@@ -490,3 +490,29 @@
 - Follow-up for the user: if the DSW instance is not recycled before its
   `authCode` expires, revoke/reissue it from the ModelScope console.
 - Commit: `e35e863` (hash backfill; the incident has no code change of its own)
+
+## 2026-09-22 - Real-candidate grid v6 completed and committed
+
+- Task: finish the sizing decision with real evidence - 3 LLM-generated designs
+  x 3 DPC-4 traces x 2 repeats inside the official image, then record the verdict.
+- Tools: `chia-grid` container on `ghcr.io/ucb-bar/chia-champsim:latest`
+  (`sha256:610951d3...`), Ray ChampSimNode, `scripts/check_grid_evidence.py`.
+- Operations: committed `results/grid_v6/` (raw.json, audit/dblind reports,
+  scorecard, env_pin) plus a new `provenance.json` holding the image digest, the
+  container command, the three trace SHA-256s and the build timeline; extended
+  `docs/plans/2026-09-22-modelscope-dsw-timing.md` with the grid outcome section;
+  removed the verified `.tmp/backups/` copies (rule 2.5).
+- Verification:
+  - Container exit 0 after 8,746.7 s; 3 cold builds, 18 runs, 3 distinct binary
+    digests, none equal to the image's prebuilt `688278205d6c9fa4`.
+  - `python3 scripts/check_grid_evidence.py --raw results/grid_v6/raw.json
+    --reference results/reference_designs_2026-09-22.jsonl` -> rc=1, one failure:
+    seed 2 on imagick equals the no-op cycle count exactly.
+  - `scorecard.txt`: cross-seed CV 78.16% (gate 5%) -> NON-REPRODUCIBLE, publish
+    gate BLOCKED; repeated-run CV 0.0000% with all 9 cells bit-identical.
+  - The seed-3 design's `prefetcher_source` digest is `529a404042b5`, matching the
+    value recorded when the incident was opened.
+  - `python3 -m unittest discover -s chia_loop/tests` -> 34 tests OK.
+- Deviation: the image digest and trace hashes were not retained by the harness, so
+  they were written into `provenance.json` after the run rather than by it.
+- Commit: _(backfill below)_

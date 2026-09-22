@@ -529,3 +529,79 @@ to the local copy after upload), their result files
 two idle Jupyter kernels. None of them hold credentials. They are kept rather than
 deleted so the numbers above can be re-derived; deleting them costs nothing once
 this section has been checked against them.
+
+## The grid ran (2026-09-22 19:10:11 - 21:35:57, contract `39fb3caf1be1`)
+
+`chia-grid` exited 0 after 8,746.7 s. The rectangle was 3 seeds x 1 prompt x
+3 traces with `n_repeat=2`, i.e. 9 cells and 18 runs, behind 3 cold builds
+(binary ready at 19:32:27, 20:30:50, 20:59:51). Artifacts:
+`results/grid_v6/{raw.json,audit_report.json,dblind_report.json,scorecard.txt,env_pin.json,provenance.json}`;
+`provenance.json` carries what `raw.json` does not - image digest, the container
+command, the three trace SHA-256s, and the build timeline.
+
+Median cycles per cell, against the two reference designs measured on the same
+trace and the same 1M+4M budget:
+
+| seed | image digest (binary) | fotonik3d | ligra_BFSCC | imagick |
+| --- | --- | --- | --- | --- |
+| noop reference | `b49ebf8858bedd46` | 2,261,770 | 7,183,123 | 1,561,323 |
+| next_line reference | `476f7ee0b9cfc286` | 2,252,330 | 5,520,026 | 1,496,885 |
+| 1 | `11791ea33a696b76` | 2,252,142 (-0.43%) | 95,624,440 (+1231%) | 1,526,689 (-2.22%) |
+| 2 | `28e80600e04c016a` | 2,255,590 (-0.27%) | 6,420,195 (-10.62%) | **1,561,323 (+0.00%)** |
+| 3 | `46a3c00dde193bff` | 2,252,142 (-0.43%) | 95,624,440 (+1231%) | 1,526,689 (-2.22%) |
+
+`scripts/check_grid_evidence.py` says `passed: false`, with one failure:
+`moves_cycles_vs_reference - fill_only_conservative/2 on imagick equals noop at
+1.56132e+06`. Three things follow, and they are the reason this grid is worth
+more than the 18 cells it contains.
+
+1. **Two seeds produced one algorithm.** Seeds 1 and 3 differ only in the struct
+   name and in the continuation indentation of two parameter lines; their
+   `prefetcher_source` digests (`b542624faf6a`, `529a404042b5`), design digests
+   (`fe657c63be72`, `94327c7d3d51`) and binary digests are all different, while
+   every one of the three traces returns bit-identical cycles. So "the seed
+   changes the artifact" holds and "the seed changes the design" does not: at
+   this prompt the generator's seed moved only cosmetics. Both implement
+   prefetch-on-every-fill, which is not next-line: on BFSCC it costs 13.3x the
+   no-op cycle count and about 19x its wall clock (17.5 min per run against the
+   reference's 56.2 s on that trace), because every fill queues another line and
+   the graph workload has almost no locality to exploit.
+2. **A candidate can be inert on one trace and strong on another.** Seed 2 keeps
+   a 16-entry fill history and prefetches only when a recorded block sits exactly
+   one line ahead, so on imagick it issues nothing and reproduces the no-op
+   cycle count to the unit while on ligra it is 10.6% faster than no-op and 16.3%
+   faster than next_line. The checker flags the equality, which is right as a
+   warning and wrong as a gate: the design is not globally null, so per-trace
+   inertness and design-level inertness have to stay separate claims. Judgement,
+   not fact: imagick's streaming access pattern is the plausible reason a
+   history-match prefetcher never fires.
+3. **The reproducibility verdict on this rectangle is NON-REPRODUCIBLE, and the
+   cause is now visible rather than assumed.** `scorecard.txt`: max cross-seed CV
+   78.16% against a 5% gate, max trace CV 163.33%, trace top-1 stability 0.667,
+   Kendall tau 0.556, publish gate BLOCKED on `reproducibility_threshold`. The
+   cross-seed spread is entirely seed 2 against seeds 1 and 3, which agree with
+   each other exactly. Repeated-run CV is 0.0000%: all 9 cells gave bit-identical
+   cycles across their two trials, each trial its own process, so the simulator
+   is deterministic at this budget - but N=2 is below the N>=5 cross-session bar
+   this project sets for a determinism claim, so no such claim is made here.
+
+What this does and does not license. Gate 2's compile half is met: three generated
+modules each produced their own binary, none equal to the image's prebuilt
+`688278205d6c9fa4`, with `incremental=False`. Gate 3 is met (runs complete on
+three traces). Gate 4 is met only because `provenance.json` was written after the
+fact: `raw.json` alone has no image digest and no trace hashes, and its `git_sha`
+is HEAD at write time rather than at stage entry - it reads `d3033f5`, while the
+code that ran was that of `675abf8` and only documentation commits landed in
+between. No ranking claim is supportable from these three designs: two are the
+same program and the third is inert on a third of the traces.
+
+Follow-ups opened by the run, none done in it:
+
+- `stage_run` writes `raw.json` once at the end, so a single run timeout discards
+  every completed cell. The BFSCC runs took ~17.5 min against `run_timeout_s`
+  1800 s, i.e. 1.7x margin, so that was one slower design away from losing the
+  whole grid; per-design output plus a caught build/run failure is the fix.
+- The checker should report design-level and cell-level nullity separately, and
+  grid cells should retain per-run wall seconds the way the reference probe does.
+- The screening artifact still needs the contract key and a per-row source digest,
+  so 6/17 and the per-contract split are re-derivable from the committed file.
