@@ -331,4 +331,4 @@
 - Verification: test written first and observed red (`AttributeError:
   'SimResult' object has no attribute 'binary_sha256'`), then
   `python3 -m unittest discover -s chia_loop/tests` -> Ran 22 tests, OK.
-- Commit: pending
+- Commit: `8227ef0` (hash backfill; record maintenance only)
