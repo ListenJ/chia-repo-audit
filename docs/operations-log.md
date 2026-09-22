@@ -564,4 +564,4 @@
   only hits are the prose of the exposure record - no credential value is present.
 - Deviation: the 557 count was not caught before the migration record was
   committed; the record's "549 files on both sides" claim was corrected in place.
-- Commit: `<pending>`
+- Commit: `8698ea3` (hash backfill; record maintenance only)
