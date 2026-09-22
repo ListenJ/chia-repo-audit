@@ -556,12 +556,30 @@
   touched on the destination.
 - Verification: destination now 537 regular files; relative path lists from local
   `find . -type f` and remote `dir /s /b /a-d` (CRLF stripped, separators
-  normalised) diff clean -> `LISTS_IDENTICAL`. Remote `git rev-parse HEAD` =
+  normalised) diff clean -> `LISTS_IDENTICAL`. Then upgraded the check from spot
+  hashes to a full comparison: SHA-256 of all 148 non-`.git` files on both hosts
+  (`Get-FileHash` remotely via `D:\tmp\qoder_remote_hash.ps1`, `sha256sum`
+  locally) -> 147 identical, the single difference being this file, which is
+  locally ahead of the last upload and re-uploaded after the record is committed.
+  The list diff is against the destination's 537 files; the local side has since
+  grown by the loose git objects these two commits create, which are not data
+  drift.
+  Remote `git rev-parse HEAD` =
   `d8325fb`, `git fsck --no-progress` reports only 3 dangling blobs. Archive
   re-hashed with `certutil`: `1ba856fe93065ba9...`, equal to local, 1,402,191 B.
   Rule 11 re-scan of the migrated set: pattern search over `authCode|sk-*|ghp_|
   AKIA*|PRIVATE KEY|password=` returns 1 file, `docs/operations-log.md`, and the
   only hits are the prose of the exposure record - no credential value is present.
+- Destination git state: the packed `.git` keeps its branch ref at the HEAD that
+  was current when packing; record-maintenance commits made afterwards are
+  reachable there by `git fetch origin` (verified: `FETCH_HEAD` advanced
+  `d8325fb..9968c98`). The one working file those commits change,
+  `docs/operations-log.md`, was re-uploaded with `scp` and re-hashed on both
+  hosts, so the destination tree is byte-identical to the newest local tree even
+  though its packed object store predates those commits.
 - Deviation: the 557 count was not caught before the migration record was
   committed; the record's "549 files on both sides" claim was corrected in place.
-- Commit: `8698ea3` (hash backfill; record maintenance only)
+  The two follow-up edits to this file reused the committed version as the
+  rollback point instead of re-creating a `.tmp/backups/` copy (rule 2).
+- Commit: `8698ea3`, plus one follow-up commit that adds the re-verification
+  detail recorded above and backfills hashes (record maintenance).
