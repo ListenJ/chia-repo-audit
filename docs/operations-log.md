@@ -532,7 +532,7 @@
   and the timing plan doc hash identically after extraction. No member name uses a
   character Windows rejects and the longest path stays under 130 characters.
 - Also this round: removed `.tmp/backups/` (6 verified copies, all reconstructible
-  from git, unreferenced) and the container-generated `scripts/__pycache__`.
+  from git, unreferenced) and every container-generated `__pycache__` directory.
 - Credential check: `.tmp`, `results`, `docs`, `scripts`, `chia_loop` scanned for
   high-entropy key patterns and cookie/auth-token strings before packing - no hits.
-- Commit: _(backfill below)_
+- Commit: `4d61b6a` (hash backfill; record maintenance only)
