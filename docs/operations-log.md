@@ -527,12 +527,41 @@
   `docs/`, `.tmp/`) into `chia-repo-audit-20260922.tar.gz`, created
   `D:\chia-repo-audit-from-linux-20260922`, uploaded the archive, extracted it
   there, and kept both the archive and the tree.
-- Verification: archive sha256 `59d6136eb4f9b219...` identical on both hosts and
-  the same 1,458,615 B; 549 regular files on both sides; `results/grid_v6/raw.json`
-  and the timing plan doc hash identically after extraction. No member name uses a
-  character Windows rejects and the longest path stays under 130 characters.
+- Verification: archive sha256 `1ba856fe93065ba9...` identical on both hosts and
+  the same 1,402,191 B; `results/grid_v6/raw.json` and the timing plan doc hash
+  identically after extraction. No member name uses a character Windows rejects
+  and the longest path stays under 130 characters.
+- Correction: the archive hash/size and the "549 regular files on both sides"
+  written above came from the first upload, which was then superseded by a
+  repacked (pycache-free) archive; the numbers above now record the final archive
+  as re-hashed this round. The destination equality claim was not established at
+  the time: the extracted tree actually held 557 files, 20 of them `.pyc` under 4
+  `__pycache__` directories, and those 20 are absent from the final archive, so
+  they must have arrived with the first upload - re-extracting does not delete a
+  file the new archive omits. See the re-verification record below.
 - Also this round: removed `.tmp/backups/` (6 verified copies, all reconstructible
   from git, unreferenced) and every container-generated `__pycache__` directory.
 - Credential check: `.tmp`, `results`, `docs`, `scripts`, `chia_loop` scanned for
   high-entropy key patterns and cookie/auth-token strings before packing - no hits.
 - Commit: `4d61b6a` (hash backfill; record maintenance only)
+
+## 2026-09-22 - Migration re-verified after the destination-tree count mismatch
+
+- Task: resolve the 557-vs-537 file-count mismatch reported in the migration
+  record above and prove destination equality beyond spot hashes.
+- Tools: ssh (key auth, cmd.exe), local `find`/`diff`, remote `git fsck`.
+- Operations: deleted the 4 stale `__pycache__` directories in the extracted tree
+  (20 `.pyc` files left by the first extraction; a re-extract does not remove them)
+  and the session scratch folder `D:\qoder-probe-20260922`. No repository file was
+  touched on the destination.
+- Verification: destination now 537 regular files; relative path lists from local
+  `find . -type f` and remote `dir /s /b /a-d` (CRLF stripped, separators
+  normalised) diff clean -> `LISTS_IDENTICAL`. Remote `git rev-parse HEAD` =
+  `d8325fb`, `git fsck --no-progress` reports only 3 dangling blobs. Archive
+  re-hashed with `certutil`: `1ba856fe93065ba9...`, equal to local, 1,402,191 B.
+  Rule 11 re-scan of the migrated set: pattern search over `authCode|sk-*|ghp_|
+  AKIA*|PRIVATE KEY|password=` returns 1 file, `docs/operations-log.md`, and the
+  only hits are the prose of the exposure record - no credential value is present.
+- Deviation: the 557 count was not caught before the migration record was
+  committed; the record's "549 files on both sides" claim was corrected in place.
+- Commit: `<pending>`
