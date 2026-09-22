@@ -380,4 +380,4 @@
 - Deviation to remember: v3's 3/3 is not evidence that the corrected signature
   raised the compile rate, because v3 was screened only on the brief family that
   had already compiled once. Two variables moved.
-- Commit: pending
+- Commit: `d08a112` (hash backfill; record maintenance only)
