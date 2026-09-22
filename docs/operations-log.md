@@ -515,4 +515,4 @@
   - `python3 -m unittest discover -s chia_loop/tests` -> 34 tests OK.
 - Deviation: the image digest and trace hashes were not retained by the harness, so
   they were written into `provenance.json` after the run rather than by it.
-- Commit: _(backfill below)_
+- Commit: `0e8e4b1` (hash backfill; record maintenance only)
