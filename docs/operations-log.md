@@ -399,3 +399,26 @@
   numerator/denominator`), then `python3 -m unittest discover -s chia_loop/tests`
   -> Ran 30 tests, OK. No container or host state touched.
 - Commit: `4b2414b` (hash backfill; record maintenance only)
+
+## 2026-09-22 - Reference designs measured on all three grid traces
+
+- Task: produce the no-op / next-line baselines the grid verdict compares
+  against, at the grid's own instruction budget.
+- Tools: `scripts/baseline_probe.py` in container `chia-baseline` (official
+  image, Ray), `.tmp/run_baselines.sh` launcher, `scripts/check_grid_evidence.py`.
+- Operations:
+  - `results/reference_designs_2026-09-22.jsonl`: 2 designs, one cold binary each
+    (`b49ebf8858bedd46`, `476f7ee0b9cfc286`), 1,380.3 s and 1,348.4 s builds, run
+    across fotonik3d, ligra_BFSCC and imagick at 1M warmup + 4M simulation.
+    Container exited rc=0 at 19:59:52.
+  - Plan doc records the trace-by-trace gap (0.42% / 23.15% / 4.13%) and the
+    consequence that `instructions` counts the simulated window only, so the
+    smoke floor applies to that window, not warmup + simulation.
+- Verification:
+  - `python3 -` join check: a synthetic cell per reference trace resolved all 3
+    traces through `check_grid_evidence.verdicts` with `failures: {}`, so the
+    reference file and the grid artifact share a key before the grid finishes.
+  - Re-running the checker's own suite: `Ran 30 tests, OK`.
+- Note: not yet verified whether the grid's first design cost more than a solo
+  screening build; recorded once `.tmp/grid_start`/`grid_end` exist.
+- Commit: pending

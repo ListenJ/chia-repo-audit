@@ -367,6 +367,33 @@ every trace) and fails against a build-per-trace variant. The launcher keeps a
 second cold build off the host until memory is free again, because the machine has
 15.8 GiB and each build container holds ~2.3 GiB while four ran at once.
 
+Reference designs measured, on all three grid traces at 1M warmup + 4M
+simulation (`results/reference_designs_2026-09-22.jsonl`, container exited rc=0
+at 19:59:52):
+
+| trace | noop cycles | next_line cycles | gap |
+| --- | --- | --- | --- |
+| `SPEC17-649.fotonik3d_s-1B` | 2,261,770 | 2,252,330 | 0.42% |
+| `ligra_BFSCC.com-lj.ungraph...length_250M` | 7,183,123 | 5,520,026 | 23.15% |
+| `638.imagick_s-4128B` | 1,561,323 | 1,496,885 | 4.13% |
+
+Each reference is its own cold binary (`b49ebf8858bedd46`, `476f7ee0b9cfc286`),
+neither of them the image default, built in 1,380.3 s and 1,348.4 s while the
+grid container was building alongside, and one binary served all three traces as
+intended. Three consequences:
+
+- The traces are not equally discriminative. `ligra_BFSCC` separates the two
+  canonical designs by 23%, while `fotonik3d` separates them by 0.42% - the same
+  order as the spread already seen between compiling candidates on that trace
+  (1,129,110 to 1,132,568 of 1,138,748, i.e. up to 0.85%). A ranking that only
+  moves on fotonik3d is therefore weak evidence, and the grid must be read per
+  trace rather than averaged.
+- `instructions` reports the simulated window only (4,000,00x), so the
+  1,000,000-instruction smoke floor is a floor on the simulation budget, not on
+  warmup plus simulation.
+- Run cost at this budget is trace dependent: 23.6 s on fotonik3d, 56.2 s on
+  ligra_BFSCC and 16.5 s on imagick per repeat, which is the input the grid cost
+  projection uses.
 
 Follow-ups opened by this freeze, not done in it:
 
