@@ -139,3 +139,33 @@
 - Deviation: Colab had no Docker and therefore cannot replace the already
   validated local official-image/ChampSimNode gate or support a GCP claim.
 - Commit: `6d0d2a9`
+
+## 2026-09-22 - ModelScope DSW channel established, prior run root cause corrected
+
+- Task: reach the running ModelScope (PAI-DSW) free CPU instance in a scriptable
+  way and recover the state of the interrupted smoke job.
+- Tools: browser tab as authenticated same-origin REST broker, Jupyter contents
+  API, Gitea/GitHub remotes, upstream CHIA docs.
+- Operations:
+  - Added the T3 plan `docs/plans/2026-09-22-modelscope-dsw-timing.md`.
+  - Confirmed local unauthenticated access is impossible: `/dsw-2201946/api/status`
+    from this host returns 302 to Aliyun login, so the gateway session cookie
+    stays in the browser and is never exported or stored.
+  - Broker base path corrected to `/dsw-2201946/`; the previous
+    `/api/contents/...` call returned 400 "Invalid url", which is why the earlier
+    conclusion "the probe file was lost to a container rebuild" was wrong.
+  - Read back the persistent volume: all prior artifacts survive under the
+    contents root (`chia-probe.txt`, `chia-run.log`, `chia-status.json`,
+    `champsim-smoke/`, `chia-repo-audit/` at `f1a16a9`).
+- Verification:
+  - Instance shape: 8 vCPU, 30 GiB RAM, x86_64, Python 3.11.11, g++ 11.4.0,
+    NAS 1.0 PiB mount with 1002 TiB free, tmux present.
+  - Docker CLI 28.1.0 exists but the daemon is unavailable, so the official
+    image path cannot be claimed on this instance.
+  - Recorded failure: `{"state":"failed","exit_code":1,"finished_at":
+    "2026-09-22T15:10:40+08:00"}`, cause `curl (35) ... connection reset` to
+    `release-assets.githubusercontent.com:443` during vcpkg bootstrap, i.e. an
+    egress/CDN reachability failure, not a browser or code failure.
+- Deviation: real-trace sourcing is unresolved; the documented
+  `dpc4-all-traces` bucket is not anonymously listable (404). No grid started.
+- Commit: `PLAN-ONLY`
