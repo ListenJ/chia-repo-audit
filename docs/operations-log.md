@@ -235,3 +235,31 @@
   `--warmup-instructions` never reaches the `champsim_node` config block; the
   NO-GO list in `PRECOMPUTE.md` is numbered 1,3,4,5,6.
 - Commit: `dd17585`
+
+## 2026-09-22 - Compile-feedback repair protocol added; screening shows what the prompt pins
+
+- Task: reach the number of compiling candidates that gate 2 asks for, without
+  hiding how they came to compile.
+- Tools: `scripts/real_candidate_generate.py`, `scripts/module_effect_control.py`
+  in directory (screening) mode, official image containers on the local daemon.
+- Operations:
+  - `scripts/real_candidate_generate.py`: `MODULE_SPEC` gains the
+    `champsim::block_number` constraints (`no operator%`, `/`, `>>`; use
+    `champsim::offset(base, blk)`; include what you use), a `build_repair_prompt`
+    one-turn repair mode driven by `--repair-from <screening log> --source-dir`,
+    and `build_candidate_record(extra=...)`, so a repaired record carries
+    `repair_round`, `repaired_from` and `diagnostics_sha256`.
+- Verification:
+  - `python3 -m unittest discover -s chia_loop/tests` -> Ran 19 tests, OK.
+  - Screening, one-shot candidates, real cold builds: prompt spec v1 compiled
+    0/4 screened (each `make` failure in ~48 s); prompt spec v2 compiled 0/3
+    screened so far. Every observed failure was API conformance, not algorithm:
+    `static_cast<int64_t>(champsim::address)`, `addr >> LOG2_BLOCK_SIZE`,
+    `block_number % REGION_SIZE`, `block_number >> n`, `block_number & mask`.
+  - `--dry-run` over the v2 screening log emits exactly the three failed cells as
+    `gen_aggressive_offset_s{0,1,2}_r1` and skips the unfailed cells.
+- Limitation recorded now, not later: the repair prompt carries spec v3 while the
+  source it repairs was generated under spec v2, so the repair round is not a
+  single-variable ablation. Each artifact stores its own `prompt_text` and
+  `prompt_sha256`, so the exact protocol per candidate is recoverable.
+- Commit: `<pending>`

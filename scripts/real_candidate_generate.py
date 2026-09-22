@@ -67,7 +67,16 @@ observed in a generated candidate, so re-read the code for them before answering
 - LOG2_BLOCK_SIZE is an unsigned int, so it cannot shift an address; shift
   plain integers only.
 - Key tables on champsim::address or champsim::block_number values, which
-  support == and <. There is no address-to-integer conversion to hash with."""
+  support == and <. There is no address-to-integer conversion to hash with.
+- champsim::block_number is not an integer either: it supports ==, <, ++, and
+  addition/subtraction of a difference_type, but there is no operator%, operator/
+  or operator>> on it, so you cannot index an array with an address or mask off
+  region bits. To reason about a region, hold a champsim::block_number base and
+  take champsim::offset(base, blk), which returns a signed line count you can
+  compare or use as an offset. Track a small fixed set of registers, or a
+  std::vector of entries scanned with ==, instead of an address-indexed table.
+- Include what you use: <vector>, <algorithm>, <cstddef> are available; anything
+  else is not."""
 
 PROMPTS = {
     "default": (
@@ -105,6 +114,24 @@ def build_prompt(prompt_name: str, seed: int) -> str:
         f"Design brief (seed {seed}): {brief}\n\n"
         "Return only one ```cpp fenced block holding the complete module, including "
         "the three #include lines. No prose, no comments describing the plan."
+    )
+
+
+def build_repair_prompt(prompt_name: str, seed: int, previous_source: str,
+                        diagnostics: str, module: str) -> str:
+    """Prompt for one compile-feedback round.
+
+    Repaired candidates stay a separate protocol: the record carries
+    ``repair_round`` and the module they were repaired from, so a repaired
+    design can never be counted as a one-shot generation.
+    """
+    return (
+        f"{build_prompt(prompt_name, seed)}\n\n"
+        f"Your previous answer for this brief was:\n\n```cpp\n{previous_source}\n```\n\n"
+        "It failed to compile. Compiler output:\n\n"
+        f"```\n{diagnostics[-4000:]}\n```\n\n"
+        f"Name the struct exactly `{module}`. Keep the design idea and change only "
+        "what the compiler requires. Return only the corrected ```cpp block."
     )
 
 
@@ -155,7 +182,7 @@ def parse_candidate_source(raw: str, *, module_name: str) -> dict:
 
 def build_candidate_record(*, model: str, prompt_name: str, seed: int, prompt_text: str,
                            raw_response: str, parsed: dict, api_base: str,
-                           latency_s: float, usage: dict) -> dict:
+                           latency_s: float, usage: dict, extra: dict | None = None) -> dict:
     module = parsed["module_name"]
     return {
         "candidate_id": module,
@@ -181,6 +208,7 @@ def build_candidate_record(*, model: str, prompt_name: str, seed: int, prompt_te
             "normalizations": parsed["normalizations"],
             "warnings": parsed["warnings"],
             "credential_source": str(CREDENTIAL_PATH) + " (value not stored)",
+            **(extra or {}),
         },
     }
 
@@ -236,6 +264,11 @@ def main() -> int:
     parser.add_argument("--timeout-s", type=int, default=180)
     parser.add_argument("--dry-run", action="store_true",
                         help="print prompts without contacting any API")
+    parser.add_argument("--repair-from", type=Path,
+                        help="screening JSONL from scripts/module_effect_control.py; "
+                             "one repair turn is generated for each build failure")
+    parser.add_argument("--source-dir", type=Path,
+                        help="directory holding the candidate JSONs named by that log")
     args = parser.parse_args()
 
     cells = []
@@ -251,9 +284,38 @@ def main() -> int:
     api_key = "" if args.dry_run else read_api_key(args.credential_path)
     written, failures = 0, []
 
+    failed, previous = {}, {}
+    if args.repair_from:
+        for line in args.repair_from.read_text().splitlines():
+            try:
+                record = json.loads(line)
+            except ValueError:
+                continue
+            if record.get("build_success") is False:
+                failed[record["module"]] = record.get("diagnostics_tail", "")
+        for path in sorted((args.source_dir or args.out_dir).glob("*.json")):
+            try:
+                record = json.loads(path.read_text())
+            except ValueError:
+                continue
+            if "design" in record:
+                previous[record["design"]["module_name"]] = record
+
     for name, seed in cells:
         prompt_text = build_prompt(name, seed)
         module = module_name_for(name, seed)
+        extra = None
+        if args.repair_from:
+            diagnostics = failed.get(module)
+            if diagnostics is None or module not in previous:
+                continue
+            extra = {"repair_round": 1, "repaired_from": module,
+                     "diagnostics_sha256":
+                         hashlib.sha256(diagnostics.encode()).hexdigest()}
+            prompt_text = build_repair_prompt(
+                name, seed, previous[module]["design"]["prefetcher_source"],
+                diagnostics, f"{module}_r1")
+            module += "_r1"
         entry = {"cell": f"{name}/{seed}", "module_name": module, "model": args.model,
                  "generator_repo_sha": repo_sha(), "prompt_sha256":
                      hashlib.sha256(prompt_text.encode()).hexdigest()}
@@ -282,6 +344,7 @@ def main() -> int:
             model=args.model, prompt_name=name, seed=seed, prompt_text=prompt_text,
             raw_response=reply["text"], parsed=parsed, api_base=args.api_base,
             latency_s=round(time.monotonic() - started, 2), usage=reply.get("usage", {}),
+            extra=extra,
         )
         record["provenance"]["generator_repo_sha"] = repo_sha()
         path = args.out_dir / f"{module}.json"

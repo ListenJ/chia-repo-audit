@@ -83,5 +83,19 @@ class RealCandidateGenerationTests(unittest.TestCase):
             self.assertIn(key, provenance)
 
 
+    def test_repair_turn_is_marked_and_gets_its_own_module(self):
+        parsed = gen.parse_candidate_source(FENCED_REPLY, module_name="gen_default_s0_r1")
+        record = gen.build_candidate_record(
+            model="pro-model", prompt_name="default", seed=0, prompt_text="p",
+            raw_response=FENCED_REPLY, parsed=parsed,
+            api_base="https://example.invalid/v1", latency_s=1.0, usage={},
+            extra={"repair_round": 1, "repaired_from": "gen_default_s0"},
+        )
+        self.assertEqual("gen_default_s0_r1", record["module_name"])
+        self.assertEqual(1, record["provenance"]["repair_round"])
+        self.assertEqual("gen_default_s0", record["provenance"]["repaired_from"])
+        self.assertEqual("default", record["prompt"])
+        self.assertEqual(0, record["generator_seed"])
+
 if __name__ == "__main__":
     unittest.main()
