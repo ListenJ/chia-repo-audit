@@ -398,4 +398,4 @@
 - Verification: red first (`TypeError: can't convert type 'NoneType' to
   numerator/denominator`), then `python3 -m unittest discover -s chia_loop/tests`
   -> Ran 30 tests, OK. No container or host state touched.
-- Commit: pending
+- Commit: `4b2414b` (hash backfill; record maintenance only)
