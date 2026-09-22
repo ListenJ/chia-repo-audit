@@ -421,4 +421,4 @@
   - Re-running the checker's own suite: `Ran 30 tests, OK`.
 - Note: not yet verified whether the grid's first design cost more than a solo
   screening build; recorded once `.tmp/grid_start`/`grid_end` exist.
-- Commit: pending
+- Commit: `a0b0afb` (hash backfill; record maintenance only)
