@@ -12,12 +12,14 @@ spec.loader.exec_module(check)
 REFERENCE = [{"design": "noop", "runs": [{"trace": "/traces/t1.xz", "cycles": 1000.0}]},
              {"design": "next_line", "runs": [{"trace": "/traces/t1.xz", "cycles": 940.0}]}]
 
+_UNSET = object()
+
 
 def raw_for(digest="a" * 16, cycles=980.0, backend="champsim_node", prompt="default",
-            module="gen_default_s0", trial_cycles=None, instructions=5_000_001):
+            module="gen_default_s0", trial_cycles=_UNSET, instructions=5_000_001):
     trial = {"cycles": cycles, "ipc": 1.7, "instructions": instructions,
              "binary_sha256": digest}
-    trials = [trial, dict(trial, cycles=cycles if trial_cycles is None else trial_cycles)]
+    trials = [trial, dict(trial, cycles=cycles if trial_cycles is _UNSET else trial_cycles)]
     return {
         "schema_version": 2, "backend": backend, "git_sha": "abc",
         "config_sha256": "def",
@@ -64,6 +66,14 @@ class CheckGridEvidenceTest(unittest.TestCase):
         # NaN comparisons are always False, so a NaN must not slip through.
         out = check.verdicts(raw_for(instructions=float("nan")), REFERENCE)
         self.assertIn("above_smoke_floor", out["failures"])
+
+    def test_a_trial_that_never_measured_cycles_is_a_named_failure(self):
+        # stage_run keeps failed trials in raw.json with cycles=None, and a
+        # verdict that silently drops them would read a broken cell as clean.
+        out = check.verdicts(raw_for(trial_cycles=None), REFERENCE)
+        self.assertIn("all_repeats_measured", out["failures"])
+        self.assertFalse(out["passed"])
+        self.assertIn("t1.xz", out["failures"]["all_repeats_measured"][0])
 
 
 if __name__ == "__main__":

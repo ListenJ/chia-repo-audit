@@ -381,3 +381,21 @@
   raised the compile rate, because v3 was screened only on the brief family that
   had already compiled once. Two variables moved.
 - Commit: `d08a112` (hash backfill; record maintenance only)
+
+## 2026-09-22 - Grid checker no longer crashes on a trial that never measured cycles
+
+- Task: make the verdict readable when one repeat of a cell fails, while the grid
+  is running (the checker is the only thing that turns `raw.json` into a claim).
+- Tools: direct edit, `python3 -m unittest`.
+- Operations:
+  - `scripts/check_grid_evidence.py`: `load_cells` now separates measured from
+    `None` cycle counts and reports `n_unmeasured`; a new named failure
+    `all_repeats_measured` fires instead of `statistics.mean` raising.
+  - `chia_loop/tests/test_check_grid_evidence.py`: added the failing-trial test
+    and replaced the `trial_cycles=None` helper default with an `_UNSET`
+    sentinel, because `None` was indistinguishable from "not specified" and the
+    first version of the test asserted on data that contained no `None` at all.
+- Verification: red first (`TypeError: can't convert type 'NoneType' to
+  numerator/denominator`), then `python3 -m unittest discover -s chia_loop/tests`
+  -> Ran 30 tests, OK. No container or host state touched.
+- Commit: pending

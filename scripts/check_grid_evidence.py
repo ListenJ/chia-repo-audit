@@ -29,6 +29,7 @@ def load_cells(raw: dict) -> list[dict]:
     for cell in raw["cells"].values():
         digests = {trial.get("binary_sha256") for trial in cell["trials"]}
         cycles = [trial["cycles"] for trial in cell["trials"]]
+        measured = [value for value in cycles if value is not None]
         instructions = cell["median"].get("instructions")
         if isinstance(instructions, float) and math.isnan(instructions):
             instructions = None
@@ -41,8 +42,9 @@ def load_cells(raw: dict) -> list[dict]:
             "cycles": cell["median"]["cycles"],
             "ipc": cell["median"]["ipc"],
             "instructions": instructions,
-            "repeat_spread": (max(cycles) - min(cycles)) / statistics.mean(cycles)
-            if len(cycles) > 1 and statistics.mean(cycles) else 0.0,
+            "n_unmeasured": len(cycles) - len(measured),
+            "repeat_spread": (max(measured) - min(measured)) / statistics.mean(measured)
+            if len(measured) > 1 and statistics.mean(measured) else 0.0,
         })
     return sorted(rows, key=lambda r: (r["design"], r["trace"]))
 
@@ -80,6 +82,10 @@ def verdicts(raw: dict, reference: list[dict] | None,
             fail("not_the_image_default_binary", row["design"])
         if row["digests_per_cell"] > 1:
             fail("one_binary_per_design", f"{row['design']} used {row['digests_per_cell']}")
+        if row["n_unmeasured"]:
+            fail("all_repeats_measured",
+                 f"{row['design']} on {row['trace']} has {row['n_unmeasured']} trial(s)"
+                 " without cycles")
         if row["repeat_spread"] > 0.01:
             fail("repeats_agree", f"{row['design']} {row['trace']} spread={row['repeat_spread']:.4f}")
         if (row["instructions"] or 0) < SMOKE_INSTRUCTION_FLOOR:
