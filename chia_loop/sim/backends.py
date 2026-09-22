@@ -226,7 +226,7 @@ class ChampSimNodeBackend:
         cache_level: str = "L2C",
         build_timeout_s: int = 1800,
         run_timeout_s: int = 3600,
-        incremental: bool = True,
+        incremental: bool = False,
         build_runner: Callable[..., object] | None = None,
         run_runner: Callable[..., object] | None = None,
     ):
@@ -238,6 +238,9 @@ class ChampSimNodeBackend:
         self.build_timeout_s = build_timeout_s
         self.run_timeout_s = run_timeout_s
         self.incremental = incremental
+        # A cached (incremental) build returns whatever binary the tree already
+        # holds, so it silently measures the same design for every candidate.
+        self._binaries: dict[tuple[str, str], bytes] = {}
         self.build_runner = build_runner or _default_build_runner
         self.run_runner = run_runner or _default_run_runner
 
@@ -257,20 +260,25 @@ class ChampSimNodeBackend:
                 "design.module_name"
             )
 
-        build = self.build_runner(
-            self.champsim_root,
-            source,
-            module_name,
-            cache_level=self.cache_level,
-            timeout_s=self.build_timeout_s,
-            incremental=self.incremental,
-        )
-        if not getattr(build, "success", False):
-            diagnostics = getattr(build, "build_diagnostics", "")
-            raise RuntimeError(f"CHIA ChampSim build failed: {diagnostics}")
+        key = (module_name, hashlib.sha256(source.encode()).hexdigest())
+        binary = self._binaries.get(key)
+        if binary is None:
+            build = self.build_runner(
+                self.champsim_root,
+                source,
+                module_name,
+                cache_level=self.cache_level,
+                timeout_s=self.build_timeout_s,
+                incremental=self.incremental,
+            )
+            if not getattr(build, "success", False):
+                diagnostics = getattr(build, "build_diagnostics", "")
+                raise RuntimeError(f"CHIA ChampSim build failed: {diagnostics}")
+            binary = getattr(build, "binary", b"")
+            self._binaries[key] = binary
 
         result = self.run_runner(
-            getattr(build, "binary", b""),
+            binary,
             self.traces_dir / trace,
             warmup_instructions=self.warmup,
             simulation_instructions=self.sim,

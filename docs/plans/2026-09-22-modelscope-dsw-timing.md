@@ -141,3 +141,100 @@ the assumptions above.
   is rejected with 403, so downloads must use curl and stay in the 25-50 MB
   range. Consequence: the "large trace" grid is not feasible on this instance;
   the timing probe must state which trace and instruction count it used.
+
+## Findings from the second round (2026-09-22)
+
+All numbers below were produced on the local machine inside the official
+`ghcr.io/ucb-bar/chia-champsim:latest` image, which is where the compute was
+moved once round 1 showed the DSW instance cannot host a Docker daemon.
+
+- Plan deviations, recorded: `scripts/dsw_remote_driver.sh` and
+  `scripts/modelscope_timing_probe.py` listed in the contract were never
+  created. The same-origin REST broker replaced the queued-file driver, and the
+  broker plus direct `docker exec` replaced the local-side driver, so a queue
+  protocol would have been dead weight. The candidate generator was created as
+  specified; `results/modelscope_timing_probe.json` was not, because the timing
+  evidence landed in the control script's JSONL output instead.
+- Transfer bridge (step 7): the authenticated tab's own origin serves
+  `/dsw-2201946/files/<path>?download=1`, so a NAS file lands on this machine by
+  clicking a link the page renders. No dataset publish, no token, no third-party
+  relay, no new dependency. Chrome only honours the first page-initiated
+  download; the remaining two landed after replacing the DOM with a single
+  visible link and issuing a real click. The earlier "browser download produced
+  no local file" reading was wrong: this desktop uses `~/下载`, not `~/Downloads`.
+- Throughput correction: instance-side pulls from the public R2 bucket run at
+  ~662 KB/s, not the ~182 KB/s recorded in round 1. That round-1 figure came
+  from a 74 KB manifest fetch, which is latency-dominated, so it understated the
+  steady-state rate by ~3.6x.
+- Traces (step 5 done): three DPC-4 traces with behavioural spread, all
+  non-smoke, byte-verified against the R2 manifest MD5.
+
+  | trace | bytes | md5 (manifest-verified) |
+  | --- | --- | --- |
+  | `SPEC17-649.fotonik3d_s-1B` | 25,294,572 | `a9ee5d35387f0ceb530b39a79efdb93e` |
+  | `ligra_BFSCC.com-lj.ungraph...length_250M` | 74,092,232 | `8df5a66937966db41932c4ea60b57051` |
+  | `638.imagick_s-4128B` | 50,679,132 | `ed67c3d3df7889c508f11b0837f96b8c` |
+
+  SHA-256 of the local copies is recorded in the operations log. DPC4-ChampSim
+  reads `.xz` natively (`src/tracereader.cc:42` branches on the suffix into an
+  lzma inflator), so no decompression staging is needed and the traces mount
+  read-only.
+- Real candidates (step 4 done): five candidates from
+  `Pro/deepseek-ai/DeepSeek-V3` through an OpenAI-compatible endpoint, each with
+  prompt text, prompt SHA-256, raw response, latency, token usage, parse verdict,
+  normalizations and warnings retained. Seed and prompt both change the artifact
+  (distinct prompt SHA-256 per cell), so NO-GO item 3 no longer holds.
+- Measurement validity (Critical, and the reason no ranking claim survives the
+  pre-compaction scorecard): with the previous `incremental=True` default,
+  `build_champsim` returns the image's prebuilt binary unchanged. Three different
+  module names, three different sources, one identical binary:
+
+  ```text
+  noop / next_line / gen_default_s0  ->  binary_sha256 688278205d6c9fa4
+  image's shipped bin/champsim       ->  688278205d6c9fa4  (same bytes, 37,861,176)
+  strings bin/champsim | grep -c probe_noop        -> 0
+  strings bin/champsim | grep -c gen_default_s0    -> 0
+  strings bin/champsim | grep -c ip_stride         -> 424
+  ```
+
+  Mechanism, read from the installed `chia/simulators/champsim.py`: the
+  incremental branch runs `make -j$(nproc)` and deliberately skips `config.sh`,
+  so the generated `module_inst_N.cc.inc` never names the new module, so make
+  rebuilds nothing. The docstring's own precondition ("module name ... stay
+  constant") is violated by any loop that gives each candidate a distinct module
+  name, which is exactly what the candidate contract requires. Consequence: every
+  cycles/IPC number gathered through that path measures the image default, not
+  the candidate.
+- Fix and its proof: `incremental` now defaults to `False` in
+  `chia_loop/sim/backends.py`, and the adapter memoises binaries keyed by
+  (module name, SHA-256 of the source) so a design is built once and reused
+  across traces and repeats. A real cold build produces a different binary and
+  different cycles:
+
+  ```json
+  {"design":"noop_cold","incremental":false,"build_success":true,"build_s":1440.0,
+   "binary_sha256":"8a4884c11c4995dc","binary_bytes":37855336,
+   "base_rev":"164fdb1e...","run_s":13.9,"success":true,
+   "instructions":2000001,"cycles":1138748,"ipc":1.7563157081285763}
+  ```
+
+  against `688278205d6c9fa4` / 1,129,305 cycles for the stale binary.
+- Timing (step 6, the reason this plan exists): cold build 1,440 s per design;
+  one run at 1,000,000 warmup + 2,000,000 simulation instructions (2,000,001
+  measured) 13.9 s.
+- Wall-clock constraint found, not worked around: the build command is
+  `make -j$(nproc)`, and inside a Ray actor `nproc` prints 1 because Ray exports
+  `OMP_NUM_THREADS=1` for a 1-CPU actor. The container sees 12 cores; the build
+  uses one. Leaving it alone keeps us inside the audited CHIA contract, and the
+  sizing below uses the measured single-core number.
+- Separate defect, worked around in config, code untouched:
+  `audit_repro._apply_overrides` forwards `--simulation-instructions` to the
+  `champsim_node` block but never `--warmup-instructions`, so warmup must be set
+  in the config JSON or it silently stays at the 5,000,000 default.
+- Grid go/no-go (step 7), sized by the measurements above: 4 candidates (2
+  prompts x 2 seeds) x 3 traces x 2 repeats. Builds dominate: 4 cold builds x
+  1,440 s = 96 min, since the memo makes one build serve all traces and repeats.
+  Runs: 24 x ~28 s at 1M/4M = ~11 min. Total ~1.8 h of wall clock on this
+  machine, which fits well inside the deadline, so the grid is GO on cost. It is
+  NOT yet GO on evidence: the gate is "a real candidate compiles and moves the
+  cycle count", and that measurement is what the parallel control is producing.

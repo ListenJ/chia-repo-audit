@@ -1,6 +1,6 @@
 # Pre-Compute Completion and Go/No-Go Gate
 
-Updated: 2026-09-18
+Updated: 2026-09-22
 
 ## Purpose
 
@@ -83,6 +83,14 @@ Local 0.8B strategy model: WARNING (unstable instruction following)
 The warning is retained. A 0.8B local model is only a portability check and
 must not be treated as the final candidate generator.
 
+Corrected 2026-09-22: the `Official image + Ray + ChampSimNode: PASS` line above
+was produced while the adapter defaulted to incremental builds, and an
+incremental build hands back the prebuilt binary of the image rather than
+compiling the candidate. That PASS therefore demonstrates that the plumbing
+runs, not that any candidate was measured. It has to be re-earned under gate 2.
+See `docs/plans/2026-09-22-modelscope-dsw-timing.md` for the digests and the
+mechanism.
+
 ## GO Gate
 
 A submission is GO only if all conditions below are visible in the artifact:
@@ -90,7 +98,13 @@ A submission is GO only if all conditions below are visible in the artifact:
 1. Official `ghcr.io/ucb-bar/chia-champsim:latest` container starts. [Local
    gate: PASS]
 2. Real `ChampSimNode.build_champsim` compiles at least three generated
-   candidate modules.
+   candidate modules, and each one is shown to have actually been compiled: the
+   delivered binary's SHA-256 must differ per module and must not equal the
+   digest of the binary the image ships. `success: true` alone is not evidence,
+   because an incremental build returns whatever binary the tree already holds.
+   The simulated cycle count must also differ across those binaries; if every
+   candidate yields the same cycles, the backend is insensitive to the design and
+   no ranking claim may be made from it.
 3. `ChampSimNode.run_champsim` completes on at least three traces.
 4. Raw JSON, commands, image digest, commit SHA, and trace hashes are retained.
 5. Two genuinely different auditors or annotators produce labels for the

@@ -193,3 +193,45 @@
 - Deviation: the browser bridge allows ~15 s per call, so long remote jobs must be
   detached and polled via the contents API; this constrains the plan's driver.
 - Commit: `369c1c6` (amended after the placeholder was written; see record-maintenance history)
+
+## 2026-09-22 - ChampSimNode incremental builds measured the image, not the candidate
+
+- Task: measure one real candidate on one real trace so the grid is sized by
+  data, and record what the measurement path is actually sensitive to.
+- Tools: official `chia-champsim` image on the local Docker daemon, Ray,
+  same-origin DSW REST broker for trace retrieval, `Explore`-free direct reads.
+- Operations:
+  - `chia_loop/sim/backends.py`: `incremental` now defaults to `False` and the
+    adapter memoises binaries by (module name, source SHA-256).
+  - `chia_loop/tests/test_champsim_node_backend.py`: new test asserting one
+    build per design, never an incremental one, and that a repeat run reuses
+    that design's binary.
+  - `scripts/real_candidate_generate.py`, `scripts/module_effect_control.py` and
+    `chia_loop/tests/test_real_candidate_generate.py` added.
+  - `PRECOMPUTE.md` gate 2 and `docs/plans/2026-09-22-modelscope-dsw-timing.md`
+    second-round findings updated.
+- Verification:
+  - `python3 -m unittest discover -s chia_loop/tests` -> Ran 18 tests, OK.
+  - Three different modules through the old incremental path all returned
+    binary SHA-256 `688278205d6c9fa4`, which is the digest of the binary the
+    image ships (`strings` gives 0 hits for the module names, 424 for
+    `ip_stride`), and all three returned 1,129,305 cycles. So the previous
+    ChampSimNode "PASS" and any scorecard built on it measured the image default.
+  - A real cold build changes both: `8a4884c11c4995dc`, 37,855,336 bytes,
+    1,138,748 cycles, build 1,440 s, run 13.9 s at 1M warmup + 2M simulation
+    (2,000,001 instructions) on `SPEC17-649.fotonik3d_s-1B`.
+  - Three DPC-4 traces now live in `/traces` read-only, MD5-verified against the
+    public R2 manifest; `.xz` needs no staging because `tracereader.cc:42`
+    inflates it.
+  - One-shot compile rate of the five generated candidates under the original
+    prompt: 0 of the four screened compiled, each failure reported by `make` in
+    ~48 s (`invalid static_cast` from `champsim::address`, `addr >> LOG2_BLOCK_SIZE`).
+    The prompt now pins the typed address API; the six regenerated candidates use
+    `champsim::block_number`/`champsim::offset` and contain no illegal pattern.
+- Deviation: the funded-GCP window stayed `BLOCKED_PENDING_ACCOUNT_ACCESS`, so
+  every number above is local-official-image evidence and is labelled as such.
+- Follow-ups (not done here): `stage_run` lets a build failure abort the whole
+  grid; the build runs `make -j1` because Ray exports `OMP_NUM_THREADS=1`;
+  `--warmup-instructions` never reaches the `champsim_node` config block; the
+  NO-GO list in `PRECOMPUTE.md` is numbered 1,3,4,5,6.
+- Commit: `<pending>`

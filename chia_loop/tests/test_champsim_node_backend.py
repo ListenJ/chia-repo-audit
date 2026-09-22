@@ -48,6 +48,33 @@ class ChampSimNodeBackendTests(unittest.TestCase):
         self.assertEqual(result.ipc, 0.42)
         self.assertTrue(math.isnan(result.l1_miss_rate))
 
+    def test_builds_once_per_design_and_never_requests_a_cached_binary(self):
+        builds, runs = [], []
+
+        def build_runner(champsim_root, source, module, **kwargs):
+            builds.append({"module": module, "incremental": kwargs["incremental"]})
+            return SimpleNamespace(binary=module.encode(), success=True)
+
+        def run_runner(binary, trace, **kwargs):
+            runs.append((binary, str(trace)))
+            return SimpleNamespace(success=True, cycles=1, ipc=0.5)
+
+        backend = ChampSimNodeBackend(
+            champsim_root="/tmp/champsim",
+            traces_dir="/tmp/traces",
+            build_runner=build_runner,
+            run_runner=run_runner,
+        )
+        design_a = {"prefetcher_source": "struct a {};", "module_name": "a"}
+        design_b = {"prefetcher_source": "struct b {};", "module_name": "b"}
+        for trace in ("t1", "t2"):
+            backend.run(seed=0, prompt="default", trace=trace, design=design_a)
+        backend.run(seed=0, prompt="default", trace="t1", design=design_b)
+
+        self.assertEqual([b["module"] for b in builds], ["a", "b"])
+        self.assertEqual([b["incremental"] for b in builds], [False, False])
+        self.assertEqual([binary for binary, _ in runs], [b"a", b"a", b"b"])
+
 
 if __name__ == "__main__":
     unittest.main()
