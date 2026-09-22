@@ -263,3 +263,37 @@
   single-variable ablation. Each artifact stores its own `prompt_text` and
   `prompt_sha256`, so the exact protocol per candidate is recoverable.
 - Commit: `77759ad`
+
+## 2026-09-22 - Screening closes at 2/12 compiling; one candidate compiles but is behaviorally null
+
+- Task: finish the compile screening that gate 2 depends on, and make the grid
+  unable to mix prompt contracts.
+- Tools: official image containers on the local daemon (5 in parallel),
+  `scripts/module_effect_control.py` (screening mode),
+  `scripts/real_candidate_generate.py`, `.tmp/make_grid_config.py`.
+- Operations:
+  - `scripts/real_candidate_generate.py`: the skeleton comment said
+    `prefetch_line(addr, metadata, in)`; `inc/modules.h:104` in the image is
+    `prefetch_line(champsim::address, bool, uint32_t)`. Comment corrected, since
+    one candidate failed on exactly that call.
+  - `.tmp/make_grid_config.py`: compiled designs are grouped by a contract key
+    hashed from the retained prompt text (prefix before the cell brief, module
+    names normalised out), so a grid cannot silently blend briefs; repair-round
+    designs stay out of the one-shot grid; only the selected rectangle is staged.
+  - Screening evidence collected from every `chia-screen*` container into
+    `results/candidate_compile_screening_2026-09-22.jsonl` (written by the chain).
+- Verification:
+  - 12 designs screened, 2 compiled: `gen_fill_only_conservative_s0` (1,411.2 s,
+    `312911d8236d3fa0`, 1,129,706 cycles) and `gen_default_s0` (1,417.1 s,
+    `cc0477f0e1ee0187`, 1,138,748 cycles). Failures took 47.3-52.8 s.
+  - `gen_default_s0` matches the cold `noop` control's cycle count exactly while
+    its binary digest differs: it compiles, enters the machine, and changes
+    nothing. Gate wording must be "compiles and moves cycles", not "compiles".
+  - `python3 -m unittest discover -s chia_loop/tests` -> Ran 19 tests, OK.
+  - Naming clarification: the previous entry's "spec v3" meant the repair prompt;
+    from this entry on, contract v3 means the corrected-signature brief, and the
+    repair designs' contract prefix is v2 (their extra text is post-brief).
+- Follow-ups: 3 contract-v3 designs screening in parallel; grid blocked until one
+  contract yields 3 cells; `stage_run` still aborts a whole stage on one build
+  failure.
+- Commit: pending

@@ -38,7 +38,8 @@ The module must be one C++ struct that derives from the prefetcher module API:
     uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,
                                        uint8_t cache_hit, bool useful_prefetch,
                                        access_type type, uint32_t metadata_in) {
-      // called on every core-cache access; call prefetch_line(addr, metadata, in)
+      // called on every core-cache access; the real signature is
+      // prefetch_line(champsim::address pf_addr, bool fill_this_level, uint32_t prefetch_metadata)
       return metadata_in;
     }
 

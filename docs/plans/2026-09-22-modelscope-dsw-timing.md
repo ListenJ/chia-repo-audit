@@ -219,6 +219,27 @@ moved once round 1 showed the DSW instance cannot host a Docker daemon.
   ```
 
   against `688278205d6c9fa4` / 1,129,305 cycles for the stale binary.
+
+The complete control run (`results/module_effect_control_2026-09-22.jsonl`, one
+real trace, 1M warmup + 2M simulation, 2,000,001 instructions measured):
+
+| design | incremental | build_s | binary sha256 | cycles |
+| --- | --- | --- | --- | --- |
+| noop | yes | 1.9 | `688278205d6c9fa4` | 1,129,305 |
+| next_line | yes | 0.8 | `688278205d6c9fa4` | 1,129,305 |
+| llm candidate | yes | 0.9 | `688278205d6c9fa4` | 1,129,305 |
+| noop | no (cold) | 1,440.0 | `8a4884c11c4995dc` | 1,138,748 |
+| next_line | no (cold) | 1,390.2 | `bee5b5b60c6f4437` | 1,129,305 |
+| noop, after the next_line build | yes | 0.7 | `bee5b5b60c6f4437` | 227,700 |
+
+Three things follow from that table. The last row is the defect in its purest
+form: a build labelled "noop" delivered the binary that the previous
+`next_line` build left in the tree. The two cold rows show the backend does
+respond to the design (1,138,748 vs 1,129,305 cycles, a 0.83% spread in the
+direction a next-line prefetcher should help). And the image's own prebuilt
+binary scores exactly like `next_line`, which is what the DPC4 default
+configuration is expected to do, so the stale numbers were not noise: they were
+one fixed machine measured three times.
 - Timing (step 6, the reason this plan exists): cold build 1,440 s per design;
   one run at 1,000,000 warmup + 2,000,000 simulation instructions (2,000,001
   measured) 13.9 s.
@@ -238,3 +259,72 @@ moved once round 1 showed the DSW instance cannot host a Docker daemon.
   machine, which fits well inside the deadline, so the grid is GO on cost. It is
   NOT yet GO on evidence: the gate is "a real candidate compiles and moves the
   cycle count", and that measurement is what the parallel control is producing.
+
+## Compile screening (steps 4-5, 2026-09-22)
+
+Evidence file: `results/candidate_compile_screening_2026-09-22.jsonl`, one JSON
+line per design produced by `scripts/module_effect_control.py --candidate <dir>`
+with `incremental=False` on the real fotonik3d trace (1M warmup + 2M simulation).
+Every design below is a real LLM response retained with its raw prompt and
+response under `.tmp/cand*/`; the generator is
+`scripts/real_candidate_generate.py` against an OpenAI-compatible endpoint.
+
+Compile rate per prompt contract, measured, not estimated:
+
+| contract | what changed in the brief | designs screened | compiled | failures |
+| --- | --- | --- | --- | --- |
+| v1 | module API skeleton only | 5 | 1 (`gen_fill_only_conservative_s0`) | 4 |
+| v2 | + hard typed-address constraints | 6 | 1 (`gen_default_s0`) | 5 |
+| v2 + repair | v2 brief plus the failing compiler output | 1 so far | 0 | 1 |
+| v3 | + corrected `prefetch_line` signature | 3 (in flight) | - | - |
+
+Overall so far: 2 of 12 designs compile. The cost is strongly asymmetric, which
+is what makes screening affordable: every failure dies inside the candidate
+translation unit in 47.3-52.8 s, while a success costs a full cold build
+(1,411.2 s and 1,417.1 s measured). 10 failures cost 8.5 min of machine time in
+total; 2 successes cost 47 min.
+
+All 10 failures are the same family: the model treats ChampSim's typed address as
+an integer. Distinct compiler errors observed, with counts: `invalid 'static_cast'
+from type 'champsim::address'` x2, `no match for 'operator%'` on
+`champsim::block_number` x2, `no match for 'operator>>'` x2 (once on `address`,
+once on `block_number`), `no match for 'operator&'` x1, `no match for
+'operator!='` x1, no matching `prefetch_line` overload x1, `cannot convert
+'champsim::address'` x1. Pining the constraints into the brief (v2) did not move
+the rate: 1/5 versus 1/6, which on this sample size is not a measurable effect,
+so no claim is made for it.
+
+Two findings that the screening produced by accident and that change the plan:
+
+- The generator's own brief contained a false API statement. Its skeleton comment
+  read `call prefetch_line(addr, metadata, in)`, while
+  `/home/ray/champsim/inc/modules.h:104` declares
+  `bool prefetch_line(champsim::address pf_addr, bool fill_this_level,
+  uint32_t prefetch_metadata) const`. One candidate hit exactly that
+  (`no matching function for call to ...::prefetch_line(champsim::address&,
+  champsim::address..., ...)`) because it followed the comment rather than the
+  constraint list. Fixed in `scripts/real_candidate_generate.py`; that fix is
+  what defines contract v3, so v3 rates are not comparable to v1/v2 rates as a
+  single-variable change.
+- Compiling is not the same as being measured. `gen_default_s0` builds to a
+  binary digest (`cc0477f0e1ee0187`) that differs from the image default
+  (`688278205d6c9fa4`) and from both controls, so it genuinely entered the
+  simulated machine - and its cycle count, 1,138,748, is *identical* to the cold
+  `noop` control. Same for the two binaries' determinism: two different designs
+  that issue no effective prefetch produce bit-identical timing, which is a
+  reproducibility datapoint, not a result. `gen_fill_only_conservative_s0`
+  (1,129,706 cycles) is the only design so far that both compiles and moves the
+  cycle count. Consequence for the gate: "compiles" is a weak criterion, and the
+  grid must be judged against the noop baseline per trace, not against zero.
+
+Grid sizing updated from these numbers (supersedes the cost paragraph above):
+the grid runs the designs that compile inside one contract, because directory
+mode would otherwise mix briefs. `.tmp/make_grid_config.py` groups compiled
+designs by a contract key derived from the retained prompt text (everything
+before the cell-specific brief, with module names normalised out), refuses to mix
+contracts, excludes repair-round designs from the one-shot grid, stages only the
+selected rectangle so the pool cannot leak a wrong design, and refuses to start
+below 3 cells. Under those rules the current evidence blocks the grid (2 compiled
+designs, 1 cell per contract), which is why contract v3 is being screened in
+three parallel containers at ~24 min each.
+
