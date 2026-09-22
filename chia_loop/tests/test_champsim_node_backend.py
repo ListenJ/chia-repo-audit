@@ -24,7 +24,8 @@ class ChampSimNodeBackendTests(unittest.TestCase):
 
         def run_runner(binary, trace, **kwargs):
             calls["run"] = {"binary": binary, "trace": trace, "kwargs": kwargs}
-            return SimpleNamespace(success=True, cycles=1234, ipc=0.42)
+            return SimpleNamespace(success=True, cycles=1234, ipc=0.42,
+                                   instructions=5_000_001)
 
         backend = ChampSimNodeBackend(
             champsim_root="/tmp/champsim",
@@ -47,6 +48,7 @@ class ChampSimNodeBackendTests(unittest.TestCase):
         self.assertEqual(calls["run"]["trace"], Path("/tmp/traces/trace-a"))
         self.assertEqual(result.cycles, 1234)
         self.assertEqual(result.ipc, 0.42)
+        self.assertEqual(result.instructions, 5_000_001)
         self.assertTrue(math.isnan(result.l1_miss_rate))
 
     def test_builds_once_per_design_and_never_requests_a_cached_binary(self):

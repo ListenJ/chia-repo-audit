@@ -332,3 +332,24 @@
   'SimResult' object has no attribute 'binary_sha256'`), then
   `python3 -m unittest discover -s chia_loop/tests` -> Ran 22 tests, OK.
 - Commit: `8227ef0` (hash backfill; record maintenance only)
+
+## 2026-09-22 - Grid evidence checker added; measurements now carry their instruction count
+
+- Task: make gate 2 and gate 8 re-derivable from `raw.json` instead of from an
+  agent reading JSON by eye.
+- Tools: `scripts/check_grid_evidence.py` (new), `chia_loop/tests/test_check_grid_evidence.py`
+  (new), `chia_loop/sim/backends.py`, `chia_loop/tests/test_champsim_node_backend.py`.
+- Operations: `SimResult` gains `instructions` from the run result; the checker
+  asserts real backend, per-design binary digest distinct and not the image's own
+  `688278205d6c9fa4`, one design per binary, repeats within 1%, above the
+  1,000,000-instruction smoke floor, and cycles differing from the no-op
+  reference on the same trace.
+- Verification:
+  - `python3 -m unittest discover -s chia_loop/tests` -> Ran 29 tests, OK.
+  - Red case on the existing stub artifact: `python3 scripts/check_grid_evidence.py
+    --raw results/raw.json` -> rc=1 with `backend_is_real`,
+    `binary_digest_recorded` (9 designs) and `reference_available`, so the
+    checker is not a rubber stamp.
+  - A NaN instruction count is normalised to missing, because NaN comparisons
+    would otherwise clear the smoke floor silently.
+- Commit: pending
