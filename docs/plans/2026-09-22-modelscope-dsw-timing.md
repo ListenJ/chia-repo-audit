@@ -281,24 +281,45 @@ Compile rate per prompt contract, measured, not estimated:
 | --- | --- | --- | --- | --- |
 | v1 | module API skeleton only | 5 | 1 (`gen_fill_only_conservative_s0`) | 4 |
 | v2 | + hard typed-address constraints | 6 | 1 (`gen_default_s0`) | 5 |
-| v2 + repair | v2 brief plus the failing compiler output | 1 so far | 0 | 1 |
-| v3 | + corrected `prefetch_line` signature | 3 (in flight) | - | - |
+| v2 + repair | v2 brief plus the failing compiler output | 3 | 1 (`gen_aggressive_offset_s1_r1`) | 2 |
+| v3 | + corrected `prefetch_line` signature | 3 | 3 | 0 |
 
-Overall so far: 2 of 12 designs compile. The cost is strongly asymmetric, which
+Overall: 6 of 17 designs compile (35%). The cost is strongly asymmetric, which
 is what makes screening affordable: every failure dies inside the candidate
-translation unit in 47.3-52.8 s, while a success costs a full cold build
-(1,411.2 s and 1,417.1 s measured). 10 failures cost 8.5 min of machine time in
-total; 2 successes cost 47 min.
+translation unit in 47.3-54.5 s, while a success costs a full cold build
+(1,411-1,674 s). 11 failures cost 9.1 min summed; 6 successes cost 2.6 h summed
+build seconds, which is not wall-clock because designs were screened in parallel
+containers. The three v3 designs, launched as one wave of three containers, sit
+at the top of the range (1,644-1,674 s) against 1,411-1,417 s for two of the
+solo builds; the artifact records no timestamps, so attributing that ~17% to
+concurrency is an inference from the launch waves, not a measurement.
 
-All 10 failures are the same family: the model treats ChampSim's typed address as
-an integer. Distinct compiler errors observed, with counts: `invalid 'static_cast'
-from type 'champsim::address'` x2, `no match for 'operator%'` on
-`champsim::block_number` x2, `no match for 'operator>>'` x2 (once on `address`,
-once on `block_number`), `no match for 'operator&'` x1, `no match for
-'operator!='` x1, no matching `prefetch_line` overload x1, `cannot convert
-'champsim::address'` x1. Pining the constraints into the brief (v2) did not move
-the rate: 1/5 versus 1/6, which on this sample size is not a measurable effect,
-so no claim is made for it.
+Reading the table above: the 17 rows are 17 distinct generated sources (the four
+module names `gen_aggressive_offset_s0/s1`, `gen_default_s0/s1` were each
+generated twice, once per contract, and their `prefetcher_source` differ), but
+the screening artifact carries no contract or prompt-sha column, so which of two
+same-named rows belongs to v1 and which to v2 is established only by the
+per-wave container logs in `.tmp/`, not by the committed file.
+
+The v3 rate is not comparable to v1 or v2 and must not be read as proof that the
+signature fix works: v3 was screened only on the `fill_only_conservative` brief
+family, which had already compiled once under v1, and it used three fresh seeds.
+Two variables moved at once (brief contract and prompt family).
+
+The failures we can attribute are one family: the model treats ChampSim's typed
+address as an integer. Attribution is limited by the artifact itself - the
+screening keeps `build_diagnostics[-1500:]`, the *last* 1,500 characters, so on a
+verbose error the primary `error:` line is cut and only trailing `note:`
+candidates survive; 4 of the 11 failing rows retain no `error:` line at all.
+Counting failing designs (a design can appear under more than one message) whose
+surviving text does name one: `cannot convert` x3 (e.g. `LOG2_BLOCK_SIZE` of type
+`const unsigned int` to `champsim::data::bits`), `no match for 'operator%'` x2,
+`no match for 'operator>>'` x2, `invalid 'static_cast'` from
+`champsim::address` x1, `no match for 'operator&'` x1, `no match for
+'operator!='` x1, and `prefetch_line` called with the wrong argument list x1.
+Pinning the constraints into the brief (v2) did not move the rate: 1/5 versus
+1/6, which on this sample size is not a measurable effect, so no claim is made
+for it.
 
 Two findings that the screening produced by accident and that change the plan:
 
@@ -312,16 +333,18 @@ Two findings that the screening produced by accident and that change the plan:
   constraint list. Fixed in `scripts/real_candidate_generate.py`; that fix is
   what defines contract v3, so v3 rates are not comparable to v1/v2 rates as a
   single-variable change.
-- Compiling is not the same as being measured. `gen_default_s0` builds to a
-  binary digest (`cc0477f0e1ee0187`) that differs from the image default
-  (`688278205d6c9fa4`) and from both controls, so it genuinely entered the
-  simulated machine - and its cycle count, 1,138,748, is *identical* to the cold
-  `noop` control. Same for the two binaries' determinism: two different designs
-  that issue no effective prefetch produce bit-identical timing, which is a
-  reproducibility datapoint, not a result. `gen_fill_only_conservative_s0`
-  (1,129,706 cycles) is the only design so far that both compiles and moves the
-  cycle count. Consequence for the gate: "compiles" is a weak criterion, and the
-  grid must be judged against the noop baseline per trace, not against zero.
+- Compiling is not the same as being measured. Against the cold `noop` control on
+  the same trace and budget (1,138,748 cycles) and the `next_line` control
+  (1,129,305 cycles), the six compiling designs split three ways:
+  `gen_default_s0` and `gen_aggressive_offset_s1_r1` land on 1,138,748 - a
+  distinct binary digest that reproduces the no-op timing exactly - while
+  `gen_fill_only_conservative_s0/s1/s3` reach 1,129,706 / 1,129,110 / 1,129,110
+  and `s2` 1,132,568. Three different binaries sharing the no-op count, and two
+  different binaries sharing 1,129,110, are also a determinism datapoint: the
+  backend is bit-reproducible, which is what makes an equal count a statement
+  about the design rather than about noise. Consequence for the gate: "compiles"
+  is a weak criterion, so `scripts/check_grid_evidence.py` requires the cycle
+  count to differ from the no-op reference on the same trace.
 
 Grid sizing updated from these numbers (supersedes the cost paragraph above):
 the grid runs the designs that compile inside one contract, because directory
@@ -330,9 +353,9 @@ designs by a contract key derived from the retained prompt text (everything
 before the cell-specific brief, with module names normalised out), refuses to mix
 contracts, excludes repair-round designs from the one-shot grid, stages only the
 selected rectangle so the pool cannot leak a wrong design, and refuses to start
-below 3 cells. Under those rules the current evidence blocks the grid (2 compiled
-designs, 1 cell per contract), which is why contract v3 is being screened in
-three parallel containers at ~24 min each.
+below 3 cells. On this evidence it selected contract `39fb3caf1be1` at
+`fill_only_conservative` x seeds {1,2,3} and dropped the other three compiled
+designs as foreign contracts; the grid started at 19:10.
 
 Because a compiling design can still be behaviourally null, `scripts/
 baseline_probe.py` measures the no-op and next-line references on every trace in
@@ -344,3 +367,13 @@ every trace) and fails against a build-per-trace variant. The launcher keeps a
 second cold build off the host until memory is free again, because the machine has
 15.8 GiB and each build container holds ~2.3 GiB while four ran at once.
 
+
+Follow-ups opened by this freeze, not done in it:
+
+- The screening artifact should carry the contract key (or `prompt_sha256`) and a
+  digest of `prefetcher_source` per row, so the 6/17 rate and the per-contract
+  split are re-derivable from the committed file alone.
+- `.tmp/make_grid_config.py` keys its gathered designs by module name, so a name
+  that compiles under two contracts keeps whichever directory was read last. That
+  did not bite this run (the selected rectangle came from one directory and the
+  staged files were checked), but the builder needs a duplicate-name refusal.

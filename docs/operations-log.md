@@ -353,3 +353,31 @@
   - A NaN instruction count is normalised to missing, because NaN comparisons
     would otherwise clear the smoke floor silently.
 - Commit: `d1113e0` (hash backfill; record maintenance only)
+
+## 2026-09-22 - Screening frozen at 6/17 compiling; grid launched on one contract
+
+- Task: close the compile screening and start the sized grid without mixing
+  prompt contracts.
+- Tools: `.tmp/run_grid_chain.sh` (detached), `.tmp/make_grid_config.py`,
+  official image containers (`chia-screen*` -> `chia-grid`, `chia-baseline`).
+- Operations:
+  - `results/candidate_compile_screening_2026-09-22.jsonl`: 17 real designs, 6
+    compiled. Per contract v1 1/5, v2 1/6, v2+repair 1/3, v3 3/3. Failures died
+    in 47.3-54.5 s; successes cost 1,411-1,674 s of cold build. The retained
+    `diagnostics_tail` is the last 1,500 characters, so 4 of the 11 failing rows
+    keep no `error:` line and only 7 support a named error family; the four
+    module names generated under two contracts also mean the artifact has no
+    contract column, so per-row attribution rests on the launch-wave logs.
+  - `.tmp/cfg/grid.json` from contract `39fb3caf1be1`,
+    prompt `fill_only_conservative`, seeds {1,2,3}, 3 traces, 2 repeats,
+    1M warmup + 4M simulation, `incremental=False`; the three other compiled
+    designs were dropped as foreign contracts rather than blended into the grid.
+  - Reference designs (`chia-baseline`) launched only after the memory guard saw
+    no screening container, at most one heavy container and >= 6 GiB free.
+- Verification: `scripts/check_grid_evidence.py` will judge the artifact when the
+  grid exits; the watcher `.tmp/watch_grid_and_check.sh` runs it. Screening file
+  scanned for host paths and credential patterns: none.
+- Deviation to remember: v3's 3/3 is not evidence that the corrected signature
+  raised the compile rate, because v3 was screened only on the brief family that
+  had already compiled once. Two variables moved.
+- Commit: pending
