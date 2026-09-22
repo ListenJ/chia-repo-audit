@@ -516,3 +516,23 @@
 - Deviation: the image digest and trace hashes were not retained by the harness, so
   they were written into `provenance.json` after the run rather than by it.
 - Commit: `0e8e4b1` (hash backfill; record maintenance only)
+
+## 2026-09-22 - Evidence migrated to the Windows D: drive
+
+- Task: copy the repository, the results, the documents and the reproducible
+  inputs in `.tmp` to `18336@192.168.0.100:D:` so the night's evidence survives
+  this host.
+- Tools: ssh/scp (key auth, cmd.exe shell), `tar`/bsdtar 3.8.8, `certutil`.
+- Operations: packed `chia-repo-audit` (working tree incl. `.git`, `results/`,
+  `docs/`, `.tmp/`) into `chia-repo-audit-20260922.tar.gz`, created
+  `D:\chia-repo-audit-from-linux-20260922`, uploaded the archive, extracted it
+  there, and kept both the archive and the tree.
+- Verification: archive sha256 `59d6136eb4f9b219...` identical on both hosts and
+  the same 1,458,615 B; 549 regular files on both sides; `results/grid_v6/raw.json`
+  and the timing plan doc hash identically after extraction. No member name uses a
+  character Windows rejects and the longest path stays under 130 characters.
+- Also this round: removed `.tmp/backups/` (6 verified copies, all reconstructible
+  from git, unreferenced) and the container-generated `scripts/__pycache__`.
+- Credential check: `.tmp`, `results`, `docs`, `scripts`, `chia_loop` scanned for
+  high-entropy key patterns and cookie/auth-token strings before packing - no hits.
+- Commit: _(backfill below)_
