@@ -581,8 +581,8 @@
   committed; the record's "549 files on both sides" claim was corrected in place.
   The two follow-up edits to this file reused the committed version as the
   rollback point instead of re-creating a `.tmp/backups/` copy (rule 2).
-- Commit: `8698ea3`, plus one follow-up commit that adds the re-verification
-  detail recorded above and backfills hashes (record maintenance).
+- Commit: `8698ea3`, plus `15b71b8` (adds the full-tree hash detail recorded
+  above and backfills hashes; record maintenance).
 
 ## 2026-09-22 - Session transcript and Qoder memory exported to Windows, redacted
 
@@ -612,4 +612,5 @@
 - Deviation: rollback point for this file was its committed blob `15b71b8` rather
   than a `.tmp/backups/` copy, so the repo's `.tmp/` stayed in step with the
   freshly verified `D:` copy.
-- Commit: `<pending>`
+- Commit: `69629c0` (this line updated by a record-maintenance commit; the export
+  itself predates both).
