@@ -138,4 +138,4 @@
   - Evidence: `results/colab_champsim_smoke_result.json`.
 - Deviation: Colab had no Docker and therefore cannot replace the already
   validated local official-image/ChampSimNode gate or support a GCP claim.
-- Commit: `PENDING`
+- Commit: `6d0d2a9`
