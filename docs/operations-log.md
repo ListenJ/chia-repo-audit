@@ -474,7 +474,7 @@
     masks it because `make clean` leaves the `.inc` files in place.
 - Verdict: DSW is not usable for this evidence tonight; the official image stays
   the single compute path.
-- Commit: _(backfill below)_
+- Commit: `e35e863` (hash backfill; record maintenance only)
 
 ## 2026-09-22 - Credential exposure incident during the DSW probe
 
@@ -489,4 +489,4 @@
   value. Subsequent probes printed whitelisted scalars only.
 - Follow-up for the user: if the DSW instance is not recycled before its
   `authCode` expires, revoke/reissue it from the ModelScope console.
-- Commit: _(backfill below)_
+- Commit: `e35e863` (hash backfill; the incident has no code change of its own)
