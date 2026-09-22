@@ -234,4 +234,4 @@
   grid; the build runs `make -j1` because Ray exports `OMP_NUM_THREADS=1`;
   `--warmup-instructions` never reaches the `champsim_node` config block; the
   NO-GO list in `PRECOMPUTE.md` is numbered 1,3,4,5,6.
-- Commit: `<pending>`
+- Commit: `dd17585`
