@@ -407,3 +407,125 @@ Follow-ups opened by this freeze, not done in it:
   tonight's case (`gen_default_s0` exists under v1 and v2, neither selected). A
   stricter guard was written, tested, and removed after it was shown to reject
   this exact valid input.
+
+## Third round: is the DSW instance actually able to run this workload? (2026-09-22 20:55-21:20)
+
+Round 1 ended with "the DSW instance cannot host a Docker daemon", and round 2
+therefore moved the compute into the official image. That inference was recorded
+before the instance had been measured for the thing it was being dismissed for,
+so this round re-opened the instance and tested it directly, because it is the
+only other place that already holds all three grid traces.
+
+Answer: **no, not for this evidence, and the two blockers are independent of the
+instance's shape.** The shape is adequate; the environment is not.
+
+Channel (facts): the instance id had been recycled, so the round-2 path
+`/dsw-2201946/...` now serves the ModelScope SPA; the live instance is
+`dsw-2203230`. Its Jupyter server answers cross-origin requests carrying
+`credentials: 'include'` from the already-authenticated `www.modelscope.cn` tab,
+and kernel code runs over the websocket at `/api/kernels/<id>/channels` (there is
+no `/connect` route, and forcing the `v1.kernel.jupyter.org` subprotocol fails).
+Replies arrive synchronously now - the round-2 "fire and poll" fallback was
+working around the stale instance path, not the channel.
+
+Adequate shape (facts, read inside the instance):
+
+- The instance is a Kubernetes pod (`/proc/self/cgroup` puts it under
+  `kubepods/burstable/pod<uid>/<container-id>`, both elided here) using cgroup v1,
+  so the v2 files
+  `cpu.max` and `memory.max` do not exist there. Reading the v1 knobs:
+  `cpu/cpu.cfs_quota_us` = 800000 over `cpu/cpu.cfs_period_us` = 100000 = **8
+  usable cores** while `nproc` reports 64, `cpu/cpu.shares` = 8192, and
+  `memory/memory.limit_in_bytes` = 30,064,771,072 B = **28.0 GiB** (`free -g`
+  agrees: 28 total, 27 available). `cpu/cpu.stat` shows `nr_throttled 5` with
+  `throttled_time 12447165363` ns, so the quota has been enforced at some
+  point since the pod started (these counters are cumulative, so they do not
+  attribute that time to any one run). The
+  session runs as root, so apt needs no sudo. Consequence for CHIA:
+  `make -j$(nproc)` would ask for 64 jobs against an 8-core quota.
+- `g++ (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0`, the same compiler series as the
+  image, with Python 3.11.11 where the image has 3.10.19.
+- All three grid traces are on the NAS, and `SPEC17-649.fotonik3d_s-1B.champsimtrace.xz`
+  measures 25,294,572 B with sha256 starting `ecdc1feb586b6362`, which is the same
+  digest as the copy the grid is running against (checked below), so trace
+  identity is not a confound between the two machines.
+- The tree at `/root/dswb` is the pinned commit
+  `164fdb1ed01185a21a39c292937bf26bb7f4c694`, and its `config.sh`
+  (`41d2025cb69ec01e...`) and `Makefile` (`65603ae87509ac7c...`) are byte-identical
+  to the ones in the official image, so a build difference cannot be blamed on the
+  sources or the build scripts.
+
+Blocker 1 - no Docker daemon (fact, unchanged from round 1): the `docker` CLI is
+installed (Client: Docker Engine - Community 28.1.0) but `docker info` answers
+`Cannot connect to the Docker daemon at unix:///var/run/docker.sock`, and neither
+`/run/docker.sock` nor `/dev/docker*` exists. The contract names the official
+image, and it cannot be pulled or started there. Even a successful
+from-source build would produce a hand-configured binary that cannot be pooled
+with tonight's reference designs, which were measured in the image.
+
+Blocker 2 - the from-source build cannot complete, for two separable reasons
+(fact). The first is pinned to one token: the tree's `vcpkg` submodule is empty,
+so `config.sh` writes
+`absolute.options` with no dependency include directory. The two files compared
+byte-for-byte:
+
+```
+image  -I/home/ray/champsim/inc -isystem /home/ray/champsim/vcpkg_installed/x64-linux/include
+dsw    -I/root/dswb/inc -isystem <newline>   # dangling: -isystem is the last token
+```
+
+Every ChampSim compile rule is `g++ @global.options @absolute.options -MM -MT ... `,
+so the empty argument makes `-isystem` swallow the following `-MM`. cc1plus then
+rejects the command line for every translation unit:
+`error: to generate dependencies you must specify either '-M' or '-MM'`, and
+`make` exits 2 within seconds without producing `bin/`.
+
+A second, independent cause is entangled with it, and the two must not be merged
+into one explanation. On a tree whose `.csconfig/` has genuinely just been deleted,
+the core translation units start before the generated-file rule at Makefile:93/201
+has written `.csconfig/module_decl.inc`, so `inc/cache.h:232` fails with
+`fatal error: module_decl.inc: No such file or directory` even though `make` had
+printed `Building .csconfig/module_decl.inc with modules` for exactly that build.
+Building the two generated files first does not dodge it: `make .csconfig/module_decl.inc
+.csconfig/legacy_bridge.h` returned 0 with both files on disk (81 B and 71 B, and
+reported "already up to date" on the follow-up), and the next `make -j8` still
+failed on the same missing include, so the full build does not keep those files
+alive long enough for the compiles that need them. The generated files themselves
+are fine: `module_decl.inc` and `legacy_bridge.h` are 3 lines in both trees, so the
+empty guard body is normal, not a symptom.
+
+The official image never hits either cause, because `make clean` leaves the `.inc`
+files from the image's own build in place and `vcpkg_installed/` is populated, so
+CHIA's `make clean && config.sh && make -j$(nproc)` runs against a pre-populated
+`.csconfig` and a complete include list. That is the same mechanism that made
+`incremental=True` return the image's prebuilt digest instead of a fresh build.
+Judgement, not fact: the surviving `module_decl.inc` ordering hazard is worth
+reporting upstream independently of this instance, since a first build of a clean
+checkout is the normal case everywhere else.
+
+Judgement, stated as judgement: both blockers are environment, not hardware, so
+the instance is not permanently unfit. Populating `vcpkg_installed/` (or pointing
+`-isystem` at the apt-provided headers) removes the swallowed `-MM` in minutes; the
+generated-include lifetime needs a separate fix, most likely a serial first pass
+over `.csconfig/module_decl.inc` and `legacy_bridge.h` before the core objects.
+Neither is worth doing before the deadline, because the result still would not be
+an official-image binary and so could not be pooled with tonight's references.
+
+Residual risk this leaves open, and it is the one worth naming: tonight's grid is
+single-source evidence, one machine and one container. If that container is lost,
+the fallback is not the DSW instance but a re-pull of the same image on this host.
+
+Artifacts left on the instance by this round, in `/mnt/workspace` (NAS, so they
+survive a recycle) and `/root` (container-local): the probe drivers
+`probe3.py`, `probe5.py`, `probe6.py`, `probe7.py`, `dsw_build_test.py`,
+`dsw_equiv.py`, `dsw_equiv2.py`, `dsw_coldbuild.py`, `dsw_wa.py`, `dsw_serial.py`,
+the header `probe_noop.h` (671 B, sha256 `d7e9ef0b5fbcf1df...`, verified identical
+to the local copy after upload), their result files
+`chia_probe_out.json`, `chia_probe3.json`, `chia_probe5.json`, `chia_probe6.json`,
+`chia_probe7.json`, `dsw_build_result.json`, `dsw_equiv.json`, `dsw_equiv2.json`,
+`dsw_coldbuild.json`, `dsw_workaround.json`, `dsw_serial.json`, `dsw_serial2.log`,
+`dsw_serial3.log`, `dsw_run.log`, the build trees `/root/dswb`, `/root/dswb2`,
+`/root/dswb3`, and
+two idle Jupyter kernels. None of them hold credentials. They are kept rather than
+deleted so the numbers above can be re-derived; deleting them costs nothing once
+this section has been checked against them.

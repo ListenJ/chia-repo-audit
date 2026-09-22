@@ -449,3 +449,44 @@
   The builder's docstring now states that it must not be run while a grid is live.
 - Verification: `python3 -m unittest discover -s chia_loop/tests` -> 34 tests OK.
 - Commit: `6c4b57f` (hash backfill; record maintenance only)
+
+## 2026-09-22 - DSW runnability re-tested against the live instance
+
+- Task: answer whether the ModelScope DSW instance can really run the ChampSim
+  evidence workload, instead of inheriting round 1's Docker-only inference.
+- Tools: browser tab as authenticated cross-origin Jupyter REST/websocket
+  broker, `docker exec` into the official image for the control comparison.
+- Operations: extended `docs/plans/2026-09-22-modelscope-dsw-timing.md` with a
+  third-round section; no code or configuration was changed.
+- Verification:
+  - Instance id had moved to `dsw-2203230`; kernel code executes and replies
+    synchronously over `/api/kernels/<id>/channels`.
+  - Shape measured in place: cgroup quota 8 cores, 28.0 GiB, root, g++ 11.4.0;
+    the fotonik3d trace on the NAS is 25,294,572 B and the tree is the pinned
+    commit with byte-identical `config.sh`/`Makefile`.
+  - Blocker 1: still no Docker daemon. Blocker 2: `absolute.options` ends with a
+    dangling `-isystem` because `vcpkg/` is empty, so the token swallows `-MM` in
+    every compile rule and `make` exits 2 without producing `bin/`. Reproduced in
+    place at `-j8`; building `module_decl.inc` and `legacy_bridge.h` first did not
+    avoid the missing-include failure, so the ordering cause is separate.
+  - Separately confirmed ordering hazard: on a genuinely emptied `.csconfig`,
+    `make -j8` compiles core TUs before `module_decl.inc` is written; the image
+    masks it because `make clean` leaves the `.inc` files in place.
+- Verdict: DSW is not usable for this evidence tonight; the official image stays
+  the single compute path.
+- Commit: _(backfill below)_
+
+## 2026-09-22 - Credential exposure incident during the DSW probe
+
+- Event: a redaction routine in a probe checked key names but echoed nested
+  objects, so one instance URL containing an `authCode` value appeared once in
+  tool output visible to this session.
+- Impact: the value was never written to a file, the repository, the plan
+  document, memory, or any chat message authored by the user; the gateway cookie
+  was never exported from the browser.
+- Actions: the value is treated as leaked and rotates with the instance, which
+  the platform recycles; only its name and location are recorded here, never the
+  value. Subsequent probes printed whitelisted scalars only.
+- Follow-up for the user: if the DSW instance is not recycled before its
+  `authCode` expires, revoke/reissue it from the ModelScope console.
+- Commit: _(backfill below)_
