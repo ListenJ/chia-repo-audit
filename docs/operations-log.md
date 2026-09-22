@@ -115,3 +115,27 @@
 - Impact: GCP setup is `BLOCKED_PENDING_ACCOUNT_ACCESS`; local validation
   remains available.
 - Commit: `479399e`
+
+## 2026-09-22 - Colab CPU portability validation
+
+- Task: use the authenticated Colab CLI as a fallback compute path and stop
+  if the real-evidence gate could not be completed.
+- Tools: Google Colab CLI 0.7.1, standard CPU runtime, pinned DPC4-ChampSim,
+  upstream CHIA smoke trace, Python 3.13, vcpkg, g++, and make.
+- Operations:
+  - Added the T3 execution and rollback plan under `docs/plans/`.
+  - A high-memory CPU allocation returned `Service Unavailable`; no session
+    was allocated by that request.
+  - Allocated one standard CPU session (2 vCPU, 12.7 GiB RAM), ran the pinned
+    source-build smoke, downloaded the result, and terminated the session.
+  - Stopped before the large trace grid because real generated candidates and
+    a second independent auditor were unavailable.
+- Verification:
+  - Pinned commit `164fdb1ed01185a21a39c292937bf26bb7f4c694` and trace SHA-256
+    `3516e79d7523a1b2c88a5abd364be8704b4d7de117f4820724b15002bd8428e8`.
+  - Two runs were identical: 5,003 instructions, 40,459 cycles, IPC 0.123656.
+  - `colab sessions` reported no active sessions after cleanup.
+  - Evidence: `results/colab_champsim_smoke_result.json`.
+- Deviation: Colab had no Docker and therefore cannot replace the already
+  validated local official-image/ChampSimNode gate or support a GCP claim.
+- Commit: `PENDING`
