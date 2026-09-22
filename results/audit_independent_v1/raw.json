@@ -1,0 +1,696 @@
+[
+ {
+  "id": "gold-01",
+  "source": "chia_loop\\gold\\gold-01.json",
+  "expected_verdict": "equivalent",
+  "expected_errors": [],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "5ffc38b6edbe22d81bb1147529522e6c1e40fc980f5d64401f34a1c80f6bb95f",
+    "raw_reply": "```json\n{\"id\": \"gold-01\", \"verdict\": \"equivalent\", \"errors\": [], \"rationale\": \"The design specification perfectly matches the reference specification for all listed parameters.\"}\n```",
+    "usage": {
+     "promptTokenCount": 316,
+     "candidatesTokenCount": 44,
+     "totalTokenCount": 707,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 316
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 44
+      }
+     ],
+     "thoughtsTokenCount": 347
+    },
+    "verdict": "equivalent",
+    "errors": [],
+    "rationale": "The design specification perfectly matches the reference specification for all listed parameters.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "5ffc38b6edbe22d81bb1147529522e6c1e40fc980f5d64401f34a1c80f6bb95f",
+    "raw_reply": "```json\n{\n  \"id\": \"gold-01\",\n  \"verdict\": \"equivalent\",\n  \"errors\": [],\n  \"rationale\": \"The candidate and reference specifications are identical across all parameters.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 316,
+     "candidatesTokenCount": 52,
+     "totalTokenCount": 1150,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 316
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 52
+      }
+     ],
+     "thoughtsTokenCount": 782
+    },
+    "verdict": "equivalent",
+    "errors": [],
+    "rationale": "The candidate and reference specifications are identical across all parameters.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "gold-02",
+  "source": "chia_loop\\gold\\gold-02.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "b2181c3cf2752103c7ab38ec713411dfc69b2744dd6205091931a81c72edfd4b",
+    "raw_reply": "```json\n{\n  \"id\": \"gold-02\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E4\"],\n  \"rationale\": \"The candidate design includes an 'extra_prefetcher' component that is not present in the reference specification.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 329,
+     "candidatesTokenCount": 67,
+     "totalTokenCount": 890,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 329
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 67
+      }
+     ],
+     "thoughtsTokenCount": 494
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E4"
+    ],
+    "rationale": "The candidate design includes an 'extra_prefetcher' component that is not present in the reference specification.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "b2181c3cf2752103c7ab38ec713411dfc69b2744dd6205091931a81c72edfd4b",
+    "raw_reply": "```json\n{\n  \"id\": \"gold-02\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate design adds an 'extra_prefetcher' component that is not present in the reference specification.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 329,
+     "candidatesTokenCount": 73,
+     "totalTokenCount": 1358,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 329
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 73
+      }
+     ],
+     "thoughtsTokenCount": 956
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E4"
+    ],
+    "rationale": "The candidate design adds an 'extra_prefetcher' component that is not present in the reference specification.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "gold-03",
+  "source": "chia_loop\\gold\\gold-03.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E2"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "b356563ace6d2d40c19a1ad8aedd669d7aed66b7e0e531a1dd05f87f628f7f40",
+    "raw_reply": "```json\n{\"id\": \"gold-03\", \"verdict\": \"not_equivalent\", \"errors\": [\"E1\"], \"rationale\": \"The candidate microarchitecture specifies a 'FIFO' cache replacement policy, while the reference specifies 'LRU', indicating a parameter mislink.\"}\n```",
+    "usage": {
+     "promptTokenCount": 315,
+     "candidatesTokenCount": 63,
+     "totalTokenCount": 644,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 315
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 63
+      }
+     ],
+     "thoughtsTokenCount": 266
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1"
+    ],
+    "rationale": "The candidate microarchitecture specifies a 'FIFO' cache replacement policy, while the reference specifies 'LRU', indicating a parameter mislink.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "b356563ace6d2d40c19a1ad8aedd669d7aed66b7e0e531a1dd05f87f628f7f40",
+    "raw_reply": "```json\n{\n  \"id\": \"gold-03\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\"\n  ],\n  \"rationale\": \"The candidate specifies a FIFO replacement policy while the reference specifies LRU.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 315,
+     "candidatesTokenCount": 66,
+     "totalTokenCount": 1277,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 315
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 66
+      }
+     ],
+     "thoughtsTokenCount": 896
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1"
+    ],
+    "rationale": "The candidate specifies a FIFO replacement policy while the reference specifies LRU.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "gold-04",
+  "source": "chia_loop\\gold\\gold-04.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "b81d5898c5b23c8f0095c34836ea8efbdb56a2e5f28e028703ed4b43d1d76660",
+    "raw_reply": "```json\n{\"id\": \"gold-04\", \"verdict\": \"not_equivalent\", \"errors\": [\"E3\"], \"rationale\": \"The candidate design is missing the 'branch_predictor' component which is present in the reference specification.\"}\n```",
+    "usage": {
+     "promptTokenCount": 304,
+     "candidatesTokenCount": 56,
+     "totalTokenCount": 650,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 304
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 56
+      }
+     ],
+     "thoughtsTokenCount": 290
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3"
+    ],
+    "rationale": "The candidate design is missing the 'branch_predictor' component which is present in the reference specification.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "b81d5898c5b23c8f0095c34836ea8efbdb56a2e5f28e028703ed4b43d1d76660",
+    "raw_reply": "```json\n{\n  \"id\": \"gold-04\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate specification is missing the `branch_predictor` component which is present in the reference.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 304,
+     "candidatesTokenCount": 71,
+     "totalTokenCount": 1349,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 304
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 71
+      }
+     ],
+     "thoughtsTokenCount": 974
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3"
+    ],
+    "rationale": "The candidate specification is missing the `branch_predictor` component which is present in the reference.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "gold-05",
+  "source": "chia_loop\\gold\\gold-05.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E1"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "d932d78b94f0459b85ace2c782cd158fd8b8095ef3220982b08de597561cc50d",
+    "raw_reply": "```json\n{\n  \"id\": \"gold-05\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E1\"],\n  \"rationale\": \"The candidate design differs from the reference in 'cache_size' and 'associativity', which are shared parameters with different values.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 318,
+     "candidatesTokenCount": 72,
+     "totalTokenCount": 724,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 318
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 72
+      }
+     ],
+     "thoughtsTokenCount": 334
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1"
+    ],
+    "rationale": "The candidate design differs from the reference in 'cache_size' and 'associativity', which are shared parameters with different values.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "d932d78b94f0459b85ace2c782cd158fd8b8095ef3220982b08de597561cc50d",
+    "raw_reply": "```json\n{\n  \"id\": \"gold-05\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\"\n  ],\n  \"rationale\": \"The candidate specification has a different cache size and associativity compared to the reference.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 318,
+     "candidatesTokenCount": 67,
+     "totalTokenCount": 1473,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 318
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 67
+      }
+     ],
+     "thoughtsTokenCount": 1088
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1"
+    ],
+    "rationale": "The candidate specification has a different cache size and associativity compared to the reference.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "av-001",
+  "source": "chia_loop\\adversarial\\av-001.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E1"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "2fb5ef2a7526917892ca240b13a24ed566a12993fb5a6b9adcada3d1389d68f2",
+    "raw_reply": "```json\n{\n  \"id\": \"av-001\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E1\"],\n  \"rationale\": \"The candidate design specifies a cache size of 32KB, which is a different value from the reference specification's 64KB cache size for the shared 'cache_size' parameter.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 293,
+     "candidatesTokenCount": 87,
+     "totalTokenCount": 633,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 293
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 87
+      }
+     ],
+     "thoughtsTokenCount": 253
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1"
+    ],
+    "rationale": "The candidate design specifies a cache size of 32KB, which is a different value from the reference specification's 64KB cache size for the shared 'cache_size' parameter.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "2fb5ef2a7526917892ca240b13a24ed566a12993fb5a6b9adcada3d1389d68f2",
+    "raw_reply": "```json\n{\n  \"id\": \"av-001\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E1\"],\n  \"rationale\": \"The candidate's cache size of 32KB does not match the reference's 64KB.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 293,
+     "candidatesTokenCount": 70,
+     "totalTokenCount": 1414,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 293
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 70
+      }
+     ],
+     "thoughtsTokenCount": 1051
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1"
+    ],
+    "rationale": "The candidate's cache size of 32KB does not match the reference's 64KB.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "av-002",
+  "source": "chia_loop\\adversarial\\av-002.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E2"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "717a646191675b0559c95b6ec5fffad95470c1acd3fc31c9617caf9bda8e32b6",
+    "raw_reply": "```json\n{\n  \"id\": \"av-002\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\"\n  ],\n  \"rationale\": \"The 'replacement' policy differs between the design (MRU) and the reference (LRU), indicating a parameter mislink.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 293,
+     "candidatesTokenCount": 79,
+     "totalTokenCount": 731,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 293
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 79
+      }
+     ],
+     "thoughtsTokenCount": 359
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1"
+    ],
+    "rationale": "The 'replacement' policy differs between the design (MRU) and the reference (LRU), indicating a parameter mislink.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "717a646191675b0559c95b6ec5fffad95470c1acd3fc31c9617caf9bda8e32b6",
+    "raw_reply": "```json\n{\n  \"id\": \"av-002\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E2\"\n  ],\n  \"rationale\": \"The candidate specifies a Most Recently Used (MRU) replacement policy, which is the opposite of the reference's Least Recently Used (LRU) policy.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 293,
+     "candidatesTokenCount": 85,
+     "totalTokenCount": 1519,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 293
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 85
+      }
+     ],
+     "thoughtsTokenCount": 1141
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E2"
+    ],
+    "rationale": "The candidate specifies a Most Recently Used (MRU) replacement policy, which is the opposite of the reference's Least Recently Used (LRU) policy.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "av-003",
+  "source": "chia_loop\\adversarial\\av-003.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "5a15828fd5352047ab064726039099d64caddee59d7e624a534f30401c44001c",
+    "raw_reply": "```json\n{\"id\": \"av-003\", \"verdict\": \"not_equivalent\", \"errors\": [\"E3\"], \"rationale\": \"The candidate design is missing the 'branch_predictor' component which is present in the reference specification.\"}\n```",
+    "usage": {
+     "promptTokenCount": 314,
+     "candidatesTokenCount": 57,
+     "totalTokenCount": 629,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 314
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 57
+      }
+     ],
+     "thoughtsTokenCount": 258
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3"
+    ],
+    "rationale": "The candidate design is missing the 'branch_predictor' component which is present in the reference specification.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "5a15828fd5352047ab064726039099d64caddee59d7e624a534f30401c44001c",
+    "raw_reply": "```json\n{\n  \"id\": \"av-003\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate design is missing the gshare branch predictor specified in the reference.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 314,
+     "candidatesTokenCount": 68,
+     "totalTokenCount": 847,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 314
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 68
+      }
+     ],
+     "thoughtsTokenCount": 465
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3"
+    ],
+    "rationale": "The candidate design is missing the gshare branch predictor specified in the reference.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "av-004",
+  "source": "chia_loop\\adversarial\\av-004.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "2fe1a584f94fca1a75e9e8836ef7c23dbc2cb8885e5b9c6c3a957635c0c8e407",
+    "raw_reply": "```json\n{\n  \"id\": \"av-004\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate design includes an 'extra_stage' component that is not present in the reference specification.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 331,
+     "candidatesTokenCount": 73,
+     "totalTokenCount": 760,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 331
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 73
+      }
+     ],
+     "thoughtsTokenCount": 356
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E4"
+    ],
+    "rationale": "The candidate design includes an 'extra_stage' component that is not present in the reference specification.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "2fe1a584f94fca1a75e9e8836ef7c23dbc2cb8885e5b9c6c3a957635c0c8e407",
+    "raw_reply": "```json\n{\n  \"id\": \"av-004\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate design adds an `extra_stage` component that is not present in the reference specification.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 331,
+     "candidatesTokenCount": 73,
+     "totalTokenCount": 1501,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 331
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 73
+      }
+     ],
+     "thoughtsTokenCount": 1097
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E4"
+    ],
+    "rationale": "The candidate design adds an `extra_stage` component that is not present in the reference specification.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "av-005",
+  "source": "chia_loop\\adversarial\\av-005.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "83ceadf775467191337c166d7436c09f167451acdc9830ceed444fe646c85ab2",
+    "raw_reply": "```json\n{\n  \"id\": \"av-005\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\"\n  ],\n  \"rationale\": \"The 'output' parameter in the design has a different value ('PASS') compared to the reference ('expected: complex verification').\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 254,
+     "candidatesTokenCount": 79,
+     "totalTokenCount": 663,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 254
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 79
+      }
+     ],
+     "thoughtsTokenCount": 330
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1"
+    ],
+    "rationale": "The 'output' parameter in the design has a different value ('PASS') compared to the reference ('expected: complex verification').",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "83ceadf775467191337c166d7436c09f167451acdc9830ceed444fe646c85ab2",
+    "raw_reply": "```json\n{\n  \"id\": \"av-005\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\"\n  ],\n  \"rationale\": \"The design's output value 'PASS' does not match the reference's expected output 'expected: complex verification'.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 254,
+     "candidatesTokenCount": 77,
+     "totalTokenCount": 1309,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 254
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 77
+      }
+     ],
+     "thoughtsTokenCount": 978
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1"
+    ],
+    "rationale": "The design's output value 'PASS' does not match the reference's expected output 'expected: complex verification'.",
+    "parse_ok": true
+   }
+  ]
+ }
+]

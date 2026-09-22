@@ -1,0 +1,31 @@
+{
+ "id": "sem-01",
+ "design": {
+  "module_name": "gen_fill_only_conservative_s1",
+  "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n        return metadata_in;\n    }\n};\n"
+ },
+ "reference": {
+  "module_name": "gen_fill_only_conservative_s2",
+  "prefetcher_source": "#include <cstdint>\n#include <vector>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    std::vector<champsim::block_number> last_fill;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        if (!prefetch) {\n            last_fill.push_back(blk);\n            if (last_fill.size() > 16)\n                last_fill.erase(last_fill.begin());\n        }\n\n        for (const auto &entry : last_fill) {\n            if (champsim::offset(entry, blk) == 1) {\n                prefetch_line(champsim::address{blk + 1}, true, metadata_in);\n                break;\n            }\n        }\n        return metadata_in;\n    }\n};\n"
+ },
+ "expected_verdict": "not_equivalent",
+ "expected_errors": [
+  "E3"
+ ],
+ "planting": "real generated pair (gen_fill_only_conservative_s1 vs gen_fill_only_conservative_s2); cycles differ; design drops state ['last_fill']",
+ "evidence": {
+  "design_source_sha256": "b542624faf6a8b4e8eba1d367fc9442eb05db8b79daa440cd396f9622c217900",
+  "reference_source_sha256": "db77bf3cc5a59a15c1d02832c4a9de19d61775fedc679d6ae946f5269f556f6e",
+  "design_cycles": {
+   "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 2252142.0,
+   "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 95624440.0,
+   "638.imagick_s-4128B.champsimtrace.xz": 1526689.0
+  },
+  "reference_cycles": {
+   "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 2255590.0,
+   "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 6420195.0,
+   "638.imagick_s-4128B.champsimtrace.xz": 1561323.0
+  },
+  "label_basis": "measured cycles"
+ }
+}

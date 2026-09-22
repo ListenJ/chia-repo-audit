@@ -614,3 +614,84 @@
   freshly verified `D:` copy.
 - Commit: `69629c0` (this line updated by a record-maintenance commit; the export
   itself predates both).
+
+## 2026-09-23 - GCP 正式网格启动，以及冲榜缺口的三项收敛
+
+- Task: 在资助算力上跑 N=5 的正式网格；同时收敛 `proposal.md` 四问与
+  `ROADMAP.md` 非协商条款中仍未满足的部分（真实独立审计、prompt 敏感性、
+  校准集同义反复）。
+- Tools: 本地 gcloud CLI 586.0.0（winget `Google.CloudSDK`）、Cloud Shell、
+  `ssh`/`scp`、官方镜像 `ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4`、
+  Vertex AI `gemini-2.5-flash` / `gemini-2.5-pro`。
+
+### 访问与算力
+
+- 个人账户开启 2SV 后控制台可用；随后 Cloud Shell 与本地 gcloud 都以资助账户
+  `devstar7744@gcplab.me` 完成认证。本地 CLI 必须带
+  `HTTPS_PROXY=http://127.0.0.1:7897`：`ProxyEnable=0` 使命令行不走系统代理，
+  直连 `oauth2.googleapis.com` 超时（`gcloud config list` 会挂住）。
+- Cloud Shell **不会**自动带上凭据，`gcloud auth list` 报 No credentialed accounts，
+  需要一次 `gcloud auth login`。
+- `us-central1-a` 对 `c2d-standard-8` 返回 `stockout`；实例最终落在
+  `us-east1-b`，创建于 2026-09-22T09:51:35-07:00，NAT `136.108.73.240`。
+  Ubuntu 24.04 的 image family 是 `ubuntu-2404-lts-amd64`，不带 `-amd64` 会 404。
+- 配额实测（`us-central1`）：C2D 1000 / N2 3000 / C3 300 vCPU，
+  `DISKS_TOTAL_GB` 102400，`SSD_TOTAL_GB` 40960，用量全为 0。主办方随后答复
+  无配额上限亦无预算封顶。
+- 容器两个真实陷阱，都会静默毁掉实验：
+  1. 镜像内以 `uid=1000(ray)` 运行，而挂载目录属 `uid=1001(devstar7744)`，
+     首次启动直接 `PermissionError: /workspace/results/grid_v7_gcp`、`grid_rc=1`，
+     **零测量产出**。以 `chmod -R a+rwX` 放开。
+  2. coreutils `nproc` 服从 `OMP_NUM_THREADS`，而 Ray 给 actor 默认注入 1，
+     于是 `make -j$(nproc)` 退化为 `-j1`。加 `-e OMP_NUM_THREADS=8` 后实测
+     `make -j8`。冷编译从约 8 倍慢回到 13 分钟量级。
+- 观测性缺口：`audit_repro.py` 不打印逐单元进度，`raw.json` 只在结束时一次性写出，
+  `/tmp/champsim_stats_*.json` 每次只留一个。进度只能靠
+  `/home/ray/champsim/champsim_config.json` 的 mtime 变化间接确认新编译已开始。
+  实测 BFSCC 单元约 8 分钟，一个设计的 15 个单元约 47 分钟。
+- 环境一致性：镜像内 `python3 -m unittest discover -s chia_loop/tests` 为
+  `Ran 34 tests / OK`；Python 3.10.19、Ray 2.54.0、`/home/ray/champsim` 在
+  `164fdb1ed01185a21a39c292937bf26bb7f4c694`，与 `grid_v6/provenance.json` 逐项相同，
+  因此 v7 与 v6 可直接比较。三条 trace 上传后 SHA-256 与 provenance 记录逐字相符。
+- v7 配置只改一处：`n_repeat` 2 → 5，输出 `results/grid_v7_gcp`，不覆盖 v6。
+  进入 stage 时的 HEAD 钉为 `b85b38c34789b5b99a13fd8f4eca223391714786`
+  （容器内 git 因 uid 不同报 dubious ownership，加 `safe.directory` 后写入）。
+
+### 真实独立审计（补上 gate 5）
+
+- 新增 `scripts/independent_audit.py`：标注负载按白名单只放
+  `id/design/reference`，任何 `expected_*`/`category`/`variant`/`rationale`/`planting`
+  残留即拒绝运行；两个模型独立上下文、temperature 0。
+- 10 条隐藏用例结果：**κ = 0.8592**（合并标签），verdict 维度 κ = 1.0，
+  observed agreement 0.9；两模型 verdict 准确率均 10/10，错误类精确命中
+  7/10 与 8/10；唯一分歧 `av-002`（flash 判 E1，pro 判 E2，key 为 E2）。
+- 更重要的发现：**2/10 校准用例的期望标签无法从可见证据推出**。
+  `gold-03` 把 FIFO vs LRU 标为 E2 方向错误，但 FIFO 并非 LRU 的反向，
+  两模型一致判 E1；`av-005` 期望 E4，而负载只含
+  `output: PASS` 对 `output: expected: complex verification`，E4 只能靠隐藏意图得知。
+  按非协商条款如实登记，**不修改 key 去迁就模型输出**。
+- 证据落盘 `results/audit_independent_v1/{raw.json,report.json}`。
+
+### 语义用例与生成侧修正
+
+- 新增 `scripts/semantic_cases_from_candidates.py`：期望标签由仿真实测与源码结构
+  差异共同决定，判不出的标 `class not derivable` 而不硬贴。
+- 首版分类器的成员正则不支持模板类型，把 s2 的新增状态误判成 E1；对照真实
+  unified diff 发现 s2 多了 `std::vector<champsim::block_number> last_fill;`，
+  修正后：`sem-02` s1↔s3 判 **equivalent**，依据是"改名并归一空白后源码相同"
+  且"三条 trace 上 cycles 相同"；s1↔s2 与 s2↔s3 因方向不同分别得 E3 / E4。
+- prompt × seed 因子：首轮 9 格只有 3 格产出，6 格报 `unbalanced braces`。
+  实测确认是 `maxOutputTokens=4000` 被思考 token 吃掉（`thoughtsTokenCount` 达
+  3,836–10,066）导致答案被截断，**不是**模型产出畸形代码；提高到 16000 后
+  **9/9 全部产出且源码互不相同**，3 prompts × 3 seeds 因子完整。
+  因此首轮不得引用为"生成成功率 3/9"。
+- 附带发现：同一 seed 下 `fill_only_conservative` 的 s2/s3 源码哈希与上一轮逐位相同
+  （`8c39beb8e7`、`9be416ee0a`），但 s1 由 `bdd992e47b4f` 变为 `60f4a4f099`。
+  固定 seed + temperature 0.9 **不保证生成可复现**，这正是本课题要测的方差来源。
+
+### 投稿侧决定
+
+- HotCRP #27 的 `Open-source artifact URL` 改指分支
+  `https://github.com/ListenJ/chia-repo-audit/tree/codex/colab-cpu-validation`；
+  公开仓库默认分支 `main` 仍停在 `f1a16a9`（9/21 的 stub 状态），按用户裁定不合并。
+  分支 URL 匿名 HTTP 200 已验证。

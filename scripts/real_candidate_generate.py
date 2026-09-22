@@ -10,7 +10,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
+import shutil
 import subprocess
 import time
 import urllib.error
@@ -21,6 +23,13 @@ from pathlib import Path
 API_BASE = "https://api.siliconflow.cn/v1"
 CHAT_ENDPOINT = API_BASE + "/chat/completions"
 CREDENTIAL_PATH = Path.home() / ".axiom/axiom-secrets/siliconflow.credentials"
+
+# Vertex AI is the funded path: the hackathon project already has
+# aiplatform.googleapis.com enabled, so the access token comes from the ambient
+# gcloud credential instead of a stored key.
+VERTEX_BASE = "https://us-central1-aiplatform.googleapis.com/v1"
+VERTEX_PROJECT = "a3-chia-hack26ath-7744"
+VERTEX_MODEL_DEFAULT = "gemini-2.5-flash"
 
 MODULE_SPEC = """\
 Target simulator: ChampSim (the fork shipped in ghcr.io/ucb-bar/chia-champsim,
@@ -218,9 +227,39 @@ def read_api_key(path: Path = CREDENTIAL_PATH) -> str:
     return path.read_text().strip().splitlines()[0]
 
 
+def _find_gcloud() -> str:
+    """Resolve the gcloud launcher; the SDK is often installed off PATH."""
+    exe = "gcloud.cmd" if os.name == "nt" else "gcloud"
+    found = shutil.which(exe) or shutil.which("gcloud")
+    if found:
+        return found
+    candidates = [
+        Path.home() / "AppData/Local/Google/Cloud SDK/google-cloud-sdk/bin/gcloud.cmd",
+        Path("/usr/lib/google-cloud-sdk/bin/gcloud"),
+        Path.home() / "google-cloud-sdk/bin/gcloud",
+    ]
+    for path in candidates:
+        if path.is_file():
+            return str(path)
+    raise RuntimeError("gcloud not found on PATH or in its usual install dirs")
+
+
+def vertex_access_token() -> str:
+    out = subprocess.run([_find_gcloud(), "auth", "print-access-token"],
+                         capture_output=True, text=True, timeout=60)
+    token = out.stdout.strip()
+    if not token:
+        raise RuntimeError(f"gcloud returned no access token: {out.stderr.strip()[:200]}")
+    return token
+
+
 def call_chat(prompt_text: str, *, model: str, api_key: str, seed: int,
               temperature: float, max_tokens: int, timeout_s: int,
               api_base: str = API_BASE) -> dict:
+    if "aiplatform.googleapis.com" in api_base:
+        return call_vertex(prompt_text, model=model, api_key=api_key, seed=seed,
+                           temperature=temperature, max_tokens=max_tokens,
+                           timeout_s=timeout_s, api_base=api_base)
     body = json.dumps({
         "model": model,
         "messages": [{"role": "user", "content": prompt_text}],
@@ -243,6 +282,30 @@ def call_chat(prompt_text: str, *, model: str, api_key: str, seed: int,
     }
 
 
+def call_vertex(prompt_text: str, *, model: str, api_key: str, seed: int,
+                temperature: float, max_tokens: int, timeout_s: int,
+                api_base: str = VERTEX_BASE,
+                project: str = VERTEX_PROJECT) -> dict:
+    url = (f"{api_base}/projects/{project}/locations/us-central1"
+           f"/publishers/google/models/{model}:generateContent")
+    body = json.dumps({
+        "contents": [{"role": "user", "parts": [{"text": prompt_text}]}],
+        "generationConfig": {"temperature": temperature, "maxOutputTokens": max_tokens,
+                             "seed": int(seed)},
+    }).encode()
+    request = urllib.request.Request(
+        url, data=body, method="POST",
+        headers={"Content-Type": "application/json",
+                 "Authorization": "Bearer " + api_key})
+    with urllib.request.urlopen(request, timeout=timeout_s) as response:
+        payload = json.load(response)
+    parts = payload["candidates"][0]["content"].get("parts") or []
+    return {
+        "text": "".join(part.get("text", "") for part in parts),
+        "usage": payload.get("usageMetadata", {}),
+    }
+
+
 def repo_sha() -> str:
     try:
         out = subprocess.run(["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parents[1],
@@ -257,8 +320,10 @@ def main() -> int:
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--cells", default="default:0,aggressive_offset:0,default:1",
                         help="comma separated prompt:seed pairs")
-    parser.add_argument("--model", default="Pro/deepseek-ai/DeepSeek-V3")
-    parser.add_argument("--api-base", default=API_BASE)
+    parser.add_argument("--provider", choices=("siliconflow", "vertex"), default="siliconflow",
+                        help="vertex uses the funded GCP project and the ambient gcloud token")
+    parser.add_argument("--model", default=None)
+    parser.add_argument("--api-base", default=None)
     parser.add_argument("--credential-path", type=Path, default=CREDENTIAL_PATH)
     parser.add_argument("--temperature", type=float, default=0.9)
     parser.add_argument("--max-tokens", type=int, default=4000)
@@ -272,6 +337,13 @@ def main() -> int:
                         help="directory holding the candidate JSONs named by that log")
     args = parser.parse_args()
 
+    if args.provider == "vertex":
+        args.api_base = args.api_base or VERTEX_BASE
+        args.model = args.model or VERTEX_MODEL_DEFAULT
+    else:
+        args.api_base = args.api_base or API_BASE
+        args.model = args.model or "Pro/deepseek-ai/DeepSeek-V3"
+
     cells = []
     for token in args.cells.split(","):
         name, _, seed = token.partition(":")
@@ -282,7 +354,12 @@ def main() -> int:
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     log_path = args.out_dir / "generation-log.jsonl"
-    api_key = "" if args.dry_run else read_api_key(args.credential_path)
+    if args.dry_run:
+        api_key = ""
+    elif args.provider == "vertex":
+        api_key = vertex_access_token()
+    else:
+        api_key = read_api_key(args.credential_path)
     written, failures = 0, []
 
     failed, previous = {}, {}
