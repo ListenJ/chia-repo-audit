@@ -262,4 +262,4 @@
   source it repairs was generated under spec v2, so the repair round is not a
   single-variable ablation. Each artifact stores its own `prompt_text` and
   `prompt_sha256`, so the exact protocol per candidate is recoverable.
-- Commit: `<pending>`
+- Commit: `77759ad`
