@@ -59,7 +59,7 @@ def now() -> str:
 def load_cases(paths: list[Path]) -> list[dict]:
     cases = []
     for path in paths:
-        for entry in sorted(path.glob("*.json")):
+        for entry in sorted(Path(path).resolve().glob("*.json")):
             if entry.name == "answer-key.json":
                 continue
             record = json.loads(entry.read_text(encoding="utf-8"))

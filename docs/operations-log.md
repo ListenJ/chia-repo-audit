@@ -695,3 +695,30 @@
   `https://github.com/ListenJ/chia-repo-audit/tree/codex/colab-cpu-validation`；
   公开仓库默认分支 `main` 仍停在 `f1a16a9`（9/21 的 stub 状态），按用户裁定不合并。
   分支 URL 匿名 HTTP 200 已验证。
+
+## 2026-09-23 - 语义用例上的独立审计出现相关性失效
+
+- Task: 用真实生成候选的 C++ 源码做审计用例（回应"字典差异同义反复"），并验证
+  ArchAgent 式 simulator escape 能否被现有 E0-E4 分类拦截。
+- 用例来源：`scripts/semantic_cases_from_candidates.py` 从 `grid_v6` 的三个真实候选
+  生成 3 条成对用例，期望标签由实测 cycles 与源码结构差异共同决定；
+  `chia_loop/semantic/sem-esc-01.json` 记录实测到的空实现。
+- Escape 证据（同一 trace、1M warmup + 2M simulation）：冷编译 no-op 参考
+  `8a4884c11c4995dc` = 1,138,748 cycles；`gen_default_s0`（`cc0477f0e1ee0187`）与修复版
+  `gen_aggressive_offset_s1_r1`（`5de585b809f878ee`）是**两个不同二进制**，cycles 均精确
+  等于 1,138,748；next-line 参考为 1,129,305，真 prefetcher 为 1,129,110 / 1,129,706 /
+  1,132,568。即 17 个筛选设计中 2 个"能编译、能跑、有指标"但行为上等价于什么都不做，
+  且 `gen_default_s0` 并非偷懒桩，而是预取逻辑从未真正触发的 stride 实现。
+  任何只看"编译+运行+产出指标"的验证器都会放行。
+- 双模型结果（`results/audit_independent_semantic/`）：**κ = 0.6667**、agreement 0.75，
+  明显低于字典用例的 0.8592；两模型 verdict 准确率均为 3/4、错误类精确命中 0.5 与 0.25。
+- 关键发现：两模型 verdict 唯一共同错的那条正是 `sem-esc-01`——都判
+  `not_equivalent|E4`，而实测为 `equivalent`。即**读到看起来成立的预取代码就判定其有效**，
+  两者一致地错，属于相关性失效而非独立噪声。结论：基于规格文本的成对等价审计不能替代
+  仿真实测；拦住这个 escape 的是门禁里的 no-op 对照，不是 E0-E4 分类。
+- 协议缺口（如实记录，不改动分类法去迎合结果）：E0-E4 只描述成对差异，无法表达
+  "宣称有效、实测无效"，因此该用例的两个模型标注被迫落到 E4。已在用例上标
+  `taxonomy_gap: true` 与说明。
+- κ=0.6667 低于本协议自设的 0.7 门禁，语义用例上判红。
+- 修正：`independent_audit.py` 的 `load_cases` 在传入相对目录时
+  `relative_to(REPO)` 抛 ValueError，改为先 `resolve()`。
