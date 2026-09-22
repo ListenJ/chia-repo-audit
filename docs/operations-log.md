@@ -422,3 +422,30 @@
 - Note: not yet verified whether the grid's first design cost more than a solo
   screening build; recorded once `.tmp/grid_start`/`grid_end` exist.
 - Commit: `a0b0afb` (hash backfill; record maintenance only)
+
+## 2026-09-22 - Grid config builder promoted to scripts/, plus an incident I caused
+
+- Task: make the contract selection that tonight's grid depends on re-derivable,
+  i.e. out of `.tmp/` and into version control with tests.
+- Tools: `scripts/make_grid_config.py` (new, copied from `.tmp/`),
+  `chia_loop/tests/test_make_grid_config.py` (new), mutation check in `/tmp`.
+- Operations:
+  - Four tests pin the safety properties: largest single-contract rectangle,
+    leftovers dropped and never staged, repairs excluded, and a colliding module
+    name in the dropped remainder not blocking a valid grid. Staged files are
+    re-read to prove all carry the chosen contract's header.
+  - A duplicate-name guard I wrote first was removed: run against tonight's real
+    input shape it returned rc=1 on `gen_default_s0` (present under v1 and v2,
+    neither selected), so it rejected a grid that is actually safe. The existing
+    cell-collision check plus one-contract-per-rectangle already cover the hazard.
+- Incident: while mutation-testing, I executed the repo-resident copy with its
+  real `REPO`, and because the script wipes `.tmp/grid_cand` before selecting, the
+  staging pool of the live grid was deleted from ~20:14:30 to 20:16:36. The grid
+  had already read seeds 1 and 2 (s2's build started 20:05:42) and the next pool
+  read (seed 3) happens after s2's runs, around 20:30, so no cell scored the
+  wrong design. Restored by copying from `.tmp/cand4`, verified byte-identical
+  with `cmp` for all three files. Follow-up check on the artifact: confirm the
+  seed-3 cell's design digest equals `529a404042b5` (its `prefetcher_source`).
+  The builder's docstring now states that it must not be run while a grid is live.
+- Verification: `python3 -m unittest discover -s chia_loop/tests` -> 34 tests OK.
+- Commit: pending

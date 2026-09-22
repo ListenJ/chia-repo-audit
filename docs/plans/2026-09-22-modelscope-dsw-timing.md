@@ -348,7 +348,7 @@ Two findings that the screening produced by accident and that change the plan:
 
 Grid sizing updated from these numbers (supersedes the cost paragraph above):
 the grid runs the designs that compile inside one contract, because directory
-mode would otherwise mix briefs. `.tmp/make_grid_config.py` groups compiled
+mode would otherwise mix briefs. `scripts/make_grid_config.py` groups compiled
 designs by a contract key derived from the retained prompt text (everything
 before the cell-specific brief, with module names normalised out), refuses to mix
 contracts, excludes repair-round designs from the one-shot grid, stages only the
@@ -400,7 +400,10 @@ Follow-ups opened by this freeze, not done in it:
 - The screening artifact should carry the contract key (or `prompt_sha256`) and a
   digest of `prefetcher_source` per row, so the 6/17 rate and the per-contract
   split are re-derivable from the committed file alone.
-- `.tmp/make_grid_config.py` keys its gathered designs by module name, so a name
-  that compiles under two contracts keeps whichever directory was read last. That
-  did not bite this run (the selected rectangle came from one directory and the
-  staged files were checked), but the builder needs a duplicate-name refusal.
+- Closed while promoting the builder to `scripts/make_grid_config.py`: the
+  duplicate-module-name hazard needs no name-level refusal. A rectangle is drawn
+  from one contract at a time and two designs claiming one cell are already
+  refused, so a name collision can only sit in the dropped remainder - which is
+  tonight's case (`gen_default_s0` exists under v1 and v2, neither selected). A
+  stricter guard was written, tested, and removed after it was shown to reject
+  this exact valid input.
