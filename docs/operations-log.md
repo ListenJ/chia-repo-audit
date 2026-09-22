@@ -296,4 +296,4 @@
 - Follow-ups: 3 contract-v3 designs screening in parallel; grid blocked until one
   contract yields 3 cells; `stage_run` still aborts a whole stage on one build
   failure.
-- Commit: pending
+- Commit: `7493c7d` (hash backfill; record maintenance only)
