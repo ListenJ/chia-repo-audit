@@ -448,4 +448,4 @@
   seed-3 cell's design digest equals `529a404042b5` (its `prefetcher_source`).
   The builder's docstring now states that it must not be run while a grid is live.
 - Verification: `python3 -m unittest discover -s chia_loop/tests` -> 34 tests OK.
-- Commit: pending
+- Commit: `6c4b57f` (hash backfill; record maintenance only)
