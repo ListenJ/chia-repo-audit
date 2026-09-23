@@ -154,7 +154,7 @@ Across 3 designs $\times$ 3 traces $\times$ 5 repeats (45 runs, on a second phys
 host) the loop reports cross-seed CV $\mathbf{78.16\%}$ against the 5\% threshold,
 verdict \textsc{Non-Reproducible}, publish gate \textsc{Blocked}. Repeated-run CV
 is $\mathbf{0.0000\%}$: no cell varies across its five runs. The simulator is
-deterministic, and determinism is not reproducibility.
+deterministic, and determinism is not reproducibility (Fig.~\ref{fig:decomp}a).
 
 The replication is exact on measurement and total on artifact. Cycles, IPC and
 instruction counts match the earlier run on all nine cells, yet \textbf{0 of 9}
@@ -253,6 +253,7 @@ apart, which is the point of \S\ref{sec:groundtruth}.
 \label{sec:escape}
 
 Compile-and-run is not evidence of a design. Against a cold no-op reference
+(Fig.~\ref{fig:decomp}b)
 measuring 1{,}138{,}748 cycles, two \emph{distinct} binaries---a generated stride
 prefetcher and a repaired aggressive-offset candidate---return exactly
 1{,}138{,}748, while every genuine prefetcher differs (1{,}129{,}110 /
@@ -409,6 +410,25 @@ that into a check rather than a coincidence. Reproduce the headline grid with
 output directory outside \texttt{results/} so a replication cannot overwrite the
 committed evidence.
 
+\section{What this should change}
+\label{sec:changes}
+
+Each rule below is stated as a check an author can run, because every one of them was
+violated by us and caught by reading primary evidence rather than by a green gate.
+\textbf{(1) Report factor levels next to every variance statistic.} A spread computed
+over fewer than two levels of its own axis must be emitted as \emph{unexercised}, never
+as a value that can satisfy a threshold. \textbf{(2) Treat labels as generated
+artifacts.} Where a verdict can be grounded in measurement, ground it; where it cannot,
+abstain rather than infer, and fuzz structural labelers against non-design syntax such
+as preprocessor lines and comments. \textbf{(3) Key identity on the delivered
+digest, and report the label marginal with every agreement statistic.} $\kappa$ without
+the class distribution is uninterpretable, and $\kappa=1.0$ on a single-class set means
+nothing. \textbf{(4) Do not let a learned score decide what needs human approval}
+unless it is shown to separate the safe action from the destructive one; a rule that
+escalates everything automates nothing. \textbf{(5) Make a nullity check a gate, not a
+diagnostic.} ``Compiles, runs, produces numbers'' passed three designs that do nothing;
+any verifier weaker than a comparison against a no-op reference will pass them too.
+
 \section{Limitations}
 \textbf{Axes are measured separately.} Prompt spread comes from a
 $1\times3$ grid and cross-seed CV from a $3\times1$ one; no reported cell yet varies
@@ -445,8 +465,8 @@ own automation---a gate that passed an unexercised axis, a labeler that read
 \texttt{\#include} brackets as comparison operators, an escalation rule built
 on an approval score we then measured not to separate safe from destructive, and a
 screening file whose incremental rows cannot be attributed to the design they name.
-The
-instrument, the negative verdicts and the self-reports are the contribution.
+The instrument, the negative verdicts, the five protocol rules we would ask of any
+such loop (\S\ref{sec:changes}) and the self-reports are the contribution.
 
 \section*{AI Assistance Disclosure}
 AI coding and writing tools assisted with implementation, experiment plumbing,
