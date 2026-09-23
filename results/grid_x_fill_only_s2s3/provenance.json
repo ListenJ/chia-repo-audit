@@ -1,0 +1,55 @@
+{
+  "grid": "grid_x_fill_only_s2s3",
+  "purpose": "Second single-axis replication: the fill_only_conservative prompt at seeds 2 and 3, three traces, three repeats. Run to test whether the 78.16% cross-seed CV measured on grid_v6 (seeds 1,2,3) is a property of the design family or of the particular seed triple.",
+  "run": {
+    "started_utc": "2026-09-23T12:58Z",
+    "finished_utc": "2026-09-23T15:13Z",
+    "host": "GCP compute instance chia-grid2, us-east1-b, c2d-standard-8, sponsor-funded project",
+    "container": "chia-extra, ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+    "config": ".tmp/cfg/grid_x_a.json (seeds [2,3], prompts [fill_only_conservative], n_repeat 3, 3 traces)",
+    "cells": 2,
+    "trials": 18,
+    "repository_head_at_launch": "c89ce8161bc365389c0383d56c7a948928d324c9"
+  },
+  "gate_correction": {
+    "printed_at_run_time": {
+      "verdict": "REPRODUCIBLE",
+      "publish_gate": "PASS",
+      "outcome": "PUBLISHABLE",
+      "publish_blockers": []
+    },
+    "why_that_was_wrong": "This VM was one commit behind: it ran c89ce81, which predates the axis-level fix in 118d313. The grid holds the prompt constant, so max prompt spread was computed over a single level, returned 0.0, and satisfied nothing -- and because the old gate only tested the seed and repeat axes, an unexercised prompt axis produced a clean PASS with no blocker recorded.",
+    "rescored_with": "python3 scripts/rescore_grid.py --raw results/grid_x_fill_only_s2s3/raw.json --write",
+    "corrected": {
+      "verdict": "REPRODUCIBLE",
+      "publish_gate": "BLOCKED",
+      "publish_blockers": ["axis_not_exercised:prompt"],
+      "axis_levels": {"seed": 2, "prompt": 1, "trace": 3, "repeat_min": 3}
+    },
+    "note": "The reproducibility verdict itself does NOT change: with two real seed levels the cross-seed CV is a genuine 0.0000%, not a vacuous one. What changes is the publish gate, which the old code passed while an axis went unmeasured. This is a second live instance of the same false PASS, produced by running the unfixed gate rather than by a different kind of mistake."
+  },
+  "measured": {
+    "max_seed_cv_pct": 0.0,
+    "max_repeat_cv_pct": 0.0,
+    "max_prompt_spread_pct": 0.0,
+    "max_trace_cv_pct": 163.3321,
+    "trace_top1_stability": 1.0,
+    "trace_kendall_tau": 1.0
+  },
+  "what_this_adds": "It narrows the headline, and the narrowing matters. grid_v6/v7 drew its three seeds from .tmp/grid_cand; this grid drew seeds 2 and 3 from .tmp/cand_fact2. Those directories contain DIFFERENT programs under the SAME module names: gen_fill_only_conservative_s2 is file sha256 d3b488833a362800 (1210 source chars) in grid_cand and fba763d78e5bc047 (1107 chars) in cand_fact2. On BFSCC the grid_cand s2 measures 6,420,195 cycles while the cand_fact2 s2 measures 95,624,440 -- a 15x gap that is fully explained by different inputs, not by a measurement disagreement. Within cand_fact2, seeds 2 and 3 reproduce each other bit-exactly on all three traces (cross-seed CV 0.0000%). So the 78.16% cross-seed CV is a property of ONE generated series, not of LLM-driven generation in general, and a seed label is not a design identifier across series. The paper's reproducibility claim is scoped accordingly.",
+  "cross_series_name_collision": {
+    "gen_fill_only_conservative_s2": {
+      "grid_cand_file_sha256_prefix": "d3b488833a362800",
+      "grid_cand_source_chars": 1210,
+      "grid_cand_bfscc_cycles": 6420195,
+      "cand_fact2_file_sha256_prefix": "fba763d78e5bc047",
+      "cand_fact2_source_chars": 1107,
+      "cand_fact2_bfscc_cycles": 95624440
+    },
+    "consequence": "Any comparison of 'the same design' across candidate directories must be keyed on candidate_sha256 or design_sha256. The two grids' raw.json files already record both, and they differ, which is what made this detectable."
+  },
+  "known_gaps": [
+    "raw.json records HEAD at write time, not at stage entry, so the SHA above was recovered from the host-side clone rather than captured by the loop.",
+    "The screening rows in this grid do not carry a trace field; trace identity comes from the config, not per cell."
+  ]
+}

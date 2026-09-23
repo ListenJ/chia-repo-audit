@@ -23,7 +23,8 @@ trace---gating publication on both a pre-registered threshold and a double-blind
 annotation layer scored by same-provider models and by a third, architecturally
 different one. Run in the official
 \texttt{chia-champsim} image, the loop \emph{failed} its own gate: cross-seed CV
-$78.16\%$ against a $5\%$ threshold while repeated-run CV is $0.0000\%$ over 45
+$78.16\%$ against a $5\%$ threshold within one generated series, while repeated-run
+CV is $0.0000\%$ over 45
 runs, so the publish gate reads \textsc{Blocked}. Two candidates differing only in
 a struct name and indentation carry distinct source, design and binary digests yet
 bit-identical cycles on all three traces: the seed moved the artifact, not the
@@ -178,6 +179,19 @@ no-op reference on BFSCC, and reproduces the no-op cycle count exactly on
 imagick. The seed moved the artifact and not the design, and nullity is a
 per-trace property---our cell-level checker conflates the two, which we record as
 a protocol defect.
+
+That $78.16\%$ is scoped to one generated series, and a second series says why.
+A replication of the same prompt at seeds $\{2,3\}$ drawn from a \emph{different}
+candidate directory measures cross-seed CV $\mathbf{0.0000\%}$: those two seeds
+reproduce each other bit-exactly on all three traces. The two directories hold
+different programs under the same module name---\texttt{gen\_fill\_only\_conservative\_s2}
+is 1{,}210 source characters in one and 1{,}107 in the other, and its BFSCC cycle
+count is 6{,}420{,}195 versus 95{,}624{,}440---so the $15\times$ gap between the two
+grids is an input difference, not a measurement disagreement, and the two
+\texttt{raw.json} files record distinct \texttt{candidate\_sha256} values that are
+what made this checkable. A seed label is not a design identifier across series, and
+the seed effect reported here is a property of one series rather than of agentic
+generation in general.
 
 \subsection{Trace choice reorders the candidates}
 \label{sec:trace}
@@ -402,7 +416,7 @@ repository URL is filed in this submission's required open-source-artifact field
 rather than printed here, so the paper stays anonymous while the artifact stays
 reachable. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (43 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (47 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check rather than a coincidence. Reproduce the headline grid with
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 6 --config
@@ -440,7 +454,12 @@ is the axis that fails. \textbf{Labels:} the 33-pair $\kappa$ rests on structura
 labels that survive our own header-parsing defect only because we could re-derive
 them; only the 4-case set has a measurement-grounded label, and its correlated
 failure is $n=1$. That set carries no \texttt{equivalent} gold case at all, which is
-why its verdict-axis agreement is reported as degenerate rather than as reliability. \textbf{Annotators:} both generative models come from one
+why its verdict-axis agreement is reported as degenerate rather than as reliability.
+\textbf{One series per axis.} Each grid draws candidates from a single directory, and
+the same module name denotes different programs across directories, so no number here
+is a cross-series estimate: the $78.16\%$ and $0.0000\%$ cross-seed CVs are both
+correct and describe different generated series.
+\textbf{Annotators:} both generative models come from one
 provider, and \S\ref{sec:substrate} shows that the architecturally different rater
 we could reach is worse than independent rather than better. \textbf{Checker:} the
 cell-level nullity rule conflates per-trace with global nullity.

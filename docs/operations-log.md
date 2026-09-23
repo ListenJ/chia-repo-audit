@@ -1059,3 +1059,34 @@ PDF 里再印一次并不增加可发现性，只破坏匿名。
 `github.com/ucb-bar/chia` —— 那是别人引用的仓库，不是我们的身份。
 **会误报的门禁很快就会被无视**，所以收窄成只匹配自己的仓库名与账号串。
 声明的 claim 数由 41 → 43，正文同步。
+
+### 10. 第二个 seed 系列回来的是 0.0000%，而它逼着我把标题数字收窄
+
+VM2 的 `grid_x_fill_only_s2s3`（fill_only_conservative，seeds{2,3}，3 trace × 3 重复）
+15:13 跑完 —— 比我装上看门狗还早 6 分钟，所以是我主动拉回来的，不是等来的。
+
+两件事立刻出现：
+
+1. **它打印的是 `REPRODUCIBLE` / `PUBLISHABLE`。** 那台 VM 停在 `c89ce81`，
+   比门禁修复 `118d313` 早一个提交，所以旧的假 PASS **在修复已经存在之后又复现了一次**。
+   本地 `rescore_grid.py` 重算后：`REPRODUCIBLE` 不变（seed 轴确实有两个水平，
+   0.0000% 是真的），但 `publish_gate` 变 `BLOCKED`，
+   blocker `axis_not_exercised:prompt`。这条修正没有重跑一次仿真。
+2. **cross-seed CV = 0.0000%，而 v6 同一 prompt 同一 seed 标号是 78.16%。**
+   第一反应是"两次测量打架"。查下去不是：
+   v6/v7 的候选来自 `.tmp/grid_cand`，这个网格来自 `.tmp/cand_fact2`，
+   而 `gen_fill_only_conservative_s2` 在两个目录里是**两个不同的程序**
+   （1210 vs 1107 源字符，文件 sha `d3b48883…` vs `fba763d7…`），
+   BFSCC 上 6,420,195 vs 95,624,440。
+   两份 `raw.json` 各自记了 `candidate_sha256`，两者不同 —— 这就是可查的原因。
+
+**对论文的后果**：78.16% 不是"LLM 生成对 seed 敏感"的一般性度量，
+它是**某一个生成系列内部**的度量；换一个系列、同样两个 seed 标号，CV 是 0.0000%。
+所以我把标题改成"within one generated series"，Limitations 加一条
+"One series per axis"，provenance 里写清 `cross_series_name_collision` 的两侧摘要与周期。
+这与 §5 的 binary 归属、§7 的名字冲突是同一件事的第三次现身：
+**seed 标号、模块名、binary digest 三个都不是设计身份**，
+而只有 digest 这一层我们之前说对了方向（v6 的 0/9 共享 digest）。
+
+验证脚本 +4 条（第二个系列的 0.0000%、prompt 未行使、seed 轴确有 2 个水平、
+同名跨系列 candidate digest 真的不同），自指那条再次把正文数字从 43 顶到 47。

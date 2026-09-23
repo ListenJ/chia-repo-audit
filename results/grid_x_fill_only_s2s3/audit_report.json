@@ -1,0 +1,112 @@
+{
+ "version": 6,
+ "backend": "champsim_node",
+ "config_sha256": "589b98454c78e104083ab663a4f149ff535a22a848dbd723851cc7aa5ad05ab1",
+ "acceptance_threshold": 0.05,
+ "axis_levels": {
+  "seed": 2,
+  "prompt": 1,
+  "trace": 3,
+  "repeat_min": 3
+ },
+ "axes_measured": {
+  "seed": true,
+  "prompt": false,
+  "trace": true,
+  "repeat": true
+ },
+ "unexercised_axes": [
+  "prompt"
+ ],
+ "max_seed_cv": 0.0,
+ "max_repeat_cv": 0.0,
+ "max_prompt_spread": 0.0,
+ "max_trace_cv": 1.633321,
+ "seed_cv": {
+  "fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+ },
+ "repeatability_cv": {
+  "2/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "2/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "2/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
+  "3/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "3/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "3/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+ },
+ "prompt_spread": {
+  "2/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "2/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "2/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
+  "3/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "3/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "3/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+ },
+ "trace_cv": {
+  "2/fill_only_conservative": 1.633321,
+  "3/fill_only_conservative": 1.633321
+ },
+ "ranking_stability": {
+  "n_candidates": 2,
+  "n_traces": 3,
+  "full_ranking": [
+   "gen_fill_only_conservative_s2",
+   "gen_fill_only_conservative_s3"
+  ],
+  "full_top_candidate": "gen_fill_only_conservative_s2",
+  "full_scores": {
+   "gen_fill_only_conservative_s2": 33134423.666667,
+   "gen_fill_only_conservative_s3": 33134423.666667
+  },
+  "top1_stability": 1.0,
+  "mean_kendall_tau": 1.0,
+  "leave_one_out": [
+   {
+    "held_out_trace": "638.imagick_s-4128B.champsimtrace.xz",
+    "ranking": [
+     "gen_fill_only_conservative_s2",
+     "gen_fill_only_conservative_s3"
+    ],
+    "top_candidate": "gen_fill_only_conservative_s2",
+    "top1_matches_full": true,
+    "kendall_tau": 1.0
+   },
+   {
+    "held_out_trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+    "ranking": [
+     "gen_fill_only_conservative_s2",
+     "gen_fill_only_conservative_s3"
+    ],
+    "top_candidate": "gen_fill_only_conservative_s2",
+    "top1_matches_full": true,
+    "kendall_tau": 1.0
+   },
+   {
+    "held_out_trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+    "ranking": [
+     "gen_fill_only_conservative_s2",
+     "gen_fill_only_conservative_s3"
+    ],
+    "top_candidate": "gen_fill_only_conservative_s2",
+    "top1_matches_full": true,
+    "kendall_tau": 1.0
+   }
+  ]
+ },
+ "verdict": "REPRODUCIBLE",
+ "cohen_kappa": 1.0,
+ "publish_gate": "BLOCKED",
+ "publish_blockers": [
+  "axis_not_exercised:prompt"
+ ],
+ "adversarial_detection": 1.0,
+ "gold_calibration": "5/5",
+ "error_distribution": {
+  "E0": 0,
+  "E1": 2,
+  "E2": 2,
+  "E3": 2,
+  "E4": 3
+ }
+}

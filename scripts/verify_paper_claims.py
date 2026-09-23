@@ -211,6 +211,29 @@ check("paper still claims anonymity consistently", "Anonymous Submission",
       "Anonymous Submission" if "Anonymous Submission" in tex_src else None)
 
 
+# ---- 第二个 seed 系列：0.0000% 与跨系列同名不同物 ----------------------
+s2g = load_json("results/grid_x_fill_only_s2s3/audit_report.json")
+check("second series cross-seed CV", 0.0, pct(s2g["max_seed_cv"]), r"0\.0000\%")
+check("second series gate blocked on unexercised prompt", ["prompt"],
+      s2g.get("unexercised_axes"), r"One series per axis")
+check("second series seed axis really has two levels", 2,
+      s2g.get("axis_levels", {}).get("seed"))
+
+
+def cand_sha(path, name):
+    d = load_json(path)
+    return {c.get("generator_seed", c.get("seed")): c["candidate_sha256"]
+            for c in d["cells"].values() if c["candidate_id"] == name}
+
+
+v6_s2 = cand_sha("results/grid_v6/raw.json", "gen_fill_only_conservative_s2").get(2)
+x_s2 = cand_sha("results/grid_x_fill_only_s2s3/raw.json",
+                "gen_fill_only_conservative_s2").get(2)
+check("same module name, different candidate digest across series", True,
+      v6_s2 is not None and x_s2 is not None and v6_s2 != x_s2,
+      r"1\{,\}210 source characters")
+
+
 def main() -> int:
     # The paper states how many claims this script checks, so that number is itself a
     # claim. Include this check in its own count, or the sentence can never be right.
