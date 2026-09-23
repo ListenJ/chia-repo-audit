@@ -27,13 +27,13 @@ from independent_audit import (  # noqa: E402
 CKPT = "/root/models/laya"
 SETS = {
     "spec10": [REPO / "chia_loop/gold", REPO / "chia_loop/adversarial"],
-    "semantic4": [REPO / "chia_loop/semantic"],
+    "measured6": [REPO / "chia_loop/semantic"],
     "fact36": [REPO / "chia_loop/semantic_fact"],
 }
 # 已落盘的生成式标注者结果，用来配对比分
 LLM_RESULTS = {
     "spec10": REPO / "results/audit_independent_v1/raw.json",
-    "semantic4": REPO / "results/audit_independent_semantic/raw.json",
+    "measured6": REPO / "results/audit_independent_semantic_v3/raw.json",
     "fact36": REPO / "results/audit_independent_fact36/raw.json",
 }
 

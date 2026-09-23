@@ -1,8 +1,8 @@
 {
-  "mode": "write",
+  "mode": "dry-run",
   "defect": "comparators() matched angle brackets inside #include directives, so a difference in how many headers a generated candidate included was labelled E2 'comparison polarity differs'",
   "sets": {
-    "semantic4": {
+    "measured6": {
       "relabelled": [],
       "label_stats": {
         "verdicts": {},
@@ -10,54 +10,36 @@
           "sem-01",
           "sem-02",
           "sem-03",
-          "sem-esc-01"
+          "sem-esc-01",
+          "sem-esc-02",
+          "sem-esc-03"
         ]
       },
       "rescored": {
-        "n_scored": 4,
-        "n_labellable": 4,
+        "n_scored": 6,
+        "n_labellable": 6,
         "n_unlabellable": 0,
-        "verdict_accuracy_gemini-2.5-flash": 0.75,
-        "combined_exact_gemini-2.5-flash": 0.5,
-        "verdict_accuracy_gemini-2.5-pro": 0.75,
-        "combined_exact_gemini-2.5-pro": 0.25,
+        "verdict_accuracy_gemini-2.5-flash": 0.5,
+        "combined_exact_gemini-2.5-flash": 0.3333,
+        "verdict_accuracy_gemini-2.5-pro": 0.5,
+        "combined_exact_gemini-2.5-pro": 0.3333,
         "kappa_verdict_only": 1.0,
-        "kappa_combined_label": 0.6667,
+        "kappa_combined_label": 0.4545,
         "annotators_agree_with_each_and_wrong": [
-          "sem-esc-01"
+          "sem-esc-01",
+          "sem-esc-02",
+          "sem-esc-03"
         ],
         "annotators_agree_and_right": 3,
         "annotators_disagree": 0,
         "gold_class_tally": {
           "not_equivalent": 2,
-          "equivalent": 2
+          "equivalent": 4
         }
       }
     },
     "fact36": {
-      "relabelled": [
-        {
-          "id": "sem-34",
-          "old": "not_equivalent|E2",
-          "new": "unlabellable|",
-          "note": "no shared trace measurement; sources differ only in names or formatting, so no verdict is derivable",
-          "path": "chia_loop/semantic_fact/sem-34.json"
-        },
-        {
-          "id": "sem-35",
-          "old": "not_equivalent|E2",
-          "new": "unlabellable|",
-          "note": "no shared trace measurement; sources differ only in names or formatting, so no verdict is derivable",
-          "path": "chia_loop/semantic_fact/sem-35.json"
-        },
-        {
-          "id": "sem-36",
-          "old": "not_equivalent|E2",
-          "new": "unlabellable|",
-          "note": "no shared trace measurement; sources differ only in names or formatting, so no verdict is derivable",
-          "path": "chia_loop/semantic_fact/sem-36.json"
-        }
-      ],
+      "relabelled": [],
       "label_stats": {
         "verdicts": {
           "not_equivalent": 33,

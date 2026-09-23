@@ -21,7 +21,7 @@ from independent_audit import cohen_kappa  # noqa: E402
 from semantic_cases_from_candidates import classify  # noqa: E402
 
 SETS = {
-    "semantic4": (REPO / "chia_loop/semantic", REPO / "results/audit_independent_semantic/raw.json"),
+    "measured6": (REPO / "chia_loop/semantic", REPO / "results/audit_independent_semantic_v3/raw.json"),
     "fact36": (REPO / "chia_loop/semantic_fact", REPO / "results/audit_independent_fact36/raw.json"),
 }
 

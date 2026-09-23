@@ -48,7 +48,7 @@ def main() -> int:
 
     token = vertex_access_token()
     cases = load_cases([Path(p) for p in args.case_dirs])
-    baseline_path = REPO / "results/audit_independent_semantic_v2/raw.json"
+    baseline_path = REPO / "results/audit_independent_semantic_v3/raw.json"
     if not baseline_path.is_file():
         raise SystemExit(f"need the forward-direction baseline at {baseline_path}")
     forward = {r["id"]: {l["model"]: l for l in r["labels"]}

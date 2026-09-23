@@ -1318,3 +1318,51 @@ flips 0/8 (rate 0.0)
 论文 §3.5 加一句、Limitations 把那条从"我们没测"改写成"威胁里可测的那一半测了，
 训练污染那一半没测"——**如实区分测过与没测过，而不是笼统承认或笼统否认。**
 验证器 +3 条（比较了 8 次、0 翻转、逃逸用例两向都是 not_equivalent），80/80。
+
+### 18. 共同错误从 n=1 提到 n=3：三个逃逸全部被两个模型同时漏掉
+
+Limitations 自己写着"测量接地集上的共同错误是 n=1"。但 screening 里本来就有**三个**
+编译通过、跑起来、出指标、cycle 数与冷启动 no-op 逐位相同的设计，我只做了一个用例。
+另外两个的源码与测量都已在仓库里，**不需要再花一次仿真**。
+
+`scripts/escape_cases_from_measurements.py` 生成 sem-esc-02 / sem-esc-03。
+归属不手抄：从各自真实来源目录读文件、现算 sha256，并按 `(module, binary_sha256)`
+匹配 screening 行；同时把"这个模块名在哪些目录还有不同内容的同名副本"写进证据。
+可归属性能直接判定，因为 `screen_fact.sh` 只扫了 `cand_fact2` 一个目录，
+而 13-design 批的 5/6/3/3 目录-行映射已在上一步锁死。
+三个设计共享同一 trace（fotonik3d）与同一预算（1M warmup + 2M sim，`instructions=2000001`），
+no-op 参考同样是 1,138,748。
+
+重跑 6 例 × 2 模型标注：
+
+```
+sem-01      gold=not_equivalent  flash=not_equivalent  pro=not_equivalent   OK
+sem-02      gold=equivalent      flash=equivalent      pro=equivalent       OK
+sem-03      gold=not_equivalent  flash=not_equivalent  pro=not_equivalent   OK
+sem-esc-01  gold=equivalent      flash=not_equivalent  pro=not_equivalent   MISS
+sem-esc-02  gold=equivalent      flash=not_equivalent  pro=not_equivalent   MISS
+sem-esc-03  gold=equivalent      flash=not_equivalent  pro=not_equivalent   MISS
+
+kappa_verdict_only 1.0   kappa_combined_label 0.4545   verdict_accuracy 0.5 / 0.5
+disagreements 0   shared errors = 三个逃逸，且非逃逸用例一个没错
+```
+
+**这就是论文论点的最好一张图：verdict κ = 1.0（零分歧）而准确率 0.5，
+三个错处恰好就是三个逃逸，非逃逸零失误。** 一致性到顶，正确性抛硬币 ——
+而且现在是系统性的，不是巧合。
+
+角色互换对照在 6 例集上重跑：**0/12 翻转**。第三 substrate 也在同一 6 例集上重算
+（acc 0.667、与两个 LLM 的 κ −0.364；它默认答 `equivalent`，而现在 6 个 gold 里有 3 个是
+`equivalent`，所以它的"分数"上升恰恰说明那个数是集合构成给的，不是能力给的 ——
+这一点比原来的 −0.500 更能说明问题）。
+集合键名从 `semantic4` 改为 `measured6`，三层数据全部对齐同一集。
+
+验证器 80 → 85 条（新增 6 例集大小、κ 0.455、verdict κ 1.0、准确率 0.5、
+三个共同错误恰为三个逃逸、非逃逸零错误、零分歧、12 次互换比较、substrate −0.364）。
+论文 7 页、0 error / 0 overfull / 0 undefined，43 测试全绿，85/85。
+
+途中两次自己的失误，记下来：
+1. 用 python 批量替换表格行时把行尾 `\` 吃成了一个 `\`，LaTeX 直接
+   `Extra alignment tab has been changed to \cr`。批量改 LaTeX 不如逐处 Edit。
+2. 三条 `sed -i` 因为反斜杠转义全部**静默没生效**，我却按"已经改了"去编译，
+   结果 overfull 数值一模一样才发觉。**sed 无输出不等于成功**，改完要 grep 回读。

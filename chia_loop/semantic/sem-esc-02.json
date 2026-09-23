@@ -1,0 +1,32 @@
+{
+ "id": "sem-esc-02",
+ "design": {
+  "module_name": "gen_aggressive_offset_s1_r1",
+  "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_aggressive_offset_s1_r1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    static constexpr int REGION_SIZE = 8;\n    static constexpr int MAX_OFFSET = 4;\n    static constexpr int MAX_CONFIDENCE = 3;\n\n    struct region_entry {\n        champsim::block_number base;\n        int confidence = 0;\n    };\n\n    region_entry regions[64] = {};\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        champsim::block_number region_base = blk;\n        for (int i = 0; i < LOG2_BLOCK_SIZE + REGION_SIZE; ++i)\n            region_base = region_base + champsim::block_number::difference_type{1};\n\n        for (auto& entry : regions) {\n            if (entry.base == region_base) {\n                if (entry.confidence > 0) {\n                    for (int offset = 1; offset <= MAX_OFFSET; ++offset) {\n                        prefetch_line(champsim::address{blk + offset}, true, metadata_in);\n                    }\n                }\n                entry.confidence = std::min(entry.confidence + 1, MAX_CONFIDENCE);\n                return metadata_in;\n            }\n        }\n\n        auto* victim = &regions[0];\n        for (auto& entry : regions) {\n            if (entry.confidence < victim->confidence) {\n                victim = &entry;\n            }\n        }\n        victim->base = region_base;\n        victim->confidence = 0;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n"
+ },
+ "reference": {
+  "module_name": "probe_noop",
+  "prefetcher_source": "\n#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct probe_noop : public champsim::modules::prefetcher {\n  using prefetcher::prefetcher;\n\n  uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                    uint8_t cache_hit, bool useful_prefetch,\n                                    access_type type, uint32_t metadata_in) {\n    return metadata_in;\n  }\n\n  uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n    return metadata_in;\n  }\n};\n"
+ },
+ "expected_verdict": "equivalent",
+ "expected_errors": [],
+ "planting": "real generated prefetcher that compiles, runs and reports metrics, but is behaviourally indistinguishable from doing nothing on this trace and instruction budget",
+ "evidence": {
+  "design_source_sha256": "d5f6db5528588869069e147619349b899003f8175d0b3d95f3e942e578bffeed",
+  "reference_source_sha256": "d7e9ef0b5fbcf1dfe0d3cf0b1e268b23be24d96f4de1f0cf40719fcea1731c48",
+  "design_binary_sha256": "5de585b809f878ee",
+  "reference_binary_sha256": "8a4884c11c4995dc",
+  "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+  "warmup_instructions": 1000000,
+  "simulation_instructions": 2000000,
+  "design_cycles": 1138748,
+  "reference_cycles": 1138748,
+  "distinct_binaries": true,
+  "source": "results/candidate_compile_screening_2026-09-22.jsonl",
+  "provenance": "13-design screening batch, cold build",
+  "attribution_method": "source read from .tmp/cand3 and hashed here, not transcribed; the screening row is matched on (module, binary_sha256)",
+  "same_module_name_other_sources": {}
+ },
+ "taxonomy_gap": true,
+ "taxonomy_note": "E0-E4 audits design-vs-reference equivalence. A nullity escape is equivalent to the no-op and therefore scores E0 here even though the candidate claims to prefetch; only the harness's no-op comparison catches it."
+}

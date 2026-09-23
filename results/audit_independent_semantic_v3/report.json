@@ -1,0 +1,47 @@
+{
+ "generated_at": "2026-09-23T16:36:58.049211+00:00",
+ "annotators": [
+  "gemini-2.5-flash",
+  "gemini-2.5-pro"
+ ],
+ "n_cases": 6,
+ "n_scored": 6,
+ "n_unscored": 0,
+ "kappa_combined_label": 0.45454545454545453,
+ "kappa_verdict_only": 1.0,
+ "observed_agreement": 0.6667,
+ "per_model": {
+  "gemini-2.5-flash": {
+   "n": 6,
+   "parse_ok": 6,
+   "verdict_accuracy": 0.5,
+   "error_set_exact": 0.3333
+  },
+  "gemini-2.5-pro": {
+   "n": 6,
+   "parse_ok": 6,
+   "verdict_accuracy": 0.5,
+   "error_set_exact": 0.3333
+  }
+ },
+ "disagreements": [
+  {
+   "id": "sem-01",
+   "expected": "not_equivalent|E3",
+   "gemini-2.5-flash": "not_equivalent|E3",
+   "gemini-2.5-pro": "not_equivalent|E3,E4"
+  },
+  {
+   "id": "sem-03",
+   "expected": "not_equivalent|E4",
+   "gemini-2.5-flash": "not_equivalent|E3,E4",
+   "gemini-2.5-pro": "not_equivalent|E4"
+  }
+ ],
+ "unparseable": [],
+ "caveats": [
+  "Both annotators are hosted by the same provider; cross-family independence is not claimed.",
+  "kappa here is model-model agreement. It is not a human reliability estimate.",
+  "The deterministic in-loop double-blind self-test is reported separately and is not merged into this number."
+ ]
+}

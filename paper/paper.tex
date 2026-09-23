@@ -31,9 +31,9 @@ bit-identical cycles on all three traces: the seed moved the artifact, not the
 design. Ranking is unstable (top-1 $0.667$, Kendall $\tau=0.556$) and prompt
 response reaches $249.18\%$. Annotation gives $\kappa=0.859$ on specification diffs
 and $0.636$ on real generated C++, below our own 0.7 gate on both external sets;
-there both models are correct on all 33 labellable pairs and share no error. On the
-four measurement-grounded pairs they are wrong together on one measured simulator
-escape. Auditing that
+there both models are correct on all 33 labellable pairs and share no error. On the six
+measurement-grounded pairs they never disagree yet each is right on only 3 of 6, and the
+three they miss together are all measured simulator escapes. Auditing that
 $\kappa$ found the defect inside it: our own label generator read \texttt{\#include}
 angle brackets as comparison operators and mislabelled three rename-only pairs, so
 the annotators we were scoring were correct and the ground truth was not. We report
@@ -246,9 +246,14 @@ carry a derivable verdict, both annotators are correct on \textbf{all 33}
 verdict), and combined-label $\kappa$ falls to $\mathbf{0.636}$. That is now
 \emph{below} our own 0.7 gate too, so both external sets are red, not just the
 measured one: the pre-correction 0.7235 was the only value that passed, and it
-passed on labels that had to be withdrawn. On the four
-measurement-grounded cases $\kappa$ is $\mathbf{0.667}$, and there the two models
-agree on all four verdicts and are wrong together on exactly \textbf{one}.
+passed on labels that had to be withdrawn. On the
+\textbf{six} measurement-grounded cases---three real nullity escapes, added to the
+original four after we found the escape case had cited a source that cannot
+compile---the two models never disagree once ($\kappa=1.0$ on verdict,
+0 disagreements), and each is right on only 3 of 6 (verdict accuracy
+$\mathbf{0.5}$); combined-label $\kappa$ is $\mathbf{0.455}$. The three cases they
+miss together are \emph{exactly} the three escapes, and no escape is missed by only
+one of them.
 
 One caveat we have to carry rather than resolve: \textbf{all 33 labellable gold
 labels in that set are \texttt{not\_equivalent}}---no pair of generated candidates
@@ -292,17 +297,20 @@ numbers'' passes all three.
 
 Both independent annotators classified this case
 \texttt{not\_equivalent}/\textbf{E4}; measurement says \texttt{equivalent}. They
-agree with each other and disagree with the simulator---one case out of four in
-the measurement-grounded set, in the same direction, which is a correlated failure
-rather than independent noise, but is also $n=1$ and we do not claim more. This
+agree with each other and disagree with the simulator---and this is no longer a single
+observation. Three of the six measurement-grounded cases are nullity escapes, drawn
+from two screening batches and three distinct delivered binaries, and both raters miss
+\textbf{all three} in the same direction while missing none of the three non-escape
+cases. That is a systematic blind spot rather than independent noise, though the
+denominator is still six and we do not claim more than that. This
 result was re-obtained after we found and fixed an attribution error in the case
 itself: the source it embedded was a same-named file that does not compile against
 the pinned image, while the measurement came from a second file in another candidate
 directory (\S\ref{sec:attribution}). Re-annotating the corrected source leaves the
-outcome and the $\kappa=0.667$ unchanged, with both rationales still naming the added
+outcome and the $\kappa=0.455$ unchanged, with both rationales still naming the added
 stride mechanism. Nor is the failure an artefact of how the pair is framed: exchanging
-which design is labelled candidate and which is reference leaves all eight verdicts
-unchanged ($0/8$ flips, \texttt{scripts/annotation\_role\_swap.py}), so the blind spot is
+which design is labelled candidate and which is reference leaves all twelve verdicts
+unchanged ($0/12$ flips, \texttt{scripts/annotation\_role\_swap.py}), so the blind spot is
 symmetric rather than a reading of narrative direction. E0--E4
 also has no slot for ``claims to work, measurably does
 nothing'': it audits pairwise specification difference, whereas the escape is a
@@ -369,12 +377,12 @@ Both generative annotators come from one provider, so we added an architecturall
 distinct rater: a 421M ModernBERT \emph{discriminative} head, non-autoregressive,
 which cannot generate the rationale an audit prompt asks for. Run on the same three
 case sets as a third annotator, it is accurate on 0.5 of the 10 specification cases
-and 0.5 of the 4 measurement-grounded cases, and on \textbf{0 of 33} real generated
+and 0.667 of the 6 measurement-grounded cases, and on \textbf{0 of 33} real generated
 pairs---it answers \texttt{equivalent} on 35 of 36 while every labellable gold label
 in that set is \texttt{not\_equivalent}. Its single non-default answer falls on one
 of the three pairs whose label \S\ref{sec:groundtruth} had to withdraw, so even that
 hit is unscoreable. Its agreement with the two generative raters is
-$\kappa=0.138$, $\mathbf{-0.500}$ and $-0.057$ across the three sets: on two of
+$\kappa=0.138$, $\mathbf{-0.364}$ and $-0.057$ across the three sets: on two of
 three sets it is anti-correlated with them, not merely uninformative.
 
 On the escape case itself it answers \texttt{equivalent}---\emph{correct}, matching
@@ -414,7 +422,7 @@ two margins below 0.15. The ladder, the gate and the recorded verdicts ship in
 
 \begin{table}[h]
 \vspace{-0.4em}
-\centering\footnotesize\setlength{\tabcolsep}{4pt}
+\centering\footnotesize\setlength{\tabcolsep}{2.5pt}
 \begin{tabular}{lcc}
 \toprule
 \textbf{Metric} & \textbf{Gate} & \textbf{Measured} \\
@@ -428,9 +436,10 @@ Mean Kendall $\tau$ & report & $0.556$ \\
 $\kappa$, spec cases & $\geq0.7$ & $0.859$ \\
 $\kappa$, real pairs (33 label.) & $\geq0.7$ & $0.636$ \\
 $\kappa$, verdict only$^{\dagger}$ & $\geq0.7$ & $1.000$ \\
-$\kappa$, 4 measured cases & $\geq0.7$ & $0.667$ \\
+$\kappa$, 6 measured & $\geq0.7$ & $0.455$ \\
+Verdict acc., 6 measured & $\geq0.7$ & $0.500$ \\
 \midrule
-Third-substrate $\kappa$ & --- & $0.138\,/\,-0.500\,/\,-0.057$ \\
+Third-substrate $\kappa$ & --- & $0.138\,/\,-0.364\,/\,-0.057$ \\
 Unlabellable pairs & 0 & $3$ of $36$ \\
 \midrule
 Publish gate & both pass & \textsc{Blocked} \\
@@ -456,7 +465,7 @@ repository URL is filed in this submission's required open-source-artifact field
 rather than printed here, so the paper stays anonymous while the artifact stays
 reachable. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (80 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (85 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check rather than a coincidence. Reproduce the headline grid with
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 6 --config
@@ -496,8 +505,8 @@ response and the $78.16\%$ seed response compose or interfere.
 that execution is deterministic; it says nothing about generation variance, which
 is the axis that fails. \textbf{Labels:} the 33-pair $\kappa$ rests on structural
 labels that survive our own header-parsing defect only because we could re-derive
-them; only the 4-case set has a measurement-grounded label, and its correlated
-failure is $n=1$. That set carries no \texttt{equivalent} gold case at all, which is
+them; only the 4-case set has a measurement-grounded label, and the three shared errors are the three escapes, so the
+failure is systematic on this set rather than a single coincidence. That set carries no \texttt{equivalent} gold case at all, which is
 why its verdict-axis agreement is reported as degenerate rather than as reliability.
 \textbf{One series per axis.} Each grid draws candidates from a single directory, and
 the same module name denotes different programs across directories, so no number here

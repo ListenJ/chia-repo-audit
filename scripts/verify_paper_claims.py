@@ -93,10 +93,18 @@ check("fact36 flash verdict acc", 1.0, f36["verdict_accuracy_gemini-2.5-flash"],
       r"correct on all")
 check("fact36 shared errors after correction", [],
       f36["annotators_agree_with_each_and_wrong"])
-sem = rescore["semantic4"]["rescored"]
-check("measured-set kappa combined", 0.6667, sem["kappa_combined_label"], r"0\.667")
-check("measured-set shared error is the escape", ["sem-esc-01"],
-      sem["annotators_agree_with_each_and_wrong"])
+sem = rescore["measured6"]["rescored"]
+check("measured-set size", 6, sem["n_scored"], r"six measurement-grounded")
+check("measured-set kappa combined", 0.4545, sem["kappa_combined_label"], r"0\.455")
+check("measured-set verdict kappa stays 1.0", 1.0, sem["kappa_verdict_only"], r"1\.0")
+check("measured-set verdict accuracy", 0.5, sem["verdict_accuracy_gemini-2.5-flash"],
+      r"right on only 3 of 6|accuracy")
+check("all three escapes are the shared errors",
+      ["sem-esc-01", "sem-esc-02", "sem-esc-03"],
+      sorted(sem["annotators_agree_with_each_and_wrong"]), r"three escapes")
+check("and no non-escape case is missed", [],
+      [c for c in sem["annotators_agree_with_each_and_wrong"] if "esc" not in c])
+check("zero verdict disagreements", 0, sem["annotators_disagree"], r"0 disagreements")
 
 spec = load_json("results/audit_independent_v1/report.json")
 check("spec kappa", "0.859", str(round(spec["kappa_combined_label"], 3)), r"0\.859")
@@ -107,9 +115,9 @@ check("substrate labellable accuracy", 0.0,
       sub["fact36"]["laya_verdict_accuracy_vs_expected"], r"0 of 33")
 check("substrate answers equivalent on", 35,
       sub["fact36"]["laya_verdict_tally"].get("equivalent"), r"35 of 36")
-check("substrate kappa on measured set", -0.5,
-      sub["semantic4"]["kappa_vs_gemini-2.5-flash"], r"-0\.500")
-esc = sub["semantic4"]["laya_per_case"]["sem-esc-01"]
+check("substrate kappa on measured set", -0.3636,
+      sub["measured6"]["kappa_vs_gemini-2.5-flash"], r"-0\.364")
+esc = sub["measured6"]["laya_per_case"]["sem-esc-01"]
 check("substrate right on the escape", "equivalent", esc["laya"], r"correct on")
 check("substrate escape margin is negligible", True, esc["margin"] < 0.02, r"0\.010")
 
@@ -340,11 +348,11 @@ check("a citation audit record ships with the artifact", True,
       (REPO / "docs/citation-audit.md").is_file())
 
 
-swap = load_json("results/annotation_role_swap/report.json")
-check("role-swap probe compared 8 answers", 8, swap["n_comparisons"], r"eight verdicts")
+swap = load_json("results/annotation_role_swap_v3/report.json")
+check("role-swap probe compared 12 answers", 12, swap["n_comparisons"], r"twelve verdicts")
 check("no verdict flips when candidate and reference exchange places", 0, swap["n_flips"],
       r"0/8")
-swap_rows = {r["id"]: r for r in load_json("results/annotation_role_swap/raw.json")}
+swap_rows = {r["id"]: r for r in load_json("results/annotation_role_swap_v3/raw.json")}
 esc_swap = swap_rows["sem-esc-01"]["labels"]
 check("escape case stays wrong in both directions", {"not_equivalent"},
       {l["verdict"] for l in esc_swap}, r"symmetric")

@@ -92,13 +92,13 @@
     },
     "llm_vs_llm_kappa_on_laya_shared": 1.0
   },
-  "semantic4": {
-    "n_cases": 4,
-    "n_labellable": 4,
+  "measured6": {
+    "n_cases": 6,
+    "n_labellable": 6,
     "n_unlabellable": 0,
     "laya_verdict_tally": {
       "not_equivalent": 2,
-      "equivalent": 2
+      "equivalent": 4
     },
     "laya_per_case": {
       "sem-01": {
@@ -119,27 +119,41 @@
       "sem-esc-01": {
         "laya": "equivalent",
         "expected": "equivalent",
-        "margin": 0.0102
+        "margin": 0.008
+      },
+      "sem-esc-02": {
+        "laya": "equivalent",
+        "expected": "equivalent",
+        "margin": 0.3266
+      },
+      "sem-esc-03": {
+        "laya": "equivalent",
+        "expected": "equivalent",
+        "margin": 0.1744
       }
     },
-    "laya_verdict_accuracy_vs_expected": 0.5,
-    "mean_margin": 0.179,
+    "laya_verdict_accuracy_vs_expected": 0.6667,
+    "mean_margin": 0.2025,
     "low_margin_cases": 3,
-    "kappa_vs_gemini-2.5-flash": -0.5,
-    "agreement_vs_gemini-2.5-flash": 0.25,
+    "kappa_vs_gemini-2.5-flash": -0.3636,
+    "agreement_vs_gemini-2.5-flash": 0.1667,
     "llm_verdicts_gemini-2.5-flash": {
       "sem-01": "not_equivalent",
       "sem-02": "equivalent",
       "sem-03": "not_equivalent",
-      "sem-esc-01": "not_equivalent"
+      "sem-esc-01": "not_equivalent",
+      "sem-esc-02": "not_equivalent",
+      "sem-esc-03": "not_equivalent"
     },
-    "kappa_vs_gemini-2.5-pro": -0.5,
-    "agreement_vs_gemini-2.5-pro": 0.25,
+    "kappa_vs_gemini-2.5-pro": -0.3636,
+    "agreement_vs_gemini-2.5-pro": 0.1667,
     "llm_verdicts_gemini-2.5-pro": {
       "sem-01": "not_equivalent",
       "sem-02": "equivalent",
       "sem-03": "not_equivalent",
-      "sem-esc-01": "not_equivalent"
+      "sem-esc-01": "not_equivalent",
+      "sem-esc-02": "not_equivalent",
+      "sem-esc-03": "not_equivalent"
     },
     "llm_vs_llm_kappa_on_laya_shared": 1.0
   },

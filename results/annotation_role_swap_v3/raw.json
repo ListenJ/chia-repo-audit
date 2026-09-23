@@ -1,0 +1,396 @@
+[
+  {
+    "id": "sem-01",
+    "expected_verdict": "not_equivalent",
+    "labels": [
+      {
+        "model": "gemini-2.5-flash",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-01\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E4\"],\n  \"rationale\": \"The candidate introduces a history buffer (`last_fill`) and associated logic to conditionally prefetch the next block only when a sequential access pattern is detected, whereas the reference unconditionally prefetches the next block on every cache fill.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 896,
+          "candidatesTokenCount": 90,
+          "totalTokenCount": 3359,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 896
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 90
+            }
+          ],
+          "thoughtsTokenCount": 2373
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E4"
+        ],
+        "rationale": "The candidate introduces a history buffer (`last_fill`) and associated logic to conditionally prefetch the next block only when a sequential access pattern is detected, whereas the reference unconditionally prefetches the next block on every cache fill.",
+        "parse_ok": true
+      },
+      {
+        "model": "gemini-2.5-pro",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-01\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate adds a history buffer and conditional logic to only prefetch when a stream is detected, while omitting the reference's behavior of unconditionally prefetching on every cache fill.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 896,
+          "candidatesTokenCount": 93,
+          "totalTokenCount": 2898,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 896
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 93
+            }
+          ],
+          "thoughtsTokenCount": 1909
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E3",
+          "E4"
+        ],
+        "rationale": "The candidate adds a history buffer and conditional logic to only prefetch when a stream is detected, while omitting the reference's behavior of unconditionally prefetching on every cache fill.",
+        "parse_ok": true
+      }
+    ]
+  },
+  {
+    "id": "sem-02",
+    "expected_verdict": "equivalent",
+    "labels": [
+      {
+        "model": "gemini-2.5-flash",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\"id\": \"sem-02\", \"verdict\": \"equivalent\", \"errors\": [], \"rationale\": \"The prefetcher logic in both the candidate and reference specifications is identical, only the module name differs.\"}\n```",
+        "usage": {
+          "promptTokenCount": 772,
+          "candidatesTokenCount": 52,
+          "totalTokenCount": 1374,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 772
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 52
+            }
+          ],
+          "thoughtsTokenCount": 550
+        },
+        "verdict": "equivalent",
+        "errors": [],
+        "rationale": "The prefetcher logic in both the candidate and reference specifications is identical, only the module name differs.",
+        "parse_ok": true
+      },
+      {
+        "model": "gemini-2.5-pro",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-02\",\n  \"verdict\": \"equivalent\",\n  \"errors\": [],\n  \"rationale\": \"The candidate and reference specifications implement the exact same prefetching logic, with the only difference being the non-functional change of the module's name.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 772,
+          "candidatesTokenCount": 71,
+          "totalTokenCount": 2115,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 772
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 71
+            }
+          ],
+          "thoughtsTokenCount": 1272
+        },
+        "verdict": "equivalent",
+        "errors": [],
+        "rationale": "The candidate and reference specifications implement the exact same prefetching logic, with the only difference being the non-functional change of the module's name.",
+        "parse_ok": true
+      }
+    ]
+  },
+  {
+    "id": "sem-03",
+    "expected_verdict": "not_equivalent",
+    "labels": [
+      {
+        "model": "gemini-2.5-flash",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-03\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E2\"\n  ],\n  \"rationale\": \"The candidate lacks the history buffer (`last_fill`) and the conditional logic for prefetching found in the reference, causing it to unconditionally prefetch `blk + 1` instead of only when a stride-1 pattern is observed from non-prefetched fills, which is a change in the prefetching logic's direction.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 896,
+          "candidatesTokenCount": 124,
+          "totalTokenCount": 2700,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 896
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 124
+            }
+          ],
+          "thoughtsTokenCount": 1680
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E2",
+          "E3"
+        ],
+        "rationale": "The candidate lacks the history buffer (`last_fill`) and the conditional logic for prefetching found in the reference, causing it to unconditionally prefetch `blk + 1` instead of only when a stride-1 pattern is observed from non-prefetched fills, which is a change in the prefetching logic's direction.",
+        "parse_ok": true
+      },
+      {
+        "model": "gemini-2.5-pro",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-03\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate unconditionally prefetches the next block on any cache fill, whereas the reference only prefetches after detecting a sequential access pattern, because the candidate lacks the state and conditional logic for pattern detection.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 896,
+          "candidatesTokenCount": 91,
+          "totalTokenCount": 2572,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 896
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 91
+            }
+          ],
+          "thoughtsTokenCount": 1585
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E3"
+        ],
+        "rationale": "The candidate unconditionally prefetches the next block on any cache fill, whereas the reference only prefetches after detecting a sequential access pattern, because the candidate lacks the state and conditional logic for pattern detection.",
+        "parse_ok": true
+      }
+    ]
+  },
+  {
+    "id": "sem-esc-01",
+    "expected_verdict": "equivalent",
+    "labels": [
+      {
+        "model": "gemini-2.5-flash",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\"id\": \"sem-esc-01\", \"verdict\": \"not_equivalent\", \"errors\": [\"E3\"], \"rationale\": \"The candidate prefetcher is a no-operation module, while the reference implements a stride prefetcher with state tracking and prefetch logic, thus the candidate is missing core components and behavior present in the reference.\"}\n```",
+        "usage": {
+          "promptTokenCount": 843,
+          "candidatesTokenCount": 80,
+          "totalTokenCount": 1408,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 843
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 80
+            }
+          ],
+          "thoughtsTokenCount": 485
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E3"
+        ],
+        "rationale": "The candidate prefetcher is a no-operation module, while the reference implements a stride prefetcher with state tracking and prefetch logic, thus the candidate is missing core components and behavior present in the reference.",
+        "parse_ok": true
+      },
+      {
+        "model": "gemini-2.5-pro",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-esc-01\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate is a no-op prefetcher and is missing the entire stride detection and prefetching logic present in the reference specification.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 843,
+          "candidatesTokenCount": 81,
+          "totalTokenCount": 1705,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 843
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 81
+            }
+          ],
+          "thoughtsTokenCount": 781
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E3"
+        ],
+        "rationale": "The candidate is a no-op prefetcher and is missing the entire stride detection and prefetching logic present in the reference specification.",
+        "parse_ok": true
+      }
+    ]
+  },
+  {
+    "id": "sem-esc-02",
+    "expected_verdict": "equivalent",
+    "labels": [
+      {
+        "model": "gemini-2.5-flash",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-esc-02\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\"],\n  \"rationale\": \"The candidate prefetcher is a no-operation module, completely lacking the internal state, constants, and complex prefetching logic implemented in the `prefetcher_cache_operate` method of the reference specification.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 1047,
+          "candidatesTokenCount": 90,
+          "totalTokenCount": 1974,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 1047
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 90
+            }
+          ],
+          "thoughtsTokenCount": 837
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E3"
+        ],
+        "rationale": "The candidate prefetcher is a no-operation module, completely lacking the internal state, constants, and complex prefetching logic implemented in the `prefetcher_cache_operate` method of the reference specification.",
+        "parse_ok": true
+      },
+      {
+        "model": "gemini-2.5-pro",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-esc-02\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate is a no-operation prefetcher, whereas the reference implements a stateful prefetching algorithm; the candidate is missing the entire prefetching logic.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 1047,
+          "candidatesTokenCount": 86,
+          "totalTokenCount": 2022,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 1047
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 86
+            }
+          ],
+          "thoughtsTokenCount": 889
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E3"
+        ],
+        "rationale": "The candidate is a no-operation prefetcher, whereas the reference implements a stateful prefetching algorithm; the candidate is missing the entire prefetching logic.",
+        "parse_ok": true
+      }
+    ]
+  },
+  {
+    "id": "sem-esc-03",
+    "expected_verdict": "equivalent",
+    "labels": [
+      {
+        "model": "gemini-2.5-flash",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-esc-03\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate microarchitecture (`probe_noop`) is a no-operation prefetcher that simply passes through metadata, whereas the reference microarchitecture (`gen_aggressive_offset_s1`) implements a complex aggressive offset prefetching strategy with stream tracking, confidence mechanisms, and prefetch issuance, thus the candidate is missing significant functional components and behavior.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 1888,
+          "candidatesTokenCount": 123,
+          "totalTokenCount": 3174,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 1888
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 123
+            }
+          ],
+          "thoughtsTokenCount": 1163
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E3"
+        ],
+        "rationale": "The candidate microarchitecture (`probe_noop`) is a no-operation prefetcher that simply passes through metadata, whereas the reference microarchitecture (`gen_aggressive_offset_s1`) implements a complex aggressive offset prefetching strategy with stream tracking, confidence mechanisms, and prefetch issuance, thus the candidate is missing significant functional components and behavior.",
+        "parse_ok": true
+      },
+      {
+        "model": "gemini-2.5-pro",
+        "direction": "swapped",
+        "raw_reply": "```json\n{\n  \"id\": \"sem-esc-03\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate is a no-op prefetcher and is missing the entire stream detection, confidence tracking, and prefetch-issuing logic of the reference design.\"\n}\n```",
+        "usage": {
+          "promptTokenCount": 1888,
+          "candidatesTokenCount": 87,
+          "totalTokenCount": 2674,
+          "trafficType": "ON_DEMAND",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 1888
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 87
+            }
+          ],
+          "thoughtsTokenCount": 699
+        },
+        "verdict": "not_equivalent",
+        "errors": [
+          "E3"
+        ],
+        "rationale": "The candidate is a no-op prefetcher and is missing the entire stream detection, confidence tracking, and prefetch-issuing logic of the reference design.",
+        "parse_ok": true
+      }
+    ]
+  }
+]
