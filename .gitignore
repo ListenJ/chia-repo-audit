@@ -24,3 +24,9 @@ chia_loop/sim/champsim-build/
 paper/*.aux
 paper/*.log
 paper/*.out
+
+# LaTeX build logs and intermediates
+paper/*.txt
+paper/*.aux
+paper/*.log
+paper/*.out

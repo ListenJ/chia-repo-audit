@@ -198,6 +198,19 @@ check("no functioning prefetcher equals the no-op", True,
       r"functioning prefetcher")
 
 
+# 论文写的是 Anonymous Submission，所以 PDF 源码里不能出现任何指向作者或赞助方
+# 账号的标识。这条检查存在的意义是：以后有人为了"方便 reviewer"把仓库 URL 粘回正文，
+# 会立刻翻红，而不是等到 desk reject。
+# 不能写成裸 `github.com/`：那会把 \bibitem 里引用的 ucb-bar/chia 也算成泄露，
+# 一个会误报的门禁很快就会被无视。只匹配我们自己的仓库与身份串。
+IDENTITY = re.compile(r"ListenJ|jlinshan6|devstar7744|Listen Jiang|gcplab|"
+                      r"a3-chia-hack26ath|github\.com/ListenJ|chia-repo-audit", re.I)
+tex_src = (REPO / "paper/paper.tex").read_text(encoding="utf-8")
+check("paper source leaks no identity", [], IDENTITY.findall(tex_src))
+check("paper still claims anonymity consistently", "Anonymous Submission",
+      "Anonymous Submission" if "Anonymous Submission" in tex_src else None)
+
+
 def main() -> int:
     # The paper states how many claims this script checks, so that number is itself a
     # claim. Include this check in its own count, or the sentence can never be right.

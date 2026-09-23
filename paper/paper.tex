@@ -396,10 +396,12 @@ raters on the spec / measured / real-pair sets in turn.}
 \textbf{Artifact.} A harness that only ever returns \textsc{Pass} cannot be
 distinguished from one that is not looking, so the release ships the blocked
 scorecard, raw cells and digests: loop, cases, generators, gate and
-\texttt{scripts/independent\_audit.py} as CHIA-compatible blocks (BSD-3-Clause),
-\url{https://github.com/ListenJ/chia-repo-audit}. Every number quoted in this paper
+\texttt{scripts/independent\_audit.py} as CHIA-compatible blocks (BSD-3-Clause). The
+repository URL is filed in this submission's required open-source-artifact field
+rather than printed here, so the paper stays anonymous while the artifact stays
+reachable. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (41 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (43 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check rather than a coincidence. Reproduce the headline grid with
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 6 --config

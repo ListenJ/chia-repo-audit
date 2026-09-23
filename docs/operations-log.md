@@ -627,7 +627,7 @@
 ### 访问与算力
 
 - 个人账户开启 2SV 后控制台可用；随后 Cloud Shell 与本地 gcloud 都以资助账户
-  `devstar7744@gcplab.me` 完成认证。本地 CLI 必须带
+  （赞助方签发的账号邮箱，此处不公开）完成认证。本地 CLI 必须带
   `HTTPS_PROXY=http://127.0.0.1:7897`：`ProxyEnable=0` 使命令行不走系统代理，
   直连 `oauth2.googleapis.com` 超时（`gcloud config list` 会挂住）。
 - Cloud Shell **不会**自动带上凭据，`gcloud auth list` 报 No credentialed accounts，
@@ -1037,3 +1037,25 @@ exit on drift)"，检查要求这个数 == 本次运行的检查总数。哪天�
 仓库里没有的图"这种投稿事故。
 
 论文 5 页，0 error / 0 overfull / 0 undefined；39 测试全绿；41/41 声明可重derive。
+
+### 9. 投稿匿名性：PDF 里写着 Anonymous Submission，正文却印着我们自己的仓库 URL
+
+`grep` 全仓身份串时抓到 `paper.tex:400` 的 `\url{https://github.com/ListenJ/chia-repo-audit}`，
+而第 10 行是 `\author{Anonymous Submission}` —— 这两件事不能同时成立。
+先确认会场的要求再动笔：HotCRP 的提示原文是
+"Required field [Open-source artifact URL] is incomplete"，
+**artifact URL 是投稿表单的必填项**，所以 reviewer 从表单就能拿到仓库，
+PDF 里再印一次并不增加可发现性，只破坏匿名。
+改成"仓库 URL 填在投稿表单的必填字段里，故正文不印"，两个目标都满足。
+
+顺手清掉两处：
+- `docs/operations-log.md` 里赞助方签发账号的邮箱明文，替换为不公开的指代；
+- 9 个 LaTeX 构建日志（`paper/b1..b8.txt`、`build.txt`）被 `git add -A` 顺带提交进了公开仓库，
+  `git rm --cached` 移出并把 `paper/*.txt`、`*.aux`、`*.log`、`*.out` 加进 `.gitignore`。
+  这些日志里含本地绝对路径与用户名。
+
+验证脚本加两条常驻门禁：**论文源码不得出现身份串**、**必须仍声明 Anonymous Submission**。
+第一条一开始写的是裸 `github.com/`，立刻误报了 `\bibitem{chia}` 里引用的
+`github.com/ucb-bar/chia` —— 那是别人引用的仓库，不是我们的身份。
+**会误报的门禁很快就会被无视**，所以收窄成只匹配自己的仓库名与账号串。
+声明的 claim 数由 41 → 43，正文同步。
