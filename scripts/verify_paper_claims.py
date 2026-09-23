@@ -323,6 +323,23 @@ check("and both still cite the added stride mechanism", 2,
       r"claims to work, measurably does")
 
 
+# ---- 引用完整性：本地脚本能查的那一半 ---------------------------------
+tex_raw = (REPO / "paper/paper.tex").read_text(encoding="utf-8")
+cited = set(re.findall(r"\\cite\{([^}]+)\}", tex_raw))
+defined = set(re.findall(r"\\bibitem\{([^}]+)\}", tex_raw))
+check("every cited key has a bibliography entry", set(), cited - defined)
+check("no unused bibliography entry", set(), defined - cited)
+check("the 25.7% claim carries its real denominator (tasks, not benchmarks)", True,
+      bool(re.search(r"25\.7\%.*?\btasks\b", PAPER, re.S))
+      and "of 168 reviewed benchmarks carry" not in PAPER, r"evaluated")
+check("no 'retracted SWE-bench Pro' overstatement", False,
+      "retracted SWE-bench" in PAPER)
+check("the NeurIPS page is no longer cited for a SWE-bench claim", False,
+      "neurips.cc" in tex_raw)
+check("a citation audit record ships with the artifact", True,
+      (REPO / "docs/citation-audit.md").is_file())
+
+
 def main() -> int:
     # The paper states how many claims this script checks, so that number is itself a
     # claim. Include this check in its own count, or the sentence can never be right.

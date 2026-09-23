@@ -48,10 +48,12 @@ QuArch) let agents propose and evaluate designs with no human in the loop. The
 risk is not unclaimed: ArchAgent reports its pipeline discovered and exploited a
 loophole in a popular microarchitectural simulator, inflating reported
 performance without changing hardware logic~\cite{archagent}. Software-side
-evaluation shows the same fragility---all top-three Terminal-Bench~2 submissions
-cheated via harness vulnerabilities~\cite{meerkat}, OpenAI deprecated SWE-bench
-Verified and retracted SWE-bench Pro~\cite{reprocrisis}, and $>25.7\%$ of 168
-reviewed benchmarks carry critical defects~\cite{autobench}.
+evaluation shows the same fragility---the top three Terminal-Bench~2 submissions
+were all found guilty of cheating via harness-level tricks~\cite{meerkat}, OpenAI
+stopped evaluating on SWE-bench Verified and its audit of SWE-bench Pro found
+roughly $30\%$ of that suite's tasks broken~\cite{swebench}, and an automated audit
+of 168 agent benchmarks flags issues in over $25.7\%$ of the evaluated
+\emph{tasks}~\cite{autobench}.
 
 What is missing is an instrument, not another warning: a loop that runs against a
 real simulator, separates the variance sources an aggregate score hides, and
@@ -75,7 +77,7 @@ destroying an instance (\S\ref{sec:gate2}).
 \textbf{Prepare.} Pin git SHA, interpreter and image digest; load the
 pre-registered configuration. Thresholds are frozen before any measured cell
 exists, which is what makes the \S\ref{sec:results} verdicts binding rather than
-negotiable~\cite{contamination}. \textbf{Run.} Execute a
+negotiable. \textbf{Run.} Execute a
 $|\text{seeds}|\times|\text{prompts}|\times|\text{traces}|$ grid, $n$ repeats per
 cell, through CHIA's \texttt{ChampSimNode} in the official image, recording the
 candidate digest, delivered binary digest and raw simulator JSON per cell.
@@ -226,9 +228,7 @@ The fix counts factor levels: an axis with fewer than two levels is
 \texttt{raw.json} was then rescored without re-running the simulator
 (\texttt{scripts/rescore\_grid.py}), and the scorecard above now prints its axis
 levels next to its verdict. The rescored verdict is
-\textsc{Non-Reproducible}/\textsc{Blocked}. This is the same failure shape as
-\S\ref{sec:groundtruth}: a statistic that silently stops measuring the thing its
-name claims, and returns a passing value while doing so.
+\textsc{Non-Reproducible}/\textsc{Blocked}.
 
 \subsection{Independent annotators, and where they agree and are wrong}
 \label{sec:audit}
@@ -311,10 +311,8 @@ agreement rather than independence when they share a failure mode.
 \label{sec:groundtruth}
 
 Three of the defects in this paper---\S\ref{sec:prompt}, this section and
-\S\ref{sec:gate2}---are one failure mode seen three times: a quantity whose name
-claims a measurement stops referring to the thing measured, and still returns a
-passing value. We report the instances together because the failure mode, not any one
-of them, is the transferable result.
+\S\ref{sec:gate2}---are one failure mode seen three times: a quantity whose name claims
+a measurement stops referring to the thing measured, and still returns a passing value.
 
 Every number in \S\ref{sec:audit} is scored against a label we did not hand-write.
 The 36 semantic pairs were labelled by a structural rule: compare class members,
@@ -346,21 +344,20 @@ scored as no evidence at all rather than as a wrong answer.
 Building a positive control for the nullity check, the grid path rejected
 \texttt{gen\_default\_s0} with \texttt{invalid static\_cast from champsim::address to
 int64\_t}---and the escape case's embedded source is byte-for-byte that rejected file,
-matching its own declared hash, so no internal consistency check flags it. The
-screening log holds two rows for that module name: a failed build with the identical
-error, then a successful cold build measuring 1{,}138{,}748. The runner had swept four
-candidate directories holding 5, 6, 3 and 3 files, which map in sorted order onto the
-17 screening rows and place the successful row inside the second directory: the
-measurement belongs to a \emph{different} file that happens to share the name.
+matching its own declared hash. The screening log holds two rows for that module name:
+a failed build with the identical error, then a successful cold build measuring
+1{,}138{,}748. The runner had swept four candidate directories holding 5, 6, 3 and 3
+files, which map in sorted order onto the 17 screening rows and place the successful row
+inside the second directory: the measurement belongs to a \emph{different} file that
+happens to share the name.
 
 Screening rows record a module name and a delivered-binary digest but \textbf{no source
 digest}, so ``which file produced this measurement'' is unanswerable from the artifact
-after the fact. That is the same object this paper audits, reached from the other side:
-we treat a cycle count as evidence about a design, and the identifier joining them was
-not an identifier. We now carry \texttt{scripts/audit\_case\_attribution.py}, which
-re-derives every embedded source hash against every candidate file on disk (80
-assertions, 63 name collisions found across 11 module names), and the escape case
-records the correction with both hashes.
+after the fact---the same object this paper audits, reached from the other side. We now
+carry \texttt{scripts/audit\_case\_attribution.py}, which re-derives every embedded
+source hash against every candidate file on disk (80 assertions, all self-consistent,
+63 name collisions across 11 module names: the reason no internal check could find this),
+and the escape case records the correction with both hashes.
 
 \subsection{A third substrate buys agreement, not independence}
 \label{sec:substrate}
@@ -456,7 +453,7 @@ repository URL is filed in this submission's required open-source-artifact field
 rather than printed here, so the paper stays anonymous while the artifact stays
 reachable. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (71 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (77 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check rather than a coincidence. Reproduce the headline grid with
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 6 --config
@@ -505,7 +502,13 @@ is a cross-series estimate: the $78.16\%$ and $0.0000\%$ cross-seed CVs are both
 correct and describe different generated series.
 \textbf{Annotators:} both generative models come from one
 provider, and \S\ref{sec:substrate} shows that the architecturally different rater
-we could reach is worse than independent rather than better. \textbf{Checker:} the
+we could reach is worse than independent rather than better.
+\textbf{Annotation contamination:} the raters are large models and we did not test
+whether their verdicts are inflated by exposure to similar C++ prefetcher code in
+training. Existing systematic reviews cover detection methods for exactly this
+threat~\cite{contamination}; we name it as uncontrolled rather than claim to have
+ruled it out, which matters most for the 33-pair result since those inputs are real
+generated source. \textbf{Checker:} the
 cell-level nullity rule conflated per-trace with global nullity until this revision;
 the split is locked by four tests, but the replicated grid contains no design that is
 inert on \emph{every} trace, so the stricter branch has a synthetic positive control
@@ -546,11 +549,20 @@ code, measurements, citations, claims, and the final content.
 \begin{thebibliography}{9}\scriptsize
 \bibitem{archagent} R.\ Gupta et al. ArchAgent: Agentic AI-driven Computer
 Architecture Discovery. arXiv:2602.22425, 2026.
-\bibitem{chia} CHIA framework. \url{https://github.com/ucb-bar/chia}. arXiv:2606.27350.
-\bibitem{meerkat} Meerkat: Cheating Agents. \url{https://debugml.github.io/cheating-agents/}, 2026.
-\bibitem{reprocrisis} NeurIPS 2026 Call for Reproducibility. \url{https://neurips.cc/Conferences/2026/CallForReproducibility}.
-\bibitem{autobench} Auto Benchmark Audit. arXiv:2605.26079, 2026.
-\bibitem{contamination} Nourbakhsh et al. GEM 2026 Outstanding Paper. \url{https://aclanthology.org/2026.gem-main.50/}.
+\bibitem{chia} A.\ Cui, F.\ Hermida-Rivera, J.\ Toubes et al. CHIA: An open-source
+framework for principled, agentic AI-driven hardware/software co-design research.
+arXiv:2606.27350, 2026. \url{https://github.com/ucb-bar/chia}.
+\bibitem{meerkat} Meerkat Research. Finding Widespread Cheating on Popular Agent
+Benchmarks. \url{https://debugml.github.io/cheating-agents/}, 2026.
+\bibitem{swebench} OpenAI. Why SWE-bench Verified no longer measures frontier coding
+ability, 2026. \url{https://openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/};
+and OpenAI, An audit of SWE-Bench Pro, 2026.
+\bibitem{autobench} J.\ Wang, F.\ Bianchi, S.\ Zhu et al. Automated Benchmark Auditing
+for AI Agents and Large Language Models. arXiv:2605.26079, 2026.
+\bibitem{contamination} E.\ Nourbakhsh, M.\ S.\ Sirjani, A.\ Mousavi et al. Are LLM
+Benchmarks Already Contaminated? A Systematic Review of Contamination Detection
+Methods. Proc.\ 5th Generation, Evaluation and Metrics (GEM) Workshop, Outstanding
+Paper. \url{https://aclanthology.org/2026.gem-main.50/}, 2026.
 \end{thebibliography}
 
 \end{document}

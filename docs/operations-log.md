@@ -1251,3 +1251,41 @@ kappa_combined_label 0.6667   kappa_verdict_only 1.0   observed_agreement 0.75
 我们同时记了模块名和交付 binary 摘要，仍然让一次测量归给了编译不过的文件，
 缺的正是输入哈希这一样东西。验证器 +6 条（含"用例引用的源码 = cand2 那份"、
 "修正记录在案"、"binary 未被改动"、"重测后 κ 与两个 E4 不变"），71/71。
+
+### 16. 引用审计：三条外部断言里两条引用是错的，还有一条是装饰性的
+
+论文自己的测量有 77 条机械检查，**外部文献没有**。一份讲评估诚信的论文如果引用是错的，
+等于自打。逐条 fetch 了 intro 的每个外部断言（`docs/citation-audit.md` 记录 URL 与结论）：
+
+| 断言 | 结果 |
+|---|---|
+| ArchAgent 报告 agent 发现并利用模拟器漏洞 | ✅ arXiv:2602.22425 标题作者相符 |
+| CHIA 框架 | ✅ 但 bibitem 只写 "CHIA framework"，已补全真实标题与作者 |
+| Terminal-Bench 2 前三名全部作弊 | ✅ 原文 "the top three submissions … are guilty of cheating" |
+| "168 个 benchmark 中 >25.7% 有严重缺陷" | ❌ **量纲错了** |
+| "OpenAI 弃用 SWE-bench Verified 并撤回 SWE-bench Pro" | ❌ **引用错源** |
+| 预注册让判决"具约束力而非可协商" | ❌ **装饰性引用** |
+
+**① 量纲错误**：原文是"审查 168 个 benchmark，在**被评估的任务**中超过 25.7% 发现问题"。
+我写成">25.7% of 168 reviewed benchmarks carry critical defects"，把任务占比
+说成了 benchmark 占比 —— 读者会以为 168 个里有 43 个坏掉。已改为两个分母分开表述。
+
+**② 引用错源**：SWE-bench 那句话引的是 NeurIPS Call for Reproducibility。fetch 之后：
+**该页面完全没提 SWE-bench**，而且它标的是 NeurIPS **2025** 不是 2026。
+断言本身是真的（OpenAI 2026-02 发过 "Why SWE-bench Verified no longer measures
+frontier coding ability"，2026-07 审计 SWE-Bench Pro 发现约 30% 任务坏掉），
+所以换成 OpenAI 原始来源。同时"retracted"是我的夸大 —— 来源说的是"审计发现坏任务"，
+不是"撤回"，已删。
+
+**③ 装饰性引用**：`Thresholds are frozen before any measured cell exists … binding rather
+than negotiable~\cite{contamination}`。那篇 GEM outstanding paper 是真的、作者与奖项都对，
+但它讲的是**污染检测方法**，跟预注册约束力无关。这个引用在做声誉工作而不是证据工作。
+已从该句删除，并把它挂到它真正支撑的地方：Limitations 新增一段
+**标注污染** —— 我们的评审是大模型，我们没测过它们的判断是否被训练里见过的相似 C++
+prefetcher 代码污染，这一点对 33 对真实生成源码那组影响最大。如实命名未控制的威胁，
+比假装排除它强。
+
+验证器 +6 条静态引用检查（每个 `\cite` 有 bibitem、无未用 bibitem、25.7% 必须与
+"tasks" 同现且旧措辞不得复活、"retracted SWE-bench" 不得出现、neurips.cc 不得再被引用、
+引用审计文件必须随 artifact 发布）。**这些查的是我能不能再犯同样的错，不是这次对不对。**
+论文 7 页（末页 4 行参考文献尾巴），0 error / 0 overfull / 0 undefined，43 测试全绿，77/77。
