@@ -340,6 +340,16 @@ check("a citation audit record ships with the artifact", True,
       (REPO / "docs/citation-audit.md").is_file())
 
 
+swap = load_json("results/annotation_role_swap/report.json")
+check("role-swap probe compared 8 answers", 8, swap["n_comparisons"], r"eight verdicts")
+check("no verdict flips when candidate and reference exchange places", 0, swap["n_flips"],
+      r"0/8")
+swap_rows = {r["id"]: r for r in load_json("results/annotation_role_swap/raw.json")}
+esc_swap = swap_rows["sem-esc-01"]["labels"]
+check("escape case stays wrong in both directions", {"not_equivalent"},
+      {l["verdict"] for l in esc_swap}, r"symmetric")
+
+
 def main() -> int:
     # The paper states how many claims this script checks, so that number is itself a
     # claim. Include this check in its own count, or the sentence can never be right.

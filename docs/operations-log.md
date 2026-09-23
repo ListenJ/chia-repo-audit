@@ -1289,3 +1289,32 @@ prefetcher 代码污染，这一点对 33 对真实生成源码那组影响最�
 "tasks" 同现且旧措辞不得复活、"retracted SWE-bench" 不得出现、neurips.cc 不得再被引用、
 引用审计文件必须随 artifact 发布）。**这些查的是我能不能再犯同样的错，不是这次对不对。**
 论文 7 页（末页 4 行参考文献尾巴），0 error / 0 overfull / 0 undefined，43 测试全绿，77/77。
+
+### 17. 把刚写下的"我们没测"变成能测的那一半测掉了
+
+Limitations 里刚承认标注污染未测，转身就发现**同一类威胁里有一半是可测的**：
+等价是对称关系，所以把 candidate 与 reference 对调再问一遍，
+如果 verdict 变了，说明模型读的是叙述方向（"加了 X"/"少了 Y"）而不是行为等价性——
+那 κ 再高也只是两个模型共享同一种呈现偏置。
+
+`scripts/annotation_role_swap.py`，4 个测量接地用例 × 2 个模型 = 8 次比较：
+
+```
+sem-01    flash  fwd=not_equivalent swap=not_equivalent  gold=not_equivalent  stable
+sem-01    pro    fwd=not_equivalent swap=not_equivalent  gold=not_equivalent  stable
+sem-02    flash  fwd=equivalent     swap=equivalent      gold=equivalent      stable
+sem-02    pro    fwd=equivalent     swap=equivalent      gold=equivalent      stable
+sem-03    flash  fwd=not_equivalent swap=not_equivalent  gold=not_equivalent  stable
+sem-03    pro    fwd=not_equivalent swap=not_equivalent  gold=not_equivalent  stable
+sem-esc-01 flash fwd=not_equivalent swap=not_equivalent  gold=equivalent      stable
+sem-esc-01 pro   fwd=not_equivalent swap=not_equivalent  gold=equivalent      stable
+flips 0/8 (rate 0.0)
+```
+
+**0/8 翻转。** 两件事同时成立：标注层不读叙述方向；
+而**逃逸用例在两个方向上都答错** —— 这个盲点是双侧对称的，不是呈现方式造成的。
+这排除了"两个模型其实判断正确、只是被问法带偏"这一种对本论文最不利的解释。
+
+论文 §3.5 加一句、Limitations 把那条从"我们没测"改写成"威胁里可测的那一半测了，
+训练污染那一半没测"——**如实区分测过与没测过，而不是笼统承认或笼统否认。**
+验证器 +3 条（比较了 8 次、0 翻转、逃逸用例两向都是 not_equivalent），80/80。

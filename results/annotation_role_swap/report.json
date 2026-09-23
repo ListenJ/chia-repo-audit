@@ -1,0 +1,8 @@
+{
+  "n_cases": 4,
+  "n_comparisons": 8,
+  "n_flips": 0,
+  "flip_rate": 0.0,
+  "flips": [],
+  "note": "equivalence is symmetric, so a verdict that changes when candidate and reference exchange places is reading the direction of the narrative, not the behaviour"
+}
