@@ -125,6 +125,28 @@ leave-one-trace-out Kendall $\tau$ reported; annotation gate $\kappa\geq0.7$.
 \section{Results}
 \label{sec:results}
 
+\begin{figure*}[t]
+\vspace{-0.6em}
+\centering
+\includegraphics[width=0.99\textwidth]{fig_decomposition.pdf}
+\caption{Two claims of this paper, drawn from the committed artifacts by
+\texttt{scripts/make\_figures.py}. \textbf{(a)} Maximum relative spread per variance
+axis on one scale, with the pre-registered $5\%$ gate: repeated execution is
+\emph{exactly} deterministic while the seed, trace and prompt axes move by
+$78.16\%$, $163.33\%$ and $249.18\%$. Determinism is not reproducibility.
+\textbf{(b)} Every design that compiled and ran, as deviation from the cold no-op
+reference under the same instruction budget (2{,}000{,}001 instructions; the trace is
+recorded in the audit case, not per screening row). Three designs land on exactly
+$0.000\%$---they compile, run, emit metrics and do nothing measurable---while every
+functioning prefetcher is $0.54$--$0.96\%$ faster. The grey bar is the reference
+itself. \texttt{fill\_only\_conservative\_s2} appears twice because the two screening
+batches reuse module \emph{names} while delivering different binaries; it measures
+$-0.54\%$ in one batch and $-0.85\%$ in the other, which is why bars are keyed on
+binary digest (\S\ref{sec:repro}).}
+\label{fig:decomp}
+\vspace{-0.6em}
+\end{figure*}
+
 \subsection{The gate blocked our own headline claim}
 \label{sec:repro}
 
@@ -140,7 +162,13 @@ cells share a delivered binary digest---a rebuild on another host produces
 byte-different binaries while the simulated measurement stays bit-identical. A
 binary digest therefore evidences that a distinct build was delivered, not design
 identity, and a replication gate that demanded digest equality across hosts would
-reject a faithful reproduction.
+reject a faithful reproduction. The converse failure is present in our own screening
+data and is easier to miss: module \emph{names} are not design identifiers either.
+\texttt{gen\_fill\_only\_conservative\_s2} occurs in both screening batches under
+different delivered binaries (digests \texttt{ace3ea88\ldots} and \texttt{b83f003a\ldots})
+and measures $1{,}132{,}568$ in one and $1{,}129{,}110$ in the other. Any join keyed
+on the module name silently discards one of those measurements---which is exactly what
+an earlier version of Fig.~\ref{fig:decomp} did before we keyed it on the digest.
 
 The seed axis explains the gap. \texttt{s1} and \texttt{s3} differ only in the
 struct name and two lines of continuation indentation, yet each carries a
@@ -371,7 +399,7 @@ scorecard, raw cells and digests: loop, cases, generators, gate and
 \texttt{scripts/independent\_audit.py} as CHIA-compatible blocks (BSD-3-Clause),
 \url{https://github.com/ListenJ/chia-repo-audit}. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (35 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (41 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check rather than a coincidence. Reproduce the headline grid with
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 6 --config

@@ -997,3 +997,43 @@ LaTeX 会断行、转义 `\_`、把短语包进 `\textbf{}`，所以任何正则
    按 digest 逐个核过，README 改口。
 
 论文 5 页，0 error / 0 overfull / 0 undefined，39 测试全绿，35/35 声明可重derive。
+
+### 7. 第五个缺陷：我自己画图时把一次测量悄悄丢掉了
+
+为了补论文缺的图，写了 `scripts/make_figures.py`，第一版按 `module` 名把两个 screening
+批次的行合并（`seen[mod] = cyc`）。跑出来的图 panel (b) 里所有柱子高度几乎一样，
+因为 cycle 数只差 0.8%，0 基线看不见 —— 换成 Δ% 之后能看了，同时暴露出
+`gen_fill_only_conservative_s2` 只有一个值。
+
+查两个文件才确认：**同一个 module 名在两个批次里交付的是不同 binary、测出不同 cycle**：
+
+| 批次 | module | binary_sha256 | cycles |
+|---|---|---|---|
+| A（13 设计） | gen_fill_only_conservative_s2 | ace3ea88bc7e4c24 | 1,132,568 |
+| B（9 因子） | gen_fill_only_conservative_s2 | b83f003a913605b7 | 1,129,110 |
+
+按名字 join 就静默丢掉了 1,132,568 —— 而论文正文里恰好写着这个数。
+**这就是本论文论点的自我复现**：binary digest 不等于设计身份（§repro 已写），
+反过来 **module 名字也不等于设计身份**，而后者更容易踩，因为它看起来像个 key。
+
+修法：图的 key 改成 `(module, binary_sha256, batch)`，13 根柱子全画出来，
+两个 `s2` 各占一根（−0.54% 与 −0.85%），论文 §repro 补一段说明这个反向失效，
+图注直接指出这一点。验证脚本加三条：
+"同名模块确实有两个测量值""这两个值的 binary 也确实不同"" functioning prefetcher
+没有一个等于 no-op"。
+
+另外如实记录：这些 screening 行**没有** trace 字段（`trace=None`），只有
+`instructions=2000001` 这个预算。所以"同一 trace、同一预算"里的 trace 来自审计用例
+`sem-esc-01.json`，不来自 screening 行本身 —— 图注按实情写，不假装行里有 trace。
+
+### 8. 让论文不能与自己的验证器漂移
+
+`verify_paper_claims.py` 最后一条检查是**自指**的：论文正文写着"(41 claims, non-zero
+exit on drift)"，检查要求这个数 == 本次运行的检查总数。哪天加一条或删一条检查而忘了
+改正文，这一条就翻红。总数因此从 35 → 40 → 41，正文同步跟上。
+
+图 `paper/fig_decomposition.pdf` 由 artifact 生成、被论文 `\includegraphics` 引用，
+两者都进了检查项（"图存在且被引用""生成脚本存在"），避免出现"论文引用了一张
+仓库里没有的图"这种投稿事故。
+
+论文 5 页，0 error / 0 overfull / 0 undefined；39 测试全绿；41/41 声明可重derive。

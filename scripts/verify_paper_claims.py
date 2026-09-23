@@ -170,7 +170,40 @@ else:
     check("reproduce command parseable", True, False)
 
 
+# 名字不是设计标识：两个批次里同名模块交付了不同 binary、测出不同 cycle。
+# 断言的是"冲突真实存在且论文披露过"，不是"数据干净"。
+batches = {}
+for tag, rel in (("A", "results/candidate_compile_screening_2026-09-22.jsonl"),
+                 ("B", "results/factorial_screening_2026-09-23.jsonl")):
+    for r in load_jsonl(rel):
+        if r.get("cycles") and r.get("module") and r.get("binary_sha256"):
+            batches.setdefault(r["module"], {})[(r["binary_sha256"], tag)] = r["cycles"]
+collide = {m: v for m, v in batches.items() if len(set(v.values())) > 1}
+check("a module name carries two measurements", ["gen_fill_only_conservative_s2"],
+      sorted(collide), "gen_fill_only_conservative_s2")
+check("and the two differ in binary digest too", True,
+      all(len(k) == 2 for k in collide.values()), r"different delivered binaries")
+
+# 图必须由 artifact 重derive，且真的被论文引用
+check("figure is generated and included", True,
+      (REPO / "paper/fig_decomposition.pdf").is_file()
+      and "fig_decomposition.pdf" in PAPER, r"fig_decomposition")
+check("figure generator exists", True,
+      (REPO / "scripts/make_figures.py").is_file(), r"make_figures")
+
+# 论文里说"每个真 prefetcher 都偏离 no-op"，逐个回代
+check("no functioning prefetcher equals the no-op", True,
+      all(c != noop_ref for m, v in batches.items() for c in v.values()
+          if "fill_only" in m or m in ("gen_default_s1", "gen_aggressive_offset_s3")),
+      r"functioning prefetcher")
+
+
 def main() -> int:
+    # The paper states how many claims this script checks, so that number is itself a
+    # claim. Include this check in its own count, or the sentence can never be right.
+    stated = re.search(r"\((\d+) claims, non-zero exit on drift\)", PAPER)
+    check("stated claim count is self-consistent", True,
+          stated is not None and int(stated.group(1)) == len(CHECKS) + 1)
     width = max(len(n) for n, _, _, _ in CHECKS)
     failed = 0
     for name, expect, actual, ok in CHECKS:
