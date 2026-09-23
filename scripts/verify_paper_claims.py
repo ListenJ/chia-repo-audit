@@ -234,6 +234,36 @@ check("same module name, different candidate digest across series", True,
       r"1\{,\}210 source characters")
 
 
+# ---- 每-trace no-op 参考：论文三处相对量断言的落点 --------------------
+refs = {}
+for r in load_jsonl("results/reference_designs_2026-09-22.jsonl"):
+    if r.get("design") and r.get("runs"):
+        refs[r["design"]] = {Path(run["trace"]).name: run["cycles"] for run in r["runs"]}
+noop_by_trace = refs.get("noop", {})
+nl_by_trace = refs.get("next_line", {})
+check("per-trace no-op reference exists for all three traces", 3, len(noop_by_trace))
+check("noop and next_line are different cold builds", True,
+      {r["binary_sha256"] for r in load_jsonl("results/reference_designs_2026-09-22.jsonl")}
+      == {"b49ebf8858bedd46", "476f7ee0b9cfc286"})
+
+v6 = load_json("results/grid_v6/raw.json")
+s2 = {Path(k.split("/", 2)[2]).name: c["median"]["cycles"]
+      for k, c in v6["cells"].items() if c.get("generator_seed", c.get("seed")) == 2}
+bf = next(t for t in noop_by_trace if "BFSCC" in t)
+im = next(t for t in noop_by_trace if "imagick" in t)
+fo = next(t for t in noop_by_trace if "fotonik" in t)
+
+faster = 100.0 * (noop_by_trace[bf] - s2[bf]) / noop_by_trace[bf]
+check("s2 is 10.6% faster than the no-op on BFSCC", 10.62, round(faster, 2), r"10\.6")
+check("s2 equals the no-op exactly on imagick", noop_by_trace[im], s2[im],
+      r"reproduces the no-op cycle count exactly on")
+
+sep_bf = 100.0 * (noop_by_trace[bf] - nl_by_trace[bf]) / noop_by_trace[bf]
+sep_fo = 100.0 * (noop_by_trace[fo] - nl_by_trace[fo]) / noop_by_trace[fo]
+check("control pair separates 23.15% on BFSCC", 23.15, round(sep_bf, 2), r"23\.15")
+check("control pair separates only 0.42% on fotonik3d", 0.42, round(sep_fo, 2), r"0\.42")
+
+
 def main() -> int:
     # The paper states how many claims this script checks, so that number is itself a
     # claim. Include this check in its own count, or the sentence can never be right.

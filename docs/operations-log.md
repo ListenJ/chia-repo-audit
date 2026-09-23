@@ -1090,3 +1090,25 @@ VM2 的 `grid_x_fill_only_s2s3`（fill_only_conservative，seeds{2,3}，3 trace 
 
 验证脚本 +4 条（第二个系列的 0.0000%、prompt 未行使、seed 轴确有 2 个水平、
 同名跨系列 candidate digest 真的不同），自指那条再次把正文数字从 43 顶到 47。
+
+### 11. 把"我人工核过了"变成常驻覆盖：每-trace no-op 参考
+
+论文有三处相对量断言一直没进验证器：`s2` 在 BFSCC 上"比 no-op 快 10.6%"、
+在 imagick 上"与 no-op 逐位相同"、控制对"BFSCC 分开 23.15% / fotonik3d 只有 0.42%"。
+它们的落点是 `results/reference_designs_2026-09-22.jsonl` 里的 cold 构建：
+
+| | fotonik3d | BFSCC | imagick | binary |
+|---|---|---|---|---|
+| noop | 2,261,770 | 7,183,123 | 1,561,323 | b49ebf8858bedd46 |
+| next_line | 2,252,330 | 5,520,026 | 1,496,885 | 476f7ee0b9cfc286 |
+
+逐条回代（定义都是 `(noop − x)/noop`）：
+- `(7,183,123 − 6,420,195)/7,183,123 = 10.62%` ✓ 论文写 10.6%
+- imagick：`s2 = 1,561,323` 与 no-op **完全相等** ✓
+- BFSCC 控制对 `= 23.15%` ✓；fotonik3d `= 0.4174%` ✓ 论文写 0.42%
+- （imagick 控制对 4.127%，与 ops log 早先记的 4.13% 一致）
+
+四处断言全部成立，但**在此之前它们只是我读过、算过、记得对** ——
+一旦有人改了 `reference_designs` 或换了 trace 命名，论文里这三个数会静默失效。
+验证器 +6 条（no-op 参考覆盖三条 trace、两个 cold 构建确实是不同 binary、
+以及上面四个相对量），声明数 47 → 53，自指那条再次把正文数字顶上去。
