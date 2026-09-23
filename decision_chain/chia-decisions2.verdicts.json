@@ -1,0 +1,54 @@
+{
+  "gate_version": 2,
+  "margin_min": 0.15,
+  "escalable_blast_radii": [
+    "destructive",
+    "external_write"
+  ],
+  "noul_role": "advisory cross-check only; measured Spearman(blast tier, noul)=+0.406 with min(tier3)-max(tier0)=-0.169, so it is not used as a veto",
+  "decisions": [
+    {
+      "id": "D7_freeze_evidence_or_add_grid",
+      "verdict": "AUTO",
+      "chosen_action": "freeze_after_running_grid",
+      "reasons": [
+        "[核对] noul=0.945 与登记表不一致（模型判需批，不作依据）"
+      ]
+    },
+    {
+      "id": "D8_push_corrected_branch",
+      "verdict": "ESCALATE",
+      "chosen_action": "push_now",
+      "reasons": [
+        "margin 0.102 < 0.15：模型自己拿不准",
+        "选中 push_now 登记为 external_write，外写/不可逆由代码判定",
+        "[核对] noul=0.753 与登记表一致"
+      ]
+    },
+    {
+      "id": "D9_vm_teardown_timing",
+      "verdict": "AUTO",
+      "chosen_action": "keep_running",
+      "reasons": [
+        "[核对] noul=0.441 与登记表一致"
+      ]
+    },
+    {
+      "id": "D10_hotcrp_submission_edit",
+      "verdict": "ESCALATE",
+      "chosen_action": "agent_edits_form",
+      "reasons": [
+        "选中 agent_edits_form 登记为 external_write，外写/不可逆由代码判定",
+        "[核对] noul=0.607 与登记表一致"
+      ]
+    }
+  ],
+  "auto": [
+    "D7_freeze_evidence_or_add_grid",
+    "D9_vm_teardown_timing"
+  ],
+  "escalate": [
+    "D8_push_corrected_branch",
+    "D10_hotcrp_submission_edit"
+  ]
+}

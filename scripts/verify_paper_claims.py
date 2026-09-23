@@ -264,6 +264,32 @@ check("control pair separates 23.15% on BFSCC", 23.15, round(sep_bf, 2), r"23\.1
 check("control pair separates only 0.42% on fotonik3d", 0.42, round(sep_fo, 2), r"0\.42")
 
 
+# ---- 决策链：§gate2 的每个数字都要能从落盘 JSON 重derive --------------
+lad = load_json("results/noul_approval_ladder.json")
+rows = {r["id"]: r for r in lad["rows"]}
+check("ladder Spearman", 0.406, round(lad["spearman_tier_noul"], 3), r"\+0\.406")
+check("ladder separation is negative", -0.169, round(lad["separation"], 3),
+      r"=-0\.169|0\.169")
+check("ladder verdict", "NOT-USABLE-AS-GATE", lad["verdict"])
+check("outside write scored below the safe local edit", True,
+      rows["edit_submission"]["noul"] < rows["rewrite_local_scorecard"]["noul"],
+      r"\$0\.126\$, below the safe local rewrite at \$0\.160\$")
+check("edit_submission value", 0.126, round(rows["edit_submission"]["noul"], 3), r"0\.126")
+check("local scorecard rewrite value", 0.16, round(rows["rewrite_local_scorecard"]["noul"], 2),
+      r"0\.160")
+
+vd = load_json("decision_chain/chia-decisions2.verdicts.json")
+check("gate v2 escalates exactly the outside writes",
+      sorted(["D8_push_corrected_branch", "D10_hotcrp_submission_edit"]),
+      sorted(vd["escalate"]))
+check("gate declares blast radius in code, not in the model",
+      ["destructive", "external_write"], sorted(vd["escalable_blast_radii"]),
+      r"register")
+check("gate and ladder code ship with the artifact", True,
+      all((REPO / f"decision_chain/{n}").is_file()
+          for n in ("laya_gate2.py", "laya_noul_ladder.py", "chia-decisions2.json")))
+
+
 def main() -> int:
     # The paper states how many claims this script checks, so that number is itself a
     # claim. Include this check in its own count, or the sentence can never be right.
