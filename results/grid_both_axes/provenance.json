@@ -1,0 +1,64 @@
+{
+  "grid": "grid_both_axes",
+  "purpose": "Close the gap recorded verbatim in results/grid_fact_prompt/provenance.json: no grid in this artifact varied the generation seed and the prompt at the same time, so the two largest reported effects were never tested for composition. This grid is a 2-seed x 2-prompt x 3-trace rectangle.",
+  "run": {
+    "started_utc": "2026-09-23T14:12Z",
+    "finished_utc": "2026-09-23T17:06:21Z",
+    "wall_clock": "2h54m",
+    "host": "GCP compute instance chia-grid, us-east1-b, c2d-standard-8 (sponsor-funded project)",
+    "container": "chia-both, ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+    "config": ".tmp/cfg/grid_both_axes.json (seeds [1,3], prompts [aggressive_offset, fill_only_conservative], n_repeat 3, 3 traces)",
+    "candidates_dir": "/workspace/.tmp/cand_fact2",
+    "cells": 12,
+    "trials": 36,
+    "repository_head": "118d313c146fd32a47de7adeef10b1bd14709a67",
+    "git_sha_recorded_in_raw": "118d313",
+    "note_on_capture": "raw.json carries git_sha 118d313 because this run started from the commit containing the axis-level gate fix. The .tmp/grid_git_sha and .tmp/grid_start markers were NOT written for this run: the container could not write them because an earlier host-side `chown -R devstar7744 ~/repo` (done to unblock a git reset) had removed the container user's write access to .tmp. Fixed with `chmod -R a+rwX .tmp` after launch, so the stage window here comes from the host (container start 14:12Z, watcher completion 17:06:21Z) rather than from in-container markers."
+  },
+  "gate_status": {
+    "axis_levels": {"seed": 2, "prompt": 2, "trace": 3, "repeat_min": 3},
+    "unexercised_axes": [],
+    "why_this_matters": "This is the first grid in the artifact where the fixed gate reports 'Unexercised axes: none'. Every earlier grid passed or failed on at least one axis that had a single level; here both axes the paper discusses are genuinely varied, so neither reported spread can be a vacuous zero.",
+    "verdict": "NON-REPRODUCIBLE",
+    "publish_gate": "BLOCKED",
+    "publish_blockers": ["reproducibility_threshold"]
+  },
+  "measured": {
+    "max_seed_cv_pct": 23.5042,
+    "max_repeat_cv_pct": 0.0,
+    "max_prompt_spread_pct": 179.67,
+    "max_trace_cv_pct": 163.3321,
+    "trace_top1_stability": 1.0,
+    "trace_kendall_tau": 0.777778
+  },
+  "per_cell_cycles": {
+    "aggressive_offset/seed1": {"imagick": 1554278, "fotonik3d": 2261770, "BFSCC": 7161605},
+    "aggressive_offset/seed3": {"imagick": 1501413, "fotonik3d": 2250832, "BFSCC": 5120350},
+    "fill_only_conservative/seed1": {"imagick": 1526689, "fotonik3d": 2252142, "BFSCC": 95624440},
+    "fill_only_conservative/seed3": {"imagick": 1526689, "fotonik3d": 2252142, "BFSCC": 95624440}
+  },
+  "findings": [
+    {
+      "claim": "The two axes compose rather than mask each other.",
+      "evidence": "With seed and prompt varied together, cross-seed CV is 23.50% and prompt spread 179.67%, both far above the 5% gate. Running them in the same grid did not make either effect disappear, so the single-axis grids were not each other's artefacts."
+    },
+    {
+      "claim": "The seed effect is prompt-specific, not a general property of seeding.",
+      "evidence": "fill_only_conservative reproduces bit-exactly across seeds 1 and 3 on all three traces (1,526,689 / 2,252,142 / 95,624,440 in both). aggressive_offset differs by 3.4% on imagick, 0.5% on fotonik3d and 28.5% on BFSCC. The whole 23.50% comes from one prompt."
+    },
+    {
+      "claim": "The grids replicate each other exactly where they overlap.",
+      "evidence": "grid_v6's fill_only seeds 1 and 3 measured 1,526,689 / 2,252,142 / 95,624,440; this grid's same two cells are identical to the cycle. Two grids, run hours apart from different candidate directories, agree bit-for-bit on shared designs."
+    },
+    {
+      "claim": "Ranking stability is itself design-set-specific, which is the strongest negative result here.",
+      "evidence": "grid_v6 reported top-1 stability 0.667 and mean Kendall tau 0.556 over 3 designs. This grid, same harness, same image, same three traces, reports top-1 1.0 and tau 0.778 over 4 designs. The instrument did not change and the simulator is deterministic; only the design set did. So 'the ranking is unstable' is not a property of agentic architecture discovery in general -- it is a property of a particular candidate set, and a set that yields tau 0.78 can be reported next to one that yields 0.56 by the same code."
+    }
+  ],
+  "why_the_numbers_differ_from_the_single_axis_grids": "grid_v6's 78.16% cross-seed CV was driven by fill_only seed 2, a different program (6,420,195 vs 95,624,440 on BFSCC); this grid has no seed 2, so its seed effect is the smaller aggressive_offset one. grid_fact_prompt's 249.18% spread came from a different triple of prompt variants over a different candidate set; here the two prompts differ by 179.67%. Neither pair disagrees -- they measure different design sets, which is exactly the scoping section 3.1 of the paper now states.",
+  "known_gaps": [
+    "Stage-entry markers were not written for this run (see run.note_on_capture); the wall-clock window is reconstructed from host-side evidence.",
+    "4 designs is still a small set for a stability claim; the tau comparison above is one observation per set, not a distribution.",
+    "The screening rows carry no trace field; trace identity here comes from the config."
+  ]
+}

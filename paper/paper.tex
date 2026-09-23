@@ -208,13 +208,30 @@ no-op/next-line control pair separates by 23.15\% on BFSCC but only 0.42\% on
 fotonik3d, so a ranking that moves only on fotonik3d is weak evidence and the
 grid must be read per trace, not averaged.
 
+\textbf{The stability number is not stable either.} A second rectangle,
+$2\,\text{seeds}\times2\,\text{prompts}\times3\,\text{traces}$ (12 cells, 36 runs),
+same harness, same pinned image, same three traces, reports top-1 stability
+$\mathbf{1.0}$ and mean Kendall $\tau=\mathbf{0.778}$ over four designs. Nothing in
+the instrument changed and the simulator is deterministic; only the candidate set
+did. So \texttt{tau}=0.556 and \texttt{tau}=0.778 are both correct readings of the
+same code, and ``the ranking is unstable'' is a claim about a design set, not about
+agentic architecture discovery. We report both rather than the one that reads better.
+
 \subsection{Prompt sensitivity is 249\%, and the gate could not see it}
 \label{sec:prompt}
 
 A separate $1\,\text{seed}\times3\,\text{prompt}$ grid over three traces gives
 maximum prompt spread $\mathbf{249.18\%}$, computed as
 $(\max-\min)/\text{mean}$; the
-spread is almost entirely one trace. The same grid carries a second, worse story.
+spread is almost entirely one trace. The two axes do not mask each other: a
+$2\times2$ seed-by-prompt rectangle (12 cells, 36 runs, \texttt{Unexercised axes:
+none}) measures cross-seed CV $\mathbf{23.50\%}$ and prompt spread
+$\mathbf{179.67\%}$ simultaneously, both far above the $5\%$ gate. Within that
+rectangle the seed effect is confined to one prompt---\texttt{fill\_only\_conservative}
+reproduces bit-exactly across seeds 1 and 3 on all three traces, while
+\texttt{aggressive\_offset} differs by $28.5\%$ on BFSCC---and the same two cells
+reproduce grid v6's values to the cycle, so the grids agree wherever they overlap.
+The same grid carries a second, worse story.
 Because it holds the seed constant, cross-seed CV was computed over a single value,
 and our variance helper returns $0.0$ for fewer than two samples---so the gate
 printed $\text{cross-seed CV}=0.0000\%$, watched it satisfy the $<5\%$ threshold,
@@ -430,11 +447,15 @@ two margins below 0.15. The ladder, the gate and the recorded verdicts ship in
 \textbf{Metric} & \textbf{Gate} & \textbf{Measured} \\
 \midrule
 Cross-seed CV (max) & $<5\%$ & $78.16\%$ \\
+\quad same, $2\times2$ grid & $<5\%$ & $23.50\%$ \\
 Repeated-run CV (max) & report & $0.0000\%$ \\
 Prompt spread (max) & report & $249.18\%$ \\
+\quad same, $2\times2$ grid & report & $179.67\%$ \\
 Trace CV (max) & report & $163.33\%$ \\
 Trace top-1 stability & report & $0.667$ \\
+\quad same, $2\times2$ grid & report & $1.000$ \\
 Mean Kendall $\tau$ & report & $0.556$ \\
+\quad same, $2\times2$ grid & report & $0.778$ \\
 $\kappa$, spec cases & $\geq0.7$ & $0.859$ \\
 $\kappa$, real pairs (33 label.) & $\geq0.7$ & $0.636$ \\
 $\kappa$, verdict only$^{\dagger}$ & $\geq0.7$ & $1.000$ \\
@@ -467,7 +488,7 @@ repository URL is filed in this submission's required open-source-artifact field
 rather than printed here, so the paper stays anonymous while the artifact stays
 reachable. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (86 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (97 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check rather than a coincidence. Reproduce the headline grid with
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 6 --config
@@ -499,10 +520,13 @@ screening rows carried both and still let a cycle count be attributed to a file 
 cannot compile, because the one thing missing was the hash of the input.
 
 \section{Limitations}
-\textbf{Axes are measured separately.} Prompt spread comes from a
-$1\times3$ grid and cross-seed CV from a $3\times1$ one; no reported cell yet varies
-seed and prompt simultaneously, so we cannot say whether the $249.18\%$ prompt
-response and the $78.16\%$ seed response compose or interfere.
+\textbf{Axes do compose, but each grid is one design set.} The $2\times2$ rectangle
+shows cross-seed CV and prompt spread surviving simultaneous variation, so the
+single-axis grids were not each other's artefacts. What does not transfer is the
+magnitude: the same code reports $\tau=0.556$ on one candidate set and $0.778$ on
+another, $78.16\%$ and $23.50\%$ cross-seed CV, $249.18\%$ and $179.67\%$ prompt
+spread. Every number here is therefore a statement about a specific set of generated
+designs, and we give the set for each.
 \textbf{Repeats:} $0.0000\%$ is $N=5$ per cell (45 runs), but it establishes only
 that execution is deterministic; it says nothing about generation variance, which
 is the axis that fails. \textbf{Labels:} the 33-pair $\kappa$ rests on structural

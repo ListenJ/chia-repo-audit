@@ -1,0 +1,22 @@
+CHIA reproducibility audit (config v6)
+========================================================
+Backend: champsim_node
+Verdict: NON-REPRODUCIBLE
+Max cross-seed CV: 23.5042% (gate < 5%)
+Max repeated-run CV: 0.0000%
+Max prompt spread: 179.6700% (max-min)/mean
+Max trace CV: 163.3321%
+Axis levels: seed=2 prompt=2 trace=3 repeat>=3
+Unexercised axes: none
+Trace top-1 stability: 1.0
+Trace ranking Kendall tau: 0.777778
+========================================================
+Double-blind protocol self-test:
+  Cohen's kappa: 1.0 (gate 0.7)
+  Adversarial detection: 1.0
+  Gold calibration: 5/5
+  Error distribution: {'E0': 0, 'E1': 2, 'E2': 2, 'E3': 2, 'E4': 3}
+  Publish gate: BLOCKED
+  Publish blockers: ['reproducibility_threshold']
+========================================================
+BLOCKED

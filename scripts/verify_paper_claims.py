@@ -369,6 +369,42 @@ check("candidate index exists and its collision count matches the paper",
       else f"{colliding} of {total_mods}", r"9 of 15 module names")
 
 
+# ---- 两轴矩形：论文新增的四个数与跨网格复现 ----------------------------
+b2 = load_json("results/grid_both_axes/audit_report.json")
+check("2x2 cross-seed CV", 23.5, pct(b2["max_seed_cv"]), r"23\.50")
+check("2x2 prompt spread", 179.67, pct(b2["max_prompt_spread"]), r"179\.67")
+check("2x2 top-1 stability", 1.0,
+      round(b2["ranking_stability"]["top1_stability"], 3), r"1\.000|top-1 stability")
+check("2x2 kendall tau", 0.778, round(b2["ranking_stability"]["mean_kendall_tau"], 3),
+      r"0\.778")
+check("2x2 exercises both axes", [], b2.get("unexercised_axes"), r"Unexercised axes:\s*none")
+check("2x2 seed and prompt levels", {"seed": 2, "prompt": 2},
+      {k: b2["axis_levels"][k] for k in ("seed", "prompt")})
+check("2x2 verdict", "NON-REPRODUCIBLE", b2["verdict"])
+check("2x2 gate", "BLOCKED", b2["publish_gate"])
+_v6 = load_json("results/grid_v6/raw.json")
+_b2 = load_json("results/grid_both_axes/raw.json")
+
+
+def cell(raw, seed, prompt, trace_sub):
+    for c in raw["cells"].values():
+        if (c.get("generator_seed", c.get("seed")) == seed and c["prompt"] == prompt
+                and trace_sub in c["trace"]):
+            return c["median"]["cycles"]
+    return None
+
+
+_overlap = [(s, t) for s in (1, 3) for t in ("fotonik", "BFSCC", "imagick")]
+check("the two grids agree bit-for-bit on every overlapping cell", True,
+      all(cell(_v6, s, "fill_only_conservative", t)
+          == cell(_b2, s, "fill_only_conservative", t) for s, t in _overlap))
+check("fill_only reproduces across seeds inside the 2x2 grid", True,
+      all(cell(_b2, 1, "fill_only_conservative", t)
+          == cell(_b2, 3, "fill_only_conservative", t) for t in ("fotonik", "BFSCC", "imagick")))
+check("aggressive_offset does not", False,
+      cell(_b2, 1, "aggressive_offset", "BFSCC") == cell(_b2, 3, "aggressive_offset", "BFSCC"))
+
+
 def main() -> int:
     # The paper states how many claims this script checks, so that number is itself a
     # claim. Include this check in its own count, or the sentence can never be right.

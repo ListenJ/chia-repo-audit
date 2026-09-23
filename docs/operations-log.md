@@ -1420,3 +1420,43 @@ disagreements 0   shared errors = 三个逃逸，且非逃逸用例一个没错
 
 验证器 +1 条：`CANDIDATES.md` 里数出来的"colliding / total 模块名"必须等于论文正文
 写的 "9 of 15 module names" —— 跨 artifact 的一致性也纳入重derive。86/86。
+
+### 21. 两轴网格回来了：12 格 36 次运行，而且它把"排名不稳定"这条也收窄了
+
+VM1 的 `grid_both_axes` 17:06:21Z 完成（2h54m），看门狗正确落档
+`cells=12 trials=36 archive=grid_both_axes.tgz`。这是本 artifact **第一个同时行使
+seed 与 prompt 两轴的网格**，scorecard 上 `Unexercised axes: none` —— 修好的门禁
+第一次在一件真事上说话。
+
+```
+Axis levels: seed=2 prompt=2 trace=3 repeat>=3      Unexercised axes: none
+Max cross-seed CV:  23.5042%   (gate < 5%)
+Max prompt spread: 179.6700%
+Max trace CV:      163.3321%
+Trace top-1 stability: 1.0     Kendall tau: 0.777778
+Verdict: NON-REPRODUCIBLE      Publish gate: BLOCKED
+```
+
+四条结论，都写进 provenance：
+
+1. **两轴是复合的，不是互相掩盖的。** 同时变化时 seed 23.50% / prompt 179.67%
+   都还在，远超 5% 门禁 —— 单轴网格不是彼此的假象。
+2. **seed 效应是 prompt 特异的。** `fill_only_conservative` 在 seeds 1/3 上
+   三条 trace 全部逐位相同（1,526,689 / 2,252,142 / 95,624,440），
+   而 `aggressive_offset` 在 BFSCC 上差 28.5%。整个 23.50% 来自一个 prompt。
+3. **两个网格在重叠处逐位复现。** v6 的 fill_only s1/s3 与这里的同两格
+   cycle 完全相同 —— 不同候选目录、相隔数小时的两跑，在共享设计上agree to the cycle。
+   这是本 artifact 里最干净的一次复现证据。
+4. **最狠的一条：稳定性指标本身不稳。** 同一套代码、同一镜像、同样三条 trace，
+   3 设计集给 τ=0.556 / top-1 0.667，4 设计集给 **τ=0.778 / top-1 1.0**。
+   仿真器是确定的，工具没动，只有候选集变了。
+   所以"排名不稳定"不是 agentic 架构发现的性质，是**某个设计集**的性质。
+
+据此改了四处：摘要把 "Ranking is unstable" 换成"稳定性在设计集之间都不迁移"；
+§3.2 加第 4 条；§3.3 加复合性与逐位复现；Limitations 把"两轴尚未同时测量"这条
+**已关闭的缺口**换成"每个网格只是一个设计集"；表格为三个指标各加一行 2×2 读数。
+验证器 +11 条（含"重叠格逐位相同"与"fill_only 跨 seed 相同 / aggressive 不同"
+这组方向相反的断言），97/97。
+
+**这次也修正了我自己的一处口径**：之前论文与 README 把 78.16% 当成可迁移的
+seed 效应来写。现在有三个数并排（78.16 / 23.50，且都真），只能按设计集报告。

@@ -1,0 +1,11 @@
+{
+  "config_version": 6,
+  "timestamp": 1790172768.0548742,
+  "git_sha": "118d313",
+  "python": "3.10.19",
+  "cwd": "/workspace",
+  "config_sha256": "14e6a27a2579c5d458d57224d46d816812d8dc2f7c475e296ef74e347b97cfbf",
+  "backend": "champsim_node",
+  "audit_protocol": "double-blind semantics adapted from Axiom (kappa=0.954, N=100, 20% re-audit)",
+  "pre_registered": true
+}
