@@ -36,6 +36,16 @@ Trace Kendall tau:     0.556
 Publish gate:          BLOCKED  (reproducibility_threshold)
 ```
 
+**That 78.1641% is a within-series measurement, and a second series shows why the
+qualifier is needed.** `results/grid_x_fill_only_s2s3/` runs the same prompt at seeds
+{2,3} from a *different* candidate directory and measures cross-seed CV **0.0000%**.
+Not a contradiction: `gen_fill_only_conservative_s2` is a different program in each
+directory (1,210 vs 1,107 source characters; BFSCC cycles 6,420,195 vs 95,624,440),
+and the two `raw.json` files record distinct `candidate_sha256` values. A seed label is
+not a design identifier across candidate series, so the seed effect reported here is
+series-specific rather than a property of agentic generation in general. See
+`results/grid_x_fill_only_s2s3/provenance.json`.
+
 v7 reproduces v6 exactly on cycles, IPC and instruction counts across all nine
 cells, on a different physical host — while **0 of 9 cells share a delivered
 binary digest**. A rebuild elsewhere produces byte-different binaries and the same
@@ -93,12 +103,14 @@ supplies one here.
 
 ### Still open
 
-- Seed and prompt are still measured on separate grids (3×1 and 1×3). Prompt spread
-  measures **249.18%** on the 1×3 grid; a 2-seed × 2-prompt rectangle is running to
-  test whether the two responses compose.
+- Seed and prompt are still measured on separate grids (3×1, 1×3, and now a 2×1 seed
+  replication). Prompt spread measures **249.18%** on the 1×3 grid; a 2-seed ×
+  2-prompt rectangle is running to test whether the two responses compose.
 - `main` is frozen at the 2026-09-21 pilot state by choice. **All current evidence
-  is on `codex/colab-cpu-validation`**, which is what the HotCRP artifact URL
-  points at.
+  is on `codex/colab-cpu-validation`.** The HotCRP artifact URL still points at the
+  repository root and the submitted PDF is still the pre-measurement version; both
+  need the author to replace them, and the corrections in this branch have not been
+  pushed yet.
 
 ### Code and infrastructure
 
