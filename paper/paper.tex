@@ -22,7 +22,7 @@ aggregate score hides---repeated-run, generation-seed, prompt and
 trace---gating publication on both a pre-registered threshold and a double-blind
 annotation layer whose annotators are independent models. Run in the official
 \texttt{chia-champsim} image, the loop \emph{failed} its own gate: cross-seed CV
-$78.16\%$ against a $5\%$ threshold while repeated-run CV is $0.0000\%$ over 18
+$78.16\%$ against a $5\%$ threshold while repeated-run CV is $0.0000\%$ over 45
 runs, so the publish gate reads \textsc{Blocked}. Two candidates differing only in
 a struct name and indentation carry distinct source, design and binary digests yet
 bit-identical cycles on all three traces: the seed moved the artifact, not the
@@ -98,10 +98,14 @@ pass inside the image. Three DPC-4 traces (fotonik3d, ligra BFSCC, imagick) with
 SHA-256 in \texttt{results/grid\_v6/provenance.json}, 1M warmup + 4M simulated
 instructions, L2C. Candidates are three real LLM-generated prefetcher modules
 retained with raw prompts and responses, loaded through directory mode; seeds and
-prompts select the artifact and the simulator is never handed a seed. Calibration
-is 5 gold + 5 adversarial specification cases plus 4 semantic cases built from
-the generated C++ itself. Pre-registered metrics: cross-seed CV $<5\%$;
-repeated-run CV, prompt spread, trace CV, top-1 stability and
+prompts select the artifact and the simulator is never handed a seed. A separate
+$3{\times}3$ prompt-by-seed factorial was generated to exercise the prompt axis:
+\textbf{6 of 9} candidates compile, taking every generated candidate as the
+denominator, and all three failures abort the build within ${\approx}13$\,s
+against ${\approx}800$\,s for a cold success.
+\textbf{Calibration.} 5 gold + 5 adversarial specification cases plus 4
+semantic cases built from the generated C++ itself. Pre-registered metrics:
+cross-seed CV $<5\%$; repeated-run CV, prompt spread, trace CV, top-1 stability and
 leave-one-trace-out Kendall $\tau$ reported; annotation gate $\kappa\geq0.7$.
 
 \section{Results}
@@ -110,11 +114,19 @@ leave-one-trace-out Kendall $\tau$ reported; annotation gate $\kappa\geq0.7$.
 \subsection{The gate blocked our own headline claim}
 \label{sec:repro}
 
-Across 3 designs $\times$ 3 traces $\times$ 2 repeats the loop reports cross-seed
-CV $\mathbf{78.16\%}$ against the 5\% threshold, verdict
-\textsc{Non-Reproducible}, publish gate \textsc{Blocked}. Repeated-run CV is
-$\mathbf{0.0000\%}$ over 18 runs: the simulator is deterministic, and
-determinism is not reproducibility.
+Across 3 designs $\times$ 3 traces $\times$ 5 repeats (45 runs, on a second physical
+host) the loop reports cross-seed CV $\mathbf{78.16\%}$ against the 5\% threshold,
+verdict \textsc{Non-Reproducible}, publish gate \textsc{Blocked}. Repeated-run CV
+is $\mathbf{0.0000\%}$: no cell varies across its five runs. The simulator is
+deterministic, and determinism is not reproducibility.
+
+The replication is exact on measurement and total on artifact. Cycles, IPC and
+instruction counts match the earlier run on all nine cells, yet \textbf{0 of 9}
+cells share a delivered binary digest---a rebuild on another host produces
+byte-different binaries while the simulated measurement stays bit-identical. A
+binary digest therefore evidences that a distinct build was delivered, not design
+identity, and a replication gate that demanded digest equality across hosts would
+reject a faithful reproduction.
 
 The seed axis explains the gap. \texttt{s1} and \texttt{s3} differ only in the
 struct name and two lines of continuation indentation, yet each carries a
@@ -204,8 +216,9 @@ scorecard, raw cells and digests: loop, cases, generators, gate and
 \section{Limitations}
 \textbf{Prompt sensitivity is unmeasured}, not zero: the grid held one prompt
 constant; a $3{\times}3$ prompt$\times$seed factorial is generated and queued.
-\textbf{Repeats:} $0.0000\%$ is $N=2$ per cell and supports no distributional
-claim; a 5-repeat replication is running. \textbf{Annotators:} both models come
+\textbf{Repeats:} $0.0000\%$ is $N=5$ per cell (45 runs), but it establishes only
+that execution is deterministic; it says nothing about generation variance, which
+is the axis that fails. \textbf{Annotators:} both models come
 from one provider, so we claim model-model, not cross-family, independence, and
 4 semantic cases are few. \textbf{Checker:} the cell-level nullity rule conflates
 per-trace with global nullity. \textbf{Provenance:} \texttt{raw.json} records
