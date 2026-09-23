@@ -1396,3 +1396,27 @@ disagreements 0   shared errors = 三个逃逸，且非逃逸用例一个没错
 顺带记下判断失误的机制：我看到 7 页 + README 写着 4 页，就得出"违规"结论。
 **两个都可能是真的字符串，不等于它们之间有支持关系** —— 跟 §3.3 那个空轴、
 §3.6 那个标签器是同一件事：代理量返回了一个通过/失败值，而它没有指称任何东西。
+
+### 20. 补上防住 §3.7 那类错误该有的东西：候选目录索引
+
+`CANDIDATES.md`（由 `scripts/make_candidates_index.py` 生成，不手写）：
+每个候选目录 → 哪个 config/script/case 消费它 → 目录内每个模块的源摘要 →
+每个模块名在哪些 artifact 里有测量。它不解释哪个是"对的"，只把磁盘上的事实列全。
+
+生成后立刻看见的数：**15 个模块名里 9 个带着不止一份不同内容的源文件**。
+这就是 §3.7 能发生的结构性原因，也是"以模块名 join 一切"的真实代价。
+另外 `.tmp/cand_fact` 没有任何 tracked 文件引用它 —— 索引如实标成
+"nothing consumes it"，并写明**不删**：删掉候选目录不会让事情变整洁，
+只会让某次测量永久无法回答。
+
+**这个工具自己也犯了同一类错，被抓出来了。** 第一版"referenced by"列里
+`.tmp/cand4` 显示"not referenced in tracked files"，可我前一轮才刚刚证明
+它就是 sem-01/02/03 的来源。查下去：`run_grid_chain.sh:27` 那一行是
+`--candidate-dirs .tmp/cand .tmp/cand2 .tmp/cand3 .tmp/cand4`，
+而我用了 `re.search` —— **一行里四个目录只记第一个**。
+改成 `re.finditer` 后 cand4 立刻显出 `.tmp/run_grid_chain.sh:27`。
+一个"出处索引"少报引用，比没有索引更糟：它会让人以为某个目录无关。
+（同一行里自我引用的目录也过滤掉了，否则 generation-log 会把真正的使用者埋掉。）
+
+验证器 +1 条：`CANDIDATES.md` 里数出来的"colliding / total 模块名"必须等于论文正文
+写的 "9 of 15 module names" —— 跨 artifact 的一致性也纳入重derive。86/86。

@@ -132,6 +132,11 @@ supplies one here.
   fix is a rescore rather than a re-run. Three published corrections used them.
 - `scripts/make_figures.py` draws the paper's figure from the same artifacts, and
   `scripts/substrate_probe.py` runs the third, discriminative annotator.
+- [`CANDIDATES.md`](CANDIDATES.md) is a generated index of every candidate directory:
+  which config or script consumes it, the source digest of each module inside it, and
+  which measurements are keyed to each name. **9 of 15 module names carry more than one
+  distinct source on disk**, which is why section 3.7 of the paper was misattributed and
+  why the join key for anything load-bearing is `candidate_sha256`, never the module name.
 - [`decision_chain/`](decision_chain/) ships the Laya gate, the blast-radius
   falsification ladder that retired its approval score, the decision spec and the
   recorded routing verdicts behind §3.8.

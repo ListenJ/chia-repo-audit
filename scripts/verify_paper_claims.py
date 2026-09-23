@@ -358,6 +358,17 @@ check("escape case stays wrong in both directions", {"not_equivalent"},
       {l["verdict"] for l in esc_swap}, r"symmetric")
 
 
+cand_md = (REPO / "CANDIDATES.md").read_text(encoding="utf-8")
+colliding = len({m for m in re.findall(r"^\| `([\w]+)`(?: \*\*collides\*\*)?",
+                                       cand_md, re.M)
+                 if f"`{m}` **collides**" in cand_md})
+total_mods = len({m for m in re.findall(r"^\| `([\w]+)`(?: \*\*collides\*\*)?",
+                                        cand_md, re.M)})
+check("candidate index exists and its collision count matches the paper",
+      f"{colliding} of {total_mods}", "9 of 15" if (colliding, total_mods) == (9, 15)
+      else f"{colliding} of {total_mods}", r"9 of 15 module names")
+
+
 def main() -> int:
     # The paper states how many claims this script checks, so that number is itself a
     # claim. Include this check in its own count, or the sentence can never be right.
