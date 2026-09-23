@@ -1160,3 +1160,47 @@ digest 的镜像跑，`Ran 43 tests / OK`（5.968s），`results/in_image_tests_
 如实记下这次修复留下的新缺口：更严的那一支（全 trace 空）现在只有合成正例，
 复现网格里**没有**一个在所有 trace 上都空的设计 —— 真空的那三个出自 screening 批，
 不在 grid 的 cells 里。写进 Limitations，不装作修完就没问题了。
+
+### 14. 第六个缺陷，也是最要命的一个：逃逸用例可能把测量归给了编译不过的源文件
+
+为了给自己新修的 `null_on_every_measured_trace` 补一个**真实**正例（复现网格里没有
+在所有 trace 上都空的设计，真空的三个出自 screening 批），在空出来的 VM2 上起了一个
+对照网格，把三个已知候选按真实 grid 路径重跑。第一个就炸了：
+
+```
+/home/ray/champsim/prefetcher/gen_default_s0/gen_default_s0.h:15:34:
+  error: invalid 'static_cast' from type 'champsim::address' to type 'int64_t'
+grid_rc=1
+```
+
+而 `sem-esc-01.json` 正是拿 `gen_default_s0` 当逃逸主角，
+且它引用的 `design_source_sha256 = 5de9bd2414de745f…` 经逐文件比对，
+**就是** `.tmp/cand/gen_default_s0.json`（1156 字符，含那两行非法 cast）。
+
+查 `candidate_compile_screening_2026-09-22.jsonl`，`gen_default_s0` 有**两条**记录：
+
+| # | build_success | build_s | binary | cycles |
+|---|---|---|---|---|
+| 1 | **False** | 47.9 | — | — |
+| 2 | **True** | 1417.1 | cc0477f0e1ee0187 | 1,138,748 |
+
+第一条与我在 VM2 上复现的错误逐字相同。也就是说：**先编译失败，后来同一模块名下
+编译成功并测出逃逸值** —— 而 screening 行不记源文件摘要，只记 `module` 名。
+结合 §7/§10 已经确认的"同名不同物"（`gen_default_s0` 在 `.tmp/cand` 是 1156 字符、
+在 `.tmp/cand2` 是 1227 字符，摘要 `5de9bd24…` vs `671bafcf…`），
+最可能的解释是：**真正编译成功并测出 1,138,748 的是 cand2 那份，
+而用例把 cand 那份的摘要写了进去。**
+
+旁证：扫过所有候选，**只有 cand 版含非法 cast**；
+另两个逃逸设计（`cand3/gen_aggressive_offset_s1_r1` d5f6db55…、
+`cand_fact2/gen_aggressive_offset_s1` ead3e4f3…）都干净。所以问题局限在这一个用例。
+
+正在跑实证：对照网格里换成 cand2 那份，若它编译通过且测出 1,138,748，
+就把 `sem-esc-01` 的 `design_source_sha256` 改为 `671bafcf…` 并在 provenance 写明这次改判；
+若测不出 1,138,748，则该逃逸测量**没有可归属的源文件**，
+论文 §3.5 与摘要里"两个独立标注者都判错、测量说等价"的表述必须降级为
+"存在一个 cycle 与 no-op 相同的构建产物，其源文件归属未确立"。
+
+**教训（写下来以免再犯）**：screening 行必须同时记 `source_sha256` 与 `binary_sha256`。
+只记模块名的话，"哪个源文件产生了这个测量"这个问题在事后无法回答 ——
+而这正是本论文批评别人的那件事。
