@@ -1,0 +1,23 @@
+{
+ "id": "sem-34",
+ "design": {
+  "module_name": "gen_fill_only_conservative_s1",
+  "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n#include <vector>\n#include <algorithm>\n#include <cstddef>\n\nstruct gen_fill_only_conservative_s1 : public champsim::modules::prefetcher {\n  using prefetcher::prefetcher;\n\n  uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n    // As per the design brief, this prefetcher never trains on demand misses\n    // and issues prefetches only from cache-fill feedback.\n    // Therefore, no prefetching logic is implemented here.\n    return metadata_in;\n  }\n\n  uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n    // This is the trigger for prefetching, as per the design brief.\n    // It issues prefetches at most one line ahead of the filled address.\n\n    // Convert the physical address to a block number for arithmetic.\n    champsim::block_number current_block{addr};\n\n    // Calculate the address for the next block (one line ahead).\n    champsim::block_number prefetch_block = current_block + 1;\n\n    // Issue the prefetch request for the calculated block.\n    // The 'fill_this_level' parameter is set to true to indicate that\n    // this prefetch should fill into the current cache level.\n    prefetch_line(champsim::address{prefetch_block}, true, metadata_in);\n\n    return metadata_in;\n  }\n};\n"
+ },
+ "reference": {
+  "module_name": "gen_fill_only_conservative_s2",
+  "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n  using prefetcher::prefetcher;\n\n  uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n    // This prefetcher never trains on demand misses, so no action here.\n    return metadata_in;\n  }\n\n  uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n    // Convert the filled address to a block number for arithmetic.\n    champsim::block_number blk{addr};\n\n    // Calculate the address of the next line.\n    champsim::block_number prefetch_blk = blk + 1;\n\n    // Issue a prefetch for the next line, one line ahead.\n    this->prefetch_line(champsim::address{prefetch_blk}, true, metadata_in);\n\n    return metadata_in;\n  }\n};\n"
+ },
+ "expected_verdict": "not_equivalent",
+ "expected_errors": [
+  "E2"
+ ],
+ "planting": "real generated pair (gen_fill_only_conservative_s1 vs gen_fill_only_conservative_s2); no shared trace measurement; comparison polarity differs",
+ "evidence": {
+  "design_source_sha256": "60f4a4f0996b94156285004b5205b2a8c463f6495711aad0be0b8b50264178e2",
+  "reference_source_sha256": "8c39beb8e7887549d7bcaa11e4ba356f8528a6af1a6e8b6a7f2527ea0a8af2d9",
+  "design_cycles": {},
+  "reference_cycles": {},
+  "label_basis": "source structure only"
+ }
+}

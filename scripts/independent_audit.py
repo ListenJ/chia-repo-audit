@@ -85,7 +85,7 @@ def call_model(model: str, prompt: str, token: str, retries: int = 3) -> tuple[s
            f"/locations/us-central1/publishers/google/models/{model}:generateContent")
     body = json.dumps({
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.0, "maxOutputTokens": 2048},
+        "generationConfig": {"temperature": 0.0, "maxOutputTokens": 8192},
     }).encode()
     last = ""
     for attempt in range(retries):
@@ -204,12 +204,16 @@ def main() -> int:
     def pick(record: dict, model: str) -> dict:
         return next(l for l in record["labels"] if l["model"] == model)
 
-    pairs = [(combined_label(pick(r, a)), combined_label(pick(r, b))) for r in records]
-    verdict_pairs = [(pick(r, a)["verdict"] or "unparseable", pick(r, b)["verdict"] or "unparseable")
-                     for r in records]
+    # kappa is only defined over pairs where both annotators actually answered.
+    # Scoring a harness failure (a truncated reply, a bad token budget) as an
+    # "unparseable" label would silently deflate the headline number and attribute
+    # our own bug to the annotators.
+    scored = [r for r in records if pick(r, a)["parse_ok"] and pick(r, b)["parse_ok"]]
+    pairs = [(combined_label(pick(r, a)), combined_label(pick(r, b))) for r in scored]
+    verdict_pairs = [(pick(r, a)["verdict"], pick(r, b)["verdict"]) for r in scored]
 
     disagreements = []
-    for record, (label_a, label_b) in zip(records, pairs):
+    for record, (label_a, label_b) in zip(scored, pairs):
         if label_a == label_b:
             continue
         disagreements.append({
@@ -223,6 +227,8 @@ def main() -> int:
         "generated_at": now(),
         "annotators": args.models,
         "n_cases": len(records),
+        "n_scored": len(scored),
+        "n_unscored": len(records) - len(scored),
         "kappa_combined_label": cohen_kappa(pairs),
         "kappa_verdict_only": cohen_kappa(verdict_pairs),
         "observed_agreement": round(sum(1 for x, y in pairs if x == y) / len(pairs), 4) if pairs else None,
@@ -239,7 +245,7 @@ def main() -> int:
             } for m in args.models
         },
         "disagreements": disagreements,
-        "unparseable": [r["id"] for r in records
+        "unparseable": [{"id": r["id"], "model": l["model"]} for r in records
                         for l in r["labels"] if not l["parse_ok"]],
         "caveats": [
             "Both annotators are hosted by the same provider; cross-family independence is not claimed.",

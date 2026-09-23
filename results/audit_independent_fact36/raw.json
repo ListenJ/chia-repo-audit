@@ -1,0 +1,2623 @@
+[
+ {
+  "id": "sem-01",
+  "source": "chia_loop\\semantic_fact\\sem-01.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "e84fc6dfebdc8994dfc04df834cb8341353298e60cb597ab85b0a3f7f33aab49",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-01\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E2\",\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate differs significantly in stream identification (IP-based vs. sequential block-based), LRU policy, confidence update parameters and bounds, and initial prefetch behavior for new streams, along with numerous parameter value mismatches.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3245,
+     "candidatesTokenCount": 114,
+     "totalTokenCount": 6908,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3245
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 114
+      }
+     ],
+     "thoughtsTokenCount": 3549
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E2",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate differs significantly in stream identification (IP-based vs. sequential block-based), LRU policy, confidence update parameters and bounds, and initial prefetch behavior for new streams, along with numerous parameter value mismatches.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "e84fc6dfebdc8994dfc04df834cb8341353298e60cb597ab85b0a3f7f33aab49",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-01\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E2\",\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate prefetcher identifies streams by instruction pointer and prefetches upon creating a new stream, whereas the reference identifies streams by detecting sequential block accesses and waits for confirmation before prefetching, which constitutes a fundamentally different algorithm.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3245,
+     "candidatesTokenCount": 113,
+     "totalTokenCount": 5651,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3245
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 113
+      }
+     ],
+     "thoughtsTokenCount": 2293
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E2",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate prefetcher identifies streams by instruction pointer and prefetches upon creating a new stream, whereas the reference identifies streams by detecting sequential block accesses and waits for confirmation before prefetching, which constitutes a fundamentally different algorithm.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-02",
+  "source": "chia_loop\\semantic_fact\\sem-02.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "0446dec8b82484c8dcd92c20c3d4315cabb35cf74547093ea380259cd9a8e72b",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-02\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E2\",\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate and reference specifications implement fundamentally different prefetching algorithms, differing in their state management (IP-based streams vs. block-based confidence and metadata maps), prefetch triggering conditions, confidence update logic, prefetch address calculation, and parameter values.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3996,
+     "candidatesTokenCount": 120,
+     "totalTokenCount": 7818,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3996
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 120
+      }
+     ],
+     "thoughtsTokenCount": 3702
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E2",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate and reference specifications implement fundamentally different prefetching algorithms, differing in their state management (IP-based streams vs. block-based confidence and metadata maps), prefetch triggering conditions, confidence update logic, prefetch address calculation, and parameter values.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "0446dec8b82484c8dcd92c20c3d4315cabb35cf74547093ea380259cd9a8e72b",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-02\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements an IP-based stream prefetcher, whereas the reference specifies a data address-based region prefetcher with metadata tracking, making their fundamental behaviors and components entirely different.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3996,
+     "candidatesTokenCount": 96,
+     "totalTokenCount": 6606,
+     "cachedContentTokenCount": 2022,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3996
+      }
+     ],
+     "cacheTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2022
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 96
+      }
+     ],
+     "thoughtsTokenCount": 2514
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements an IP-based stream prefetcher, whereas the reference specifies a data address-based region prefetcher with metadata tracking, making their fundamental behaviors and components entirely different.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-03",
+  "source": "chia_loop\\semantic_fact\\sem-03.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "8e728a7777d621012862ca317e8fde142b319890944db9283546e0b6921e09d1",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-03\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate implements an aggressive fixed-offset prefetcher with stream tracking and confidence, which is fundamentally different from the reference's stride prefetcher; it is missing the entire stride detection logic (E3) and adds stream management, confidence tracking, and fixed-offset prefetching (E4).\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2560,
+     "candidatesTokenCount": 111,
+     "totalTokenCount": 3827,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2560
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 111
+      }
+     ],
+     "thoughtsTokenCount": 1156
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements an aggressive fixed-offset prefetcher with stream tracking and confidence, which is fundamentally different from the reference's stride prefetcher; it is missing the entire stride detection logic (E3) and adds stream management, confidence tracking, and fixed-offset prefetching (E4).",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "8e728a7777d621012862ca317e8fde142b319890944db9283546e0b6921e09d1",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-03\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate replaces the reference's global stride-based prefetcher with a completely different per-IP, fixed-offset prefetcher, removing the stride detection logic and adding a stream table with a new confidence mechanism.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2560,
+     "candidatesTokenCount": 103,
+     "totalTokenCount": 4626,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2560
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 103
+      }
+     ],
+     "thoughtsTokenCount": 1963
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate replaces the reference's global stride-based prefetcher with a completely different per-IP, fixed-offset prefetcher, removing the stride detection logic and adding a stream table with a new confidence mechanism.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-04",
+  "source": "chia_loop\\semantic_fact\\sem-04.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "c322086ccb224139ea12157f9c08a2e64fa24f189f4d59ee2e24d4c8eb6dc894",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-04\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The design implements an IP-based aggressive offset prefetcher, while the reference implements a block-based stride prefetcher, leading to fundamental differences in stream tracking, prefetch generation logic, and confidence mechanisms, in addition to a differing CONFIDENCE_THRESHOLD parameter.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3599,
+     "candidatesTokenCount": 118,
+     "totalTokenCount": 6117,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3599
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 118
+      }
+     ],
+     "thoughtsTokenCount": 2400
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The design implements an IP-based aggressive offset prefetcher, while the reference implements a block-based stride prefetcher, leading to fundamental differences in stream tracking, prefetch generation logic, and confidence mechanisms, in addition to a differing CONFIDENCE_THRESHOLD parameter.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "c322086ccb224139ea12157f9c08a2e64fa24f189f4d59ee2e24d4c8eb6dc894",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-04\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a fixed-offset prefetcher that tracks streams by instruction pointer, while the reference implements a stride prefetcher that tracks streams by data address patterns.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3599,
+     "candidatesTokenCount": 97,
+     "totalTokenCount": 8294,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3599
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 97
+      }
+     ],
+     "thoughtsTokenCount": 4598
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a fixed-offset prefetcher that tracks streams by instruction pointer, while the reference implements a stride prefetcher that tracks streams by data address patterns.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-05",
+  "source": "chia_loop\\semantic_fact\\sem-05.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "3b6c29855b6b576db0b822ebb7b76d9bd974019f9ec1e3080532cf6ffed88836",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-05\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate implements an aggressive fixed-offset prefetcher with LRU stream management and confidence based on cache hit/usefulness, while the reference implements a stride prefetcher with FIFO management and confidence based on stride consistency, thus the candidate is missing core components of the reference and adds its own distinct logic.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2903,
+     "candidatesTokenCount": 112,
+     "totalTokenCount": 4910,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2903
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 112
+      }
+     ],
+     "thoughtsTokenCount": 1895
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements an aggressive fixed-offset prefetcher with LRU stream management and confidence based on cache hit/usefulness, while the reference implements a stride prefetcher with FIFO management and confidence based on stride consistency, thus the candidate is missing core components of the reference and adds its own distinct logic.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "3b6c29855b6b576db0b822ebb7b76d9bd974019f9ec1e3080532cf6ffed88836",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-05\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a fixed-offset prefetcher instead of the reference's stride-based prefetcher, completely omitting the stride detection logic and adding a new mechanism that prefetches at a constant offset.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2903,
+     "candidatesTokenCount": 100,
+     "totalTokenCount": 5142,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2903
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 100
+      }
+     ],
+     "thoughtsTokenCount": 2139
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a fixed-offset prefetcher instead of the reference's stride-based prefetcher, completely omitting the stride detection logic and adding a new mechanism that prefetches at a constant offset.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-06",
+  "source": "chia_loop\\semantic_fact\\sem-06.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "5ebc8fe8e883f366d7742eacecd5c0ccda628aa5118df6450fbaca9f5bea417d",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-06\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements an aggressive, stream-based prefetcher with confidence tracking and prefetching from `prefetcher_cache_operate` at an offset of 8, while the reference implements a conservative, fill-triggered prefetcher with no confidence tracking and prefetching from `prefetcher_cache_fill` at an offset of 1.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2140,
+     "candidatesTokenCount": 134,
+     "totalTokenCount": 4179,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2140
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 134
+      }
+     ],
+     "thoughtsTokenCount": 1905
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements an aggressive, stream-based prefetcher with confidence tracking and prefetching from `prefetcher_cache_operate` at an offset of 8, while the reference implements a conservative, fill-triggered prefetcher with no confidence tracking and prefetching from `prefetcher_cache_fill` at an offset of 1.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "5ebc8fe8e883f366d7742eacecd5c0ccda628aa5118df6450fbaca9f5bea417d",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-06\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex, stateful, IP-based stream prefetcher that triggers on core accesses, whereas the reference implements a simple, stateless, next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2140,
+     "candidatesTokenCount": 100,
+     "totalTokenCount": 3355,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2140
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 100
+      }
+     ],
+     "thoughtsTokenCount": 1115
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex, stateful, IP-based stream prefetcher that triggers on core accesses, whereas the reference implements a simple, stateless, next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-07",
+  "source": "chia_loop\\semantic_fact\\sem-07.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "8f1278c0818a76f7e1a1a3b8bec69fe670f011c6362ffe32ea75145b7e1c2eab",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-07\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate implements a stream-based, confidence-driven prefetcher triggered by cache operations with an aggressive offset, completely omitting the reference's simple next-line prefetcher triggered by cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2021,
+     "candidatesTokenCount": 91,
+     "totalTokenCount": 4005,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2021
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 91
+      }
+     ],
+     "thoughtsTokenCount": 1893
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a stream-based, confidence-driven prefetcher triggered by cache operations with an aggressive offset, completely omitting the reference's simple next-line prefetcher triggered by cache fills.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "8f1278c0818a76f7e1a1a3b8bec69fe670f011c6362ffe32ea75145b7e1c2eab",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-07\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a stateful, IP-based stream prefetcher that triggers on cache accesses, whereas the reference implements a stateless, next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2021,
+     "candidatesTokenCount": 97,
+     "totalTokenCount": 3168,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2021
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 97
+      }
+     ],
+     "thoughtsTokenCount": 1050
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a stateful, IP-based stream prefetcher that triggers on cache accesses, whereas the reference implements a stateless, next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-08",
+  "source": "chia_loop\\semantic_fact\\sem-08.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "b1ec8e31405042bf8cc6914b45b74a20d4a5834de5e2cfe0497db9e604db98df",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-08\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The design's prefetcher_cache_fill method is empty, omitting the next-line prefetching logic present in the reference, and the design adds extensive stream-based, confidence-driven prefetching logic to prefetcher_cache_operate which is absent in the reference.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2066,
+     "candidatesTokenCount": 116,
+     "totalTokenCount": 3355,
+     "cachedContentTokenCount": 2025,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2066
+      }
+     ],
+     "cacheTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2025
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 116
+      }
+     ],
+     "thoughtsTokenCount": 1173
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The design's prefetcher_cache_fill method is empty, omitting the next-line prefetching logic present in the reference, and the design adds extensive stream-based, confidence-driven prefetching logic to prefetcher_cache_operate which is absent in the reference.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "b1ec8e31405042bf8cc6914b45b74a20d4a5834de5e2cfe0497db9e604db98df",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-08\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex, stateful, IP-based stream prefetcher that triggers on cache operations, while the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2066,
+     "candidatesTokenCount": 100,
+     "totalTokenCount": 3614,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2066
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 100
+      }
+     ],
+     "thoughtsTokenCount": 1448
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex, stateful, IP-based stream prefetcher that triggers on cache operations, while the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-09",
+  "source": "chia_loop\\semantic_fact\\sem-09.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "c97eb3c457f897586bf0c876e5cf28b758178d42968c2f9b97738b778d7f9331",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-09\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate design differs from the reference in multiple parameter values, its fundamental approach to tracking prefetch streams versus regions, its handling of prefetch metadata, and its conditions for updating confidence and issuing prefetches.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 4143,
+     "candidatesTokenCount": 105,
+     "totalTokenCount": 7561,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 4143
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 105
+      }
+     ],
+     "thoughtsTokenCount": 3313
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate design differs from the reference in multiple parameter values, its fundamental approach to tracking prefetch streams versus regions, its handling of prefetch metadata, and its conditions for updating confidence and issuing prefetches.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "c97eb3c457f897586bf0c876e5cf28b758178d42968c2f9b97738b778d7f9331",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-09\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E2\",\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate is a sequential stream prefetcher, whereas the reference is a region-based offset prefetcher that uses a completely different metadata-based confidence mechanism and prefetches on any access, not just sequential ones.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 4143,
+     "candidatesTokenCount": 107,
+     "totalTokenCount": 7123,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 4143
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 107
+      }
+     ],
+     "thoughtsTokenCount": 2873
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E2",
+     "E3"
+    ],
+    "rationale": "The candidate is a sequential stream prefetcher, whereas the reference is a region-based offset prefetcher that uses a completely different metadata-based confidence mechanism and prefetches on any access, not just sequential ones.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-10",
+  "source": "chia_loop\\semantic_fact\\sem-10.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "5216f97a99e6dee6cc2b9a49470681a67a6629ffe11d3f2c41ea2fbbd6bb49e9",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-10\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The design implements a multi-stream sequential prefetcher with confidence and LRU replacement, which is fundamentally different from the reference's single-stream arbitrary stride prefetcher; the design is missing the general stride detection logic of the reference, and the reference is missing the multi-stream tracking, confidence, and LRU mechanisms of the design.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2707,
+     "candidatesTokenCount": 128,
+     "totalTokenCount": 4259,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2707
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 128
+      }
+     ],
+     "thoughtsTokenCount": 1424
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The design implements a multi-stream sequential prefetcher with confidence and LRU replacement, which is fundamentally different from the reference's single-stream arbitrary stride prefetcher; the design is missing the general stride detection logic of the reference, and the reference is missing the multi-stream tracking, confidence, and LRU mechanisms of the design.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "5216f97a99e6dee6cc2b9a49470681a67a6629ffe11d3f2c41ea2fbbd6bb49e9",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-10\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate replaces the reference's single-stream, variable-stride prefetcher with a multi-stream, sequential-only prefetcher that uses a different confidence mechanism and a fixed prefetch distance.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2707,
+     "candidatesTokenCount": 100,
+     "totalTokenCount": 4507,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2707
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 100
+      }
+     ],
+     "thoughtsTokenCount": 1700
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate replaces the reference's single-stream, variable-stride prefetcher with a multi-stream, sequential-only prefetcher that uses a different confidence mechanism and a fixed prefetch distance.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-11",
+  "source": "chia_loop\\semantic_fact\\sem-11.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "91c2ca5f67387e508faa02f4bc339242149c7a8eab03e31f6e7f1aa72686f616",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-11\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate microarchitecture implements a sequential/offset prefetcher with different state, parameters, and confidence update logic, fundamentally differing from the reference's stride-based prefetcher which trains only on demand accesses and uses stride consistency for confidence.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3746,
+     "candidatesTokenCount": 113,
+     "totalTokenCount": 7024,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3746
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 113
+      }
+     ],
+     "thoughtsTokenCount": 3165
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate microarchitecture implements a sequential/offset prefetcher with different state, parameters, and confidence update logic, fundamentally differing from the reference's stride-based prefetcher which trains only on demand accesses and uses stride consistency for confidence.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "91c2ca5f67387e508faa02f4bc339242149c7a8eab03e31f6e7f1aa72686f616",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-11\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E1\",\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a sequential stream prefetcher with a fixed offset and feedback-based confidence, whereas the reference implements a general-purpose stride prefetcher that learns arbitrary strides and uses a consistency-based confidence mechanism.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3746,
+     "candidatesTokenCount": 108,
+     "totalTokenCount": 6558,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3746
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 108
+      }
+     ],
+     "thoughtsTokenCount": 2704
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a sequential stream prefetcher with a fixed offset and feedback-based confidence, whereas the reference implements a general-purpose stride prefetcher that learns arbitrary strides and uses a consistency-based confidence mechanism.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-12",
+  "source": "chia_loop\\semantic_fact\\sem-12.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "6617542f5dcdfdc94166ca30a14995e6fdaca80b5125bfa902e1c39d310fe892",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-12\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate implements a sequential prefetcher that detects stride 1 and prefetches a fixed offset, while the reference implements an IP-based stride prefetcher, representing a fundamental difference in prefetching algorithms and state tracking.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3050,
+     "candidatesTokenCount": 95,
+     "totalTokenCount": 5303,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3050
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 95
+      }
+     ],
+     "thoughtsTokenCount": 2158
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a sequential prefetcher that detects stride 1 and prefetches a fixed offset, while the reference implements an IP-based stride prefetcher, representing a fundamental difference in prefetching algorithms and state tracking.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "6617542f5dcdfdc94166ca30a14995e6fdaca80b5125bfa902e1c39d310fe892",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-12\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a region-based sequential stream prefetcher with a fixed prefetch distance, while the reference implements an IP-based stride prefetcher that learns and uses variable strides.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3050,
+     "candidatesTokenCount": 96,
+     "totalTokenCount": 4844,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3050
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 96
+      }
+     ],
+     "thoughtsTokenCount": 1698
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a region-based sequential stream prefetcher with a fixed prefetch distance, while the reference implements an IP-based stride prefetcher that learns and uses variable strides.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-13",
+  "source": "chia_loop\\semantic_fact\\sem-13.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "7753a7919124a48139d862958c6ae8799d611db9fee00d30e0dbecb5032b9e3d",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-13\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate design completely changes the prefetching mechanism: it adds complex stream tracking and prefetching logic in `prefetcher_cache_operate` (E4) while omitting the reference's prefetching logic from `prefetcher_cache_fill` (E3), which was the sole source of prefetches in the reference.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2287,
+     "candidatesTokenCount": 116,
+     "totalTokenCount": 3583,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2287
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 116
+      }
+     ],
+     "thoughtsTokenCount": 1180
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate design completely changes the prefetching mechanism: it adds complex stream tracking and prefetching logic in `prefetcher_cache_operate` (E4) while omitting the reference's prefetching logic from `prefetcher_cache_fill` (E3), which was the sole source of prefetches in the reference.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "7753a7919124a48139d862958c6ae8799d611db9fee00d30e0dbecb5032b9e3d",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-13\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex, stateful stream prefetcher that triggers on cache accesses, whereas the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2287,
+     "candidatesTokenCount": 96,
+     "totalTokenCount": 3906,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2287
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 96
+      }
+     ],
+     "thoughtsTokenCount": 1523
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex, stateful stream prefetcher that triggers on cache accesses, whereas the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-14",
+  "source": "chia_loop\\semantic_fact\\sem-14.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "82309fd658b8da0b77fadafd439364c42d55ed79e032336ce95daabd5784a938",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-14\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate design is a complex stream-based prefetcher that operates on cache access, while the reference is a simple next-line prefetcher that operates on cache fills; thus, the candidate is missing the reference's core prefetching logic (E3) and adds significant state and logic not present in the reference (E4).\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2168,
+     "candidatesTokenCount": 119,
+     "totalTokenCount": 3499,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2168
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 119
+      }
+     ],
+     "thoughtsTokenCount": 1212
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate design is a complex stream-based prefetcher that operates on cache access, while the reference is a simple next-line prefetcher that operates on cache fills; thus, the candidate is missing the reference's core prefetching logic (E3) and adds significant state and logic not present in the reference (E4).",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "82309fd658b8da0b77fadafd439364c42d55ed79e032336ce95daabd5784a938",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-14\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate adds a complex, stateful stream-based prefetching mechanism that triggers on cache accesses, while omitting the reference's simple, stateless next-line prefetching logic that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2168,
+     "candidatesTokenCount": 99,
+     "totalTokenCount": 3665,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2168
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 99
+      }
+     ],
+     "thoughtsTokenCount": 1398
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate adds a complex, stateful stream-based prefetching mechanism that triggers on cache accesses, while omitting the reference's simple, stateless next-line prefetching logic that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-15",
+  "source": "chia_loop\\semantic_fact\\sem-15.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "5bed4af67e374bc10b1bf79d14995783d34fce42ce995dd284d4eb0906144241",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-15\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate design implements an aggressive offset prefetcher in `prefetcher_cache_operate` (E4) and does not issue prefetches in `prefetcher_cache_fill` (E3), whereas the reference implements a conservative +1 prefetcher only in `prefetcher_cache_fill` (E4) and does not issue prefetches in `prefetcher_cache_operate` (E3).\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2213,
+     "candidatesTokenCount": 136,
+     "totalTokenCount": 4024,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2213
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 136
+      }
+     ],
+     "thoughtsTokenCount": 1675
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate design implements an aggressive offset prefetcher in `prefetcher_cache_operate` (E4) and does not issue prefetches in `prefetcher_cache_fill` (E3), whereas the reference implements a conservative +1 prefetcher only in `prefetcher_cache_fill` (E4) and does not issue prefetches in `prefetcher_cache_operate` (E3).",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "5bed4af67e374bc10b1bf79d14995783d34fce42ce995dd284d4eb0906144241",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-15\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex, stateful stream prefetcher that triggers on cache accesses, while the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2213,
+     "candidatesTokenCount": 95,
+     "totalTokenCount": 3588,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2213
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 95
+      }
+     ],
+     "thoughtsTokenCount": 1280
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex, stateful stream prefetcher that triggers on cache accesses, while the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-16",
+  "source": "chia_loop\\semantic_fact\\sem-16.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "3a8ce66659289291bcca0f18daacaf523f7aecb00dcc11d2ae8dbe72921f9793",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-16\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate implements an aggressive offset prefetcher with confidence tracking and LRU tables, which is a fundamentally different algorithm (E4) from the reference's stride-based prefetcher, thus omitting the reference's core stride detection and prediction logic (E3).\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3458,
+     "candidatesTokenCount": 105,
+     "totalTokenCount": 5792,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3458
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 105
+      }
+     ],
+     "thoughtsTokenCount": 2229
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements an aggressive offset prefetcher with confidence tracking and LRU tables, which is a fundamentally different algorithm (E4) from the reference's stride-based prefetcher, thus omitting the reference's core stride detection and prediction logic (E3).",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "3a8ce66659289291bcca0f18daacaf523f7aecb00dcc11d2ae8dbe72921f9793",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-16\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a fixed-offset prefetcher with a confidence mechanism, whereas the reference implements a stride prefetcher that learns the prefetch distance dynamically.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3458,
+     "candidatesTokenCount": 90,
+     "totalTokenCount": 5229,
+     "cachedContentTokenCount": 2034,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3458
+      }
+     ],
+     "cacheTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2034
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 90
+      }
+     ],
+     "thoughtsTokenCount": 1681
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a fixed-offset prefetcher with a confidence mechanism, whereas the reference implements a stride prefetcher that learns the prefetch distance dynamically.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-17",
+  "source": "chia_loop\\semantic_fact\\sem-17.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "233681b6e9fac95ea5e2d94cf707b522dff6df8367a2bf5a81def4a91e245f32",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-17\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements an aggressive offset prefetcher with confidence and metadata tracking, which is a fundamentally different prefetching algorithm than the reference's stride-based prefetcher, thus it is missing the core stride detection logic of the reference and adds its own distinct prefetching mechanism.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 4497,
+     "candidatesTokenCount": 114,
+     "totalTokenCount": 6003,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 4497
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 114
+      }
+     ],
+     "thoughtsTokenCount": 1392
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements an aggressive offset prefetcher with confidence and metadata tracking, which is a fundamentally different prefetching algorithm than the reference's stride-based prefetcher, thus it is missing the core stride detection logic of the reference and adds its own distinct prefetching mechanism.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "233681b6e9fac95ea5e2d94cf707b522dff6df8367a2bf5a81def4a91e245f32",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-17\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a fixed-offset prefetcher with a feedback-based confidence mechanism, while the reference implements a variable-stride stream prefetcher, resulting in completely different logic and behavior.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 4497,
+     "candidatesTokenCount": 97,
+     "totalTokenCount": 6366,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 4497
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 97
+      }
+     ],
+     "thoughtsTokenCount": 1772
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a fixed-offset prefetcher with a feedback-based confidence mechanism, while the reference implements a variable-stride stream prefetcher, resulting in completely different logic and behavior.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-18",
+  "source": "chia_loop\\semantic_fact\\sem-18.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "9598a74b391c042b6a0a214390f5f12a2db39fa3376930cab545b58bc058dfca",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-18\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate implements an aggressive offset prefetcher with confidence tracking and metadata management, which is a fundamentally different algorithm from the reference's IP-based stride prefetcher, leading to distinct data structures, parameters, and operational logic for training and prefetching.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3801,
+     "candidatesTokenCount": 102,
+     "totalTokenCount": 6324,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3801
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 102
+      }
+     ],
+     "thoughtsTokenCount": 2421
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements an aggressive offset prefetcher with confidence tracking and metadata management, which is a fundamentally different algorithm from the reference's IP-based stride prefetcher, leading to distinct data structures, parameters, and operational logic for training and prefetching.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "9598a74b391c042b6a0a214390f5f12a2db39fa3376930cab545b58bc058dfca",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-18\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements an address-based, fixed-offset prefetcher with a confidence mechanism, while the reference implements an IP-based stride prefetcher, resulting in completely different algorithms, state tables, and prefetch-issuing logic.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3801,
+     "candidatesTokenCount": 107,
+     "totalTokenCount": 5929,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3801
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 107
+      }
+     ],
+     "thoughtsTokenCount": 2021
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements an address-based, fixed-offset prefetcher with a confidence mechanism, while the reference implements an IP-based stride prefetcher, resulting in completely different algorithms, state tables, and prefetch-issuing logic.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-19",
+  "source": "chia_loop\\semantic_fact\\sem-19.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "393d1c8587ad134cc16ae9211633e258fcd1615805a5fe725a87161d7809cb9c",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-19\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E2\", \"E3\", \"E4\"],\n  \"rationale\": \"The candidate prefetcher implements a complex, confidence-based aggressive offset prefetching strategy triggered by cache operations, while the reference implements a simple fill-only prefetcher triggered by cache fills, leading to fundamental behavioral differences in prefetch initiation, logic, and parameters.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3038,
+     "candidatesTokenCount": 108,
+     "totalTokenCount": 5015,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3038
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 108
+      }
+     ],
+     "thoughtsTokenCount": 1869
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E2",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate prefetcher implements a complex, confidence-based aggressive offset prefetching strategy triggered by cache operations, while the reference implements a simple fill-only prefetcher triggered by cache fills, leading to fundamental behavioral differences in prefetch initiation, logic, and parameters.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "393d1c8587ad134cc16ae9211633e258fcd1615805a5fe725a87161d7809cb9c",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-19\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate triggers prefetches on cache accesses based on a complex confidence mechanism, whereas the reference triggers a simple next-line prefetch on cache fills, making their core triggering logic and behavior completely different.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3038,
+     "candidatesTokenCount": 98,
+     "totalTokenCount": 7746,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3038
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 98
+      }
+     ],
+     "thoughtsTokenCount": 4610
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate triggers prefetches on cache accesses based on a complex confidence mechanism, whereas the reference triggers a simple next-line prefetch on cache fills, making their core triggering logic and behavior completely different.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-20",
+  "source": "chia_loop\\semantic_fact\\sem-20.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "07748900763e5e0f6bb1a128e16d6cda9fb95adf570fe71f7a342a84db46bfa4",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-20\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The design implements a completely different prefetching strategy, triggering prefetches on cache operations with a confidence-based aggressive offset mechanism, whereas the reference implements a simple next-line prefetcher triggered only on cache fills; thus, the design is missing the reference's core prefetching behavior and adds substantial new components and logic.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2919,
+     "candidatesTokenCount": 123,
+     "totalTokenCount": 4669,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2919
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 123
+      }
+     ],
+     "thoughtsTokenCount": 1627
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The design implements a completely different prefetching strategy, triggering prefetches on cache operations with a confidence-based aggressive offset mechanism, whereas the reference implements a simple next-line prefetcher triggered only on cache fills; thus, the design is missing the reference's core prefetching behavior and adds substantial new components and logic.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "07748900763e5e0f6bb1a128e16d6cda9fb95adf570fe71f7a342a84db46bfa4",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-20\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex, stateful, confidence-based prefetcher triggered on cache access, whereas the reference implements a simple, stateless, next-line prefetcher triggered on cache fill.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2919,
+     "candidatesTokenCount": 98,
+     "totalTokenCount": 4442,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2919
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 98
+      }
+     ],
+     "thoughtsTokenCount": 1425
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex, stateful, confidence-based prefetcher triggered on cache access, whereas the reference implements a simple, stateless, next-line prefetcher triggered on cache fill.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-21",
+  "source": "chia_loop\\semantic_fact\\sem-21.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "63f3f838211f28851995df474f1bc341c39253c5c25362e3bde0d2bc5eb8e2f4",
+    "raw_reply": "{\"id\": \"sem-21\", \"verdict\": \"not_equivalent\", \"errors\": [\"E3\", \"E4\"], \"rationale\": \"The candidate microarchitecture implements a completely different prefetching strategy with extensive state management and different prefetch triggers compared to the reference, which is a simple fill-only sequential prefetcher, thus both adding new components and omitting the reference's core prefetching logic.\"}",
+    "usage": {
+     "promptTokenCount": 2964,
+     "candidatesTokenCount": 88,
+     "totalTokenCount": 4529,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2964
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 88
+      }
+     ],
+     "thoughtsTokenCount": 1477
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate microarchitecture implements a completely different prefetching strategy with extensive state management and different prefetch triggers compared to the reference, which is a simple fill-only sequential prefetcher, thus both adding new components and omitting the reference's core prefetching logic.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "63f3f838211f28851995df474f1bc341c39253c5c25362e3bde0d2bc5eb8e2f4",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-21\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex, stateful, confidence-based offset prefetcher that triggers on cache access, while the reference implements a simple, stateless next-line prefetcher that triggers on cache fill.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2964,
+     "candidatesTokenCount": 99,
+     "totalTokenCount": 4339,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2964
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 99
+      }
+     ],
+     "thoughtsTokenCount": 1276
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex, stateful, confidence-based offset prefetcher that triggers on cache access, while the reference implements a simple, stateless next-line prefetcher that triggers on cache fill.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-22",
+  "source": "chia_loop\\semantic_fact\\sem-22.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "28aae84872fb6cc3fedeb8b7fb8381642739df51f8cd1235567c87e6c8530341",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-22\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\"],\n  \"rationale\": \"The candidate implements a single-stream stride prefetcher, whereas the reference implements a multi-stream stride prefetcher with an LRU replacement policy, thus the candidate is missing the multi-stream management and associated data structures present in the reference.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3061,
+     "candidatesTokenCount": 96,
+     "totalTokenCount": 5609,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3061
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 96
+      }
+     ],
+     "thoughtsTokenCount": 2452
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3"
+    ],
+    "rationale": "The candidate implements a single-stream stride prefetcher, whereas the reference implements a multi-stream stride prefetcher with an LRU replacement policy, thus the candidate is missing the multi-stream management and associated data structures present in the reference.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "28aae84872fb6cc3fedeb8b7fb8381642739df51f8cd1235567c87e6c8530341",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-22\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate implements a simple single-stream stride prefetcher, while the reference implements a more complex multi-stream prefetcher using an LRU-managed table of stream entries, a component entirely missing from the candidate.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3061,
+     "candidatesTokenCount": 97,
+     "totalTokenCount": 4759,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3061
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 97
+      }
+     ],
+     "thoughtsTokenCount": 1601
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3"
+    ],
+    "rationale": "The candidate implements a simple single-stream stride prefetcher, while the reference implements a more complex multi-stream prefetcher using an LRU-managed table of stream entries, a component entirely missing from the candidate.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-23",
+  "source": "chia_loop\\semantic_fact\\sem-23.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "8bcd8196aa286b0a6625ef93bfdd2788cb0de36c3d73ad7698aa6899c3ed73a9",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-23\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\"],\n  \"rationale\": \"The candidate implements a global stride prefetcher, while the reference implements an IP-based stride prefetcher, meaning the candidate is missing the per-instruction-pointer state tracking and associated logic (e.g., `StrideEntry` struct, `stride_history_table`, and lookup/eviction logic) present in the reference.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2365,
+     "candidatesTokenCount": 115,
+     "totalTokenCount": 4200,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2365
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 115
+      }
+     ],
+     "thoughtsTokenCount": 1720
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3"
+    ],
+    "rationale": "The candidate implements a global stride prefetcher, while the reference implements an IP-based stride prefetcher, meaning the candidate is missing the per-instruction-pointer state tracking and associated logic (e.g., `StrideEntry` struct, `stride_history_table`, and lookup/eviction logic) present in the reference.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "8bcd8196aa286b0a6625ef93bfdd2788cb0de36c3d73ad7698aa6899c3ed73a9",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-23\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\"\n  ],\n  \"rationale\": \"The candidate implements a simple global stride prefetcher, while the reference uses an instruction pointer (IP) based history table to track multiple, independent stride patterns.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2365,
+     "candidatesTokenCount": 84,
+     "totalTokenCount": 4220,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2365
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 84
+      }
+     ],
+     "thoughtsTokenCount": 1771
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3"
+    ],
+    "rationale": "The candidate implements a simple global stride prefetcher, while the reference uses an instruction pointer (IP) based history table to track multiple, independent stride patterns.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-24",
+  "source": "chia_loop\\semantic_fact\\sem-24.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "b06a7e396032d2fff25912ab236cfbb4be4525ba332887bcbc51946db480176e",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-24\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate design implements a stride prefetcher that trains and issues prefetches during `prefetcher_cache_operate` events, which is entirely absent in the reference specification's `prefetcher_cache_operate` method (E4); conversely, the candidate design omits the next-block prefetching logic present in the reference's `prefetcher_cache_fill` method (E3).\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1602,
+     "candidatesTokenCount": 140,
+     "totalTokenCount": 2447,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1602
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 140
+      }
+     ],
+     "thoughtsTokenCount": 705
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate design implements a stride prefetcher that trains and issues prefetches during `prefetcher_cache_operate` events, which is entirely absent in the reference specification's `prefetcher_cache_operate` method (E4); conversely, the candidate design omits the next-block prefetching logic present in the reference's `prefetcher_cache_fill` method (E3).",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "b06a7e396032d2fff25912ab236cfbb4be4525ba332887bcbc51946db480176e",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-24\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a stride prefetcher that trains on demand accesses, whereas the reference implements a next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1602,
+     "candidatesTokenCount": 89,
+     "totalTokenCount": 2942,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1602
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 89
+      }
+     ],
+     "thoughtsTokenCount": 1251
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a stride prefetcher that trains on demand accesses, whereas the reference implements a next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-25",
+  "source": "chia_loop\\semantic_fact\\sem-25.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "4337d85410bf00795a67aaab02f48e7fed315607c16352fc872c426dbdbe4bd6",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-25\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate implements a stride prefetcher that trains on demand accesses and prefetches based on detected strides, which is entirely different from the reference's next-line prefetcher that triggers on cache fills; thus, the candidate adds a stride detection mechanism (E4) and misses the reference's next-line prefetch on fill logic (E3).\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1483,
+     "candidatesTokenCount": 123,
+     "totalTokenCount": 2497,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1483
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 123
+      }
+     ],
+     "thoughtsTokenCount": 891
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a stride prefetcher that trains on demand accesses and prefetches based on detected strides, which is entirely different from the reference's next-line prefetcher that triggers on cache fills; thus, the candidate adds a stride detection mechanism (E4) and misses the reference's next-line prefetch on fill logic (E3).",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "4337d85410bf00795a67aaab02f48e7fed315607c16352fc872c426dbdbe4bd6",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-25\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a stride prefetcher that trains on demand accesses, while the reference implements a simple next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1483,
+     "candidatesTokenCount": 90,
+     "totalTokenCount": 2697,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1483
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 90
+      }
+     ],
+     "thoughtsTokenCount": 1124
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a stride prefetcher that trains on demand accesses, while the reference implements a simple next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-26",
+  "source": "chia_loop\\semantic_fact\\sem-26.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "f2a511d9fe71be4c25b4f7a74f591b0cff24f9fd6a0d5363ef4c3827cfd6e022",
+    "raw_reply": "```json\n{\"id\": \"sem-26\", \"verdict\": \"not_equivalent\", \"errors\": [\"E3\", \"E4\"], \"rationale\": \"The design implements a stride prefetcher based on demand accesses, while the reference implements a sequential prefetcher based on cache fill events; thus, the design is missing the reference's prefetching logic and adds its own distinct prefetching logic.\"}\n```",
+    "usage": {
+     "promptTokenCount": 1528,
+     "candidatesTokenCount": 90,
+     "totalTokenCount": 2609,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1528
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 90
+      }
+     ],
+     "thoughtsTokenCount": 991
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The design implements a stride prefetcher based on demand accesses, while the reference implements a sequential prefetcher based on cache fill events; thus, the design is missing the reference's prefetching logic and adds its own distinct prefetching logic.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "f2a511d9fe71be4c25b4f7a74f591b0cff24f9fd6a0d5363ef4c3827cfd6e022",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-26\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a stride prefetcher that triggers on demand accesses, while the reference implements a next-line prefetcher that triggers on cache fills, representing two entirely different designs.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1528,
+     "candidatesTokenCount": 95,
+     "totalTokenCount": 2669,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1528
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 95
+      }
+     ],
+     "thoughtsTokenCount": 1046
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a stride prefetcher that triggers on demand accesses, while the reference implements a next-line prefetcher that triggers on cache fills, representing two entirely different designs.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-27",
+  "source": "chia_loop\\semantic_fact\\sem-27.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E3",
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "8429904c726485e6cf83902ae0f7932041946b45ea174bfbe69a4960f9d8e7fc",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-27\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\",\n    \"E1\",\n    \"E2\"\n  ],\n  \"rationale\": \"The candidate prefetcher uses address-based stream identification with LRU replacement and trains on additional access types, while the reference uses IP-based stream identification with FIFO replacement and caps confidence.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3404,
+     "candidatesTokenCount": 108,
+     "totalTokenCount": 7148,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3404
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 108
+      }
+     ],
+     "thoughtsTokenCount": 3636
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E1",
+     "E2",
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate prefetcher uses address-based stream identification with LRU replacement and trains on additional access types, while the reference uses IP-based stream identification with FIFO replacement and caps confidence.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "8429904c726485e6cf83902ae0f7932041946b45ea174bfbe69a4960f9d8e7fc",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-27\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate is an address-based stream prefetcher with an LRU replacement policy, whereas the reference is an IP-based stride prefetcher with a FIFO replacement policy.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 3404,
+     "candidatesTokenCount": 94,
+     "totalTokenCount": 5999,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 3404
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 94
+      }
+     ],
+     "thoughtsTokenCount": 2501
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate is an address-based stream prefetcher with an LRU replacement policy, whereas the reference is an IP-based stride prefetcher with a FIFO replacement policy.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-28",
+  "source": "chia_loop\\semantic_fact\\sem-28.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "2893c906ae29badb51aa048be2a1314b3c42871f10d454137d9fc102ed303c24",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-28\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The design's prefetcher operates on demand accesses using a stride-based algorithm and internal state, while the reference prefetcher operates only on cache fills by always prefetching the next block, making them behaviorally distinct.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2641,
+     "candidatesTokenCount": 104,
+     "totalTokenCount": 3684,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2641
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 104
+      }
+     ],
+     "thoughtsTokenCount": 939
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The design's prefetcher operates on demand accesses using a stride-based algorithm and internal state, while the reference prefetcher operates only on cache fills by always prefetching the next block, making them behaviorally distinct.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "2893c906ae29badb51aa048be2a1314b3c42871f10d454137d9fc102ed303c24",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-28\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex stream prefetcher that triggers on core accesses, whereas the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2641,
+     "candidatesTokenCount": 93,
+     "totalTokenCount": 3670,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2641
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 93
+      }
+     ],
+     "thoughtsTokenCount": 936
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex stream prefetcher that triggers on core accesses, whereas the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-29",
+  "source": "chia_loop\\semantic_fact\\sem-29.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "20c66a4af240b6f172b45c3c9a4543a38823ef496c5f09b01aa404f3a2ad4f99",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-29\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate design implements a stride-based prefetcher that trains on demand accesses in `prefetcher_cache_operate`, which is entirely absent in the reference. Conversely, the candidate design lacks the sequential prefetching logic on cache fills present in the reference's `prefetcher_cache_fill` method.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2522,
+     "candidatesTokenCount": 113,
+     "totalTokenCount": 3718,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2522
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 113
+      }
+     ],
+     "thoughtsTokenCount": 1083
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate design implements a stride-based prefetcher that trains on demand accesses in `prefetcher_cache_operate`, which is entirely absent in the reference. Conversely, the candidate design lacks the sequential prefetching logic on cache fills present in the reference's `prefetcher_cache_fill` method.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "20c66a4af240b6f172b45c3c9a4543a38823ef496c5f09b01aa404f3a2ad4f99",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-29\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex stride-based prefetcher that trains on demand accesses, while the reference implements a simple next-line prefetcher that triggers only on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2522,
+     "candidatesTokenCount": 94,
+     "totalTokenCount": 3920,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2522
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 94
+      }
+     ],
+     "thoughtsTokenCount": 1304
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex stride-based prefetcher that trains on demand accesses, while the reference implements a simple next-line prefetcher that triggers only on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-30",
+  "source": "chia_loop\\semantic_fact\\sem-30.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "4d76ed042687b507dbe9e64bcc2335d6ee89d99df5aba265dfb4938af55b2dcf",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-30\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The candidate design implements a stride prefetcher that operates on demand accesses, which is absent in the reference, and it omits the sequential prefetching logic on cache fills that is present in the reference.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2567,
+     "candidatesTokenCount": 91,
+     "totalTokenCount": 3589,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2567
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 91
+      }
+     ],
+     "thoughtsTokenCount": 931
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate design implements a stride prefetcher that operates on demand accesses, which is absent in the reference, and it omits the sequential prefetching logic on cache fills that is present in the reference.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "4d76ed042687b507dbe9e64bcc2335d6ee89d99df5aba265dfb4938af55b2dcf",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-30\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a stream prefetcher that triggers on demand accesses, whereas the reference implements a next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 2567,
+     "candidatesTokenCount": 89,
+     "totalTokenCount": 3690,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 2567
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 89
+      }
+     ],
+     "thoughtsTokenCount": 1034
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a stream prefetcher that triggers on demand accesses, whereas the reference implements a next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-31",
+  "source": "chia_loop\\semantic_fact\\sem-31.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "a2a01f10a5fb68e93b3e042c2062d8a8d1c793f5e49254a61d648fdd1662ce20",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-31\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\"E3\", \"E4\"],\n  \"rationale\": \"The design implements an IP-based stride prefetcher triggered by cache operations, which is fundamentally different from the reference's simple next-line prefetcher triggered by cache fills; the design adds a complex stride detection mechanism and omits the reference's prefetching logic.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1945,
+     "candidatesTokenCount": 106,
+     "totalTokenCount": 3736,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1945
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 106
+      }
+     ],
+     "thoughtsTokenCount": 1685
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The design implements an IP-based stride prefetcher triggered by cache operations, which is fundamentally different from the reference's simple next-line prefetcher triggered by cache fills; the design adds a complex stride detection mechanism and omits the reference's prefetching logic.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "a2a01f10a5fb68e93b3e042c2062d8a8d1c793f5e49254a61d648fdd1662ce20",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-31\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a stride prefetcher that trains on demand accesses in `prefetcher_cache_operate`, whereas the reference implements a simple next-line prefetcher triggered by cache fills in `prefetcher_cache_fill`.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1945,
+     "candidatesTokenCount": 106,
+     "totalTokenCount": 2913,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1945
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 106
+      }
+     ],
+     "thoughtsTokenCount": 862
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a stride prefetcher that trains on demand accesses in `prefetcher_cache_operate`, whereas the reference implements a simple next-line prefetcher triggered by cache fills in `prefetcher_cache_fill`.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-32",
+  "source": "chia_loop\\semantic_fact\\sem-32.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "e65f83b1e973f53fdbe758c0673a5901c082813e8335cf51bf8d10133cb607d1",
+    "raw_reply": "```json\n{\"id\": \"sem-32\", \"verdict\": \"not_equivalent\", \"errors\": [\"E3\", \"E4\"], \"rationale\": \"The candidate design implements an IP-based stride prefetcher that trains on demand accesses and uses a history table, while the reference implements a simple next-line prefetcher that triggers only on cache fill events, thus the candidate both adds new functionality and omits existing functionality.\"}\n```",
+    "usage": {
+     "promptTokenCount": 1826,
+     "candidatesTokenCount": 96,
+     "totalTokenCount": 3304,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1826
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 96
+      }
+     ],
+     "thoughtsTokenCount": 1382
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate design implements an IP-based stride prefetcher that trains on demand accesses and uses a history table, while the reference implements a simple next-line prefetcher that triggers only on cache fill events, thus the candidate both adds new functionality and omits existing functionality.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "e65f83b1e973f53fdbe758c0673a5901c082813e8335cf51bf8d10133cb607d1",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-32\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex, stateful IP-based stride prefetcher that triggers on demand accesses, whereas the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1826,
+     "candidatesTokenCount": 99,
+     "totalTokenCount": 3408,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1826
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 99
+      }
+     ],
+     "thoughtsTokenCount": 1483
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex, stateful IP-based stride prefetcher that triggers on demand accesses, whereas the reference implements a simple, stateless next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-33",
+  "source": "chia_loop\\semantic_fact\\sem-33.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E4"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "b0371d0ab18e18c6b38f54c5170ac5e36855d5d56785437fd4f09de5dbea8b66",
+    "raw_reply": "{\"id\": \"sem-33\", \"verdict\": \"not_equivalent\", \"errors\": [\"E3\", \"E4\"], \"rationale\": \"The candidate prefetcher implements a stride-based prefetching mechanism triggered by demand accesses, which is entirely absent in the reference, and conversely, the candidate omits the sequential prefetching logic triggered by cache fill events that is the sole prefetching mechanism of the reference.\"}",
+    "usage": {
+     "promptTokenCount": 1871,
+     "candidatesTokenCount": 89,
+     "totalTokenCount": 3000,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1871
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 89
+      }
+     ],
+     "thoughtsTokenCount": 1040
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate prefetcher implements a stride-based prefetching mechanism triggered by demand accesses, which is entirely absent in the reference, and conversely, the candidate omits the sequential prefetching logic triggered by cache fill events that is the sole prefetching mechanism of the reference.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "b0371d0ab18e18c6b38f54c5170ac5e36855d5d56785437fd4f09de5dbea8b66",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-33\",\n  \"verdict\": \"not_equivalent\",\n  \"errors\": [\n    \"E3\",\n    \"E4\"\n  ],\n  \"rationale\": \"The candidate implements a complex IP-based stride prefetcher that triggers on demand accesses, whereas the reference implements a simple next-line prefetcher that triggers on cache fills.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1871,
+     "candidatesTokenCount": 94,
+     "totalTokenCount": 3026,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1871
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 94
+      }
+     ],
+     "thoughtsTokenCount": 1061
+    },
+    "verdict": "not_equivalent",
+    "errors": [
+     "E3",
+     "E4"
+    ],
+    "rationale": "The candidate implements a complex IP-based stride prefetcher that triggers on demand accesses, whereas the reference implements a simple next-line prefetcher that triggers on cache fills.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-34",
+  "source": "chia_loop\\semantic_fact\\sem-34.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E2"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "42ff8e47524cd5e9c15fc5a62ce191bf978164ae215268d85175865cca7bffc5",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-34\",\n  \"verdict\": \"equivalent\",\n  \"errors\": [],\n  \"rationale\": \"The prefetcher logic in both the candidate and reference specifications is identical; both `prefetcher_cache_operate` and `prefetcher_cache_fill` functions perform the same operations and produce the same results. Although the candidate includes additional standard library headers (`<vector>`, `<algorithm>`, `<cstddef>`), these headers are not utilized by the provided prefetcher logic and therefore do not introduce any behavioral differences.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1063,
+     "candidatesTokenCount": 127,
+     "totalTokenCount": 3396,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1063
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 127
+      }
+     ],
+     "thoughtsTokenCount": 2206
+    },
+    "verdict": "equivalent",
+    "errors": [],
+    "rationale": "The prefetcher logic in both the candidate and reference specifications is identical; both `prefetcher_cache_operate` and `prefetcher_cache_fill` functions perform the same operations and produce the same results. Although the candidate includes additional standard library headers (`<vector>`, `<algorithm>`, `<cstddef>`), these headers are not utilized by the provided prefetcher logic and therefor",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "42ff8e47524cd5e9c15fc5a62ce191bf978164ae215268d85175865cca7bffc5",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-34\",\n  \"verdict\": \"equivalent\",\n  \"errors\": [],\n  \"rationale\": \"The candidate and reference implementations are functionally identical, both implementing a simple next-line prefetcher on a cache fill and taking no action on a cache access.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1063,
+     "candidatesTokenCount": 73,
+     "totalTokenCount": 2147,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1063
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 73
+      }
+     ],
+     "thoughtsTokenCount": 1011
+    },
+    "verdict": "equivalent",
+    "errors": [],
+    "rationale": "The candidate and reference implementations are functionally identical, both implementing a simple next-line prefetcher on a cache fill and taking no action on a cache access.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-35",
+  "source": "chia_loop\\semantic_fact\\sem-35.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E2"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "a0a42e0931e2b09b13cd9a6b11d94fe80583637b2b82791b59be3e572e04a838",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-35\",\n  \"verdict\": \"equivalent\",\n  \"errors\": [],\n  \"rationale\": \"Both the design and reference specifications implement the same prefetching logic: they do not prefetch on cache operations, and on a cache fill, they prefetch the next sequential block into the current cache level, making them behaviorally identical.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1108,
+     "candidatesTokenCount": 88,
+     "totalTokenCount": 1860,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1108
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 88
+      }
+     ],
+     "thoughtsTokenCount": 664
+    },
+    "verdict": "equivalent",
+    "errors": [],
+    "rationale": "Both the design and reference specifications implement the same prefetching logic: they do not prefetch on cache operations, and on a cache fill, they prefetch the next sequential block into the current cache level, making them behaviorally identical.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "a0a42e0931e2b09b13cd9a6b11d94fe80583637b2b82791b59be3e572e04a838",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-35\",\n  \"verdict\": \"equivalent\",\n  \"errors\": [],\n  \"rationale\": \"Both designs implement the same logic: they do nothing on a cache access and prefetch the next sequential block on a cache fill.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 1108,
+     "candidatesTokenCount": 67,
+     "totalTokenCount": 2261,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 1108
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 67
+      }
+     ],
+     "thoughtsTokenCount": 1086
+    },
+    "verdict": "equivalent",
+    "errors": [],
+    "rationale": "Both designs implement the same logic: they do nothing on a cache access and prefetch the next sequential block on a cache fill.",
+    "parse_ok": true
+   }
+  ]
+ },
+ {
+  "id": "sem-36",
+  "source": "chia_loop\\semantic_fact\\sem-36.json",
+  "expected_verdict": "not_equivalent",
+  "expected_errors": [
+   "E2"
+  ],
+  "labels": [
+   {
+    "model": "gemini-2.5-flash",
+    "prompt_sha256": "2e08f73159d3f8542d908f3040914d2378622c0a7b130dc2ff4c6a61c9a17d03",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-36\",\n  \"verdict\": \"equivalent\",\n  \"errors\": [],\n  \"rationale\": \"The two prefetcher specifications are functionally identical; the differences are limited to module names, local variable names, and the explicit use of 'this->' which do not alter behavior.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 989,
+     "candidatesTokenCount": 78,
+     "totalTokenCount": 1708,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 989
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 78
+      }
+     ],
+     "thoughtsTokenCount": 641
+    },
+    "verdict": "equivalent",
+    "errors": [],
+    "rationale": "The two prefetcher specifications are functionally identical; the differences are limited to module names, local variable names, and the explicit use of 'this->' which do not alter behavior.",
+    "parse_ok": true
+   },
+   {
+    "model": "gemini-2.5-pro",
+    "prompt_sha256": "2e08f73159d3f8542d908f3040914d2378622c0a7b130dc2ff4c6a61c9a17d03",
+    "raw_reply": "```json\n{\n  \"id\": \"sem-36\",\n  \"verdict\": \"equivalent\",\n  \"errors\": [],\n  \"rationale\": \"Both specifications describe an identical next-line prefetcher that triggers on a cache fill, with only cosmetic differences in variable names and comments.\"\n}\n```",
+    "usage": {
+     "promptTokenCount": 989,
+     "candidatesTokenCount": 69,
+     "totalTokenCount": 1835,
+     "trafficType": "ON_DEMAND",
+     "promptTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 989
+      }
+     ],
+     "candidatesTokensDetails": [
+      {
+       "modality": "TEXT",
+       "tokenCount": 69
+      }
+     ],
+     "thoughtsTokenCount": 777
+    },
+    "verdict": "equivalent",
+    "errors": [],
+    "rationale": "Both specifications describe an identical next-line prefetcher that triggers on a cache fill, with only cosmetic differences in variable names and comments.",
+    "parse_ok": true
+   }
+  ]
+ }
+]

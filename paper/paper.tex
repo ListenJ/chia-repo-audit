@@ -151,11 +151,19 @@ grid must be read per trace, not averaged.
 
 On the 10 specification cases the two models give Cohen's
 $\kappa=\mathbf{0.859}$ (0.900 agreement, verdict accuracy 10/10 for both,
-error-class exactness 7/10 and 8/10). Rebuilding the cases from real generated
-C++ instead of dictionary diffs drops $\kappa$ to $\mathbf{0.667}$---below our own
-0.7 gate, so the annotation layer is judged red on the harder surface. The same
+error-class exactness 7/10 and 8/10). Widening to all 36 pairs of the nine
+factorial candidates, built from real generated C++ rather than dictionary diffs,
+gives $\kappa=\mathbf{0.7235}$ overall and $\kappa=\mathbf{1.0}$ on the verdict
+axis alone: across 36 real design pairs the annotators never disagree about whether
+two designs are the same. On the four measurement-grounded cases $\kappa$ falls to
+$\mathbf{0.667}$, below our own 0.7 gate, so that subset is judged red. The same
 run showed our calibration set is partly unidentifiable: two cases carry expected
 labels that cannot be derived from the payload the annotator sees.
+
+Read with \S\ref{sec:escape}, the high verdict agreement is the warning, not the
+reassurance: $\kappa$ measures correlation between annotators, not correctness
+against measurement, and $\kappa=1.0$ is exactly what a shared blind spot looks
+like from the inside.
 
 \subsection{A nullity escape both auditors missed}
 \label{sec:escape}
@@ -167,8 +175,10 @@ prefetcher and a repaired aggressive-offset candidate---return exactly
 1{,}129{,}706 / 1{,}132{,}568) and the next-line control returns 1{,}129{,}305.
 Two of 17 screened designs therefore compile, execute, emit metrics and do
 nothing; one is not a lazy stub but a plausible stride prefetcher whose issue path
-never fires. Any verifier accepting ``builds, runs, produces numbers'' passes
-both.
+never fires. Screening the factorial separately added a third:
+\texttt{gen\_aggressive\_offset\_s1} also returns 1{,}138{,}748. Three nullities in
+26 generated designs---any verifier accepting ``builds, runs, produces numbers''
+passes all three.
 
 Both independent annotators classified this case
 \texttt{not\_equivalent}/\textbf{E4}; measurement says \texttt{equivalent}. They
@@ -193,7 +203,9 @@ Trace CV (max) & report & $163.33\%$ \\
 Trace top-1 stability & report & $0.667$ \\
 Mean Kendall $\tau$ & report & $0.556$ \\
 $\kappa$, spec cases & $\geq0.7$ & $0.859$ \\
-$\kappa$, semantic cases & $\geq0.7$ & $0.667$ \\
+$\kappa$, 36 real pairs & $\geq0.7$ & $0.724$ \\
+$\kappa$, verdict only & $\geq0.7$ & $1.000$ \\
+$\kappa$, 4 measured cases & $\geq0.7$ & $0.667$ \\
 \midrule
 Publish gate & both pass & \textsc{Blocked} \\
 \bottomrule
@@ -214,13 +226,15 @@ scorecard, raw cells and digests: loop, cases, generators, gate and
 .tmp/cfg/grid.json --backend champsim\_node}.
 
 \section{Limitations}
-\textbf{Prompt sensitivity is unmeasured}, not zero: the grid held one prompt
-constant; a $3{\times}3$ prompt$\times$seed factorial is generated and queued.
+\textbf{Prompt sensitivity is unmeasured}, not zero: the reported grid held one
+prompt constant; the $3{\times}3$ factorial compiled only 6 of 9 candidates, so its
+largest complete prompt-by-seed rectangle is 3 prompts at one seed.
 \textbf{Repeats:} $0.0000\%$ is $N=5$ per cell (45 runs), but it establishes only
 that execution is deterministic; it says nothing about generation variance, which
 is the axis that fails. \textbf{Annotators:} both models come
-from one provider, so we claim model-model, not cross-family, independence, and
-4 semantic cases are few. \textbf{Checker:} the cell-level nullity rule conflates
+from one provider, so we claim model-model, not cross-family, independence; the
+36-pair $\kappa$ rests on heuristic structural labels and only the 4-case subset has
+a measurement-grounded label. \textbf{Checker:} the cell-level nullity rule conflates
 per-trace with global nullity. \textbf{Provenance:} \texttt{raw.json} records
 HEAD at write time, not stage entry. \textbf{Scope:} one simulator, one design
 family, three traces; no RTL flow and no gem5 result is claimed.

@@ -34,8 +34,34 @@ def normalize(source: str, module_name: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+CLASS_MEMBER_DECL = re.compile(
+    r"^(?:const\s+|static\s+|unsigned\s+|signed\s+)*"
+    r"[A-Za-z_][\w:]*(?:<[^<>]*(?:<[^<>]*>)?[^<>]*>)?\s+[*&]?\s*([A-Za-z_]\w*)\s*(?:\(|=|;)",
+    re.M)
+NOT_A_MEMBER = {"struct", "return", "if", "for", "while", "using", "void", "break", "continue"}
+
+
+def class_members(source: str) -> set[str]:
+    """Declarations at class scope only.
+
+    Depth matters: a local variable inside a method body is not a component of the
+    design, and comparing locals across two implementations labels almost every pair
+    as both adding and dropping state, which carries no signal.
+    """
+    out: set[str] = set()
+    depth = 0
+    for line in source.splitlines():
+        stripped = line.strip()
+        if depth == 1 and stripped and not stripped.startswith(("//", "/*", "*")):
+            match = CLASS_MEMBER_DECL.match(stripped)
+            if match and match.group(1) not in NOT_A_MEMBER:
+                out.add(match.group(1))
+        depth += line.count("{") - line.count("}")
+    return out
+
+
 def members(source: str) -> set[str]:
-    return {m for m in MEMBER_DECL.findall(source) if m not in NOT_A_MEMBER}
+    return class_members(source)
 
 
 def comparators(source: str) -> list[str]:
