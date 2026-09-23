@@ -107,8 +107,8 @@ E4 & Added or fabricated component \\
 
 \textbf{Setup.} \texttt{ghcr.io/ucb-bar/chia-champsim} at digest
 \texttt{sha256:610951d3\ldots}, ChampSim \texttt{164fdb1e\ldots}, Python 3.10.19,
-Ray 2.54.0; 39 unit tests pass in-tree, of which 34 were last verified passing
-inside the image. Grids ran on a \texttt{c2d-standard-8} VM
+Ray 2.54.0; 39 unit tests pass in-tree and inside the pinned image. Grids ran on a
+\texttt{c2d-standard-8} VM
 (\texttt{us-east1-b}) and are being replicated on a second one. Three DPC-4 traces (fotonik3d, ligra BFSCC, imagick) with
 SHA-256 in \texttt{results/grid\_v6/provenance.json}, 1M warmup + 4M simulated
 instructions, L2C. Candidates are three real LLM-generated prefetcher modules
@@ -424,7 +424,7 @@ repository URL is filed in this submission's required open-source-artifact field
 rather than printed here, so the paper stays anonymous while the artifact stays
 reachable. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (62 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (64 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check rather than a coincidence. Reproduce the headline grid with
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 6 --config

@@ -1112,3 +1112,22 @@ VM2 的 `grid_x_fill_only_s2s3`（fill_only_conservative，seeds{2,3}，3 trace 
 一旦有人改了 `reference_designs` 或换了 trace 命名，论文里这三个数会静默失效。
 验证器 +6 条（no-op 参考覆盖三条 trace、两个 cold 构建确实是不同 binary、
 以及上面四个相对量），声明数 47 → 53，自指那条再次把正文数字顶上去。
+
+### 12. 把"34 在镜像里验过"这句 hedge 变成 39 的实测
+
+论文与 README 之前写"39 in-tree，其中 34 最后一次在镜像里通过"——因为最近 5 个测试
+落下后没再进镜像跑过。这是一句**用推测填补的口径**，正是本项目反复批评的东西。
+VM2 的网格跑完、CPU 空出来后，把当前 `chia_loop/` 与 `scripts/` 打成 tar 传到
+`/tmp/imgtest`，以只读挂载进钉死 digest 的官方镜像跑了一遍：
+
+```
+Python 3.10.19
+Ran 39 tests in 5.941s
+OK
+rc=0
+```
+
+39 全过。证据落在 `results/in_image_tests_2026-09-23.json`，里面同时写明它**取代**
+`grid_v7_gcp/provenance.json` 里的 `unit_tests_in_image = Ran 34 tests`（34 在当时是对的），
+并写明这套测试是纯 Python，进镜像只证明解释器与依赖兼容，不证明任何测量复现。
+验证器 +2 条（镜像内确实跑了 39 且 OK、用的是那个 digest），声明数 62 → 64。

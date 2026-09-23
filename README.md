@@ -120,7 +120,21 @@ supplies one here.
   (`scripts/real_candidate_generate.py`, SiliconFlow or the funded Vertex AI path).
 - Deterministic stub backend and the pinned source-build smoke, both retained as
   explicitly-labelled protocol validation.
-- 39 unit tests, which also pass inside the official image.
+- 39 unit tests pass in-tree and, as re-verified on 2026-09-23, inside the pinned
+  official image (`results/in_image_tests_2026-09-23.json`). The suite is pure Python,
+  so an in-image run establishes compatibility, not that any measurement reproduced.
+- `scripts/verify_paper_claims.py` re-derives every number in the paper from its
+  committed artifact and exits non-zero on drift (62 claims). Its final check is
+  self-referential: the paper states the claim count, so editing the verifier without
+  updating the prose turns the run red.
+- `scripts/rescore_grid.py` and `scripts/relabel_semantic_cases.py` recompute verdicts
+  and labels from retained `raw.json` / retained annotator replies, so a gate or label
+  fix is a rescore rather than a re-run. Three published corrections used them.
+- `scripts/make_figures.py` draws the paper's figure from the same artifacts, and
+  `scripts/substrate_probe.py` runs the third, discriminative annotator.
+- [`decision_chain/`](decision_chain/) ships the Laya gate, the blast-radius
+  falsification ladder that retired its approval score, the decision spec and the
+  recorded routing verdicts behind §3.8.
 - Public artifact: <https://github.com/ListenJ/chia-repo-audit>; HotCRP `#27`.
 
 See [ROADMAP.md](ROADMAP.md) for the execution plan and claim boundaries,
