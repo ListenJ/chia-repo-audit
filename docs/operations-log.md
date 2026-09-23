@@ -944,3 +944,56 @@ Laya 是 421M ModernBERT **判别式**头，非自回归、生不成审计要的
 - 论文：3 页 → **4 页**，0 error、0 undefined reference、0 Overfull hbox；
   测试 35 → **39 全绿**（新增 4 条锁住 `#include` 尖括号、`unlabellable`、
   真字面量差异仍判 E1、测量优先于文本）。
+
+### 5. 第四个缺陷：binary 归属，以及"撞见不是方法"
+
+上面三处都是读文件时**撞见**的。撞见不能复用，所以写了 `scripts/verify_paper_claims.py`：
+把论文正文每个数量断言映射回它声称的 artifact 重算，对不上就非零退出。
+第一次跑 22/31，逐条分诊后 35/35。分诊结果分两类：
+
+**我自己写错的检查（4 条）**：`pct()` 返回 float 而期望写成字符串；
+LaTeX 会断行、转义 `\_`、把短语包进 `\textbf{}`，所以任何正则都会在论文其实还说着的时候
+判成"论文没说了" —— 加了 `_flatten()` 统一剥标记。
+**这类检查的危险在于它会假绿**：一个永远匹配不上的 in-paper 断言，会让"论文不再声明 X"
+看起来像是修好了 X。
+
+**证据里真实存在的缺陷（1 条，新）**：`results/module_effect_control_2026-09-22.jsonl`
+的三行 `incremental` 分别命名 `probe_noop` / `probe_next_line` / `gen_default_s0`，
+但三行的 `binary_sha256` **全是** `688278205d6c9fa4`、cycles **全是** 1,129,305。
+也就是说这三行无法归属到它们所命名的设计。同一文件里可归属的是 cold 行：
+`noop_cold` 8a4884c11c4995dc@1,138,748、`next_line_cold` bee5b5b60c6f4437@1,129,305。
+
+影响评估（结论：不动摇主张，但必须披露）：
+- 逃逸用例 `sem-esc-01` 的判据来自 cold 行，两个 binary 各自独立且都 ≠ no-op 的，成立；
+- 论文里"next-line control = 1,129,305"改挂到 cold 行，并另引
+  `reference_designs_2026-09-22.jsonl`（那里 noop 与 next_line 的 digest 分别是
+  b49ebf8858bedd46 与 476f7ee0b9cfc286，确实是两个 binary）；
+- `sem-esc-01.json` 的 `evidence.source_caveat` 写明该文件只作旁证，不作判据；
+- 论文 Limitations 增一句披露，验证脚本相应加两条检查：
+  **断言的不是"数据干净"，而是"缺陷仍在且论文已披露"** —— 哪天有人悄悄改了数据或删掉
+  这句披露，检查就会翻红。这是本次唯一一处"验证器不该变绿"的地方。
+
+### 6. 外部评审第二轮抓到我自己写的错话
+
+派了一个独立评审把论文每个数字对回 artifact。十条里四条是真错，全是我自己的措辞：
+
+1. **我把"+0.406 的弱正相关"写成了"anti-correlated"**。noul 阶梯的 ρ 是**正**的
+   (+0.406)，缺陷是**分不开**（min tier3 − max tier0 = −0.169），不是反向。
+   真正的负值是**另一个东西**：判别头当标注者时与两个 LLM 的 κ（−0.500 / −0.057）。
+   我把两件事混成一个形容词写进了 intro 和结论。已改为"separates"并单独立一节。
+2. **"两个 independent auditors" 与我们自己的报告矛盾**：每份报告都写着同一家供应商。
+   改为 same-provider。
+3. **κ=1.0 verdict 那一行是退化的**：33 个可判 gold 全是 `not_equivalent`，
+   恒定答 `not_equivalent` 的评审也能拿 1.0，而 `cohen_kappa` 在边缘分布退化时按约定返回 1.0。
+   表格加 † 注明退化，正文与 README 都改口：0.636 才是有信息的数。
+4. **修正后的 0.636 已经低于我们自己 0.7 的门禁**，而论文只宣布 4 例集为红。
+   现在明确：两个外部集都是红的，唯一过线的 0.7235 靠的是必须撤回的标签。
+5. **复现命令指向 `.tmp/cfg/grid.json`（n_repeat=2，18 次）**，而论文引用的是 45 次的
+   `grid_gcp.json`；且命令没带 `--output-dir`，直接跑会覆盖 tracked 的 `results/raw.json`。
+   已改为 `grid_gcp.json --output-dir /tmp/repro`。
+6. 数字口径："39 tests pass inside the image" —— artifact 里记的是 34，39 是树内计数。
+   改为"39 in-tree, of which 34 were last verified inside the image"。**不要替未验证的口径背书。**
+7. README 说 nullity 是"每个批次一个"（=2），论文说三个（13-design 批 2 个 + factorial 批 1 个）。
+   按 digest 逐个核过，README 改口。
+
+论文 5 页，0 error / 0 overfull / 0 undefined，39 测试全绿，35/35 声明可重derive。

@@ -64,14 +64,25 @@ recording their three correct answers as three shared errors. Nothing was re-que
 retained replies are rescored against re-derived labels by
 `scripts/relabel_semantic_cases.py`.
 
-Three generated designs, one per screening batch of 13 and 9 distinct candidates,
-compile, run, emit metrics and measure **bit-identical to a no-op reference**
-(1,138,748 cycles) — simulator escapes in the sense ArchAgent reports. On that case
-both annotators agree with each other and both are wrong against measurement, and
+Three generated designs measure **bit-identical to a no-op reference**
+(1,138,748 cycles) while compiling, running and emitting metrics — simulator escapes
+in the sense ArchAgent reports. Two come from the 13-design screening batch
+(`gen_default_s0`, `gen_aggressive_offset_s1_r1`) and one from the separate 9-candidate
+factorial batch; each carries its own binary digest, distinct from the no-op's. On the
+escape case both annotators agree with each other and both are wrong against
+measurement, and
 E0–E4 has no class for "claims to work, measurably does nothing"; see
 `chia_loop/semantic/sem-esc-01.json`. κ measures correlation between annotators, not
 correctness — and as this section shows, correlation can also just mean the ground
 truth broke.
+
+Denominators worth stating plainly: the 36 semantic pairs reduce to **33 labellable**
+once the header-parsing defect is corrected, and all 33 gold labels are
+`not_equivalent`. A constant-answer rater would also score κ = 1.0 on the verdict axis
+there, so verdict-only agreement on that set is degenerate rather than evidence of
+reliability; the combined-label κ = 0.636 is the statistic that carries information,
+and it is below our own 0.7 gate. The pre-correction 0.7235 was the only value that
+passed, and it passed on labels that had to be withdrawn.
 
 A third, architecturally different rater (421M discriminative ModernBERT head,
 `scripts/substrate_probe.py`) does not rescue it: it is right on **0 of 33**

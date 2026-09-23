@@ -23,7 +23,12 @@
   "reference_cycles": 1138748,
   "distinct_binaries": true,
   "next_line_reference_cycles": 1129305,
-  "source": "results/candidate_compile_screening_2026-09-22.jsonl and results/module_effect_control_2026-09-22.jsonl"
+  "source": "results/candidate_compile_screening_2026-09-22.jsonl and results/module_effect_control_2026-09-22.jsonl",
+  "source_caveat": "module_effect_control_2026-09-22.jsonl is cited only as corroborating context. Its three incremental rows name probe_noop, probe_next_line and gen_default_s0 yet all record binary_sha256 688278205d6c9fa4 and cycles 1129305, so those rows cannot be attributed to the module they name and are not used here. The comparison that carries this case is the cold-build pair: probe_noop 8a4884c11c4995dc at 1138748 cycles versus gen_default_s0 cc0477f0e1ee0187 at 1138748 cycles, distinct binaries, identical measurement.",
+  "control_next_line_cold": {
+   "binary_sha256": "bee5b5b60c6f4437",
+   "cycles": 1129305
+  }
  },
  "taxonomy_gap": true,
  "taxonomy_note": "E0-E4 audit design-vs-reference equivalence. A nullity escape is equivalent to the no-op and therefore scores E0 here, even though the candidate claims to prefetch. Only the harness's no-op comparison catches it, not the taxonomy."

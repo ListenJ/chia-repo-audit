@@ -20,7 +20,8 @@ simulators}~\cite{archagent}, so we measure evaluation validity rather than desi
 discovery. We release a CHIA audit loop that separates four variance sources an
 aggregate score hides---repeated-run, generation-seed, prompt and
 trace---gating publication on both a pre-registered threshold and a double-blind
-annotation layer whose annotators are independent models. Run in the official
+annotation layer scored by same-provider models and by a third, architecturally
+different one. Run in the official
 \texttt{chia-champsim} image, the loop \emph{failed} its own gate: cross-seed CV
 $78.16\%$ against a $5\%$ threshold while repeated-run CV is $0.0000\%$ over 45
 runs, so the publish gate reads \textsc{Blocked}. Two candidates differing only in
@@ -28,8 +29,10 @@ a struct name and indentation carry distinct source, design and binary digests y
 bit-identical cycles on all three traces: the seed moved the artifact, not the
 design. Ranking is unstable (top-1 $0.667$, Kendall $\tau=0.556$) and prompt
 response reaches $249.18\%$. Annotation gives $\kappa=0.859$ on specification diffs
-and $0.636$ on real generated C++, where both auditors are right on all 33
-labellable pairs and wrong together on one measured simulator escape. Auditing that
+and $0.636$ on real generated C++, below our own 0.7 gate on both external sets;
+there both models are correct on all 33 labellable pairs and share no error. On the
+four measurement-grounded pairs they are wrong together on one measured simulator
+escape. Auditing that
 $\kappa$ found the defect inside it: our own label generator read \texttt{\#include}
 angle brackets as comparison operators and mislabelled three rename-only pairs, so
 the annotators we were scoring were correct and the ground truth was not. We report
@@ -56,10 +59,12 @@ it said about us---a \textsc{Blocked} verdict on our own headline claim
 (\S\ref{sec:repro}), evidence that generation seeds move artifacts without
 moving designs, trace-dependent reordering (\S\ref{sec:trace}) and prompt response
 at $249.18\%$ (\S\ref{sec:prompt}), a failure mode that text-reading auditors cannot
-catch (\S\ref{sec:escape}), and three defects we found in our own automation---a
+catch (\S\ref{sec:escape}), and four defects we found in our own automation---a
 vacuous gate axis (\S\ref{sec:prompt}), a generated ground truth that was wrong
-while the annotators were right (\S\ref{sec:groundtruth}), and an escalation signal
-measured to be anti-correlated with what it named (\S\ref{sec:substrate}).
+while the annotators were right (\S\ref{sec:groundtruth}), an escalation signal
+whose approval score does not separate a local reversible edit from destroying an
+instance (\S\ref{sec:gate2}), and a supporting screening file whose incremental
+rows cannot be attributed to the module they name (\S\ref{sec:escape}).
 
 \section{The Audit Loop}
 \label{sec:loop}
@@ -101,8 +106,9 @@ E4 & Added or fabricated component \\
 
 \textbf{Setup.} \texttt{ghcr.io/ucb-bar/chia-champsim} at digest
 \texttt{sha256:610951d3\ldots}, ChampSim \texttt{164fdb1e\ldots}, Python 3.10.19,
-Ray 2.54.0, two \texttt{c2d-standard-8} VMs (\texttt{us-east1-b}); 39 unit tests
-pass inside the image. Three DPC-4 traces (fotonik3d, ligra BFSCC, imagick) with
+Ray 2.54.0; 39 unit tests pass in-tree, of which 34 were last verified passing
+inside the image. Grids ran on a \texttt{c2d-standard-8} VM
+(\texttt{us-east1-b}) and are being replicated on a second one. Three DPC-4 traces (fotonik3d, ligra BFSCC, imagick) with
 SHA-256 in \texttt{results/grid\_v6/provenance.json}, 1M warmup + 4M simulated
 instructions, L2C. Candidates are three real LLM-generated prefetcher modules
 retained with raw prompts and responses, loaded through directory mode; seeds and
@@ -191,10 +197,22 @@ gold labels for that set were themselves generated, and three of its pairs were
 mislabeled by our own structural rule. After relabeling, \textbf{33 of 36} pairs
 carry a derivable verdict, both annotators are correct on \textbf{all 33}
 (verdict accuracy $\mathbf{1.0}$ each), they never disagree ($\kappa=1.0$ on
-verdict), and combined-label $\kappa$ falls to $\mathbf{0.636}$. On the four
-measurement-grounded cases $\kappa$ is $\mathbf{0.667}$, below our own 0.7 gate,
-so that subset is judged red; there the two models agree on all four verdicts and
-are wrong together on exactly \textbf{one}.
+verdict), and combined-label $\kappa$ falls to $\mathbf{0.636}$. That is now
+\emph{below} our own 0.7 gate too, so both external sets are red, not just the
+measured one: the pre-correction 0.7235 was the only value that passed, and it
+passed on labels that had to be withdrawn. On the four
+measurement-grounded cases $\kappa$ is $\mathbf{0.667}$, and there the two models
+agree on all four verdicts and are wrong together on exactly \textbf{one}.
+
+One caveat we have to carry rather than resolve: \textbf{all 33 labellable gold
+labels in that set are \texttt{not\_equivalent}}---no pair of generated candidates
+was ever labelled equivalent---so a rater that always answers
+\texttt{not\_equivalent} would also reach $\kappa=1.0$ on the verdict axis, and our
+$\kappa$ helper returns exactly 1.0 by convention whenever the marginals are
+degenerate. The verdict-only row is therefore \emph{not} evidence of reliability on
+this set; the combined-label 0.636 is the statistic that means something. On the
+specification and measured sets, where both classes occur, verdict $\kappa$ is
+non-degenerate.
 
 Read with \S\ref{sec:escape}, the high verdict agreement is still the warning, not
 the reassurance: $\kappa$ measures correlation between annotators, not correctness
@@ -210,7 +228,13 @@ Compile-and-run is not evidence of a design. Against a cold no-op reference
 measuring 1{,}138{,}748 cycles, two \emph{distinct} binaries---a generated stride
 prefetcher and a repaired aggressive-offset candidate---return exactly
 1{,}138{,}748, while every genuine prefetcher differs (1{,}129{,}110 /
-1{,}129{,}706 / 1{,}132{,}568) and the next-line control returns 1{,}129{,}305.
+1{,}129{,}706 / 1{,}132{,}568) and the next-line control returns 1{,}129{,}305,
+from a cold-build row carrying its own binary digest; the control pair's distinct
+binaries are recorded separately in \texttt{reference\_designs}.\footnote{The same
+screening file also carries three \emph{incremental} rows that name three different
+modules while recording one shared binary digest and one shared cycle count. Those
+rows are not attributable to a design and none of our claims rest on them; the
+escape case cites that file only as context.}
 Two of the 13 distinct designs in that screening batch therefore compile, execute,
 emit metrics and do nothing; one is not a lazy stub but a plausible stride
 prefetcher whose issue path never fires. Screening the factorial separately (9
@@ -276,13 +300,38 @@ On the escape case itself it answers \texttt{equivalent}---\emph{correct}, match
 measurement where both generative raters failed---at a top-1 minus top-2 margin of
 \textbf{0.010}. It is right for no reason a verifier can detect. A scoring rule that
 rewards agreement with measurement would bank that hit and never see that the same
-default loses 35 of 36 elsewhere. Changing substrate does not buy independence:
+default loses 33 of 33 elsewhere. Changing substrate does not buy independence:
 independence is a property of the \emph{evidence channel}, and only the simulator
 provides one here.
 
+\subsection{An approval score that cannot separate the safe action from the destructive one}
+\label{sec:gate2}
+
+We ran the loop's own decisions through a local discriminative decision head under a
+gate that escalated whenever its \texttt{needs-approval} score exceeded $0.5$. It
+escalated \textbf{6 of 6}, including a local, reversible rewrite of a committed
+scorecard---which scored \emph{higher} ($0.895$) than an actual push to the public
+artifact ($0.848$). To test rather than assume, we built ten scenarios of known
+blast radius (local reversible; pre-authorised spend; outside write; irreversible
+destroy) and measured the score against the tier:
+Spearman $\rho=+0.406$ over $n=10$, with
+$\min(\text{tier }3)-\max(\text{tier }0)=-0.169$, i.e.\ \emph{no} threshold separates
+the safest action from the most destructive. Editing a conference submission scored
+$0.126$, below the safe local rewrite at $0.160$.
+
+A rule built on that score is not conservative, it is constant: it escalates
+everything, so the automation delivers nothing and the human sees no more signal than
+before. The fix removes the model from that judgement---blast radius is declared per
+\emph{option} in code and the model only chooses among options, with the score kept as
+an advisory cross-check (it now agrees with the register on 3 of 4 decisions). This
+also exposed a granularity bug: the register had been attached to the whole question,
+so an option meaning \emph{leave the instances running} was reported as irreversible.
+Verdicts move from 0/6 automatic to 2/4 automatic, with every escalation still
+correctly motivated.
+
 \begin{table}[h]
 \vspace{-0.4em}
-\centering\small
+\centering\footnotesize\setlength{\tabcolsep}{4pt}
 \begin{tabular}{lcc}
 \toprule
 \textbf{Metric} & \textbf{Gate} & \textbf{Measured} \\
@@ -294,8 +343,8 @@ Trace CV (max) & report & $163.33\%$ \\
 Trace top-1 stability & report & $0.667$ \\
 Mean Kendall $\tau$ & report & $0.556$ \\
 $\kappa$, spec cases & $\geq0.7$ & $0.859$ \\
-$\kappa$, real pairs (33 labellable) & $\geq0.7$ & $0.636$ \\
-$\kappa$, verdict only & $\geq0.7$ & $1.000$ \\
+$\kappa$, real pairs (33 label.) & $\geq0.7$ & $0.636$ \\
+$\kappa$, verdict only$^{\dagger}$ & $\geq0.7$ & $1.000$ \\
 $\kappa$, 4 measured cases & $\geq0.7$ & $0.667$ \\
 \midrule
 Third-substrate $\kappa$ & --- & $0.138\,/\,-0.500\,/\,-0.057$ \\
@@ -305,7 +354,10 @@ Publish gate & both pass & \textsc{Blocked} \\
 \bottomrule
 \end{tabular}
 \vspace{-0.5em}
-\caption{Pre-registered gates against measured values. Prompt spread comes from a
+\caption{Pre-registered gates against measured values. $^{\dagger}$degenerate: all 33
+labellable gold labels in that set are \texttt{not\_equivalent}, so a constant rater
+also reaches 1.0 and the combined-label row is the informative one. Prompt spread
+comes from a
 grid that held the seed constant and cross-seed CV from a grid that held the prompt
 constant; \S\ref{sec:prompt} reports what each unexercised axis wrongly passed.
 The third-substrate row is discriminative-head $\kappa$ against the two generative
@@ -317,9 +369,15 @@ raters on the spec / measured / real-pair sets in turn.}
 distinguished from one that is not looking, so the release ships the blocked
 scorecard, raw cells and digests: loop, cases, generators, gate and
 \texttt{scripts/independent\_audit.py} as CHIA-compatible blocks (BSD-3-Clause),
-\url{https://github.com/ListenJ/chia-repo-audit}. Reproduce with
+\url{https://github.com/ListenJ/chia-repo-audit}. Every number quoted in this paper
+is re-derived from the committed artifacts by
+\texttt{scripts/verify\_paper\_claims.py} (35 claims, non-zero exit on drift); the
+defects above were found by reading primary evidence, and this script is what turns
+that into a check rather than a coincidence. Reproduce the headline grid with
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 6 --config
-.tmp/cfg/grid.json --backend champsim\_node}.
+.tmp/cfg/grid\_gcp.json --backend champsim\_node --output-dir /tmp/repro}, passing an
+output directory outside \texttt{results/} so a replication cannot overwrite the
+committed evidence.
 
 \section{Limitations}
 \textbf{Axes are measured separately.} Prompt spread comes from a
@@ -331,11 +389,17 @@ that execution is deterministic; it says nothing about generation variance, whic
 is the axis that fails. \textbf{Labels:} the 33-pair $\kappa$ rests on structural
 labels that survive our own header-parsing defect only because we could re-derive
 them; only the 4-case set has a measurement-grounded label, and its correlated
-failure is $n=1$. \textbf{Annotators:} both generative models come from one
+failure is $n=1$. That set carries no \texttt{equivalent} gold case at all, which is
+why its verdict-axis agreement is reported as degenerate rather than as reliability. \textbf{Annotators:} both generative models come from one
 provider, and \S\ref{sec:substrate} shows that the architecturally different rater
 we could reach is worse than independent rather than better. \textbf{Checker:} the
 cell-level nullity rule conflates per-trace with global nullity.
 \textbf{Provenance:} \texttt{raw.json} records HEAD at write time, not stage entry.
+One supporting screening file carries a binary attribution defect: three of its
+incremental rows name three different modules yet record one \texttt{binary\_sha256}
+and one cycle count, so those rows cannot evidence which design was measured. Every
+nullity cited here comes from a cold-build row whose digest differs per design, and
+the escape case records the unattributable file only as corroborating context.
 \textbf{Scope:} one simulator, one design
 family, three traces; no RTL flow and no gem5 result is claimed.
 
@@ -345,11 +409,13 @@ on measurement \emph{and} annotation, and keeps its evidence. Against the
 official CHIA ChampSim image it blocked its own reproducibility claim at
 $78.16\%$ cross-seed CV, showed seeds moving artifacts without moving designs,
 showed trace choice reordering candidates ($\tau=0.556$) and prompt response at
-$249.18\%$, and showed two independent language-model auditors agreeing and both
-wrong on a measured simulator escape. It also caught three silent defects in our
+$249.18\%$, and showed two same-provider language-model auditors agreeing and both
+wrong on a measured simulator escape. It also caught four silent defects in our
 own automation---a gate that passed an unexercised axis, a labeler that read
-\texttt{\#include} brackets as comparison operators, and an escalation rule built
-on a signal we then measured to be anti-correlated with what it named. The
+\texttt{\#include} brackets as comparison operators, an escalation rule built
+on an approval score we then measured not to separate safe from destructive, and a
+screening file whose incremental rows cannot be attributed to the design they name.
+The
 instrument, the negative verdicts and the self-reports are the contribution.
 
 \section*{AI Assistance Disclosure}
