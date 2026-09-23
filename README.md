@@ -298,10 +298,25 @@ research-notes/
 
 ## Official Submission Requirements
 
-- A PDF of at most four pages in two-column ACM/IEEE style.
+Verified against the submission system and the organizers' messages:
+
 - An open-source release of the loop and its results.
-- A public artifact URL in the HotCRP form.
-- An AI-assistance acknowledgment at the end of the paper.
+- A **public artifact URL in the HotCRP form** — this is a required field; the form
+  refuses review while it is incomplete.
+- An **AI Review Consent / Acknowledgement** field on the form, and an
+  AI-assistance acknowledgment at the end of the paper.
+- Final deadline: Friday Sep 25, 2026, 4:59:59 AM PDT.
+
+Not verified — and previously stated here as if it were:
+
+- ~~"A PDF of at most four pages in two-column ACM/IEEE style."~~ The only page
+  limit we can source is the **1-page maximum on the Aug 25 proposal**, from the
+  hackathon announcement. We could not find a documented limit for the final
+  submission PDF in the announcement, the submission system text we captured, or the
+  organizers' messages, and we did not receive an answer confirming one. Treat the
+  final length as **unconfirmed** rather than as compliant: the paper is currently
+  longer than a typical workshop short paper, and this is an open question for the
+  organizers, not a satisfied requirement.
 
 The final submission does not require prior registration or use of hackathon
 funding. The short-term funding request was a separate Sep 18 opportunity for

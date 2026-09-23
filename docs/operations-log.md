@@ -1366,3 +1366,33 @@ disagreements 0   shared errors = 三个逃逸，且非逃逸用例一个没错
    `Extra alignment tab has been changed to \cr`。批量改 LaTeX 不如逐处 Edit。
 2. 三条 `sed -i` 因为反斜杠转义全部**静默没生效**，我却按"已经改了"去编译，
    结果 overfull 数值一模一样才发觉。**sed 无输出不等于成功**，改完要 grep 回读。
+
+### 19. 第七个缺陷，这次不在数据里，在 README 里：一条我写不来的"官方要求"
+
+`README.md` 的 "Official Submission Requirements" 第一条写着
+**"A PDF of at most four pages in two-column ACM/IEEE style."**
+本轮据此判断论文 7 页"超标、有 desk-reject 风险"，差点动手砍掉四成内容。
+动手前先回去找出处，结果：**找不到。**
+
+- 全量 grep 会话记录（1.1 MB 转写）里的 `at most four` / `page limit` / `two-column` /
+  `ACM/IEEE`：**0 命中**。
+- 转写里能查到的官方要求只有两条：HotCRP 的 **Open-source artifact URL 是必填项**
+  （"This submission is not ready for review. Required field … is incomplete"），
+  以及 **AI Review Consent / Acknowledgement** 字段（该字段在 #27 上已勾为 1）。
+- 官方公告 `chialoops.ai/blog/chia-hackathon-a3-micro-2026/` 只写了
+  **"Short (1 page max) proposals are due Aug 25, 2026"** —— 那是**提案**阶段的限制，
+  不是终稿的。站点与 HotCRP 页面都没有给出终稿页数上限。
+
+所以这条要求是**我写的，没有来源**，然后被后续的自己当成事实引用，
+还差点据此删掉真实内容。**这是本 artifact 论点的第七次自我复现，而且这次不在数据里，
+在流程文档里**：一个看起来像权威的字符串，一旦落进文档，就不再被追问出处。
+
+处理：
+1. README 改成"已核实的"与"**未核实的**"两栏，把这条划掉并写明唯一能追到的页数限制
+   是提案阶段的 1 页，终稿上限**按未确认对待**，不假装合规也不假装违规；
+2. 页数问题作为开放项向组织者确认（邮件线已开着），**不靠猜来砍论文**；
+3. 加一条自律：**任何"官方要求"式的句子都要带出处**，没有出处就写"未核实"。
+
+顺带记下判断失误的机制：我看到 7 页 + README 写着 4 页，就得出"违规"结论。
+**两个都可能是真的字符串，不等于它们之间有支持关系** —— 跟 §3.3 那个空轴、
+§3.6 那个标签器是同一件事：代理量返回了一个通过/失败值，而它没有指称任何东西。
