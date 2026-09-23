@@ -1,0 +1,118 @@
+{
+ "schema_version": 1,
+ "purpose": "Provenance for the 5-repeat GCP replication of grid_v6. raw.json cannot carry the image digest, trace hashes, stage-entry SHA or the host, so they are recorded here.",
+ "relation_to_grid_v6": "Same image digest, same ChampSim revision, same three traces by SHA-256, same three candidates, same instruction budget. Only n_repeat changed, 2 to 5, and the physical host changed from a local Docker daemon to GCP.",
+ "image": {
+  "requested": "ghcr.io/ucb-bar/chia-champsim:latest",
+  "image_id": "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "repo_digest": "ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "same_digest_as_grid_v6": true
+ },
+ "host": {
+  "provider": "GCP (hackathon short-term funded project)",
+  "project": "a3-chia-hack26ath-7744",
+  "instance": "chia-grid",
+  "zone": "us-east1-b",
+  "machine_type": "c2d-standard-8",
+  "os": "Ubuntu 24.04.5 LTS, kernel 7.0.0-1011-gcp",
+  "created": "2026-09-22T09:51:35.777-07:00",
+  "service_account": "709579999237-compute@developer.gserviceaccount.com"
+ },
+ "container": {
+  "name": "chia-grid7",
+  "created": "2026-09-22T17:34:04+00:00",
+  "finished": "2026-09-22T21:25:16+00:00",
+  "exit_code": 0,
+  "wall_clock_s": 13872,
+  "command": "bash /workspace/.tmp/run_grid_gcp.sh",
+  "invocation": "python3 chia_loop/loops/audit_repro.py --version 6 --config /workspace/.tmp/cfg/grid_gcp.json --backend champsim_node --generator-mode directory --execution local --output-dir /workspace/results/grid_v7_gcp",
+  "ray_head": "ray start --head --port=6379 --resources='{\"champsim\":1}'",
+  "mounts": [
+   "/home/devstar7744/repo -> /workspace (rw)",
+   "/home/devstar7744/traces -> /traces (ro)"
+  ],
+  "resource_caps": {
+   "memory": "12 GiB",
+   "cpu": "no quota; OMP_NUM_THREADS=8 forced because Ray injects 1 and coreutils nproc obeys it, which silently made the build make -j1",
+   "shm": "default 64 MiB (not raised for this run; the later screening container uses --shm-size=6g)"
+  }
+ },
+ "code_identity": {
+  "git_sha_pinned_at_stage_entry": "b85b38c34789b5b99a13fd8f4eca223391714786",
+  "note": "run_grid_gcp.sh writes .tmp/grid_git_sha at stage entry, which is the defect grid_v6 recorded (raw.json only carries HEAD at write time).",
+  "config_path": ".tmp/cfg/grid_gcp.json",
+  "config_sha256": "0f139bededc160c762d21480fe685f9eb56242edf222d42396a7593cbac74c24"
+ },
+ "champsim": {
+  "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694",
+  "tree": "/home/ray/champsim",
+  "build_recipe": "make clean && python3 ./config.sh <tmp cfg> && make -j$(nproc)",
+  "incremental": false,
+  "python": "3.10.19",
+  "ray": "2.54.0",
+  "cold_builds_observed": 3,
+  "unit_tests_in_image": "Ran 34 tests / OK"
+ },
+ "traces": {
+  "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": {
+   "path": "/traces/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+   "bytes": 25294572,
+   "sha256": "ecdc1feb586b636273bc7f7572d181a2358c9f5680fbe97eb22002ed4763fa6e"
+  },
+  "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": {
+   "path": "/traces/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+   "bytes": 74092232,
+   "sha256": "3585b6c1a3f9d934f06c1e15199a58af6808e290408dc618de19b9dd34302a98"
+  },
+  "638.imagick_s-4128B.champsimtrace.xz": {
+   "path": "/traces/638.imagick_s-4128B.champsimtrace.xz",
+   "bytes": 50679132,
+   "sha256": "c9b081f75b8b1b7fda06d9db9254cf0c9d5ec1e2cb709207c0fc9ac8475f3825"
+  }
+ },
+ "trace_transfer_check": "All three SHA-256 recomputed on the GCP host after upload and equal to the grid_v6 provenance values byte for byte.",
+ "results": {
+  "cells": 9,
+  "trials_per_cell": 5,
+  "total_runs": 45,
+  "cells_with_any_cycle_variation": 0,
+  "scorecard": {
+   "verdict": "NON-REPRODUCIBLE",
+   "max_cross_seed_cv_pct": 78.1641,
+   "max_repeated_run_cv_pct": 0.0,
+   "max_prompt_spread_pct": 0.0,
+   "max_trace_cv_pct": 163.3321,
+   "trace_top1_stability": 0.666667,
+   "trace_kendall_tau": 0.555556,
+   "publish_gate": "BLOCKED",
+   "publish_blockers": ["reproducibility_threshold"]
+  },
+  "relation": "cycles, ipc and instructions are identical to grid_v6 on all 9 cells. What N=5 adds is that 45 runs across 9 cells show no spread at all, which grid_v6 explicitly declined to claim at N=2."
+ },
+ "binary_identity": {
+  "v6_binaries": ["11791ea33a696b76", "28e80600e04c016a", "46a3c00dde193bff"],
+  "v7_binaries": ["3b455fc0875163c1", "c67143b1f3fcf20b", "124a00a60297c4ce"],
+  "cells_sharing_a_binary_with_v6": 0,
+  "reading": "The same source, image digest and ChampSim revision produced byte-different binaries on the second host while the simulated measurements stayed bit-identical. A binary digest is therefore evidence that a distinct build was delivered, not a design identity, and requiring digest equality across hosts would reject a faithful replication."
+ },
+ "evidence_checker": {
+  "command": "python3 scripts/check_grid_evidence.py --raw results/grid_v7_gcp/raw.json --reference results/reference_designs_2026-09-22.jsonl",
+  "n_distinct_binaries": 3,
+  "passed": false,
+  "failures": {
+   "moves_cycles_vs_reference": [
+    "fill_only_conservative/2 on 638.imagick_s-4128B.champsimtrace.xz equals noop at 1.56132e+06"
+   ]
+  },
+  "reading": "The checker still fails, but on a real property rather than a missing field: seed 2 is a per-trace nullity on imagick. Its cell-level rule reports this alongside genuine cross-trace differences, which is the conflation recorded in the grid_v6 provenance and still unfixed."
+ },
+ "artifact_notes": {
+  "raw_json_sha256_after_transfer": "e028bda60648c879df5121d892ff193dcdc908c2997bc3b8b580b2a9532e206a",
+  "not_retained": [
+   "per-run wall seconds",
+   "ChampSim stdout for grid cells; cycles come from the --json stats file the adapter parses"
+  ],
+  "correction": "An earlier draft of this file claimed raw.json carried no per-cell binary digest. It does: check_grid_evidence.py reads three distinct digests from it, verified above.",
+  "prompt_axis": "prompt spread 0.0000% is not a measurement. The grid holds a single prompt value, so the prompt axis was never exercised. The 3x3 prompt-by-seed factorial is the run that addresses it."
+ }
+}

@@ -722,3 +722,35 @@
 - κ=0.6667 低于本协议自设的 0.7 门禁，语义用例上判红。
 - 修正：`independent_audit.py` 的 `load_cases` 在传入相对目录时
   `relative_to(REPO)` 抛 ValueError，改为先 `resolve()`。
+
+## 2026-09-23 - v7 五次重复完成，以及筛选链第一次静默空跑
+
+- Task: 在 GCP 上把核心单元从 N=2 提到 N=5，为 v6 明确拒绝下的确定性结论补证据；
+  并为 prompt × seed 因子准备编译筛选。
+- v7 结果：9 单元 × 5 次 = **45 次运行，没有任何单元出现 cycles 波动**；
+  scorecard 与 v6 逐位相同（跨 seed CV 78.1641%、重复运行 CV 0.0000%、
+  trace CV 163.3321%、top-1 0.666667、Kendall τ 0.555556），
+  verdict 仍为 NON-REPRODUCIBLE、publish gate BLOCKED。容器墙钟 13,872 s
+  （17:34:04Z → 21:25:16Z），exit 0。
+- 跨主机同一性：同一镜像 digest `610951d3…`、同一 ChampSim `164fdb1e…`、
+  同一三条 trace（上传后 SHA-256 逐字相符），cycles/ipc/instructions 在 9 个单元上
+  与 v6 完全一致，但**二进制摘要 0/9 相同**
+  （v6 `11791ea3/28e80600/46a3c00d` vs v7 `3b455fc0/c67143b1/124a00a6`）。
+  即换机重编译产出字节不同的二进制而测量逐位不变——二进制摘要是"确实交付了不同构建"
+  的证据，不是设计同一性；若要求跨主机摘要相等就会把一次忠实复现判为失败。
+- 证据校验器 `scripts/check_grid_evidence.py` 对 v7 判 `passed: false`，
+  唯一失败项是 `fill_only_conservative/2` 在 imagick 上等于 no-op
+  （1,561,323 cycles）——真实的每-trace 空实现，不是缺字段。
+  它的 cell 级规则仍把这种局部空实现与跨 trace 的真实差异混为一谈，
+  该缺陷自 v6 起记录至今未修。
+- 自查纠错：本文件初稿曾写"raw.json 不含每单元二进制摘要"，校验器证明它含三个
+  不同摘要，已改为 correction 条目。
+- **筛选链静默空跑（我的两个失误）**：`wait_then_screen.sh` 在 v7 退出后自动启动
+  `screen_fact.sh`，但容器内 `/workspace/.tmp/one_cold.py` 不存在（我只上传了候选目录），
+  9 次迭代全部 `No such file or directory`，脚本却以最后一条 `ray stop` 的成功状态退出，
+  状态文件写下 `{"state":"done","rc":0}`——**零产出被报成成功**。
+  修复：补传 `one_cold.py`；脚本改为先检查探针存在（缺失 exit 2），
+  结束时统计 `{"design` 记录数，不等于 9 则 exit 3，让退出码携带产出量而非命令状态。
+  同时按 Ray 的 `/dev/shm` 警告给筛选容器加 `--shm-size=6g`。
+- 重跑验证：`chia-screen` 起来后实测 `make -j8` 与 cc1plus 活跃，
+  第一个候选 `gen_aggressive_offset_s1` 正在真实编译。
