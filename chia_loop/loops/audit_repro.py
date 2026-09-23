@@ -575,9 +575,29 @@ def _compute_audit(raw: dict, config: dict, dblind: dict) -> dict:
     max_prompt_spread = max(prompt_spread.values(), default=0.0)
     max_trace_cv = max(trace_cv.values(), default=0.0)
     threshold = config["acceptance_threshold"]
-    reproducible = max_seed_cv < threshold and max_repeat_cv < threshold
+
+    # _cv and _relative_spread both return 0.0 when an axis has a single level, so a
+    # one-seed grid used to "pass" the seed gate at 0.0000% without ever varying the
+    # seed. An unexercised axis is not a passing axis.
+    # Real cells carry both keys; fixtures may carry only "seed".
+    n_seeds = len({c.get("generator_seed", c.get("seed")) for c in cells.values()})
+    n_prompts = len({c.get("prompt") for c in cells.values()})
+    n_traces = len({c.get("trace") for c in cells.values()})
+    n_repeat = min((len(c.get("trials", [])) for c in cells.values()), default=0)
+    axes = {
+        "seed": n_seeds >= 2,
+        "prompt": n_prompts >= 2,
+        "trace": n_traces >= 2,
+        "repeat": n_repeat >= 2,
+    }
+    unexercised = sorted(name for name, ok in axes.items() if not ok)
+
+    reproducible = (axes["seed"] and max_seed_cv < threshold
+                    and axes["repeat"] and max_repeat_cv < threshold)
     audit_passed = dblind.get("publish_gate") == "PASS"
     publish_blockers = []
+    if unexercised:
+        publish_blockers.append("axis_not_exercised:" + ",".join(unexercised))
     if not reproducible:
         publish_blockers.append("reproducibility_threshold")
     if not audit_passed:
@@ -590,6 +610,10 @@ def _compute_audit(raw: dict, config: dict, dblind: dict) -> dict:
         "backend": raw.get("backend", config.get("backend", "unknown")),
         "config_sha256": raw.get("config_sha256", _canonical_digest(config)),
         "acceptance_threshold": threshold,
+        "axis_levels": {"seed": n_seeds, "prompt": n_prompts, "trace": n_traces,
+                        "repeat_min": n_repeat},
+        "axes_measured": axes,
+        "unexercised_axes": unexercised,
         "max_seed_cv": round(max_seed_cv, 6),
         "max_repeat_cv": round(max_repeat_cv, 6),
         "max_prompt_spread": round(max_prompt_spread, 6),
@@ -632,8 +656,14 @@ def _format_scorecard(report: dict, config: dict) -> str:
         f"Verdict: {report['verdict']}",
         f"Max cross-seed CV: {report['max_seed_cv']:.4%} (gate < {threshold:.0%})",
         f"Max repeated-run CV: {report['max_repeat_cv']:.4%}",
-        f"Max prompt spread: {report['max_prompt_spread']:.4%}",
+        f"Max prompt spread: {report['max_prompt_spread']:.4%} (max-min)/mean",
         f"Max trace CV: {report['max_trace_cv']:.4%}",
+        f"Axis levels: seed={report.get('axis_levels', {}).get('seed')} "
+        f"prompt={report.get('axis_levels', {}).get('prompt')} "
+        f"trace={report.get('axis_levels', {}).get('trace')} "
+        f"repeat>={report.get('axis_levels', {}).get('repeat_min')}",
+        f"Unexercised axes: "
+        f"{','.join(report.get('unexercised_axes', [])) or 'none'}",
         f"Trace top-1 stability: "
         f"{ranking_stability.get('top1_stability', 'N/A')}",
         f"Trace ranking Kendall tau: "

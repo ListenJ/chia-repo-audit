@@ -1,0 +1,97 @@
+{
+ "schema_version": 1,
+ "purpose": "Provenance for the prompt-factorial grid: the first run in this artifact that exercises the prompt axis.",
+ "relation": "grid_v6 and grid_v7 exercise 3 seeds at 1 prompt; this grid exercises 3 prompts at 1 seed. Neither exercises both axes, which is why the seed and prompt numbers must not be read off the same table.",
+ "image": {
+  "requested": "ghcr.io/ucb-bar/chia-champsim:latest",
+  "repo_digest": "ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "same_digest_as_grid_v6_and_v7": true
+ },
+ "host": {
+  "provider": "GCP, hackathon short-term funded project",
+  "project": "a3-chia-hack26ath-7744",
+  "instance": "chia-grid",
+  "zone": "us-east1-b",
+  "machine_type": "c2d-standard-8"
+ },
+ "container": {
+  "name": "chia-fact",
+  "created": "2026-09-23T09:40:34+00:00",
+  "finished": "2026-09-23T12:08:18+00:00",
+  "wall_clock_s": 8864,
+  "exit_code": 0,
+  "command": "bash /workspace/.tmp/run_grid_fact.sh",
+  "invocation": "python3 chia_loop/loops/audit_repro.py --version 6 --config /workspace/.tmp/cfg/grid_fact.json --backend champsim_node --generator-mode directory --execution local --output-dir /workspace/results/grid_fact_prompt",
+  "env": { "OMP_NUM_THREADS": "8", "memory_cap": "12 GiB", "shm": "6 GiB" },
+  "mounts": [
+   "/home/devstar7744/repo -> /workspace (rw)",
+   "/home/devstar7744/traces -> /traces (ro)"
+  ]
+ },
+ "code_identity": {
+  "config_path": ".tmp/cfg/grid_fact.json",
+  "config_sha256": "506b48756b68ed5f27c68e59953e65ca2577066db68ce01b950b8d42a7294686",
+  "raw_json_config_sha256": "2bca9e05852928081acb3374a3c299af4eb36f2b36811fa10127e6eecb628918",
+  "git_sha_recorded_by_loop": "unknown",
+  "git_sha_recovered_from_host": "b85b38c34789b5b99a13fd8f4eca223391714786",
+  "gap": "The stage-entry capture wrote 'no-git' and env_pin.git_sha is 'unknown': git inside the container refuses the repository because the mount is owned by uid 1001 while the container runs as uid 1000 (dubious ownership). The commit was verified host-side from the clone, so the identity is known, but the loop did not capture it itself. run_grid_extra.sh carries the same gap."
+ },
+ "champsim": {
+  "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694",
+  "incremental": false,
+  "python": "3.10.19",
+  "distinct_binaries": {
+   "gen_aggressive_offset_s1": "da109cfad7434840",
+   "gen_default_s1": "75fb125cbfe45d10",
+   "gen_fill_only_conservative_s1": "ed0967d4af146b97"
+  },
+  "binary_note": "Three designs, three distinct delivered binaries, none equal to the image default 688278205d6c9fa4."
+ },
+ "traces": {
+  "source": "DPC-4 collection, re-verified on the host after upload",
+  "sha256": {
+   "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": "ecdc1feb586b636273bc7f7572d181a2358c9f5680fbe97eb22002ed4763fa6e",
+   "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": "3585b6c1a3f9d934f06c1e15199a58af6808e290408dc618de19b9dd34302a98",
+   "638.imagick_s-4128B.champsimtrace.xz": "c9b081f75b8b1b7fda06d9db9254cf0c9d5ec1e2cb709207c0fc9ac8475f3825"
+  }
+ },
+ "candidates": {
+  "generator": "gemini-2.5-flash via Vertex AI in the funded project, temperature 0.9, maxOutputTokens 16000",
+  "prompt_contract": "shared MODULE_SPEC, differing design brief (see scripts/real_candidate_generate.py PROMPTS)",
+  "generated": 9,
+  "compiled": 6,
+  "compile_rate_denominator": "all generated candidates, per PRECOMPUTE.md gate 2",
+  "selected_cells": "3 prompts x 1 seed, the largest complete rectangle the compiled set supports",
+  "evidence": "results/factorial_screening_2026-09-23.jsonl"
+ },
+ "results": {
+  "cells": 9,
+  "trials_per_cell": 5,
+  "total_runs": 45,
+  "max_prompt_spread": 2.491752,
+  "prompt_spread_definition": "(max - min) / mean across prompts within the same seed and trace",
+  "per_trace_prompt_spread": {
+   "SPEC17-649.fotonik3d_s-1B": 0.004275,
+   "638.imagick_s-4128B": 0.022686,
+   "ligra_BFSCC": 16.074595
+  },
+  "per_trace_spread_definition": "(max - min) / min, shown to make the ranking claim legible; the scorecard metric uses mean",
+  "bfsc_cycles_by_prompt": {
+   "default": 5600393,
+   "aggressive_offset": 7161605,
+   "fill_only_conservative": 95624440
+  },
+  "trace_top1_stability": 0.666667,
+  "trace_kendall_tau": 0.555556
+ },
+ "gate_correction": {
+  "printed_at_run_time": { "verdict": "REPRODUCIBLE", "publish_gate": "PASS", "outcome": "PUBLISHABLE" },
+  "why_that_was_wrong": "The grid has one seed. _cv and _relative_spread return 0.0 for fewer than two values, so cross-seed CV reported 0.0000% and satisfied the <5% gate on an axis that was never varied. The gate passed on a vacuous metric.",
+  "fix": "audit_repro now counts axis levels and treats an axis with fewer than two levels as unexercised: it cannot satisfy the gate, and publish_blockers records axis_not_exercised. Locked by test_single_level_axis_cannot_pass_the_gate.",
+  "rescored_with": "scripts/rescore_grid.py --raw results/grid_fact_prompt/raw.json --write",
+  "corrected": { "verdict": "NON-REPRODUCIBLE", "publish_gate": "BLOCKED", "publish_blockers": ["axis_not_exercised:seed", "reproducibility_threshold"] },
+  "regression_check": "grid_v6 and grid_v7_gcp rescore to the same NON-REPRODUCIBLE / BLOCKED verdict they printed, with unexercised_axes now correctly listing prompt."
+ },
+ "valid_claims_from_this_grid": "Prompt choice moves the measured cycle count by (max-min)/mean = 249.18%, driven almost entirely by ligra_BFSCC where the spread over the minimum is 1607%. Ranking across traces is unstable (top-1 0.667, tau 0.556). Nothing in this grid speaks to seed variance.",
+ "not_yet_done": "No grid in this artifact exercises the seed and prompt axes simultaneously. The compiled set supports a seeds{1,3} x prompts{aggressive_offset, fill_only_conservative} rectangle that would."
+}

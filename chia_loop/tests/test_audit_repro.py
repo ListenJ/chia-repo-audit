@@ -63,6 +63,31 @@ class AuditMetricTests(unittest.TestCase):
         self.assertGreater(report["max_repeat_cv"], 0)
         self.assertEqual(report["verdict"], "REPRODUCIBLE")
 
+    def test_single_level_axis_cannot_pass_the_gate(self):
+        # A one-seed grid reports cross-seed CV of exactly 0.0000% because there is
+        # nothing to vary, which used to satisfy the <5% gate and print PUBLISHABLE.
+        raw = {
+            "schema_version": 2, "version": 6, "backend": "stub", "config_sha256": "t",
+            "cells": {},
+        }
+        for prompt_index, prompt in enumerate(("aggressive_offset", "default")):
+            for trace_index, trace in enumerate(("trace-a", "trace-b")):
+                base = 1000 + prompt_index * 10 + trace_index
+                raw["cells"][f"1/{prompt}/{trace}"] = {
+                    "seed": 1, "generator_seed": 1, "prompt": prompt, "trace": trace,
+                    "design": {}, "design_sha256": "d",
+                    "median": {"cycles": base},
+                    "trials": [{"cycles": base}, {"cycles": base}],
+                }
+        report = audit_repro._compute_audit(
+            raw, {"acceptance_threshold": 0.05, "version": 6},
+            {"publish_gate": "PASS"})
+        self.assertEqual(report["max_seed_cv"], 0.0)
+        self.assertEqual(report["unexercised_axes"], ["seed"])
+        self.assertEqual(report["verdict"], "NON-REPRODUCIBLE")
+        self.assertEqual(report["publish_gate"], "BLOCKED")
+        self.assertIn("axis_not_exercised:seed", report["publish_blockers"])
+
     def test_error_taxonomy(self):
         result = audit_repro._audit_design_single(
             {"cache_size": "32KB", "replacement": "MRU"},

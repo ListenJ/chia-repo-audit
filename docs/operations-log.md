@@ -792,3 +792,33 @@
   `gen_aggressive_offset_s1`）。论文与 README 已按此改写，"26"这一分母作废。
 - 触发原因：门禁规则本来就要求"任何编译率以全部生成候选为分母"，我引用了行数而不是
   去重后的设计数。
+
+## 2026-09-23 - 因子网格完成，以及门禁在空轴上白送 PUBLISHABLE
+
+- 因子网格 `chia-fact` 完成：3 prompts × 1 seed × 3 traces × 5 重复 = 45 次运行，
+  容器墙钟 8,864 s，exit 0，三个设计三个不同二进制（均非镜像自带 `688278205d6c9fa4`）。
+- 实测 **prompt spread = 249.1752%**，定义为 `(max-min)/mean`（`_relative_spread`）。
+  逐 trace 用 `(max-min)/min` 另算以便阅读排名含义：fotonik3d 0.43%、imagick 2.27%、
+  **ligra_BFSCC 1607%**（default 5,600,393 / aggressive_offset 7,161,605 /
+  fill_only_conservative 95,624,440）。差异几乎全部来自 BFSCC 一条 trace。
+- **门禁缺陷（真实且严重）**：该网格打印 `Verdict: REPRODUCIBLE` / `PUBLISHABLE`。
+  原因是 `_cv` 与 `_relative_spread` 在取值少于 2 个时返回 0.0，而本网格只有 1 个 seed，
+  于是 cross-seed CV 恒为 0.0000% 并满足 <5% 门禁——**门禁在一个从未变化的轴上判了通过**。
+  这与本项目一直批评的"单值轴上的 0.0000%"同源，只是这次是自家门禁中招。
+- 修复：`_compute_audit` 统计各轴水平数，水平数 <2 的轴记为 unexercised，
+  既不能通过复现门禁也计入 `publish_blockers`；scorecard 新增 `Axis levels` 与
+  `Unexercised axes` 两行；新增测试 `test_single_level_axis_cannot_pass_the_gate`，
+  35 个测试全绿。
+- 新增 `scripts/rescore_grid.py`：从留存的 raw.json 重算审计报告。修一个门禁不该
+  意味着再花 2.5 小时重跑仿真才能改一行判决；同时它复用 `_compute_audit`，
+  两条路径不会漂移。
+- 重算结果：因子网格由假 `PUBLISHABLE` 修正为 `NON-REPRODUCIBLE` / `BLOCKED`
+  （blockers: `axis_not_exercised:seed`, `reproducibility_threshold`）；
+  回归检查 v6 与 v7 判决不变，且现在正确地把 prompt 标为未行使轴。
+- 三网格互补关系：v6/v7 = 3 seeds × 1 prompt（测 seed 不测 prompt）；
+  因子 = 1 seed × 3 prompts（反之）。**至今没有任何一个网格同时行使两轴**。
+  已编译候选支持 seeds{1,3} × prompts{aggressive_offset, fill_only_conservative}
+  的 4 格矩形，这是下一个该跑的实验。
+- provenance 缺口（如实记录）：容器内 git 因 uid 1001 挂载 vs uid 1000 运行而拒绝读仓库，
+  `env_pin.git_sha = "unknown"`、stage 捕获写成 `no-git`；提交号是从宿主侧克隆验证得到的
+  `b85b38c…`，不是循环自己捕获的。
