@@ -1,0 +1,415 @@
+{
+  "spec10": {
+    "n_cases": 10,
+    "laya_verdict_tally": {
+      "equivalent": 6,
+      "not_equivalent": 4
+    },
+    "laya_per_case": {
+      "av-001": {
+        "laya": "not_equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.8774
+      },
+      "av-002": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.3704
+      },
+      "av-003": {
+        "laya": "not_equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.3588
+      },
+      "av-004": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.9718
+      },
+      "av-005": {
+        "laya": "not_equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.8594
+      },
+      "gold-01": {
+        "laya": "equivalent",
+        "expected": "equivalent",
+        "margin": 0.8934
+      },
+      "gold-02": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.976
+      },
+      "gold-03": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.0728
+      },
+      "gold-04": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.6202
+      },
+      "gold-05": {
+        "laya": "not_equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.8746
+      }
+    },
+    "laya_verdict_accuracy_vs_expected": 0.5,
+    "mean_margin": 0.6875,
+    "low_margin_cases": 1,
+    "kappa_vs_gemini-2.5-flash": 0.1379,
+    "agreement_vs_gemini-2.5-flash": 0.5,
+    "llm_verdicts_gemini-2.5-flash": {
+      "av-001": "not_equivalent",
+      "av-002": "not_equivalent",
+      "av-003": "not_equivalent",
+      "av-004": "not_equivalent",
+      "av-005": "not_equivalent",
+      "gold-01": "equivalent",
+      "gold-02": "not_equivalent",
+      "gold-03": "not_equivalent",
+      "gold-04": "not_equivalent",
+      "gold-05": "not_equivalent"
+    },
+    "kappa_vs_gemini-2.5-pro": 0.1379,
+    "agreement_vs_gemini-2.5-pro": 0.5,
+    "llm_verdicts_gemini-2.5-pro": {
+      "av-001": "not_equivalent",
+      "av-002": "not_equivalent",
+      "av-003": "not_equivalent",
+      "av-004": "not_equivalent",
+      "av-005": "not_equivalent",
+      "gold-01": "equivalent",
+      "gold-02": "not_equivalent",
+      "gold-03": "not_equivalent",
+      "gold-04": "not_equivalent",
+      "gold-05": "not_equivalent"
+    },
+    "llm_vs_llm_kappa_on_laya_shared": 1.0
+  },
+  "semantic4": {
+    "n_cases": 4,
+    "laya_verdict_tally": {
+      "not_equivalent": 2,
+      "equivalent": 2
+    },
+    "laya_per_case": {
+      "sem-01": {
+        "laya": "not_equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1408
+      },
+      "sem-02": {
+        "laya": "not_equivalent",
+        "expected": "equivalent",
+        "margin": 0.415
+      },
+      "sem-03": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.15
+      },
+      "sem-esc-01": {
+        "laya": "equivalent",
+        "expected": "equivalent",
+        "margin": 0.0102
+      }
+    },
+    "laya_verdict_accuracy_vs_expected": 0.5,
+    "mean_margin": 0.179,
+    "low_margin_cases": 3,
+    "kappa_vs_gemini-2.5-flash": -0.5,
+    "agreement_vs_gemini-2.5-flash": 0.25,
+    "llm_verdicts_gemini-2.5-flash": {
+      "sem-01": "not_equivalent",
+      "sem-02": "equivalent",
+      "sem-03": "not_equivalent",
+      "sem-esc-01": "not_equivalent"
+    },
+    "kappa_vs_gemini-2.5-pro": -0.5,
+    "agreement_vs_gemini-2.5-pro": 0.25,
+    "llm_verdicts_gemini-2.5-pro": {
+      "sem-01": "not_equivalent",
+      "sem-02": "equivalent",
+      "sem-03": "not_equivalent",
+      "sem-esc-01": "not_equivalent"
+    },
+    "llm_vs_llm_kappa_on_laya_shared": 1.0
+  },
+  "fact36": {
+    "n_cases": 36,
+    "laya_verdict_tally": {
+      "equivalent": 35,
+      "not_equivalent": 1
+    },
+    "laya_per_case": {
+      "sem-01": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1744
+      },
+      "sem-02": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1744
+      },
+      "sem-03": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1744
+      },
+      "sem-04": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1744
+      },
+      "sem-05": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1744
+      },
+      "sem-06": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1744
+      },
+      "sem-07": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1744
+      },
+      "sem-08": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1744
+      },
+      "sem-09": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.195
+      },
+      "sem-10": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.195
+      },
+      "sem-11": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.195
+      },
+      "sem-12": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.195
+      },
+      "sem-13": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.195
+      },
+      "sem-14": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.195
+      },
+      "sem-15": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.195
+      },
+      "sem-16": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.344
+      },
+      "sem-17": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.344
+      },
+      "sem-18": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.344
+      },
+      "sem-19": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.344
+      },
+      "sem-20": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.344
+      },
+      "sem-21": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.344
+      },
+      "sem-22": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.2662
+      },
+      "sem-23": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.2662
+      },
+      "sem-24": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.2662
+      },
+      "sem-25": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.2662
+      },
+      "sem-26": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.2662
+      },
+      "sem-27": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1008
+      },
+      "sem-28": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1008
+      },
+      "sem-29": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1008
+      },
+      "sem-30": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.1008
+      },
+      "sem-31": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.0822
+      },
+      "sem-32": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.0822
+      },
+      "sem-33": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.0822
+      },
+      "sem-34": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.0016
+      },
+      "sem-35": {
+        "laya": "equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.0016
+      },
+      "sem-36": {
+        "laya": "not_equivalent",
+        "expected": "not_equivalent",
+        "margin": 0.269
+      }
+    },
+    "laya_verdict_accuracy_vs_expected": 0.0278,
+    "mean_margin": 0.1966,
+    "low_margin_cases": 9,
+    "kappa_vs_gemini-2.5-flash": -0.057,
+    "agreement_vs_gemini-2.5-flash": 0.0556,
+    "llm_verdicts_gemini-2.5-flash": {
+      "sem-01": "not_equivalent",
+      "sem-02": "not_equivalent",
+      "sem-03": "not_equivalent",
+      "sem-04": "not_equivalent",
+      "sem-05": "not_equivalent",
+      "sem-06": "not_equivalent",
+      "sem-07": "not_equivalent",
+      "sem-08": "not_equivalent",
+      "sem-09": "not_equivalent",
+      "sem-10": "not_equivalent",
+      "sem-11": "not_equivalent",
+      "sem-12": "not_equivalent",
+      "sem-13": "not_equivalent",
+      "sem-14": "not_equivalent",
+      "sem-15": "not_equivalent",
+      "sem-16": "not_equivalent",
+      "sem-17": "not_equivalent",
+      "sem-18": "not_equivalent",
+      "sem-19": "not_equivalent",
+      "sem-20": "not_equivalent",
+      "sem-21": "not_equivalent",
+      "sem-22": "not_equivalent",
+      "sem-23": "not_equivalent",
+      "sem-24": "not_equivalent",
+      "sem-25": "not_equivalent",
+      "sem-26": "not_equivalent",
+      "sem-27": "not_equivalent",
+      "sem-28": "not_equivalent",
+      "sem-29": "not_equivalent",
+      "sem-30": "not_equivalent",
+      "sem-31": "not_equivalent",
+      "sem-32": "not_equivalent",
+      "sem-33": "not_equivalent",
+      "sem-34": "equivalent",
+      "sem-35": "equivalent",
+      "sem-36": "equivalent"
+    },
+    "kappa_vs_gemini-2.5-pro": -0.057,
+    "agreement_vs_gemini-2.5-pro": 0.0556,
+    "llm_verdicts_gemini-2.5-pro": {
+      "sem-01": "not_equivalent",
+      "sem-02": "not_equivalent",
+      "sem-03": "not_equivalent",
+      "sem-04": "not_equivalent",
+      "sem-05": "not_equivalent",
+      "sem-06": "not_equivalent",
+      "sem-07": "not_equivalent",
+      "sem-08": "not_equivalent",
+      "sem-09": "not_equivalent",
+      "sem-10": "not_equivalent",
+      "sem-11": "not_equivalent",
+      "sem-12": "not_equivalent",
+      "sem-13": "not_equivalent",
+      "sem-14": "not_equivalent",
+      "sem-15": "not_equivalent",
+      "sem-16": "not_equivalent",
+      "sem-17": "not_equivalent",
+      "sem-18": "not_equivalent",
+      "sem-19": "not_equivalent",
+      "sem-20": "not_equivalent",
+      "sem-21": "not_equivalent",
+      "sem-22": "not_equivalent",
+      "sem-23": "not_equivalent",
+      "sem-24": "not_equivalent",
+      "sem-25": "not_equivalent",
+      "sem-26": "not_equivalent",
+      "sem-27": "not_equivalent",
+      "sem-28": "not_equivalent",
+      "sem-29": "not_equivalent",
+      "sem-30": "not_equivalent",
+      "sem-31": "not_equivalent",
+      "sem-32": "not_equivalent",
+      "sem-33": "not_equivalent",
+      "sem-34": "equivalent",
+      "sem-35": "equivalent",
+      "sem-36": "equivalent"
+    },
+    "llm_vs_llm_kappa_on_laya_shared": 1.0
+  }
+}

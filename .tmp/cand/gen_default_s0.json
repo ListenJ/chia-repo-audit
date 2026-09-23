@@ -1,0 +1,36 @@
+{
+  "candidate_id": "gen_default_s0",
+  "generator_seed": 0,
+  "prompt": "default",
+  "module_name": "gen_default_s0",
+  "design": {
+    "module_name": "gen_default_s0",
+    "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s0 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint64_t last_addr = 0;\n    int64_t stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        if (last_addr != 0) {\n            int64_t new_stride = static_cast<int64_t>(addr) - static_cast<int64_t>(last_addr);\n            if (new_stride == stride) {\n                champsim::address pf_addr(static_cast<uint64_t>(static_cast<int64_t>(addr) + stride));\n                prefetch_line(pf_addr, false, 0);\n            }\n            stride = new_stride;\n        }\n        last_addr = addr;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n",
+    "cache_level": "L2C"
+  },
+  "provenance": {
+    "model": "Pro/deepseek-ai/DeepSeek-V3",
+    "api_base": "https://api.siliconflow.cn/v1",
+    "endpoint": "/chat/completions",
+    "created_at": "2026-09-22T09:19:47+00:00",
+    "latency_s": 7.58,
+    "usage": {
+      "prompt_tokens": 366,
+      "completion_tokens": 281,
+      "total_tokens": 647,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 366
+    },
+    "prompt_sha256": "6f0c3454232e86d8a996e43803085e317d3b1c0fe56dbcf7ef4cfca2162e1740",
+    "prompt_text": "Target simulator: ChampSim (the fork shipped in ghcr.io/ucb-bar/chia-champsim,\nbase revision 164fdb1ed01185a21a39c292937bf26bb7f4c694).\n\nThe module must be one C++ struct that derives from the prefetcher module API:\n\n  #include <cstdint>\n  #include \"address.h\"\n  #include \"modules.h\"\n\n  struct <NAME> : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n      // called on every core-cache access; call prefetch_line(addr, metadata, in)\n      return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n      // called on a fill into the cache being modelled\n      return metadata_in;\n    }\n  };\n\nConstraints: standard library only, no external packages, no template\nparameters, no file or network I/O, state kept in plain member fields.\n\nName the struct exactly `gen_default_s0`.\n\nDesign brief (seed 0): Design a novel L2 software-transparent prefetcher that trains on demand accesses and issues at most one prefetch per access.\n\nReturn only one ```cpp fenced block holding the complete module, including the three #include lines. No prose, no comments describing the plan.",
+    "raw_response": "```cpp\n#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s0 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint64_t last_addr = 0;\n    int64_t stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        if (last_addr != 0) {\n            int64_t new_stride = static_cast<int64_t>(addr) - static_cast<int64_t>(last_addr);\n            if (new_stride == stride) {\n                champsim::address pf_addr(static_cast<uint64_t>(static_cast<int64_t>(addr) + stride));\n                prefetch_line(pf_addr, false, 0);\n            }\n            stride = new_stride;\n        }\n        last_addr = addr;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n```",
+    "parse": "fenced_cpp",
+    "normalizations": [],
+    "warnings": [],
+    "credential_source": "/home/listen/.axiom/axiom-secrets/siliconflow.credentials (value not stored)",
+    "generator_repo_sha": "37c399a840d1176025b039e4ddf392746cf9f0eb"
+  }
+}

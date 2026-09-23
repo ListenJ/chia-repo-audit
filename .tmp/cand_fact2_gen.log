@@ -1,0 +1,10 @@
+[ok] gen_default_s1 parse=fenced_cpp 28.8s warnings=none
+[ok] gen_default_s2 parse=fenced_cpp 58.05s warnings=none
+[ok] gen_default_s3 parse=fenced_cpp 32.02s warnings=none
+[ok] gen_aggressive_offset_s1 parse=fenced_cpp 49.69s warnings=none
+[ok] gen_aggressive_offset_s2 parse=fenced_cpp 43.08s warnings=none
+[ok] gen_aggressive_offset_s3 parse=fenced_cpp 55.42s warnings=none
+[ok] gen_fill_only_conservative_s1 parse=fenced_cpp 10.73s warnings=none
+[ok] gen_fill_only_conservative_s2 parse=fenced_cpp 8.39s warnings=none
+[ok] gen_fill_only_conservative_s3 parse=fenced_cpp 12.84s warnings=none
+candidates_written=9 cells=9 failures=0

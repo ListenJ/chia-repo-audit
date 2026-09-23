@@ -1,0 +1,4 @@
+{"design": "gen_default_s0", "module": "gen_default_s0", "build_success": true, "binary_sha256": "xxxxxxxxxxxxxxxx"}
+{"design": "gen_default_s1", "module": "gen_default_s1", "build_success": true, "binary_sha256": "xxxxxxxxxxxxxxxx"}
+{"design": "gen_default_s2", "module": "gen_default_s2", "build_success": true, "binary_sha256": "xxxxxxxxxxxxxxxx"}
+{"design": "gen_fill_only_conservative_s0", "module": "gen_fill_only_conservative_s0", "build_success": true, "binary_sha256": "xxxxxxxxxxxxxxxx"}

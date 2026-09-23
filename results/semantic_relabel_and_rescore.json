@@ -1,0 +1,87 @@
+{
+  "mode": "write",
+  "defect": "comparators() matched angle brackets inside #include directives, so a difference in how many headers a generated candidate included was labelled E2 'comparison polarity differs'",
+  "sets": {
+    "semantic4": {
+      "relabelled": [],
+      "label_stats": {
+        "verdicts": {},
+        "measurement_grounded_skipped": [
+          "sem-01",
+          "sem-02",
+          "sem-03",
+          "sem-esc-01"
+        ]
+      },
+      "rescored": {
+        "n_scored": 4,
+        "n_labellable": 4,
+        "n_unlabellable": 0,
+        "verdict_accuracy_gemini-2.5-flash": 0.75,
+        "combined_exact_gemini-2.5-flash": 0.5,
+        "verdict_accuracy_gemini-2.5-pro": 0.75,
+        "combined_exact_gemini-2.5-pro": 0.25,
+        "kappa_verdict_only": 1.0,
+        "kappa_combined_label": 0.6667,
+        "annotators_agree_with_each_and_wrong": [
+          "sem-esc-01"
+        ],
+        "annotators_agree_and_right": 3,
+        "annotators_disagree": 0,
+        "gold_class_tally": {
+          "not_equivalent": 2,
+          "equivalent": 2
+        }
+      }
+    },
+    "fact36": {
+      "relabelled": [
+        {
+          "id": "sem-34",
+          "old": "not_equivalent|E2",
+          "new": "unlabellable|",
+          "note": "no shared trace measurement; sources differ only in names or formatting, so no verdict is derivable",
+          "path": "chia_loop/semantic_fact/sem-34.json"
+        },
+        {
+          "id": "sem-35",
+          "old": "not_equivalent|E2",
+          "new": "unlabellable|",
+          "note": "no shared trace measurement; sources differ only in names or formatting, so no verdict is derivable",
+          "path": "chia_loop/semantic_fact/sem-35.json"
+        },
+        {
+          "id": "sem-36",
+          "old": "not_equivalent|E2",
+          "new": "unlabellable|",
+          "note": "no shared trace measurement; sources differ only in names or formatting, so no verdict is derivable",
+          "path": "chia_loop/semantic_fact/sem-36.json"
+        }
+      ],
+      "label_stats": {
+        "verdicts": {
+          "not_equivalent": 33,
+          "unlabellable": 3
+        },
+        "measurement_grounded_skipped": []
+      },
+      "rescored": {
+        "n_scored": 36,
+        "n_labellable": 33,
+        "n_unlabellable": 3,
+        "verdict_accuracy_gemini-2.5-flash": 1.0,
+        "combined_exact_gemini-2.5-flash": 0.2121,
+        "verdict_accuracy_gemini-2.5-pro": 1.0,
+        "combined_exact_gemini-2.5-pro": 0.2727,
+        "kappa_verdict_only": 1.0,
+        "kappa_combined_label": 0.6358,
+        "annotators_agree_with_each_and_wrong": [],
+        "annotators_agree_and_right": 33,
+        "annotators_disagree": 0,
+        "gold_class_tally": {
+          "not_equivalent": 33
+        }
+      }
+    }
+  }
+}

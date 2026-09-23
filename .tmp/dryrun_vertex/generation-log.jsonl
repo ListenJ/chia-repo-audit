@@ -1,0 +1,1 @@
+{"cell": "aggressive_offset/1", "module_name": "gen_aggressive_offset_s1", "model": "gemini-2.5-flash", "generator_repo_sha": "b85b38c34789b5b99a13fd8f4eca223391714786", "prompt_sha256": "68ffc84a0a455435370a670518be31c92f538ecc705fc01eba2d990cbcc0831f", "state": "dry_run", "prompt_chars": 3264}

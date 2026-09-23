@@ -1,0 +1,29 @@
+{
+  "traces": [
+    "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+    "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+    "638.imagick_s-4128B.champsimtrace.xz"
+  ],
+  "n_repeat": 2,
+  "generator_mode": "directory",
+  "candidates_dir": "/workspace/.tmp/grid_cand",
+  "backend": "champsim_node",
+  "champsim_node": {
+    "champsim_root": "/home/ray/champsim",
+    "traces_dir": "/traces",
+    "warmup_instructions": 1000000,
+    "simulation_instructions": 4000000,
+    "cache_level": "L2C",
+    "build_timeout_s": 3600,
+    "run_timeout_s": 1800,
+    "incremental": false
+  },
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "prompts": [
+    "fill_only_conservative"
+  ]
+}

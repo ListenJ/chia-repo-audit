@@ -8,16 +8,22 @@
   "module_name": "gen_fill_only_conservative_s2",
   "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_fill_only_conservative_s2 : public champsim::modules::prefetcher {\n  using prefetcher::prefetcher;\n\n  uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n    // This prefetcher never trains on demand misses, so no action here.\n    return metadata_in;\n  }\n\n  uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n    // Convert the filled address to a block number for arithmetic.\n    champsim::block_number blk{addr};\n\n    // Calculate the address of the next line.\n    champsim::block_number prefetch_blk = blk + 1;\n\n    // Issue a prefetch for the next line, one line ahead.\n    this->prefetch_line(champsim::address{prefetch_blk}, true, metadata_in);\n\n    return metadata_in;\n  }\n};\n"
  },
- "expected_verdict": "not_equivalent",
- "expected_errors": [
-  "E2"
- ],
+ "expected_verdict": "unlabellable",
+ "expected_errors": [],
  "planting": "real generated pair (gen_fill_only_conservative_s1 vs gen_fill_only_conservative_s2); no shared trace measurement; comparison polarity differs",
  "evidence": {
   "design_source_sha256": "60f4a4f0996b94156285004b5205b2a8c463f6495711aad0be0b8b50264178e2",
   "reference_source_sha256": "8c39beb8e7887549d7bcaa11e4ba356f8528a6af1a6e8b6a7f2527ea0a8af2d9",
   "design_cycles": {},
   "reference_cycles": {},
-  "label_basis": "source structure only"
+  "label_basis": "source structure only (headers and comments stripped)",
+  "relabel_note": "no shared trace measurement; sources differ only in names or formatting, so no verdict is derivable",
+  "previous_expected": {
+   "verdict": "not_equivalent",
+   "errors": [
+    "E2"
+   ]
+  },
+  "relabel_defect": "comparators() previously matched the angle brackets in #include directives, so header-count differences were read as comparison-polarity (E2) differences"
  }
 }

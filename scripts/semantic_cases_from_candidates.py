@@ -26,11 +26,28 @@ MEMBER_DECL = re.compile(
 NOT_A_MEMBER = {"struct", "return", "if", "for", "while", "using", "void", "break", "continue"}
 NUM_LITERAL = re.compile(r"(?<![\w.])\d+(?![\w.])")
 COMPARATORS = re.compile(r"(<=|>=|<|>)")
+PREPROC = re.compile(r"^[ \t]*#.*$", re.M)
+BLOCK_COMMENT = re.compile(r"/\*.*?\*/", re.S)
+LINE_COMMENT = re.compile(r"//[^\n]*")
+
+
+def code_only(source: str) -> str:
+    """Keep only what the compiler treats as design.
+
+    ``#include <vector>`` carries two angle brackets, and the comparator extractor
+    read them as comparison operators: three design pairs were labelled E2 "direction
+    error" purely because one candidate included more headers than the other.
+    Preprocessor lines, comments and implicit-object qualifiers are not design.
+    """
+    text = PREPROC.sub("", source)
+    text = BLOCK_COMMENT.sub(" ", text)
+    text = LINE_COMMENT.sub("", text)
+    return text.replace("this->", "")
 
 
 def normalize(source: str, module_name: str) -> str:
     """Strip the identity of the module so a rename cannot masquerade as a design change."""
-    text = re.sub(rf"\b{re.escape(module_name)}\b", "MODULE", source)
+    text = re.sub(rf"\b{re.escape(module_name)}\b", "MODULE", code_only(source))
     return re.sub(r"\s+", " ", text).strip()
 
 
@@ -61,15 +78,15 @@ def class_members(source: str) -> set[str]:
 
 
 def members(source: str) -> set[str]:
-    return class_members(source)
+    return class_members(code_only(source))
 
 
 def comparators(source: str) -> list[str]:
-    return COMPARATORS.findall(source)
+    return COMPARATORS.findall(code_only(source))
 
 
 def literals(source: str) -> list[str]:
-    return NUM_LITERAL.findall(source)
+    return NUM_LITERAL.findall(code_only(source))
 
 
 def measured_cycles(raw: dict | None, candidate_id: str) -> dict:
@@ -97,6 +114,12 @@ def classify(design_src: str, ref_src: str, design_name: str, ref_name: str,
 
     if same_source and same_measured:
         return "equivalent", [], f"source equal after rename+whitespace; cycles equal on {len(shared)} trace(s)"
+    if shared and same_measured:
+        # Measurement outranks text: two sources that differ in every cosmetic way and
+        # take the same number of cycles on every shared trace are equivalent designs.
+        # This is the nullity escape, and the old code fell through and called it not_equivalent.
+        return ("equivalent", [],
+                f"cycles equal on all {len(shared)} shared trace(s) despite textual difference")
 
     added = members(design_src) - members(ref_src)
     removed = members(ref_src) - members(design_src)
@@ -117,6 +140,12 @@ def classify(design_src: str, ref_src: str, design_name: str, ref_name: str,
             errors.append("E2")
             note.append("comparison polarity differs")
     if not errors:
+        if not shared:
+            # No measurement on either side and nothing structural to point at: the two
+            # sources differ, but not in a property any rule can call a design change.
+            # Guessing "not_equivalent" here asserted a behavioral difference from text.
+            return ("unlabellable", [], "no shared trace measurement; sources differ only in "
+                    "names or formatting, so no verdict is derivable")
         note.append("class not derivable from member/literal/operator diff")
     measured = ("cycles differ" if shared and not same_measured
                 else "cycles equal" if shared else "no shared trace measurement")

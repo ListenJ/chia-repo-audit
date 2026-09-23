@@ -822,3 +822,125 @@
 - provenance 缺口（如实记录）：容器内 git 因 uid 1001 挂载 vs uid 1000 运行而拒绝读仓库，
   `env_pin.git_sha = "unknown"`、stage 捕获写成 `no-git`；提交号是从宿主侧克隆验证得到的
   `b85b38c…`，不是循环自己捕获的。
+
+## 2026-09-23（夜）：标签生成器出错、决策头被测证伪，以及第三个 substrate
+
+本轮出现三件互相牵连的事：一处**我们自己的 ground truth 缺陷**、一次
+**决策头 noul 的否证实验**，以及**第三个架构上真正不同的标注 substrate**。
+
+### 1. 我的 gold 标签是错的，两个模型是对的
+
+发现路径很偶然：为了回答"Laya 能不能当第三标注者"，把它跑在已隐藏的审计集上，
+结果它在 36 对真实候选上只中 1 对（`equivalent` 答了 35 次，而 gold 全是
+`not_equivalent`）。我去核对 gold 为什么全是一边倒，才看到 36 对里有 3 对
+（sem-34/35/36）两个生成式标注者都判 `equivalent`、被记成共同错误。
+读 sem-34 的源码：两段实现只差**局部变量名、注释、`#include` 个数和 `this->`**。
+我的标签写着 `not_equivalent|E2`（方向错误）。
+
+根因可复现：`comparators()` 在**未预处理的源码**上抓 `<=|>=|<|>`，
+`#include <vector>` 贡献一个 `<` 一个 `>`。实测取证：
+
+| | `<`/`>` 总数 | 其中在 `#include` 行里 |
+|---|---|---|
+| design（6 个 include） | 8 | 8 |
+| reference（3 个 include） | 3 | 2 |
+
+也就是说，**"缓存替换方向错误"这个结论是从头文件个数推出来的**。
+两个被我们打分的模型，在这三对上判得对，是它们的"错误"其实是我们的错误。
+
+修三处，不是一处：
+- `code_only()`：在提取比较符/字面量/成员之前剥掉预处理行、注释与 `this->`；
+- `classify()` 原来在"文本不同但推不出任何错误类"时默认返回 `not_equivalent`，
+  等于把文本差异当成行为差异。现在显式返回 `unlabellable` 并**不计入评分**；
+- `classify()` 原来在有共享测量且 cycle 完全相等时仍会继续往下判 `not_equivalent`
+  ——这条路径正是逃逸用例的判据来源。现在测量优先于文本。
+
+不重调模型、不重跑仿真：`results/audit_independent_*/raw.json` 留有每个标注者对
+每个用例的原文与 verdict，所以 `scripts/relabel_semantic_cases.py` 只做重打分。
+修正后的真实数字：
+
+| 集合 | 修正前 | 修正后 |
+|---|---|---|
+| 36 对综合标签 κ | 0.7235 | **0.6358**（33 对可判，3 对 unlabellable） |
+| 36 对 verdict 准确率 | 0.9167 / 0.9167 | **1.0 / 1.0** |
+| 两模型共同错误 | sem-34/35/36 | **无** |
+| 4 例测量接地集 | κ 0.667，共同错误 sem-esc-01 | 不变（该集是 dict 之外的 int 型 cycle 证据，重标脚本明确跳过） |
+
+一条必须同时记下的自律：重标脚本第一次 dry-run 时把 **sem-esc-01 从 `equivalent`
+改成了 `not_equivalent|E4`**——因为它读不到该用例 int 型的 `design_cycles`，
+退回了纯文本推演，于是把"逃逸用例"这个论文核心证据**改错了**。
+加了"带测量证据的用例不得由文本重derive"的护栏后才敢落盘。修 bug 的脚本自己会引入
+同类 bug，这句话本轮又被验证了一次。
+
+### 2. noul(需批准) 头被否证：它不是保守，是没有信号
+
+v1 闸门第 3 条是"任一 `noul>0.5` ⇒ ESCALATE"。跑 6 个真实决策得到 **6/6 ESCALATE、
+0 AUTO**，其中 D2（本地改写一份 committed scorecard、原件留在 git 历史里）
+noul=0.895，比 D4（真的往公开仓库 push）的 0.848 还高。这暗示信号是反的，
+但"看起来反"不够，所以做对照：`laya_noul_ladder.py` 造 10 个**代码侧已知爆炸半径**
+的场景（tier0 本地可逆 / tier1 花已预授权额度 / tier2 对外写入 / tier3 不可逆销毁），
+量 noul 与 tier 的秩相关。
+
+```
+tier0 (local reversible)  mean=0.2155  max=0.4044   (run_tests=0.082)
+tier3 (irreversible)      mean=0.4581  min=0.2358   (retract_public=0.236)
+Spearman(tier, noul) = +0.4064   n=10
+separation min(tier3)-max(tier0) = -0.1686
+=== 对照裁定: NOT-USABLE-AS-GATE ===
+```
+
+min(tier3) < max(tier0)：**没有任何阈值能把"可逆本地"和"不可逆销毁"分开**。
+更具体：`edit_submission`（改会议提交页，真外写）0.126，比"本地可逆改写"的 0.160
+还低。建立在这种分数上的规则不是保守，是常数——它对所有输入都 ESCALATE，
+于是"自动化决策"名存实亡，而人并没有因此多看到任何模型真正拿不准的地方。
+
+v2 闸门（`laya_gate2.py`）：模型只负责在候选动作里选一个；
+**爆炸半径改成代码侧登记表，按"选项"粒度而不是"问题"粒度判定**；noul 降级为交叉核对，
+与登记表不一致时只留一行痕。重跑同样 6 个决策：**AUTO 2/6，ESCALATE 4/6**，
+且四条升级的理由全部成立（D4/D6 选中真外写动作、D1/D2 的 top1−top2 只有 0.130/0.053），
+交叉核对与登记表一致 5/6。
+
+顺带被抓出来的第二个粒度 bug：v1 把 D5 整道 `next_action` 标成 irreversible，
+于是模型选出 `keep_running`（"先别删、等实验跑完"，全选项里**最**不可逆性最低的那个）
+也被打印成"选中动作属不可逆/外写"。这跟 §门禁空轴、§标签空头文件是同一个形状：
+**标志挂错了粒度，判决就静默地不再测量它名字里的东西。**
+
+### 3. 第三个 substrate：换架构买不到独立性
+
+Laya 是 421M ModernBERT **判别式**头，非自回归、生不成审计要的 rationale，
+与两个生成式模型在架构上真正不同——这是当时唯一能拿到的跨架构数据。
+`scripts/substrate_probe.py` 把它当第三标注者跑在三个已隐藏集合上：
+
+| 集合 | n | 对 gold 准确率 | 与两个 LLM 的 κ |
+|---|---|---|---|
+| 规格用例 spec10 | 10 | 0.500 | 0.138 / 0.138 |
+| 测量接地 semantic4 | 4 | 0.500 | **−0.500 / −0.500** |
+| 真实生成对 fact36 | 36 | **0.0278**（1/36） | −0.057 / −0.057 |
+
+36 对里它把 35 次答成 `equivalent`。三个集合里两个是**负** κ——不是无信息，是反向。
+
+最有价值的一格：在 sem-esc-01（模拟器逃逸，gold 由 cycle 相等给出 `equivalent`，
+两个生成式模型都答 `not_equivalent`）上，Laya 答 `equivalent`，**判对了**——
+但 top1−top2 = **0.010**。它对一个的理由没有任何验证器能识别出来；
+而奖励"与测量一致"的打分规则会收下这一分，同时看不见同一个默认值在别处 36 战 35 负。
+
+结论写进论文 §A third substrate：**独立性是证据通道的属性，不是模型族的属性**；
+这里只有模拟器提供独立通道。这也正面回答了"两个标注者同属一家供应商"那条弱项——
+补一个真正不同架构的评审者不会更好，会更差。
+
+### 4. 两轴网格与算力
+
+- `chia-both`（VM1，`seeds{1,3} × prompts{aggressive_offset, fill_only_conservative}`，
+  4 格 / 36 次运行）从 HEAD `118d313` 起。这一步补上了此前在
+  `results/grid_fact_prompt/provenance.json` 里明文登记的缺口：
+  "至今没有任何一个网格同时行使 seed 与 prompt 两轴"。
+- 活性取证：VM1 由 `ray::ChampSimNode.build_champsim` 进到 `run_champsim`，
+  loadavg 1.16→2.77；VM2 的 `grid_x_fill_only_s2s3` 已在 `run_champsim`。
+  两台的 `results/<grid>/` 目前都只有 `env_pin.json`（正常：cell 在结束时批量写）。
+- 我自己造成的两次权限事故如实记录：为解开 `git reset --hard` 而 `chown -R devstar7744 ~/repo`，
+  导致容器（uid 1000）写不了 `.tmp/grid_git_sha` / `.tmp/grid_start`（`Permission denied`），
+  网格本身不受影响；两台都 `chmod -R a+rwX .tmp` 后清掉陈旧标记。
+  教训：**改属主之前先问谁在写这条路径。**
+- 论文：3 页 → **4 页**，0 error、0 undefined reference、0 Overfull hbox；
+  测试 35 → **39 全绿**（新增 4 条锁住 `#include` 尖括号、`unlabellable`、
+  真字面量差异仍判 E1、测量优先于文本）。

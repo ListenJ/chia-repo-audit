@@ -1,0 +1,33 @@
+2026-09-22 02:32:40,840	INFO usage_lib.py:447 -- Usage stats collection is disabled.
+2026-09-22 02:32:40,840	INFO scripts.py:936 -- [37mLocal node IP[39m: [1m172.17.0.2[22m
+2026-09-22 02:32:43,896	SUCC scripts.py:975 -- [32m--------------------[39m
+2026-09-22 02:32:43,896	SUCC scripts.py:976 -- [32mRay runtime started.[39m
+2026-09-22 02:32:43,896	SUCC scripts.py:977 -- [32m--------------------[39m
+2026-09-22 02:32:43,896	INFO scripts.py:979 -- [36mNext steps[39m
+2026-09-22 02:32:43,896	INFO scripts.py:982 -- To add another node to this Ray cluster, run
+2026-09-22 02:32:43,896	INFO scripts.py:985 -- [1m  ray start --address='172.17.0.2:6379'[22m
+2026-09-22 02:32:43,896	INFO scripts.py:996 -- To connect to this Ray cluster:
+2026-09-22 02:32:43,896	INFO scripts.py:998 -- [35mimport[39m[26m ray
+2026-09-22 02:32:43,896	INFO scripts.py:999 -- ray[35m.[39m[26minit()
+2026-09-22 02:32:43,896	INFO scripts.py:1013 -- To submit a Ray job using the Ray Jobs CLI:
+2026-09-22 02:32:43,896	INFO scripts.py:1014 -- [1m  RAY_API_SERVER_ADDRESS='http://127.0.0.1:8265' ray job submit --working-dir . -- python my_script.py[22m
+2026-09-22 02:32:43,896	INFO scripts.py:1023 -- See https://docs.ray.io/en/latest/cluster/running-applications/job-submission/index.html 
+2026-09-22 02:32:43,896	INFO scripts.py:1027 -- for more information on submitting Ray jobs to the Ray cluster.
+2026-09-22 02:32:43,896	INFO scripts.py:1032 -- To terminate the Ray runtime, run
+2026-09-22 02:32:43,896	INFO scripts.py:1033 -- [1m  ray stop[22m
+2026-09-22 02:32:43,896	INFO scripts.py:1036 -- To view the status of the cluster, use
+2026-09-22 02:32:43,897	INFO scripts.py:1037 --   [1mray status[22m[26m
+2026-09-22 02:32:43,897	INFO scripts.py:1041 -- To monitor and debug Ray, view the dashboard at 
+2026-09-22 02:32:43,897	INFO scripts.py:1042 --   [1m127.0.0.1:8265[22m[26m
+2026-09-22 02:32:43,897	INFO scripts.py:1049 -- [4mIf connection to the dashboard fails, check your firewall settings and network configuration.[24m
+2026-09-22 02:32:44,776	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-22 02:32:44,787	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "noop", "module": "probe_noop", "incremental": true, "build_success": true, "build_s": 1.9, "binary_sha256": "688278205d6c9fa4", "binary_bytes": 37861176, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 14.2, "success": true, "instructions": 2000001, "cycles": 1129305, "ipc": 1.7710016337481902}
+{"design": "next_line", "module": "probe_next_line", "incremental": true, "build_success": true, "build_s": 0.8, "binary_sha256": "688278205d6c9fa4", "binary_bytes": 37861176, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 14.5, "success": true, "instructions": 2000001, "cycles": 1129305, "ipc": 1.7710016337481902}
+{"design": "llm_gen_default_s0", "module": "gen_default_s0", "incremental": true, "build_success": true, "build_s": 0.9, "binary_sha256": "688278205d6c9fa4", "binary_bytes": 37861176, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 15.9, "success": true, "instructions": 2000001, "cycles": 1129305, "ipc": 1.7710016337481902}
+{"design": "noop_cold", "module": "probe_noop", "incremental": false, "build_success": true, "build_s": 1440.0, "binary_sha256": "8a4884c11c4995dc", "binary_bytes": 37855336, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 13.9, "success": true, "instructions": 2000001, "cycles": 1138748, "ipc": 1.7563157081285763}
+{"design": "next_line_cold", "module": "probe_next_line", "incremental": false, "build_success": true, "build_s": 1390.2, "binary_sha256": "bee5b5b60c6f4437", "binary_bytes": 37863376, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 14.6, "success": true, "instructions": 2000001, "cycles": 1129305, "ipc": 1.7710016337481902}
+{"design": "noop_small_window", "module": "probe_noop", "incremental": true, "build_success": true, "build_s": 0.7, "binary_sha256": "bee5b5b60c6f4437", "binary_bytes": 37863376, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 3.3, "success": true, "instructions": 400000, "cycles": 227700, "ipc": 1.7566974088713219}
+probe_rc=0

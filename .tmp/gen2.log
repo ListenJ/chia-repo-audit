@@ -1,0 +1,7 @@
+[ok] gen_default_s0 parse=fenced_cpp 9.8s warnings=none
+[ok] gen_default_s1 parse=fenced_cpp 9.27s warnings=none
+[ok] gen_default_s2 parse=fenced_cpp 9.16s warnings=none
+[ok] gen_aggressive_offset_s0 parse=fenced_cpp 11.93s warnings=none
+[ok] gen_aggressive_offset_s1 parse=fenced_cpp 12.89s warnings=none
+[ok] gen_aggressive_offset_s2 parse=fenced_cpp 16.12s warnings=none
+candidates_written=6 cells=6 failures=0

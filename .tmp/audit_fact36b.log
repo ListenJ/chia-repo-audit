@@ -1,0 +1,92 @@
+sem-01    gemini-2.5-flash   not_equivalent|E1,E2,E3,E4   ok
+sem-01    gemini-2.5-pro     not_equivalent|E1,E2,E3,E4   ok
+sem-02    gemini-2.5-flash   not_equivalent|E1,E2,E3,E4   ok
+sem-02    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-03    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-03    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-04    gemini-2.5-flash   not_equivalent|E1,E3,E4      ok
+sem-04    gemini-2.5-pro     not_equivalent|E1,E3,E4      ok
+sem-05    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-05    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-06    gemini-2.5-flash   not_equivalent|E1,E3,E4      ok
+sem-06    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-07    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-07    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-08    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-08    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-09    gemini-2.5-flash   not_equivalent|E1,E3,E4      ok
+sem-09    gemini-2.5-pro     not_equivalent|E1,E2,E3      ok
+sem-10    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-10    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-11    gemini-2.5-flash   not_equivalent|E1,E3,E4      ok
+sem-11    gemini-2.5-pro     not_equivalent|E1,E3,E4      ok
+sem-12    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-12    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-13    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-13    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-14    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-14    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-15    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-15    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-16    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-16    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-17    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-17    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-18    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-18    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-19    gemini-2.5-flash   not_equivalent|E2,E3,E4      ok
+sem-19    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-20    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-20    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-21    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-21    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-22    gemini-2.5-flash   not_equivalent|E3            ok
+sem-22    gemini-2.5-pro     not_equivalent|E3            ok
+sem-23    gemini-2.5-flash   not_equivalent|E3            ok
+sem-23    gemini-2.5-pro     not_equivalent|E3            ok
+sem-24    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-24    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-25    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-25    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-26    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-26    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-27    gemini-2.5-flash   not_equivalent|E1,E2,E3,E4   ok
+sem-27    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-28    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-28    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-29    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-29    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-30    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-30    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-31    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-31    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-32    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-32    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-33    gemini-2.5-flash   not_equivalent|E3,E4         ok
+sem-33    gemini-2.5-pro     not_equivalent|E3,E4         ok
+sem-34    gemini-2.5-flash   equivalent|                  ok
+sem-34    gemini-2.5-pro     equivalent|                  ok
+sem-35    gemini-2.5-flash   equivalent|                  ok
+sem-35    gemini-2.5-pro     equivalent|                  ok
+sem-36    gemini-2.5-flash   equivalent|                  ok
+sem-36    gemini-2.5-pro     equivalent|                  ok
+{
+ "n_cases": 36,
+ "kappa_combined_label": 0.7235023041474655,
+ "kappa_verdict_only": 1.0,
+ "observed_agreement": 0.8611,
+ "per_model": {
+  "gemini-2.5-flash": {
+   "n": 36,
+   "parse_ok": 36,
+   "verdict_accuracy": 0.9167,
+   "error_set_exact": 0.1944
+  },
+  "gemini-2.5-pro": {
+   "n": 36,
+   "parse_ok": 36,
+   "verdict_accuracy": 0.9167,
+   "error_set_exact": 0.25
+  }
+ }
+}

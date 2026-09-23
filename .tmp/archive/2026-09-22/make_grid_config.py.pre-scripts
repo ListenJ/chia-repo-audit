@@ -1,0 +1,168 @@
+"""Emit the grid config from the candidates that actually compiled.
+
+Takes screening logs (one or more), keeps only designs reported as built, copies
+those candidate JSONs into .tmp/grid_cand, and writes a config whose seeds and
+prompts are exactly the cells present, so directory mode can never fall back to
+another design.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+import shutil
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[1]
+TRACES = [
+    "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+    "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+    "638.imagick_s-4128B.champsimtrace.xz",
+]
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--logs", nargs="+", required=True,
+                        help="screening JSONL logs from scripts/module_effect_control.py")
+    parser.add_argument("--candidate-dirs", nargs="+", required=True)
+    parser.add_argument("--warmup-instructions", type=int, default=1_000_000)
+    parser.add_argument("--simulation-instructions", type=int, default=4_000_000)
+    parser.add_argument("--n-repeat", type=int, default=2)
+    parser.add_argument("--out", type=Path, default=REPO / ".tmp/cfg/grid.json")
+    args = parser.parse_args()
+
+    built = set()
+    for name in args.logs:
+        log = Path(name)
+        if not log.is_file():
+            print(f"screening log {log} does not exist yet", file=sys.stderr)
+            continue
+        for line in log.read_text().splitlines():
+            line = line.strip()
+            if not line.startswith('{"design'):
+                continue
+            record = json.loads(line)
+            if record.get("build_success"):
+                built.add(record["module"])
+            elif record.get("binary_sha256"):
+                built.discard(record["module"])
+
+    staging = REPO / ".tmp/grid_cand"
+    if staging.is_dir():
+        shutil.rmtree(staging)
+    staging.mkdir(parents=True)
+
+    # A design's prompt contract is recoverable from the retained raw prompt: the
+    # text before the cell-specific brief, with the module name normalised out.
+    # Designs generated under different contracts must not share one grid cell.
+    gathered = {}
+    for directory in args.candidate_dirs:
+        for path in sorted(Path(directory).glob("gen_*.json")):
+            record = json.loads(path.read_text())
+            module = record["design"]["module_name"]
+            if module not in built:
+                continue
+            prov = record.get("provenance", {})
+            prompt_text = prov.get("prompt_text", "")
+            spec = hashlib.sha256(
+                re.sub(r"gen_\w+", "<NAME>", prompt_text.split("Design brief")[0]).encode()
+            ).hexdigest()[:12]
+            gathered[module] = {
+                "path": path,
+                "cell": (record["prompt"], record["generator_seed"]),
+                "spec": spec,
+                "repaired": bool(prov.get("repair_round")),
+            }
+    if len(gathered) < 3:
+        print(f"only {len(gathered)} compiled designs: {sorted(gathered)}", file=sys.stderr)
+        return 1
+
+    # Directory mode falls back to the whole pool for a cell with no matching
+    # candidate, which would silently score the wrong design. Keep the largest
+    # complete one-shot seed x prompt rectangle inside a single contract.
+    def rectangle(filled):
+        filled = set(filled)
+        seeds = {s for (p, s) in filled}
+        prompts = {p for (p, s) in filled}
+        while seeds and prompts:
+            bad_seed = next((s for s in seeds
+                             if not all((p, s) in filled for p in prompts)), None)
+            bad_prompt = next((p for p in prompts
+                               if not all((p, s) in filled for s in seeds)), None)
+            if bad_seed is None and bad_prompt is None:
+                return seeds, prompts
+            if bad_seed is not None:
+                seeds.discard(bad_seed)
+            else:
+                prompts.discard(bad_prompt)
+        return set(), set()
+
+    best = (0, set(), set(), {}, "")
+    by_spec = {}
+    for name, design in gathered.items():
+        if not design["repaired"]:
+            by_spec.setdefault(design["spec"], {})[name] = design
+    for spec, designs in sorted(by_spec.items()):
+        cells = {}
+        for name, design in sorted(designs.items()):
+            if design["cell"] in cells:
+                # Directory mode would silently pick one of two designs for the
+                # same cell, so the grid must not start.
+                print(f"cell {design['cell']} claimed by {cells[design['cell']]} and {name}",
+                      file=sys.stderr)
+                return 1
+            cells[design["cell"]] = name
+        seeds, prompts = rectangle(cells)
+        picked = {c: n for c, n in cells.items() if c[0] in prompts and c[1] in seeds}
+        if len(picked) > best[0]:
+            best = (len(picked), seeds, prompts, picked, spec)
+        elif len(picked) == best[0] and picked:
+            print(f"contract {spec} ties at {len(picked)} cells", file=sys.stderr)
+    count, seeds, prompts, cells, contract = best
+    if not cells:
+        print("compiled one-shot designs do not fill any seed x prompt rectangle; "
+              f"contracts={sorted(set(d['spec'] for d in gathered.values()))}",
+              file=sys.stderr)
+        return 1
+    if count < 3:
+        print(f"largest one-shot rectangle has {count} cells, need 3: {sorted(cells)}",
+              file=sys.stderr)
+        return 1
+
+    dropped = sorted(set(gathered) - set(cells.values()))
+    if dropped:
+        print(f"grid drops compiled designs: {dropped}")
+    for module in cells.values():
+        shutil.copy(gathered[module]["path"], staging / gathered[module]["path"].name)
+
+    config = {
+        "traces": TRACES,
+        "n_repeat": args.n_repeat,
+        "generator_mode": "directory",
+        "candidates_dir": "/workspace/.tmp/grid_cand",
+        "backend": "champsim_node",
+        "champsim_node": {
+            "champsim_root": "/home/ray/champsim",
+            "traces_dir": "/traces",
+            "warmup_instructions": args.warmup_instructions,
+            "simulation_instructions": args.simulation_instructions,
+            "cache_level": "L2C",
+            "build_timeout_s": 3600,
+            "run_timeout_s": 1800,
+            "incremental": False,
+        },
+        "seeds": sorted(seeds),
+        "prompts": sorted(prompts),
+    }
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(json.dumps(config, indent=2))
+    print(f"contract={contract} seeds={sorted(seeds)} prompts={sorted(prompts)} "
+          f"cells={count} designs={sorted(cells.values())} config={args.out}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

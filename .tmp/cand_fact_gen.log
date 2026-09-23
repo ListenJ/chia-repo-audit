@@ -1,0 +1,10 @@
+[fail] default/1: ValueError unbalanced braces in candidate module
+[fail] default/2: ValueError unbalanced braces in candidate module
+[fail] default/3: ValueError unbalanced braces in candidate module
+[fail] aggressive_offset/1: ValueError unbalanced braces in candidate module
+[fail] aggressive_offset/2: ValueError unbalanced braces in candidate module
+[fail] aggressive_offset/3: ValueError unbalanced braces in candidate module
+[ok] gen_fill_only_conservative_s1 parse=fenced_cpp 14.11s warnings=none
+[ok] gen_fill_only_conservative_s2 parse=fenced_cpp 9.34s warnings=none
+[ok] gen_fill_only_conservative_s3 parse=fenced_cpp 11.7s warnings=none
+candidates_written=3 cells=9 failures=6

@@ -1,0 +1,10 @@
+2026-09-22T18:58:19+08:00 watch start
+2026-09-22T21:36:26+08:00 grid=exited baseline=exited
+  "scorecard": "CHIA reproducibility audit (config v6)\n========================================================\nBackend: champsim_node\nVerdict: NON-REPRODUCIBLE\nMax cross-seed CV: 78.1641% (gate < 5%)\nMax repeated-run CV: 0.0000%\nMax prompt spread: 0.0000%\nMax trace CV: 163.3321%\nTrace top-1 stability: 0.666667\nTrace ranking Kendall tau: 0.555556\n========================================================\nDouble-blind protocol self-test:\n  Cohen's kappa: 1.0 (gate 0.7)\n  Adversarial detection: 1.0\n  Gold calibration: 5/5\n  Error distribution: {'E0': 0, 'E1': 2, 'E2': 2, 'E3': 2, 'E4': 3}\n  Publish gate: BLOCKED\n  Publish blockers: ['reproducibility_threshold']\n========================================================\nBLOCKED"
+grid_rc=0
+2026-09-22T21:36:26+08:00 grid tail above
+2026-09-22T21:36:26+08:00 reference evidence copied
+2026-09-22T21:36:26+08:00 checker rc=1 written to .tmp/grid_check.json
+passed: False rows: 9 designs: 3 distinct binaries: 3
+  FAIL moves_cycles_vs_reference: ['fill_only_conservative/2 on 638.imagick_s-4128B.champsimtrace.xz equals noop at 1.56132e+06']
+2026-09-22T21:36:26+08:00 watch end

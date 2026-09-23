@@ -1,0 +1,160 @@
+{
+  "schema_version": 2,
+  "version": 6,
+  "backend": "champsim_node",
+  "config": {
+    "version": 6,
+    "backend": "champsim_node",
+    "generator_mode": "directory",
+    "candidate_catalog": [
+      {
+        "candidate_id": "lru_reference",
+        "design": {
+          "llc_replacement": "lru",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "mru_variant",
+        "design": {
+          "llc_replacement": "mru",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "fifo_variant",
+        "design": {
+          "llc_replacement": "fifo",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "srrip_variant",
+        "design": {
+          "llc_replacement": "srrip",
+          "branch_predictor": "bimodal"
+        }
+      }
+    ],
+    "seeds": [
+      0,
+      1
+    ],
+    "prompts": [
+      "default"
+    ],
+    "traces": [
+      "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz"
+    ],
+    "acceptance_threshold": 0.05,
+    "n_repeat": 1,
+    "kappa_gate": 0.7,
+    "re_audit_ratio": 0.2,
+    "candidates_dir": "/workspace/.tmp/cand",
+    "champsim_node": {
+      "champsim_root": "/home/ray/champsim",
+      "traces_dir": "/traces",
+      "warmup_instructions": 1000000,
+      "simulation_instructions": 2000000,
+      "cache_level": "L2C",
+      "build_timeout_s": 1800,
+      "run_timeout_s": 1800,
+      "incremental": true
+    },
+    "champsim": {}
+  },
+  "config_sha256": "cc33747a9383522f0fc833b90acf0bbc0606ce94a785fb72e9864f2969bf34ad",
+  "git_sha": "37c399a",
+  "n_cells": 2,
+  "n_candidates": 2,
+  "cells": {
+    "0/default/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": {
+      "seed": 0,
+      "prompt": "default",
+      "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+      "candidate_id": "gen_default_s0",
+      "candidate_sha256": "49916da6d5bad0eb973856bbab26f90ff6a026c7c7e3f19ac86dbee5b16c47f7",
+      "generator_seed": 0,
+      "design": {
+        "module_name": "gen_default_s0",
+        "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s0 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint64_t last_addr = 0;\n    int64_t stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        if (last_addr != 0) {\n            int64_t new_stride = static_cast<int64_t>(addr) - static_cast<int64_t>(last_addr);\n            if (new_stride == stride) {\n                champsim::address pf_addr(static_cast<uint64_t>(static_cast<int64_t>(addr) + stride));\n                prefetch_line(pf_addr, false, 0);\n            }\n            stride = new_stride;\n        }\n        last_addr = addr;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "0d550b442d42160f13448aa8f5c9170829fc4a26916e6070a9f797cbe3b1b40b",
+      "median": {
+        "cycles": 1129305.0,
+        "ipc": 1.7710016337481902,
+        "l1_miss_rate": NaN,
+        "seed": 0,
+        "prompt": "default",
+        "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_default_s0",
+          "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s0 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint64_t last_addr = 0;\n    int64_t stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        if (last_addr != 0) {\n            int64_t new_stride = static_cast<int64_t>(addr) - static_cast<int64_t>(last_addr);\n            if (new_stride == stride) {\n                champsim::address pf_addr(static_cast<uint64_t>(static_cast<int64_t>(addr) + stride));\n                prefetch_line(pf_addr, false, 0);\n            }\n            stride = new_stride;\n        }\n        last_addr = addr;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node"
+      },
+      "trials": [
+        {
+          "cycles": 1129305.0,
+          "ipc": 1.7710016337481902,
+          "l1_miss_rate": NaN,
+          "seed": 0,
+          "prompt": "default",
+          "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_default_s0",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s0 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint64_t last_addr = 0;\n    int64_t stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        if (last_addr != 0) {\n            int64_t new_stride = static_cast<int64_t>(addr) - static_cast<int64_t>(last_addr);\n            if (new_stride == stride) {\n                champsim::address pf_addr(static_cast<uint64_t>(static_cast<int64_t>(addr) + stride));\n                prefetch_line(pf_addr, false, 0);\n            }\n            stride = new_stride;\n        }\n        last_addr = addr;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node"
+        }
+      ]
+    },
+    "1/default/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": {
+      "seed": 1,
+      "prompt": "default",
+      "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+      "candidate_id": "gen_default_s1",
+      "candidate_sha256": "b364375e6222bd7d15ff1ee72479efa0e9580fa14b56ffed76f379cbcd41e67e",
+      "generator_seed": 1,
+      "design": {
+        "module_name": "gen_default_s1",
+        "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    champsim::address last_addr = 0;\n    int64_t last_stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        if (last_addr != 0 && !cache_hit && type == access_type::LOAD) {\n            int64_t stride = addr - last_addr;\n            if (stride == last_stride) {\n                champsim::address pf_addr = addr + stride;\n                prefetch_line(pf_addr, 0, 0);\n            }\n            last_stride = stride;\n        }\n        last_addr = addr;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n",
+        "cache_level": "L2C"
+      },
+      "design_sha256": "c3a6eca75c18befe422c0d9d20bf85a0085bcd92cae59171b736eca14fc6f8a8",
+      "median": {
+        "cycles": 1129305.0,
+        "ipc": 1.7710016337481902,
+        "l1_miss_rate": NaN,
+        "seed": 1,
+        "prompt": "default",
+        "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+        "design": {
+          "module_name": "gen_default_s1",
+          "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    champsim::address last_addr = 0;\n    int64_t last_stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        if (last_addr != 0 && !cache_hit && type == access_type::LOAD) {\n            int64_t stride = addr - last_addr;\n            if (stride == last_stride) {\n                champsim::address pf_addr = addr + stride;\n                prefetch_line(pf_addr, 0, 0);\n            }\n            last_stride = stride;\n        }\n        last_addr = addr;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n",
+          "cache_level": "L2C"
+        },
+        "backend": "champsim_node"
+      },
+      "trials": [
+        {
+          "cycles": 1129305.0,
+          "ipc": 1.7710016337481902,
+          "l1_miss_rate": NaN,
+          "seed": 1,
+          "prompt": "default",
+          "trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+          "design": {
+            "module_name": "gen_default_s1",
+            "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s1 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    champsim::address last_addr = 0;\n    int64_t last_stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        if (last_addr != 0 && !cache_hit && type == access_type::LOAD) {\n            int64_t stride = addr - last_addr;\n            if (stride == last_stride) {\n                champsim::address pf_addr = addr + stride;\n                prefetch_line(pf_addr, 0, 0);\n            }\n            last_stride = stride;\n        }\n        last_addr = addr;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n",
+            "cache_level": "L2C"
+          },
+          "backend": "champsim_node"
+        }
+      ]
+    }
+  }
+}

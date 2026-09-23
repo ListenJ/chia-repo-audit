@@ -1,0 +1,25 @@
+{
+  "traces": [
+    "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz"
+  ],
+  "n_repeat": 1,
+  "generator_mode": "directory",
+  "candidates_dir": "/workspace/.tmp/cand",
+  "backend": "champsim_node",
+  "champsim_node": {
+    "champsim_root": "/home/ray/champsim",
+    "traces_dir": "/traces",
+    "warmup_instructions": 1000000,
+    "simulation_instructions": 2000000,
+    "cache_level": "L2C",
+    "build_timeout_s": 1800,
+    "run_timeout_s": 1800,
+    "incremental": true
+  },
+  "seeds": [
+    0
+  ],
+  "prompts": [
+    "aggressive_offset"
+  ]
+}

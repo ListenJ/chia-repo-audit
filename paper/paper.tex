@@ -26,10 +26,14 @@ $78.16\%$ against a $5\%$ threshold while repeated-run CV is $0.0000\%$ over 45
 runs, so the publish gate reads \textsc{Blocked}. Two candidates differing only in
 a struct name and indentation carry distinct source, design and binary digests yet
 bit-identical cycles on all three traces: the seed moved the artifact, not the
-design. Ranking is unstable (top-1 $0.667$, Kendall $\tau=0.556$). Annotation
-gives $\kappa=0.859$ on specification diffs but $0.667$ on real generated C++,
-where both auditors agree and are both wrong about a measured simulator escape. We
-report the negatives instead of moving the thresholds.
+design. Ranking is unstable (top-1 $0.667$, Kendall $\tau=0.556$) and prompt
+response reaches $249.18\%$. Annotation gives $\kappa=0.859$ on specification diffs
+and $0.636$ on real generated C++, where both auditors are right on all 33
+labellable pairs and wrong together on one measured simulator escape. Auditing that
+$\kappa$ found the defect inside it: our own label generator read \texttt{\#include}
+angle brackets as comparison operators and mislabelled three rename-only pairs, so
+the annotators we were scoring were correct and the ground truth was not. We report
+the negatives and the self-repairs instead of moving the thresholds.
 \end{abstract}
 
 \section{Introduction}
@@ -50,8 +54,12 @@ real simulator, separates the variance sources an aggregate score hides, and
 refuses to publish when the separation fails. We contribute that loop plus what
 it said about us---a \textsc{Blocked} verdict on our own headline claim
 (\S\ref{sec:repro}), evidence that generation seeds move artifacts without
-moving designs, trace-dependent reordering (\S\ref{sec:trace}), and a failure
-mode that text-reading auditors cannot catch (\S\ref{sec:escape}).
+moving designs, trace-dependent reordering (\S\ref{sec:trace}) and prompt response
+at $249.18\%$ (\S\ref{sec:prompt}), a failure mode that text-reading auditors cannot
+catch (\S\ref{sec:escape}), and three defects we found in our own automation---a
+vacuous gate axis (\S\ref{sec:prompt}), a generated ground truth that was wrong
+while the annotators were right (\S\ref{sec:groundtruth}), and an escalation signal
+measured to be anti-correlated with what it named (\S\ref{sec:substrate}).
 
 \section{The Audit Loop}
 \label{sec:loop}
@@ -93,7 +101,7 @@ E4 & Added or fabricated component \\
 
 \textbf{Setup.} \texttt{ghcr.io/ucb-bar/chia-champsim} at digest
 \texttt{sha256:610951d3\ldots}, ChampSim \texttt{164fdb1e\ldots}, Python 3.10.19,
-Ray 2.54.0, one \texttt{c2d-standard-8} VM (\texttt{us-east1-b}); 34 unit tests
+Ray 2.54.0, two \texttt{c2d-standard-8} VMs (\texttt{us-east1-b}); 39 unit tests
 pass inside the image. Three DPC-4 traces (fotonik3d, ligra BFSCC, imagick) with
 SHA-256 in \texttt{results/grid\_v6/provenance.json}, 1M warmup + 4M simulated
 instructions, L2C. Candidates are three real LLM-generated prefetcher modules
@@ -146,24 +154,54 @@ no-op/next-line control pair separates by 23.15\% on BFSCC but only 0.42\% on
 fotonik3d, so a ranking that moves only on fotonik3d is weak evidence and the
 grid must be read per trace, not averaged.
 
+\subsection{Prompt sensitivity is 249\%, and the gate could not see it}
+\label{sec:prompt}
+
+A separate $1\,\text{seed}\times3\,\text{prompt}$ grid over three traces gives
+maximum prompt spread $\mathbf{249.18\%}$, computed as
+$(\max-\min)/\text{mean}$; the
+spread is almost entirely one trace. The same grid carries a second, worse story.
+Because it holds the seed constant, cross-seed CV was computed over a single value,
+and our variance helper returns $0.0$ for fewer than two samples---so the gate
+printed $\text{cross-seed CV}=0.0000\%$, watched it satisfy the $<5\%$ threshold,
+and returned \textsc{Reproducible}/\textsc{Publishable}. \textbf{An axis that never
+varied cannot fail a threshold on that axis}, and our gate had no way to know the
+difference between a measured $0\%$ and an unmeasured one.
+
+The fix counts factor levels: an axis with fewer than two levels is
+\emph{unexercised}, can never satisfy the gate, and is named in
+\texttt{publish\_blockers} as \texttt{axis\_not\_exercised:seed}. Every retained
+\texttt{raw.json} was then rescored without re-running the simulator
+(\texttt{scripts/rescore\_grid.py}), and the scorecard above now prints its axis
+levels next to its verdict. The rescored verdict is
+\textsc{Non-Reproducible}/\textsc{Blocked}. This is the same failure shape as
+\S\ref{sec:groundtruth}: a statistic that silently stops measuring the thing its
+name claims, and returns a passing value while doing so.
+
 \subsection{Independent annotators, and where they agree and are wrong}
 \label{sec:audit}
 
 On the 10 specification cases the two models give Cohen's
 $\kappa=\mathbf{0.859}$ (0.900 agreement, verdict accuracy 10/10 for both,
-error-class exactness 7/10 and 8/10). Widening to all 36 pairs of the nine
+error-class exactness 7/10 and 8/10). Widening to pairs of the nine
 factorial candidates, built from real generated C++ rather than dictionary diffs,
-gives $\kappa=\mathbf{0.7235}$ overall and $\kappa=\mathbf{1.0}$ on the verdict
-axis alone: across 36 real design pairs the annotators never disagree about whether
-two designs are the same. On the four measurement-grounded cases $\kappa$ falls to
-$\mathbf{0.667}$, below our own 0.7 gate, so that subset is judged red. The same
-run showed our calibration set is partly unidentifiable: two cases carry expected
-labels that cannot be derived from the payload the annotator sees.
+initially gave $\kappa=0.7235$ over 36 pairs with $\kappa=\mathbf{1.0}$ on the
+verdict axis. \S\ref{sec:groundtruth} shows why that number cannot be quoted: the
+gold labels for that set were themselves generated, and three of its pairs were
+mislabeled by our own structural rule. After relabeling, \textbf{33 of 36} pairs
+carry a derivable verdict, both annotators are correct on \textbf{all 33}
+(verdict accuracy $\mathbf{1.0}$ each), they never disagree ($\kappa=1.0$ on
+verdict), and combined-label $\kappa$ falls to $\mathbf{0.636}$. On the four
+measurement-grounded cases $\kappa$ is $\mathbf{0.667}$, below our own 0.7 gate,
+so that subset is judged red; there the two models agree on all four verdicts and
+are wrong together on exactly \textbf{one}.
 
-Read with \S\ref{sec:escape}, the high verdict agreement is the warning, not the
-reassurance: $\kappa$ measures correlation between annotators, not correctness
-against measurement, and $\kappa=1.0$ is exactly what a shared blind spot looks
-like from the inside.
+Read with \S\ref{sec:escape}, the high verdict agreement is still the warning, not
+the reassurance: $\kappa$ measures correlation between annotators, not correctness
+against measurement, and $\kappa=1.0$ is what a shared blind spot looks like from
+the inside---and also what a shared \emph{correct} reading looks like when the
+ground truth is the defective party. Agreement statistics cannot tell those two
+apart, which is the point of \S\ref{sec:groundtruth}.
 
 \subsection{A nullity escape both auditors missed}
 \label{sec:escape}
@@ -183,12 +221,62 @@ numbers'' passes all three.
 
 Both independent annotators classified this case
 \texttt{not\_equivalent}/\textbf{E4}; measurement says \texttt{equivalent}. They
-agree with each other and disagree with the simulator---a correlated failure, not
-independent noise. E0--E4 also has no slot for ``claims to work, measurably does
+agree with each other and disagree with the simulator---one case out of four in
+the measurement-grounded set, in the same direction, which is a correlated failure
+rather than independent noise, but is also $n=1$ and we do not claim more. E0--E4
+also has no slot for ``claims to work, measurably does
 nothing'': it audits pairwise specification difference, whereas the escape is a
 claim-to-measurement gap. What catches it is the nullity check, not the taxonomy.
 Reading a candidate is a poor proxy for running it, and more textual auditors buy
 agreement rather than independence when they share a failure mode.
+
+\subsection{Ground truth is generated too}
+\label{sec:groundtruth}
+
+Every number in \S\ref{sec:audit} is scored against a label we did not hand-write.
+The 36 semantic pairs were labelled by a structural rule: compare class members,
+numeric literals, and comparison operators between the two sources. That rule read
+\texttt{\#include} \texttt{<vector>} as two comparison operators. Three candidate
+pairs whose designs differ in nothing but local variable names, comments, header
+count and an explicit \texttt{this->} were therefore labelled
+\texttt{not\_equivalent}/\textbf{E2}, ``direction error''. Both generative
+annotators called all three \texttt{equivalent}, with rationales naming exactly
+the cosmetic differences involved. \textbf{The annotators were right and our ground
+truth was wrong}, and the artifact had been reporting their three correct answers
+as three shared errors.
+
+Two things follow. First, the fix is not to re-query the models: their replies are
+retained, so a label defect is rescored, not re-run
+(\texttt{scripts/relabel\_semantic\_cases.py}), and is now locked by four regression
+tests. Second, \texttt{classify()} had a second, quieter hole: it returned
+\texttt{not\_equivalent} whenever normalized text differed at all, so a pair with no
+shared trace measurement and no derivable error class was asserted to be a
+behavioral difference. It now abstains with an explicit \texttt{unlabellable}
+verdict---\textbf{3 of 36} pairs land there---and defers to measurement whenever
+cycles agree on shared traces, which is the rule that earns the escape case its
+\texttt{equivalent} label in the first place. An \texttt{unlabellable} pair is
+scored as no evidence at all rather than as a wrong answer.
+
+\subsection{A third substrate buys agreement, not independence}
+\label{sec:substrate}
+
+Both generative annotators come from one provider, so we added an architecturally
+distinct rater: a 421M ModernBERT \emph{discriminative} head, non-autoregressive,
+which cannot generate the rationale an audit prompt asks for. Run on the same three
+case sets as a third annotator, it is accurate on 0.5 of the 10 specification cases
+and 0.5 of the 4 measurement-grounded cases, and on \textbf{1 of 33} real generated
+pairs---it answers \texttt{equivalent} on 35 of 36 while every gold label in that
+set is \texttt{not\_equivalent}. Its agreement with the two generative raters is
+$\kappa=0.138$, $\mathbf{-0.500}$ and $-0.057$ across the three sets: on two of
+three sets it is anti-correlated with them, not merely uninformative.
+
+On the escape case itself it answers \texttt{equivalent}---\emph{correct}, matching
+measurement where both generative raters failed---at a top-1 minus top-2 margin of
+\textbf{0.010}. It is right for no reason a verifier can detect. A scoring rule that
+rewards agreement with measurement would bank that hit and never see that the same
+default loses 35 of 36 elsewhere. Changing substrate does not buy independence:
+independence is a property of the \emph{evidence channel}, and only the simulator
+provides one here.
 
 \begin{table}[h]
 \vspace{-0.4em}
@@ -199,22 +287,27 @@ agreement rather than independence when they share a failure mode.
 \midrule
 Cross-seed CV (max) & $<5\%$ & $78.16\%$ \\
 Repeated-run CV (max) & report & $0.0000\%$ \\
-Prompt spread (max) & report & not measured \\
+Prompt spread (max) & report & $249.18\%$ \\
 Trace CV (max) & report & $163.33\%$ \\
 Trace top-1 stability & report & $0.667$ \\
 Mean Kendall $\tau$ & report & $0.556$ \\
 $\kappa$, spec cases & $\geq0.7$ & $0.859$ \\
-$\kappa$, 36 real pairs & $\geq0.7$ & $0.724$ \\
+$\kappa$, real pairs (33 labellable) & $\geq0.7$ & $0.636$ \\
 $\kappa$, verdict only & $\geq0.7$ & $1.000$ \\
 $\kappa$, 4 measured cases & $\geq0.7$ & $0.667$ \\
+\midrule
+Third-substrate $\kappa$ & --- & $0.138\,/\,-0.500\,/\,-0.057$ \\
+Unlabellable pairs & 0 & $3$ of $36$ \\
 \midrule
 Publish gate & both pass & \textsc{Blocked} \\
 \bottomrule
 \end{tabular}
 \vspace{-0.5em}
-\caption{Pre-registered gates against measured values. Prompt spread is
-\emph{not} reported as zero: the grid held one prompt, so that axis was never
-exercised.}
+\caption{Pre-registered gates against measured values. Prompt spread comes from a
+grid that held the seed constant and cross-seed CV from a grid that held the prompt
+constant; \S\ref{sec:prompt} reports what each unexercised axis wrongly passed.
+The third-substrate row is discriminative-head $\kappa$ against the two generative
+raters on the spec / measured / real-pair sets in turn.}
 \label{tab:metrics}
 \end{table}
 
@@ -227,17 +320,21 @@ scorecard, raw cells and digests: loop, cases, generators, gate and
 .tmp/cfg/grid.json --backend champsim\_node}.
 
 \section{Limitations}
-\textbf{Prompt sensitivity is unmeasured}, not zero: the reported grid held one
-prompt constant; the $3{\times}3$ factorial compiled only 6 of 9 candidates, so its
-largest complete prompt-by-seed rectangle is 3 prompts at one seed.
+\textbf{Axes are measured separately.} Prompt spread comes from a
+$1\times3$ grid and cross-seed CV from a $3\times1$ one; no reported cell yet varies
+seed and prompt simultaneously, so we cannot say whether the $249.18\%$ prompt
+response and the $78.16\%$ seed response compose or interfere.
 \textbf{Repeats:} $0.0000\%$ is $N=5$ per cell (45 runs), but it establishes only
 that execution is deterministic; it says nothing about generation variance, which
-is the axis that fails. \textbf{Annotators:} both models come
-from one provider, so we claim model-model, not cross-family, independence; the
-36-pair $\kappa$ rests on heuristic structural labels and only the 4-case subset has
-a measurement-grounded label. \textbf{Checker:} the cell-level nullity rule conflates
-per-trace with global nullity. \textbf{Provenance:} \texttt{raw.json} records
-HEAD at write time, not stage entry. \textbf{Scope:} one simulator, one design
+is the axis that fails. \textbf{Labels:} the 33-pair $\kappa$ rests on structural
+labels that survive our own header-parsing defect only because we could re-derive
+them; only the 4-case set has a measurement-grounded label, and its correlated
+failure is $n=1$. \textbf{Annotators:} both generative models come from one
+provider, and \S\ref{sec:substrate} shows that the architecturally different rater
+we could reach is worse than independent rather than better. \textbf{Checker:} the
+cell-level nullity rule conflates per-trace with global nullity.
+\textbf{Provenance:} \texttt{raw.json} records HEAD at write time, not stage entry.
+\textbf{Scope:} one simulator, one design
 family, three traces; no RTL flow and no gem5 result is claimed.
 
 \section{Conclusion}
@@ -245,9 +342,13 @@ We released an audit loop that separates four variance sources, gates publicatio
 on measurement \emph{and} annotation, and keeps its evidence. Against the
 official CHIA ChampSim image it blocked its own reproducibility claim at
 $78.16\%$ cross-seed CV, showed seeds moving artifacts without moving designs,
-showed trace choice reordering candidates ($\tau=0.556$), and showed two
-independent language-model auditors agreeing and both wrong on a measured
-simulator escape. The instrument and the negative verdicts are the contribution.
+showed trace choice reordering candidates ($\tau=0.556$) and prompt response at
+$249.18\%$, and showed two independent language-model auditors agreeing and both
+wrong on a measured simulator escape. It also caught three silent defects in our
+own automation---a gate that passed an unexercised axis, a labeler that read
+\texttt{\#include} brackets as comparison operators, and an escalation rule built
+on a signal we then measured to be anti-correlated with what it named. The
+instrument, the negative verdicts and the self-reports are the contribution.
 
 \section*{AI Assistance Disclosure}
 AI coding and writing tools assisted with implementation, experiment plumbing,

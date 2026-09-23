@@ -1,0 +1,2 @@
+grid drops compiled designs: ['gen_aggressive_offset_s1_r1', 'gen_default_s0', 'gen_fill_only_conservative_s0']
+contract=39fb3caf1be1 seeds=[1, 2, 3] prompts=['fill_only_conservative'] cells=3 designs=['gen_fill_only_conservative_s1', 'gen_fill_only_conservative_s2', 'gen_fill_only_conservative_s3'] config=/home/listen/CHIA/chia-repo-audit/.tmp/cfg/grid.json
