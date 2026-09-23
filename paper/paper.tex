@@ -173,12 +173,13 @@ measuring 1{,}138{,}748 cycles, two \emph{distinct} binaries---a generated strid
 prefetcher and a repaired aggressive-offset candidate---return exactly
 1{,}138{,}748, while every genuine prefetcher differs (1{,}129{,}110 /
 1{,}129{,}706 / 1{,}132{,}568) and the next-line control returns 1{,}129{,}305.
-Two of 17 screened designs therefore compile, execute, emit metrics and do
-nothing; one is not a lazy stub but a plausible stride prefetcher whose issue path
-never fires. Screening the factorial separately added a third:
-\texttt{gen\_aggressive\_offset\_s1} also returns 1{,}138{,}748. Three nullities in
-26 generated designs---any verifier accepting ``builds, runs, produces numbers''
-passes all three.
+Two of the 13 distinct designs in that screening batch therefore compile, execute,
+emit metrics and do nothing; one is not a lazy stub but a plausible stride
+prefetcher whose issue path never fires. Screening the factorial separately (9
+distinct candidates, 6 compiling) added a third:
+\texttt{gen\_aggressive\_offset\_s1} also returns 1{,}138{,}748. Three nullities
+across two screening batches---any verifier accepting ``builds, runs, produces
+numbers'' passes all three.
 
 Both independent annotators classified this case
 \texttt{not\_equivalent}/\textbf{E4}; measurement says \texttt{equivalent}. They

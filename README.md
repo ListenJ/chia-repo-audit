@@ -13,40 +13,86 @@ and Evaluation Fairness in LLM-Driven Microarchitecture Search*
 
 ## Status
 
-As of 2026-09-18, this repository contains:
+As of 2026-09-23 this repository contains real measurements, and the audit gate
+**blocked** them. Nothing here is a stub result any more; the stub run is kept
+below only because it validates the plumbing.
 
-- A CHIA audit loop with separate run, audit, and action stages.
-- A deterministic stub backend for local protocol validation.
-- A pinned ChampSim source-build smoke that completed with identical repeated
-  metrics; the official CHIA Docker/Ray path still needs its own smoke.
-- Candidate generation modes: an offline catalog fixture and a directory
-  interface for real LLM-generated candidates.
-- Local integration gate covering CUDA, the official CHIA image, Ray, and
-  `ChampSimNode`.
-- Five gold and five adversarial design-classification cases.
-- Machine-readable repeatability, seed, prompt, and trace sensitivity metrics.
-- A three-page paper draft whose measured numbers need to be refreshed.
-- Public artifact: <https://github.com/ListenJ/chia-repo-audit>.
-- Registered HotCRP submission `#27`, currently saved as a draft with the
-  public artifact URL.
+### What the loop measured
 
-The most important external blockers are not code:
+Run inside the official `ghcr.io/ucb-bar/chia-champsim` image
+(digest `sha256:610951d3…`, ChampSim `164fdb1e…`), on three DPC-4 traces, against
+three real LLM-generated prefetcher designs:
 
-1. Receive the new GCP account details on Sep 20 evening PDT. Funding is
-   already confirmed; no confirmation action is required.
-2. Run the official ChampSim image smoke test before the experiment grid.
-3. Finish the paper with real measurements and mark HotCRP `#27` ready.
+```text
+results/grid_v6/  3 designs x 3 traces x 2 repeats  (local Docker)
+results/grid_v7_gcp/  same, 5 repeats, 45 runs      (GCP us-east1-b c2d-standard-8)
 
-See [ROADMAP.md](ROADMAP.md) for the 6-day execution plan, acceptance gates,
-and claim boundaries. See [COMPUTE_WINDOW.md](COMPUTE_WINDOW.md) for the
-new-account migration and 72-hour runbook. See
-[KAGGLE_VALIDATION.md](KAGGLE_VALIDATION.md) for the CPU-only preliminary
-validation decision. [PRECOMPUTE.md](PRECOMPUTE.md) defines the strict GO/NO-GO
-gate and the real candidate contract for the funded window.
+Verdict:               NON-REPRODUCIBLE
+Max cross-seed CV:     78.1641%   (gate < 5%)
+Max repeated-run CV:   0.0000%    (45 runs, no cell varies)
+Max trace CV:          163.3321%
+Trace top-1 stability: 0.667
+Trace Kendall tau:     0.556
+Publish gate:          BLOCKED  (reproducibility_threshold)
+```
 
-## Current Stub Validation
+v7 reproduces v6 exactly on cycles, IPC and instruction counts across all nine
+cells, on a different physical host — while **0 of 9 cells share a delivered
+binary digest**. A rebuild elsewhere produces byte-different binaries and the same
+measurement, so a replication gate keyed on binary equality would reject a
+faithful reproduction. See `results/grid_v7_gcp/provenance.json`.
 
-The stub run validates the audit plumbing, not ChampSim performance:
+### What the audit layer found about itself
+
+Two genuinely different models annotate the hidden set in disjoint contexts
+(`scripts/independent_audit.py`; the annotator payload is an allowlist and the
+script refuses to run if any expected label survives):
+
+| Set | n | Cohen's κ |
+| --- | --- | --- |
+| Specification cases | 10 | 0.859 |
+| Real generated C++ pairs | 36 | 0.724 (verdict only: 1.000) |
+| Measurement-grounded cases | 4 | 0.667 — below our own 0.7 gate |
+
+The interesting result is not the agreement. Three generated designs, one per
+screening batch of 13 and 9 distinct candidates, compile, run, emit metrics and
+measure **bit-identical to a no-op reference** (1,138,748 cycles) — simulators
+escapes in the sense ArchAgent reports. On that case both annotators agree with
+each other and both are wrong against measurement, and E0–E4 has no class for
+"claims to work, measurably does nothing". κ measures correlation between
+annotators, not correctness; see `chia_loop/semantic/sem-esc-01.json`.
+
+### Still open
+
+- Prompt sensitivity: the reported grid held one prompt. A `3×3` prompt-by-seed
+  factorial compiled **6 of 9** candidates and its largest complete rectangle is
+  3 prompts at one seed; that grid is running now.
+- `main` is frozen at the 2026-09-21 pilot state by choice. **All current evidence
+  is on `codex/colab-cpu-validation`**, which is what the HotCRP artifact URL
+  points at.
+
+### Code and infrastructure
+
+- CHIA audit loop with separate run, audit and action stages; combined publish
+  gate requiring reproducibility **and** audit success.
+- Candidate generation with retained prompts and raw responses
+  (`scripts/real_candidate_generate.py`, SiliconFlow or the funded Vertex AI path).
+- Deterministic stub backend and the pinned source-build smoke, both retained as
+  explicitly-labelled protocol validation.
+- 34 unit tests, which also pass inside the official image.
+- Public artifact: <https://github.com/ListenJ/chia-repo-audit>; HotCRP `#27`.
+
+See [ROADMAP.md](ROADMAP.md) for the execution plan and claim boundaries,
+[COMPUTE_WINDOW.md](COMPUTE_WINDOW.md) for the funded-window runbook,
+[KAGGLE_VALIDATION.md](KAGGLE_VALIDATION.md) for the CPU-only portability
+decision, [PRECOMPUTE.md](PRECOMPUTE.md) for the GO/NO-GO gate, and
+[docs/operations-log.md](docs/operations-log.md) for the dated record of what was
+run, what failed, and what was corrected.
+
+## Protocol validation on the stub backend
+
+This validates the audit plumbing only. It is not evidence about ChampSim, and no
+claim in the paper rests on it:
 
 ```text
 Backend: stub
@@ -57,15 +103,15 @@ Max prompt spread: 0.7899%
 Max trace CV: 0.2427%
 Trace top-1 stability: 1.0
 Trace ranking Kendall tau: 1.0
-Cohen's kappa: 1.0 (deterministic protocol self-test)
+Cohen's kappa: 1.0 (deterministic protocol self-test, not inter-rater agreement)
 Adversarial detection: 100%
 Gold calibration: 5/5
 Publish gate: PASS
 ```
 
 The nonzero repeated-run CV comes only from the synthetic stub. A real
-deterministic ChampSim run should be bit-identical unless the executable,
-trace, or environment changes.
+deterministic ChampSim run is bit-identical, which is exactly what the measured
+grid above shows at 0.0000%.
 
 ## Preliminary Real Smoke
 
@@ -149,15 +195,21 @@ python3 scripts/local_gate.py
 - **Repeated-run CV:** coefficient of variation across repeated executions of
   the same candidate, trace, and environment.
 - **Cross-seed CV:** variation across generation seeds for the same
-  prompt/trace pair. With the current stub this is synthetic. In a real run,
-  the seed must actually change candidate generation.
+  prompt/trace pair. The seed must actually change candidate generation; in the
+  measured grid it changed the artifact (source, design and binary digests all
+  differ) without changing the design (bit-identical cycles on every trace).
 - **Prompt spread:** relative cycle-count spread across prompt variants for
-  the same seed/trace pair.
+  the same seed/trace pair. Reported as unmeasured wherever the grid held a
+  single prompt - a zero from a one-value axis is not a result.
 - **Trace CV:** variation across traces for the same seed/prompt pair. This is
-  a diagnostic, not a ranking-stability metric.
+  a diagnostic, not a ranking-stability metric; use top-1 stability and
+  leave-one-trace-out Kendall τ for ranking claims.
 
-The current artifact is an audit-harness pilot. It does not yet establish that
-an LLM architecture-discovery loop reproduces.
+What this artifact does **not** establish: that any LLM architecture-discovery
+loop reproduces. It measures one simulator, one design family and three traces,
+and within that scope it reports a reproducibility failure and an audit layer
+whose agreement is correlation rather than correctness. Those are the claims; the
+gate blocked everything above them.
 
 ## Repository Layout
 
