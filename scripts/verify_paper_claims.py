@@ -8,6 +8,7 @@
 每条 claim 记：论文里的字符串、出处文件、重算方式、期望值、实测值。
 任何一条对不上就 exit 非 0。
 """
+import hashlib
 import json
 import re
 import sys
@@ -294,6 +295,32 @@ check("gate declares blast radius in code, not in the model",
 check("gate and ladder code ship with the artifact", True,
       all((REPO / f"decision_chain/{n}").is_file()
           for n in ("laya_gate2.py", "laya_noul_ladder.py", "chia-decisions2.json")))
+
+
+# ---- 逃逸用例的源归属修正，以及修正后重跑的标注 ------------------------
+esc_case = load_json("chia_loop/semantic/sem-esc-01.json")
+true_src = hashlib.sha256(
+    load_json(".tmp/cand2/gen_default_s0.json")["design"]["prefetcher_source"].encode()
+).hexdigest()
+check("escape case cites the source that actually compiled", true_src,
+      esc_case["evidence"]["design_source_sha256"], r"source")
+check("and records the correction", "5de9bd2414de745f2d5778b3e452e6d4ad98a81df7ba57139bd965cff9ac7d0a",
+      esc_case["evidence"]["attribution_correction"]["previous_design_source_sha256"])
+check("binary identity preserved through the correction", "cc0477f0e1ee0187",
+      esc_case["evidence"]["design_binary_sha256"])
+
+esc_v2 = load_json("results/audit_independent_semantic_v2/report.json")
+check("measured-set kappa unchanged after re-annotation", 0.6667,
+      round(esc_v2["kappa_combined_label"], 4), r"0\.667")
+check("measured-set verdict kappa", 1.0, esc_v2["kappa_verdict_only"], r"1\.0")
+esc_rows = [r for r in load_json("results/audit_independent_semantic_v2/raw.json")
+            if r["id"] == "sem-esc-01"][0]
+check("both annotators still wrong on the corrected escape source",
+      {"not_equivalent"},
+      {l["verdict"] for l in esc_rows["labels"]})
+check("and both still cite the added stride mechanism", 2,
+      sum(1 for l in esc_rows["labels"] if "stride" in l.get("rationale", "").lower()),
+      r"claims to work, measurably does")
 
 
 def main() -> int:

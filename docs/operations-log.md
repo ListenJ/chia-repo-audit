@@ -1204,3 +1204,50 @@ grid_rc=1
 **教训（写下来以免再犯）**：screening 行必须同时记 `source_sha256` 与 `binary_sha256`。
 只记模块名的话，"哪个源文件产生了这个测量"这个问题在事后无法回答 ——
 而这正是本论文批评别人的那件事。
+
+### 15. 归属修正落定，而且核心结论在修正后**复现**
+
+不必等那次 25 分钟的编译，目录→行的映射本身已经判死了。`run_grid_chain.sh:27` 写的是
+`--candidate-dirs .tmp/cand .tmp/cand2 .tmp/cand3 .tmp/cand4`，四个目录的文件数是
+**5 / 6 / 3 / 3 = 17**，而 `.tmp/screens_all.jsonl` 正好 17 行，且每段内部按 sorted 顺序
+与目录内文件名一一对上：
+
+| 行 | 模块 | build_success | binary | cycles | 归属目录 |
+|---|---|---|---|---|---|
+| 1–5 | aggressive_s0/s1, default_s0/s1, fill_only_s0 | 4 失败 + 1 成功 | 312911d8… | 1,129,706 | cand |
+| 6–11 | aggressive_s0/s1/s2, **default_s0**, default_s1/s2 | 第 9 行成功 | **cc0477f0…** | **1,138,748** | **cand2** |
+| 12–14 | aggressive_s0_r1 / s1_r1 / s2_r1 | 第 13 行成功 | 5de585b8… | 1,138,748 | cand3 |
+| 15–17 | fill_only_s1/s2/s3 | 全成功 | … | … | cand4 |
+
+所以产生逃逸测量的确实是 `.tmp/cand2/gen_default_s0.json`（671bafcf…），
+而用例写进去的是 `.tmp/cand` 那份（5de9bd24…，含非法 cast、编译不过）。
+
+**先做了一次全量归属审计再动手改**：`scripts/audit_case_attribution.py`
+把每个用例内嵌源码的 sha256 与它自己声明的哈希、以及与磁盘上所有同名候选比对。
+结果：80 处 (用例, 侧) 断言**全部自洽**（所以任何内部一致性检查都发现不了这个错），
+同时暴露 **63 处名字冲突**，涉及 11 个模块名。
+`sem-01/02/03` 用的是 `cand4` 系列（b542624f / db77bf3c），与 v6 的 `grid_cand` 同系列 ✓
+—— 问题确实只局限在 `sem-esc-01` 一个用例。
+
+改完必须重做受影响的那层测量：**标注者之前读的是错文件**。
+用修正后的源码重跑 4 例 × 2 模型（`results/audit_independent_semantic_v2/`）：
+
+```
+kappa_combined_label 0.6667   kappa_verdict_only 1.0   observed_agreement 0.75
+两个模型 verdict_accuracy 均 0.75；sem-esc-01 上两者仍答 not_equivalent / E4
+  flash: "implements a stride-based prefetching mechanism with internal state and
+          calls prefetch_line, which is a significant addition of functionality"
+  pro:   "adds a stride-based prefetching mechanism that is absent from the
+          no-operation reference"
+```
+
+**数字一个没变，结论在修正后的证据上复现。** 两个 rationale 说的都是真的——代码确实
+加了 stride 机制；错的是"加了机制就等于行为不同"这一步，而这只有跑起来才知道。
+这反而比原来更有力：我们把自己的证据 bug 修掉之后，核心断言没有塌。
+
+论文：新增 §3.7 "A measurement attributed to a file that cannot produce it"；
+§3.5 写明该结果是在修正归属后重测得到；intro 与结论的自报缺陷数 4 → 6；
+`scripts/changes` 那节加第 (6) 条协议规则：**每条测量都要记源文件摘要** ——
+我们同时记了模块名和交付 binary 摘要，仍然让一次测量归给了编译不过的文件，
+缺的正是输入哈希这一样东西。验证器 +6 条（含"用例引用的源码 = cand2 那份"、
+"修正记录在案"、"binary 未被改动"、"重测后 κ 与两个 E4 不变"），71/71。

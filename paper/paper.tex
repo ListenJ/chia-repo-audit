@@ -60,12 +60,14 @@ it said about us---a \textsc{Blocked} verdict on our own headline claim
 (\S\ref{sec:repro}), evidence that generation seeds move artifacts without
 moving designs, trace-dependent reordering (\S\ref{sec:trace}) and prompt response
 at $249.18\%$ (\S\ref{sec:prompt}), a failure mode that text-reading auditors cannot
-catch (\S\ref{sec:escape}), and four defects we found in our own automation---a
+catch (\S\ref{sec:escape}), and six defects we found in our own automation---a
 vacuous gate axis (\S\ref{sec:prompt}), a generated ground truth that was wrong
-while the annotators were right (\S\ref{sec:groundtruth}), an escalation signal
-whose approval score does not separate a local reversible edit from destroying an
-instance (\S\ref{sec:gate2}), and a supporting screening file whose incremental
-rows cannot be attributed to the module they name (\S\ref{sec:escape}).
+while the annotators were right (\S\ref{sec:groundtruth}), a nullity rule that could
+not tell an inert design from an ineffective one (\S\ref{sec:repro}), a screening file
+whose incremental rows cannot be attributed to the module they name, a measurement
+attributed to a source that cannot compile (\S\ref{sec:attribution}), and an
+escalation signal whose approval score does not separate a local reversible edit from
+destroying an instance (\S\ref{sec:gate2}).
 
 \section{The Audit Loop}
 \label{sec:loop}
@@ -292,7 +294,13 @@ Both independent annotators classified this case
 \texttt{not\_equivalent}/\textbf{E4}; measurement says \texttt{equivalent}. They
 agree with each other and disagree with the simulator---one case out of four in
 the measurement-grounded set, in the same direction, which is a correlated failure
-rather than independent noise, but is also $n=1$ and we do not claim more. E0--E4
+rather than independent noise, but is also $n=1$ and we do not claim more. This
+result was re-obtained after we found and fixed an attribution error in the case
+itself: the source it embedded was a same-named file that does not compile against
+the pinned image, while the measurement came from a second file in another candidate
+directory (\S\ref{sec:attribution}). Re-annotating the corrected source leaves the
+outcome and the $\kappa=0.667$ unchanged, with both rationales still naming the added
+stride mechanism. E0--E4
 also has no slot for ``claims to work, measurably does
 nothing'': it audits pairwise specification difference, whereas the escape is a
 claim-to-measurement gap. What catches it is the nullity check, not the taxonomy.
@@ -331,6 +339,28 @@ verdict---\textbf{3 of 36} pairs land there---and defers to measurement whenever
 cycles agree on shared traces, which is the rule that earns the escape case its
 \texttt{equivalent} label in the first place. An \texttt{unlabellable} pair is
 scored as no evidence at all rather than as a wrong answer.
+
+\subsection{A measurement attributed to a file that cannot produce it}
+\label{sec:attribution}
+
+Building a positive control for the nullity check, the grid path rejected
+\texttt{gen\_default\_s0} with \texttt{invalid static\_cast from champsim::address to
+int64\_t}---and the escape case's embedded source is byte-for-byte that rejected file,
+matching its own declared hash, so no internal consistency check flags it. The
+screening log holds two rows for that module name: a failed build with the identical
+error, then a successful cold build measuring 1{,}138{,}748. The runner had swept four
+candidate directories holding 5, 6, 3 and 3 files, which map in sorted order onto the
+17 screening rows and place the successful row inside the second directory: the
+measurement belongs to a \emph{different} file that happens to share the name.
+
+Screening rows record a module name and a delivered-binary digest but \textbf{no source
+digest}, so ``which file produced this measurement'' is unanswerable from the artifact
+after the fact. That is the same object this paper audits, reached from the other side:
+we treat a cycle count as evidence about a design, and the identifier joining them was
+not an identifier. We now carry \texttt{scripts/audit\_case\_attribution.py}, which
+re-derives every embedded source hash against every candidate file on disk (80
+assertions, 63 name collisions found across 11 module names), and the escape case
+records the correction with both hashes.
 
 \subsection{A third substrate buys agreement, not independence}
 \label{sec:substrate}
@@ -426,7 +456,7 @@ repository URL is filed in this submission's required open-source-artifact field
 rather than printed here, so the paper stays anonymous while the artifact stays
 reachable. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (64 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (71 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check rather than a coincidence. Reproduce the headline grid with
 \texttt{python3 chia\_loop/loops/audit\_repro.py --version 6 --config
@@ -452,6 +482,10 @@ unless it is shown to separate the safe action from the destructive one; a rule 
 escalates everything automates nothing. \textbf{(5) Make a nullity check a gate, not a
 diagnostic.} ``Compiles, runs, produces numbers'' passed three designs that do nothing;
 any verifier weaker than a comparison against a no-op reference will pass them too.
+\textbf{(6) Record a source digest beside every measurement.} A delivered-binary digest
+says a build happened, not which source produced it; a module name says even less. Our
+screening rows carried both and still let a cycle count be attributed to a file that
+cannot compile, because the one thing missing was the hash of the input.
 
 \section{Limitations}
 \textbf{Axes are measured separately.} Prompt spread comes from a
@@ -492,12 +526,15 @@ official CHIA ChampSim image it blocked its own reproducibility claim at
 $78.16\%$ cross-seed CV, showed seeds moving artifacts without moving designs,
 showed trace choice reordering candidates ($\tau=0.556$) and prompt response at
 $249.18\%$, and showed two same-provider language-model auditors agreeing and both
-wrong on a measured simulator escape. It also caught four silent defects in our
-own automation---a gate that passed an unexercised axis, a labeler that read
-\texttt{\#include} brackets as comparison operators, an escalation rule built
-on an approval score we then measured not to separate safe from destructive, and a
-screening file whose incremental rows cannot be attributed to the design they name.
-The instrument, the negative verdicts, the five protocol rules we would ask of any
+wrong on a measured simulator escape---a result that survived re-annotation after we
+found the case had cited a source that cannot compile. It also caught six silent defects
+in our own automation---a gate that passed an unexercised axis, a labeler that read
+\texttt{\#include} brackets as comparison operators, a nullity rule that could not tell
+an inert design from an ineffective one, a screening file whose incremental rows cannot
+be attributed to the module they name, a measurement attributed to a file that cannot
+produce it, and an escalation rule built on an approval score we then measured not to
+separate safe from destructive.
+The instrument, the negative verdicts, the six protocol rules we would ask of any
 such loop (\S\ref{sec:changes}) and the self-reports are the contribution.
 
 \section*{AI Assistance Disclosure}

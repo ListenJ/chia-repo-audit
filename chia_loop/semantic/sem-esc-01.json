@@ -2,7 +2,7 @@
  "id": "sem-esc-01",
  "design": {
   "module_name": "gen_default_s0",
-  "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s0 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    uint64_t last_addr = 0;\n    int64_t stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                       uint8_t cache_hit, bool useful_prefetch,\n                                       access_type type, uint32_t metadata_in) {\n        if (last_addr != 0) {\n            int64_t new_stride = static_cast<int64_t>(addr) - static_cast<int64_t>(last_addr);\n            if (new_stride == stride) {\n                champsim::address pf_addr(static_cast<uint64_t>(static_cast<int64_t>(addr) + stride));\n                prefetch_line(pf_addr, false, 0);\n            }\n            stride = new_stride;\n        }\n        last_addr = addr;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                    uint8_t prefetch, champsim::address evicted_addr,\n                                    uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n"
+  "prefetcher_source": "#include <cstdint>\n#include \"address.h\"\n#include \"modules.h\"\n\nstruct gen_default_s0 : public champsim::modules::prefetcher {\n    using prefetcher::prefetcher;\n\n    champsim::block_number last_addr = champsim::block_number{0};\n    int64_t last_stride = 0;\n\n    uint32_t prefetcher_cache_operate(champsim::address addr, champsim::address ip,\n                                     uint8_t cache_hit, bool useful_prefetch,\n                                     access_type type, uint32_t metadata_in) {\n        champsim::block_number blk{addr};\n        \n        if (last_addr != champsim::block_number{0}) {\n            auto current_stride = champsim::offset(blk, last_addr);\n            if (current_stride == last_stride && current_stride != 0) {\n                prefetch_line(champsim::address{blk + current_stride}, false, metadata_in);\n            }\n            last_stride = current_stride;\n        }\n        \n        last_addr = blk;\n        return metadata_in;\n    }\n\n    uint32_t prefetcher_cache_fill(champsim::address addr, long set, long way,\n                                  uint8_t prefetch, champsim::address evicted_addr,\n                                  uint32_t metadata_in) {\n        return metadata_in;\n    }\n};\n"
  },
  "reference": {
   "module_name": "probe_noop",
@@ -12,7 +12,7 @@
  "expected_errors": [],
  "planting": "real generated stride prefetcher that compiles, runs and reports metrics, but is behaviourally indistinguishable from doing nothing",
  "evidence": {
-  "design_source_sha256": "5de9bd2414de745f2d5778b3e452e6d4ad98a81df7ba57139bd965cff9ac7d0a",
+  "design_source_sha256": "671bafcff927ef9fd5cba1040d208639b48ad6eee55cc39c19ab3752c892190d",
   "reference_source_sha256": "d7e9ef0b5fbcf1dfe0d3cf0b1e268b23be24d96f4de1f0cf40719fcea1731c48",
   "design_binary_sha256": "cc0477f0e1ee0187",
   "reference_binary_sha256": "8a4884c11c4995dc",
@@ -28,6 +28,17 @@
   "control_next_line_cold": {
    "binary_sha256": "bee5b5b60c6f4437",
    "cycles": 1129305
+  },
+  "attribution_correction": {
+   "corrected_utc": "2026-09-23",
+   "previous_design_source_sha256": "5de9bd2414de745f2d5778b3e452e6d4ad98a81df7ba57139bd965cff9ac7d0a",
+   "previous_source_file": ".tmp/cand/gen_default_s0.json",
+   "corrected_design_source_sha256": "671bafcff927ef9fd5cba1040d208639b48ad6eee55cc39c19ab3752c892190d",
+   "corrected_source_file": ".tmp/cand2/gen_default_s0.json",
+   "why": "The embedded source used static_cast<int64_t> on a champsim::address and does not compile in the pinned image, reproducing verbatim the build_success=false row in the screening log. The successful row for the same module name (binary cc0477f0e1ee0187, 1,138,748 cycles) came from a different directory swept by the same run: run_grid_chain.sh passed --candidate-dirs .tmp/cand .tmp/cand2 .tmp/cand3 .tmp/cand4, whose file counts 5/6/3/3 match the 17 screening rows in order, placing the successful gen_default_s0 inside cand2.",
+   "root_cause": "Screening rows record a module name and a delivered-binary digest but no source digest, so 'which file produced this measurement' cannot be answered from the artifact. Module names are not design identifiers: gen_default_s0 exists twice with different content.",
+   "what_was_preserved": "design_binary_sha256, reference identities and both cycle counts are unchanged: they always described the cand2 build.",
+   "consequence_for_the_annotation_layer": "Both generative annotators had been shown the cand variant's text while the equivalent verdict came from the cand2 build. The four-case annotation was re-run against the corrected source before quoting kappa."
   }
  },
  "taxonomy_gap": true,
