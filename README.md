@@ -120,11 +120,11 @@ supplies one here.
   (`scripts/real_candidate_generate.py`, SiliconFlow or the funded Vertex AI path).
 - Deterministic stub backend and the pinned source-build smoke, both retained as
   explicitly-labelled protocol validation.
-- 39 unit tests pass in-tree and, as re-verified on 2026-09-23, inside the pinned
+- 43 unit tests pass in-tree and, re-verified on 2026-09-23, inside the pinned
   official image (`results/in_image_tests_2026-09-23.json`). The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (62 claims). Its final check is
+  committed artifact and exits non-zero on drift (64 claims). Its final check is
   self-referential: the paper states the claim count, so editing the verifier without
   updating the prose turns the run red.
 - `scripts/rescore_grid.py` and `scripts/relabel_semantic_cases.py` recompute verdicts

@@ -5,14 +5,14 @@
   "image_digest": "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
   "interpreter": "Python 3.10.19",
   "host": "GCP compute instance chia-grid2, us-east1-b (sponsor-funded project, compute idle at run time)",
-  "run_utc": "2026-09-23T15:36Z",
+  "run_utc": "2026-09-23T15:40Z",
   "result": {
-    "ran": 39,
+    "ran": 43,
     "outcome": "OK",
     "exit_code": 0,
-    "duration_s": 5.941
+    "duration_s": 5.968
   },
-  "tree_tested": "chia_loop/ and scripts/ from repository commit f54f99f, shipped as a tarball and extracted to /tmp/imgtest; the repository working tree on the VM was not touched.",
-  "supersedes": "results/grid_v7_gcp/provenance.json records unit_tests_in_image = 'Ran 34 tests / OK' from an earlier commit. 34 was correct then; 39 is correct now. The paper and README previously said '39 in-tree, 34 last verified inside the image' because no in-image run had been done since the five newest tests landed. This file is that run.",
+  "tree_tested": "chia_loop/ and scripts/ from the working tree after the nullity classification fix and its four tests; shipped as a tarball, extracted to /tmp/imgtest, mounted read-only. The VM working tree was not touched.",
+  "supersedes": "results/grid_v7_gcp/provenance.json records unit_tests_in_image = 'Ran 34 tests / OK' from an earlier commit. 34 was correct then. This run covers the 43 tests present after the gate, label and nullity fixes.",
   "note": "The suite is pure Python and does not exercise the simulator; running it in the image establishes interpreter and dependency compatibility, not that any measurement reproduced."
 }

@@ -1131,3 +1131,32 @@ rc=0
 `grid_v7_gcp/provenance.json` 里的 `unit_tests_in_image = Ran 34 tests`（34 在当时是对的），
 并写明这套测试是纯 Python，进镜像只证明解释器与依赖兼容，不证明任何测量复现。
 验证器 +2 条（镜像内确实跑了 39 且 OK、用的是那个 digest），声明数 62 → 64。
+
+### 13. 把论文自己点名的最后一个未修缺陷修掉了：nullity 的部分与全局
+
+Limitations 里有一条一直写着"cell-level nullity rule conflates per-trace with global
+nullity"。读 `check_grid_evidence.py` 才发现**检测本来就是逐 trace 的**
+（`baseline = noop_cycles.get(row["trace"])`），混起来的是**上报**：
+"这个 prefetcher 在 imagick 上没起作用"（正常性质）和"这个设计根本不做事"（模拟器逃逸）
+被打进同一个 flag `moves_cycles_vs_reference`。所以修的是语义而不是算法：
+
+- `null_on_every_measured_trace` —— 在所有可比 trace 上都等于 no-op，这才是空设计，硬失败；
+- `nullity_notes` —— 只在部分 trace 上等于 no-op，记为"trace-dependent, not a null design"，
+  **不影响 `passed`**。
+
+在 v7 上重跑：原来 `passed: false`（被 imagick 那一条局部空实现卡住），现在
+`passed: true`，同时 `n_designs_null_on_some_trace = 1` 并留下 note。
+`fill_only_conservative/2` 在 BFSCC 与 fotonik3d 上都偏离 no-op，所以它不是空设计 ——
+新语义给出的正是这个答案。
+
+新增 4 条测试锁住四种情形（全 trace 空 / 单 trace 空 / 处处不同 / 参考缺失）。
+**旧测试立刻抓到我把 flag 改名了**（`test_check_grid_evidence.py:52` 还在断言
+`moves_cycles_vs_reference`）—— 这正是它该做的事。测试数 39 → 43。
+
+顺手把"39 在镜像里过"这句也变成实测：VM2 空出来后重新打包当前树、只读挂进钉死
+digest 的镜像跑，`Ran 43 tests / OK`（5.968s），`results/in_image_tests_2026-09-23.json`
+同步为 43 并写明它取代 v7 provenance 里的 34。
+
+如实记下这次修复留下的新缺口：更严的那一支（全 trace 空）现在只有合成正例，
+复现网格里**没有**一个在所有 trace 上都空的设计 —— 真空的那三个出自 screening 批，
+不在 grid 的 cells 里。写进 Limitations，不装作修完就没问题了。

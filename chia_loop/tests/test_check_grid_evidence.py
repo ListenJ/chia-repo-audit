@@ -49,7 +49,7 @@ class CheckGridEvidenceTest(unittest.TestCase):
 
     def test_a_candidate_that_equals_the_noop_cycle_count_does_not_count(self):
         out = check.verdicts(raw_for(cycles=1000.0), REFERENCE)
-        self.assertIn("moves_cycles_vs_reference", out["failures"])
+        self.assertIn("null_on_every_measured_trace", out["failures"])
 
     def test_two_designs_sharing_one_binary_are_reported(self):
         raw = raw_for()

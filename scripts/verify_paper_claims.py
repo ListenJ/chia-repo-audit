@@ -156,9 +156,9 @@ n_ok = sum(1 for r in fac if r.get("build_success"))
 check("factorial compile rate", "6 of 9", f"{n_ok} of {len(fac)}", r"6 of 9")
 static = sum(1 for p in (REPO / "chia_loop/tests").glob("*.py")
              for _ in re.finditer(r"^\s*def test_", p.read_text(encoding="utf-8"), re.M))
-check("test count matches paper", True, static >= 39, r"39 unit tests")
+check("test count matches paper", 43, static, r"43 unit tests")
 img = load_json("results/in_image_tests_2026-09-23.json")
-check("in-image suite really ran 39 and passed", (39, "OK"),
+check("in-image suite really ran 43 and passed", (43, "OK"),
       (img["result"]["ran"], img["result"]["outcome"]), r"inside the pinned image")
 check("in-image run used the pinned digest",
       "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",

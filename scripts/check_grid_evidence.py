@@ -53,6 +53,7 @@ def verdicts(raw: dict, reference: list[dict] | None,
              image_binary: str = IMAGE_DEFAULT_BINARY) -> dict:
     rows = load_cells(raw)
     checks: dict[str, list[str]] = {}
+    notes: list[str] = []
 
     def fail(name: str, detail: str) -> None:
         checks.setdefault(name, []).append(detail)
@@ -72,6 +73,11 @@ def verdicts(raw: dict, reference: list[dict] | None,
 
     by_design: dict[str, set] = {}
     owners: dict[str, set] = {}
+    # Nullity is a per-trace property, and "does nothing anywhere" and "does nothing on
+    # this workload" are different findings. Reporting both under one flag made a normal
+    # trace-dependent result indistinguishable from a design that never fires.
+    null_on: dict[str, set] = {}
+    comparable: dict[str, set] = {}
     for row in rows:
         by_design.setdefault(row["design"], set()).add(row["binary_sha256"])
         if row["binary_sha256"]:
@@ -93,9 +99,20 @@ def verdicts(raw: dict, reference: list[dict] | None,
         baseline = noop_cycles.get(row["trace"])
         if baseline is None:
             fail("reference_available", row["trace"])
-        elif row["cycles"] == baseline:
-            fail("moves_cycles_vs_reference",
-                 f"{row['design']} on {row['trace']} equals noop at {baseline:g}")
+        else:
+            comparable.setdefault(row["design"], set()).add(row["trace"])
+            if row["cycles"] == baseline:
+                null_on.setdefault(row["design"], set()).add(row["trace"])
+
+    total_null = {d: t for d, t in null_on.items() if t == comparable.get(d)}
+    partial_null = {d: t for d, t in null_on.items() if t != comparable.get(d)}
+    for design, traces in sorted(total_null.items()):
+        fail("null_on_every_measured_trace",
+             f"{design} equals the no-op on all {len(traces)} trace(s)")
+    for design, traces in sorted(partial_null.items()):
+        notes.append(f"{design} equals the no-op on {sorted(traces)[0]} only "
+                     f"({len(traces)} of {len(comparable.get(design, []))} comparable "
+                     "trace(s)): trace-dependent, not a null design")
 
     for digest, design_names in owners.items():
         if len(design_names) > 1:
@@ -106,6 +123,9 @@ def verdicts(raw: dict, reference: list[dict] | None,
         "n_designs": len(by_design),
         "n_distinct_binaries": len(owners),
         "reference_traces": sorted(noop_cycles),
+        "nullity_notes": sorted(notes),
+        "n_designs_null_on_every_trace": len(total_null),
+        "n_designs_null_on_some_trace": len(partial_null),
         "failures": {name: sorted(set(items)) for name, items in sorted(checks.items())},
         "passed": not checks,
     }
