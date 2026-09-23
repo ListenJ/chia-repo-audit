@@ -84,14 +84,18 @@ def main() -> int:
                 ",".join(sorted(c.get("expected_errors", [])))
         laya_v = {cid: by_id[cid]["verdict"] for cid in by_id}
         gold_v = {cid: expected[cid].split("|")[0] for cid in expected}
+        # A pair the labeler withdrew has no ground truth to score the substrate against.
+        scored = [cid for cid in laya_v if gold_v[cid] != "unlabellable"]
 
-        n = len(cases)
-        acc_v = sum(1 for cid in laya_v if laya_v[cid] == gold_v[cid]) / n if n else 0.0
+        n = len(scored)
+        acc_v = sum(1 for cid in scored if laya_v[cid] == gold_v[cid]) / n if n else 0.0
         margins = [by_id[cid]["margin"] for cid in by_id]
         tally = Counter(laya_v.values())
 
         entry = {
-            "n_cases": n,
+            "n_cases": len(cases),
+            "n_labellable": n,
+            "n_unlabellable": len(cases) - n,
             "laya_verdict_tally": dict(tally),
             "laya_per_case": {cid: {"laya": laya_v[cid], "expected": gold_v[cid],
                                     "margin": round(by_id[cid]["margin"], 4)}

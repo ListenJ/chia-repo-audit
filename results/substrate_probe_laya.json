@@ -1,6 +1,8 @@
 {
   "spec10": {
     "n_cases": 10,
+    "n_labellable": 10,
+    "n_unlabellable": 0,
     "laya_verdict_tally": {
       "equivalent": 6,
       "not_equivalent": 4
@@ -92,6 +94,8 @@
   },
   "semantic4": {
     "n_cases": 4,
+    "n_labellable": 4,
+    "n_unlabellable": 0,
     "laya_verdict_tally": {
       "not_equivalent": 2,
       "equivalent": 2
@@ -141,6 +145,8 @@
   },
   "fact36": {
     "n_cases": 36,
+    "n_labellable": 33,
+    "n_unlabellable": 3,
     "laya_verdict_tally": {
       "equivalent": 35,
       "not_equivalent": 1
@@ -313,22 +319,22 @@
       },
       "sem-34": {
         "laya": "equivalent",
-        "expected": "not_equivalent",
+        "expected": "unlabellable",
         "margin": 0.0016
       },
       "sem-35": {
         "laya": "equivalent",
-        "expected": "not_equivalent",
+        "expected": "unlabellable",
         "margin": 0.0016
       },
       "sem-36": {
         "laya": "not_equivalent",
-        "expected": "not_equivalent",
+        "expected": "unlabellable",
         "margin": 0.269
       }
     },
-    "laya_verdict_accuracy_vs_expected": 0.0278,
-    "mean_margin": 0.1966,
+    "laya_verdict_accuracy_vs_expected": 0.0,
+    "mean_margin": 0.2145,
     "low_margin_cases": 9,
     "kappa_vs_gemini-2.5-flash": -0.057,
     "agreement_vs_gemini-2.5-flash": 0.0556,

@@ -74,10 +74,11 @@ correctness — and as this section shows, correlation can also just mean the gr
 truth broke.
 
 A third, architecturally different rater (421M discriminative ModernBERT head,
-`scripts/substrate_probe.py`) does not rescue it: it is right on 1 of 33 real pairs,
-anti-correlated with both LLMs on two of three sets, and correct on the escape case at
-a top-1 minus top-2 margin of **0.010**. Independence is a property of the evidence
-channel, not of the model family; only the simulator supplies one here.
+`scripts/substrate_probe.py`) does not rescue it: it is right on **0 of 33**
+labellable real pairs, anti-correlated with both LLMs on two of three sets, and
+correct on the escape case at a top-1 minus top-2 margin of **0.010**. Independence
+is a property of the evidence channel, not of the model family; only the simulator
+supplies one here.
 
 ### Still open
 

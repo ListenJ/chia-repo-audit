@@ -264,9 +264,11 @@ Both generative annotators come from one provider, so we added an architecturall
 distinct rater: a 421M ModernBERT \emph{discriminative} head, non-autoregressive,
 which cannot generate the rationale an audit prompt asks for. Run on the same three
 case sets as a third annotator, it is accurate on 0.5 of the 10 specification cases
-and 0.5 of the 4 measurement-grounded cases, and on \textbf{1 of 33} real generated
-pairs---it answers \texttt{equivalent} on 35 of 36 while every gold label in that
-set is \texttt{not\_equivalent}. Its agreement with the two generative raters is
+and 0.5 of the 4 measurement-grounded cases, and on \textbf{0 of 33} real generated
+pairs---it answers \texttt{equivalent} on 35 of 36 while every labellable gold label
+in that set is \texttt{not\_equivalent}. Its single non-default answer falls on one
+of the three pairs whose label \S\ref{sec:groundtruth} had to withdraw, so even that
+hit is unscoreable. Its agreement with the two generative raters is
 $\kappa=0.138$, $\mathbf{-0.500}$ and $-0.057$ across the three sets: on two of
 three sets it is anti-correlated with them, not merely uninformative.
 
