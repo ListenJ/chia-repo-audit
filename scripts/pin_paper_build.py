@@ -38,7 +38,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 
-INPUTS = ("paper/paper.tex", "paper/fig_decomposition.pdf")
+# The submitted 4-page paper no longer includes the figure (it was cut to meet the page
+# rule), so the figure is no longer an input of this build; listing it would make the pin
+# overstate what the PDF was compiled from.
+INPUTS = ("paper/paper.tex",)
 OUTPUTS = ("paper/paper.pdf", "paper/paper_text.txt")
 
 
@@ -87,7 +90,8 @@ def main() -> int:
         "pages": pages,
         "regenerate": (
             "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then "
-            "scripts/pin_paper_build.py; verify_paper_claims.py compares the four "
+            "scripts/pin_paper_build.py; verify_paper_claims.py compares the "
+            f"{len(INPUTS) + len(OUTPUTS)} "
             "hashes below against the bytes on disk"
         ),
     }

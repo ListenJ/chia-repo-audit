@@ -1,13 +1,12 @@
 {
   "inputs": {
-    "paper/fig_decomposition.pdf": "3daef5d31472f76fb6bb07b09c5586147b39d452fbdefc3db48542d5210c4ebe",
-    "paper/paper.tex": "2d921512c7287f1a4cb559e6a3c7afce519cbd415d6ea307f9ef64a7eed8c655"
+    "paper/paper.tex": "42e8d48d1665adb84bbf3a0deda1e90218b55ca0cc830851c0688d251ce06a94"
   },
   "outputs": {
-    "paper/paper.pdf": "39c3e63f7a8dd373276a835948d00bbd8481c61f053cbf3f617cbc79217694a1",
-    "paper/paper_text.txt": "7a8ef39cf22ccc099a4014525f57e6bb992304773bf3e150784fb543f5178955"
+    "paper/paper.pdf": "430dda7e89c56072092f356d5868ec694cbaeeac35058e429060ff3cf86e93a4",
+    "paper/paper_text.txt": "fe2b07d5f24577af752f19036730e683cb8eee780cca1af11fe2e22447bb4c3f"
   },
-  "pages": 10,
-  "pinned_utc": "2026-09-24T16:27:22Z",
-  "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the four hashes below against the bytes on disk"
+  "pages": 4,
+  "pinned_utc": "2026-09-24T17:06:07Z",
+  "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the 3 hashes below against the bytes on disk"
 }

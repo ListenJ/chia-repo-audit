@@ -126,7 +126,11 @@ supplies one here.
   The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (220 claims). Its final check is
+  committed artifact and exits non-zero on drift (220 claims). Prose checks bind to one of
+  two corpora -- the 4-page submission (`paper/paper.tex`) and the full audit report
+  (`paper/paper_extended.tex`) that ships beside it -- and the script reports which
+  document carried each fragment, because a gate that cannot say which document satisfied
+  it is a gate on two documents at once. Its final check is
   self-referential: the paper states the claim count, so editing the verifier without
   updating the prose turns the run red. This sentence is gated too, and the reason is
   that it used not to be --- it read "138 claims" for two rounds after the count had
@@ -135,16 +139,20 @@ supplies one here.
 - `paper/paper.pdf` is built with **pdfTeX** (`pdflatex paper.tex`, twice, so that
   cross-references resolve), not XeLaTeX: the host's `xetex.fmt` disappeared during the
   2026-09-23 session and the source is pure ASCII and loads no `fontspec`, so pdfTeX
-  compiles it cleanly -- 10 pages, no undefined references. Any rebuild must follow the
+  compiles it cleanly -- 4 pages, no undefined references. The submitted document is now a
+  4-page two-column ACM paper (\documentclass[sigconf,anonymous,nonacm]{acmart}), because the
+  organizers page states "A 4-page paper" and "The paper should be in 2-column ACM/IEEE
+  style, submitted as a PDF." The 10-page version it was cut from remains in the artifact
+  as `paper/paper_extended.tex`. Any rebuild must follow the
   chain source -> pdflatex x2 -> `uv run --with pypdf python scripts/extract_pdf_text.py`
   -> `uv run --with pypdf python scripts/pin_paper_build.py` -> `python3
   scripts/verify_paper_claims.py`. Use `python`, not `python3`, inside `uv run`: `python3`
   resolves to the host interpreter outside uv's ephemeral environment, so `--with pypdf`
   has no effect and the pin step exits with "pypdf is required" even though the flag was
   given. The pin step is not optional: the verifier compares
-  the SHA-256 of the source, the figure, the PDF and the text render against
-  [`paper/BUILD_PIN.json`](paper/BUILD_PIN.json), so a rebuild that skips it leaves four
-  checks red. One 8.9 pt overfull box remains, on the line carrying
+  the SHA-256 of the source, the PDF and the text render against
+  [`paper/BUILD_PIN.json`](paper/BUILD_PIN.json), so a rebuild that skips it leaves every
+  hash check red. One 8.9 pt overfull box remains, on the line carrying
   `results/vm_teardown_precondition_2026-09-24.json`. It is left alone on purpose: the
   obvious fix is a break opportunity inside that filename, and the verifier's
   `paper_says` check for it requires the filename to appear verbatim in the paper.
@@ -451,15 +459,19 @@ Verified against the submission system and the organizers' messages:
 
 Not verified — and previously stated here as if it were:
 
-- ~~"A PDF of at most four pages in two-column ACM/IEEE style."~~ was never sourced
-  and is **not** a documented hackathon requirement. Re-checked against primary
+- ~~"A PDF of at most four pages in two-column ACM/IEEE style."~~ was stated here on 2026-09-23
+  without a source and was correctly retracted the same day. **The sentence is now
+  sourced, and we comply:** re-fetched from the organizers page at 2026-09-24T16:40Z, under
+  "End-of-hackathon project submission" / "End-of-hackathon Write-up", it reads
+  "### A 4-page paper" and "The paper should be in 2-column ACM/IEEE style, submitted as a
+  PDF." The paper was cut from 10 pages to 4 on that evidence. Re-checked against primary
   sources on 2026-09-24: the hackathon announcement states only
   "Proposals are short -- 1 page max -- and are due Aug 25, 2026" and gives **no**
   final-submission length; the co-located A3 workshop call states
   "Paper length: 2-4 pages with IEEE or ACM format, excluding references", which is
   written for the **workshop paper track** and never mentions the hackathon. So the
   open question is not whether a limit exists but **whether the workshop's 2-4 pages
-  govern hackathon submissions** -- our paper is 10 pages plus 6 references, so if it
+  govern hackathon submissions** -- the paper then stood at 10 pages plus 6 references, so if it
   does, this is desk-reject scale. Asked of the organizers on 2026-09-24
   (`docs/organizer-email-2026-09-24.md`); unanswered as of this writing, and we have
   not cut content on a guess.
