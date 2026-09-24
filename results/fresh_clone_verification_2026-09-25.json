@@ -5,9 +5,14 @@
     "rehashed_ok": 21
   },
   "branch": "codex/colab-cpu-validation",
-  "clone_command": "git clone https://github.com/ListenJ/chia-repo-audit.git .tmp/fresh_clone_0925/repo && git checkout codex/colab-cpu-validation -- over HTTPS, the same URL a reviewer can paste, with no SSH key and no local state on the path",
-  "cloned_head": "eeef2f0e3783e58938ecf4c2c2ef5d544d3a569d",
-  "cloned_utc": "2026-09-24T19:12:33Z",
+  "checkout_clean_before_and_after": {
+    "dirty_lines_after_gates": 0,
+    "dirty_lines_before_gates": 0,
+    "note": "`git status --short` counted inside the clone. The after-count is what makes the mutation suite honest: it edits scripts/verify_paper_claims.py in place, so a nonzero here would mean the documented chain consumes the tree it claims to reproduce."
+  },
+  "clone_command": "git clone https://github.com/ListenJ/chia-repo-audit.git <path> -- over HTTPS, the same URL a reviewer can paste, with no SSH key and no local state on the path; this round landed at .tmp/fc_final2/repo and checked out the default branch, which is the same SHA as codex/colab-cpu-validation",
+  "cloned_head": "079271733ff70aa345d4297937567c03bc5cc768",
+  "cloned_utc": "2026-09-24T19:31:52Z",
   "core_autocrlf": "true",
   "eol_note": "Produced by `git ls-files --eol paper .gitattributes` inside the clone. The submission is now two documents, so the table is one row longer than the 9/24 record: paper_extended.tex arrived with the format split and checks out i/lf w/lf attr/-text like the other text sources. The awkward first line is unchanged -- .gitattributes cannot pin itself, and that still does not disturb the artifacts below it.",
   "eol_table_paper": [
@@ -33,7 +38,7 @@
       "rc": 0
     },
     "unittest discover -s chia_loop/tests": {
-      "last": "Ran 46 tests in 0.422s -- OK",
+      "last": "Ran 46 tests in 0.414s -- OK",
       "rc": 0
     },
     "verify_paper_claims.py": {
@@ -57,6 +62,12 @@
     "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the 3 hashes below against the bytes on disk"
   },
   "prior_clone_records": [
+    {
+      "cloned_head": "eeef2f0e3783e58938ecf4c2c2ef5d544d3a569d",
+      "result": "241/241 claims re-derived from artifacts, five gates rc=0",
+      "what_changed_since": "ops log sections 60-62 landed, plus the clone record itself: the gates re-run against the author tree at HEAD, the corrected cost of giving the extended report a render (+3 claims, 241->244, because the pin loop emits one check per pinned artifact), and the census/token sweeps. Files: docs/operations-log.md, results/fresh_clone_verification_2026-09-25.json",
+      "why_it_is_not_this_one": "it measured eeef2f0, which is two docs commits behind the tree a reviewer clones today; its gate lines are not this commit's"
+    },
     {
       "cloned_head": "9703c4b683eb23f3c42cef68c722c26614b2dacc",
       "result": "241/241 claims re-derived from artifacts, five gates rc=0",
