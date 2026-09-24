@@ -3682,3 +3682,32 @@ instances / disks / 静态地址 / snapshots / custom images 全部为 0。
 为空"这条判据在这个宇宙里再也没有能跑它的地方。也记一条止损：`.240` 可能已经分给了别的租户，
 所以我只做两次 6 秒连接和两组 ping，没有继续扫端口——对不属于自己的地址做端口普查不是收尾，
 是越界。
+
+## §57 收尾计划只看了一半的账：算力不止 GCP 一条路，凭据也不止 Atria 一把
+
+计划的 Task 7/8 把"密钥卫生"等同成 Atria、把"VM 清理"等同成那两台 GCP 机器。盘上记录不是这么
+说的：9/22 那两天用过三条计算路径（GCP、Colab CLI 命名会话 `chia-cpu-audit`、ModelScope PAI-DSW
+`dsw-2203230`），并且出过一次凭据外泄（见 §"Credential exposure incident during the DSW probe"）。
+所以这一节把这三条路各自结一次账。
+
+**DSW 外泄凭据"从未写进仓库"这句话被机械验证了。** 先前它只是一条自我声明，而自我声明正是这套
+规矩里最不该信的东西。这次不再引用，改成重derive：对 `git rev-list --all` 的全部 116 个提交跑
+`authCode|auth_code|dsw-[0-9]{5,}`，命中的只有本文与 `docs/plans/2026-09-22-modelscope-dsw-timing.md`
+两个文件，逐条读过去全是名字与路径（`/dsw-2201946/`、实例号 `dsw-2203230`、"an `authCode` value"），
+没有一个值；再跑一组更宽的形状（`OSSAccessKeyId`、`?token=`、`Bearer`、`Set-Cookie`、
+`kaggle.json`）跨全历史零命中。所以那句话在当前历史上为真，不需要改写历史，也不需要 force push。
+
+**但为真不等于那件事结了。** 9/22 的处置写的是"值随实例一起轮换，平台会回收它"，并且留了一条给
+用户的 follow-up：如果实例在 `authCode` 过期前没被回收，就去 ModelScope 控制台撤销。也就是说这个
+缓解措施的有效性挂在一个我们没有测量的前提上：实例真的被回收了。今天想测，浏览器里没有 ModelScope
+会话（跳登录页），所以这台机器现在还开着、那个 authCode 还有效没有，仍然是一个未测前提。它不是
+赞助商付费的算力（免费 CPU 实例），所以不构成账单风险，构成的是凭据风险。
+
+**Colab 那条路有落盘证据可以结账。** `results/colab_champsim_smoke_result.json` 里
+`execution_environment.session_cleanup_verified = true`，本文同一天记 `colab sessions` 清理后无
+活跃会话；高内存那次请求返回 `Service Unavailable`，压根没分配到会话。命名 VM 不必再去控制台确认。
+
+**Atria 的作废指令按端点核对了一遍。** `scripts/atria_audit.py` 的 `BASE = https://api.atria-asi.ai`，
+密钥由运行时提供，仓库里搜不到任何 key 材料（`ATRIA.*KEY` 零命中）。魔搭首页此刻有个叫
+`Atria-Dawn-Preview` 的模型条目——那是同名巧合，不是这把密钥的出处；如果照字面去魔搭撤销，就会
+撤销一个跟它无关的东西，而真正那把 `atr_3Hgr…` 还在生效。作废地点是 Atria 自己的控制台（`api.atria-asi.ai`）。
