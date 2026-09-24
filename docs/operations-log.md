@@ -3658,3 +3658,27 @@ EOF，退出码 2），跟仓库没有半点关系。但如果我只盯着"这�
 重新成立的事实。措辞上本节不引入新命名的工件（README、本文、那两个 paper 文件在别处已被命名
 过），改前改后各跑一次普查，`370 files_tracked` 与 `machine/reachable/code-unreferenced =
 173/108/89` 一字未动。
+
+## §56 试着把 GCP 那一格从"引用"改成"测量"：拿到了旁证，但那一格仍然勾不上
+
+计划里"GCP 实例 list 为空"先前只标了引用，理由是 `gcloud` 走不通。这轮先确认它仍然走不通
+（18:43Z 重测 `instances list` rc=1，`invalid_grant: Account has been deleted`），然后换一条不
+需要凭据的路：直接问那两个地址现在是什么。
+
+探针矩阵（本机直连，TCP 6s 超时）：`136.108.73.240` 是 22 超时 / 443 超时 / **ICMP 有回包**
+（TTL=101，247–251 ms）；`34.73.33.65` 是 22 超时 / 443 超时 / ICMP 100% 丢包。反向查询不碰主
+机、只问第三方 IP 库：两个地址都还是 `AS396982 Google LLC`，反解名分别是
+`240.73.108.136.bc.googleusercontent.com` 与 `65.33.73.34.bc.googleusercontent.com`，城市 North
+Charleston，和 us-east1-b 对得上。
+
+为什么这仍然不够：`bc.googleusercontent.com` 是 Google 给整个 GCP 地址池的通用反解，它既不表
+示地址是我们的，也不表示不是；而"22 没人接"跟"这台实例不存在"也不是一回事——一台防火墙不放行
+22 的实例照样在计费。所以这次测量支持的只是一个弱结论：现在 `.240` 上应答 ping 的那个东西，不
+像还活着的 chia-grid，因为我们还在用它的时候 22 是通的，而销毁当刻 `ssh_to_old_ip` 已经超时。
+删除的权威证据仍然只有 `results/compute_host_lifecycle_2026-09-22_to_24.json`：delete rc=0 之后
+instances / disks / 静态地址 / snapshots / custom images 全部为 0。
+
+于是一格从"只能引用"变成"引用加一条独立旁证"，期望值本身则确认不可执行：账号删掉之后，"list
+为空"这条判据在这个宇宙里再也没有能跑它的地方。也记一条止损：`.240` 可能已经分给了别的租户，
+所以我只做两次 6 秒连接和两组 ping，没有继续扫端口——对不属于自己的地址做端口普查不是收尾，
+是越界。
