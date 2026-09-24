@@ -3528,3 +3528,33 @@ Consent 勾选、"Save and resubmit" 之后 ready for review 仍然成立。Summ
 所以"服务端 == pin"这句话在本 artifact 里是**只能由投稿人当场演示、由评审下载后自行核验**的
 外部状态，与 §49 里 GCP 实例清单同一类。能重 derive 的部分是本地这一侧：
 `sha256sum paper/paper.pdf` 对 `BUILD_PIN.json`。
+
+## §52 终态：克隆重跑到最后一棵树，以及三条只能引用的外部状态
+
+§51 之后 HEAD 又前进了一个提交，而 README 是普查门禁的输入，所以"克隆里全绿"这句话必须
+在最后那棵树上重测。2026-09-24T18:03Z 全新 HTTPS 克隆 `codex/colab-cpu-validation` 得
+`8c93f15d371a0a5e57674ed10543e6626cf50ea8`，`core.autocrlf=true` 下三个纸面工件仍是
+`i/lf w/lf attr/-text`，跟踪文件 0 行脏。五道门禁全部在这份克隆里跑：
+`verify_paper_claims.py` 241/241 rc=0、`audit_grid_levels.py` rc=0、
+`check_documented_commands.py` rc=0、`unittest discover` Ran 46 tests OK、
+`mutation_test_gates.py` 10 mutations 0 problems；跑完 `git status` 仍 0 行脏，逐字节还原成立。
+普查在 README 改写后重算并 `--markdown` 重生成，`REVIEW_COVERAGE.md` 逐字节未变——这次措辞
+修复没有动任何被发表的分层计数。
+
+同一棵树上核过的外部状态（HEAD == 双远端 branch == 双远端 main，`git ls-remote --symref github HEAD`
+给出 `ref: refs/heads/main`）：匿名 `raw.githubusercontent.com` 上 `main` 与分支两份 README 都含
+"46 unit tests pass in-tree"；`github.com` 仓库首页与分支 URL 匿名 200；全历史 token 形状扫描
+（111 个提交）无输出。
+
+三条**只能引用、不能在本机重 derive** 的终检项，写清楚而不是打勾：
+(1) GCP 实例列表为空——赞助账号已于 2026-09-24 删除，`gcloud` 在本机返回
+`invalid_grant: Account has been deleted`，所以"没有计算资源在计费"这件事的证据是账号本身没了，
+不是一条空列表；(2) HotCRP 服务端 PDF 哈希等于 pin（§51）——需要一个已登录会话，仓库里没有
+任何门禁能重算它，评审可以下载后自行 `sha256sum`；(3) 本条目所在提交本身又落后于上面那次克隆
+一个提交，这是"被跟踪的记录必然滞后它所描述的树"这条性质在起作用，钉住它的是门禁那三条
+（`cloned_head` 是 HEAD 祖先、`pin_at_clone` 等于该提交上的 pin blob、LF 三工件），
+而不是"滞后量为零"。
+
+时间盒（计划要求 ≤ 08:00 UTC）没有达成：接管时上一会话已停在写盘之前，实际收口发生在
+17:00–18:05 UTC。按计划最后一条的处置执行——优先保证 Task 6 换件已确认（已确认，见 §51），
+其余项逐条标明是重测过还是只能引用。
