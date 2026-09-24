@@ -202,6 +202,7 @@ def main(argv: list[str]) -> int:
         ours: dict[str, str] = {k: v.get("combined", "") for k, v in prev.items()}
         per_case: dict[str, dict] = dict(prev)
         right = sum(1 for v in per_case.values() if v.get("matches_expected"))
+        right_c = sum(1 for v in per_case.values() if v.get("matches_combined"))
         for case in cases:
             if opts.resume and case["id"] in per_case:
                 continue
@@ -223,11 +224,21 @@ def main(argv: list[str]) -> int:
             exp = case.get("expected_verdict")
             ok = bool(parsed) and parsed.get("verdict") == exp
             right += ok
+            # Combined is a different quantity from verdict. The published finding is
+            # on this axis (verdict kappa 1.0, combined kappa 0.455), and measuring only
+            # verdict would call sem-03 correct when its error set is wrong -- so both
+            # are recorded and neither is allowed to stand in for the other.
+            ok_c = bool(parsed) and label == combined_label({
+                "verdict": exp, "errors": case.get("expected_errors") or []})
+            right_c += ok_c
             per_case[case["id"]] = {
                 "combined": label, "verdict": parsed.get("verdict"),
                 "errors": parsed.get("errors"), "expected_verdict": exp,
                 "expected_errors": case.get("expected_errors"),
-                "matches_expected": ok, "prompt_sha256": sha,
+                "matches_expected": ok, "matches_combined": ok_c,
+                "expected_combined": combined_label({
+                    "verdict": exp, "errors": case.get("expected_errors") or []}),
+                "prompt_sha256": sha,
                 "returned_model": data.get("model"),
                 "usage": data.get("usage"),
             }
@@ -237,10 +248,13 @@ def main(argv: list[str]) -> int:
             # was worth zero. A crash should cost one case, not an evening.
             save_set(name, per_case)
             print(f"{case['id']:12s} {label:28s} expected={exp} "
-                  f"{'OK' if ok else 'DIFF'}", flush=True)
+                  f"{'OK' if ok else 'DIFF'}" if ok_c == ok else
+                  f"verdict-ok/combined-DIFF", flush=True)
         scores: dict = {
             "n_cases": len(cases), "n_answered": len(ours),
-            "accuracy_vs_expected": round(right / len(ours), 4) if ours else None,
+            "verdict_accuracy_vs_expected": round(right / len(ours), 4) if ours else None,
+            "combined_accuracy_vs_expected": (
+                round(right_c / len(ours), 4) if ours else None),
         }
         for gmodel, gl in gemini.items():
             shared = [i for i in ours if i in gl]
