@@ -1,0 +1,122 @@
+{
+  "checks": 36,
+  "failed": [],
+  "sets": {
+    "fact36": {
+      "n_cases": 36,
+      "verdict_accuracy": 0.9167,
+      "combined_accuracy": 0.1667,
+      "kappa_vs_gemini": {
+        "gemini-2.5-flash": 0.3993,
+        "gemini-2.5-pro": 0.4061
+      },
+      "mismatched_cases": [
+        "sem-01",
+        "sem-02",
+        "sem-04",
+        "sem-05",
+        "sem-06",
+        "sem-07",
+        "sem-08",
+        "sem-09",
+        "sem-11",
+        "sem-13",
+        "sem-14",
+        "sem-15",
+        "sem-17",
+        "sem-19",
+        "sem-20",
+        "sem-21",
+        "sem-22",
+        "sem-24",
+        "sem-25",
+        "sem-26",
+        "sem-27",
+        "sem-28",
+        "sem-29",
+        "sem-30",
+        "sem-31",
+        "sem-32",
+        "sem-33",
+        "sem-34",
+        "sem-35",
+        "sem-36"
+      ]
+    },
+    "measured6": {
+      "n_cases": 6,
+      "verdict_accuracy": 0.5,
+      "combined_accuracy": 0.1667,
+      "kappa_vs_gemini": {
+        "gemini-2.5-flash": 0.5,
+        "gemini-2.5-pro": 0.7273
+      },
+      "mismatched_cases": [
+        "sem-01",
+        "sem-03",
+        "sem-esc-01",
+        "sem-esc-02",
+        "sem-esc-03"
+      ]
+    },
+    "spec10": {
+      "n_cases": 10,
+      "verdict_accuracy": 1.0,
+      "combined_accuracy": 0.9,
+      "kappa_vs_gemini": {
+        "gemini-2.5-flash": 0.7297,
+        "gemini-2.5-pro": 0.8684
+      },
+      "mismatched_cases": [
+        "gold-03"
+      ]
+    }
+  },
+  "probe": {
+    "ids": [
+      "sem-01",
+      "sem-02",
+      "sem-03",
+      "sem-esc-01",
+      "sem-esc-02",
+      "sem-esc-03"
+    ],
+    "moved_B": [
+      "sem-esc-03"
+    ],
+    "moved_C": [
+      "sem-01",
+      "sem-esc-01",
+      "sem-esc-02",
+      "sem-esc-03"
+    ],
+    "strong_confirmation": false,
+    "labels": {
+      "A": {
+        "sem-01": null,
+        "sem-02": "equivalent|",
+        "sem-03": null,
+        "sem-esc-01": "not_equivalent|E4",
+        "sem-esc-02": "not_equivalent|E4",
+        "sem-esc-03": "not_equivalent|E4"
+      },
+      "B": {
+        "sem-01": null,
+        "sem-02": "equivalent|",
+        "sem-03": null,
+        "sem-esc-01": "not_equivalent|E4",
+        "sem-esc-02": "not_equivalent|E4",
+        "sem-esc-03": null
+      },
+      "C": {
+        "sem-01": "not_equivalent|E3,E4",
+        "sem-02": "equivalent|",
+        "sem-03": null,
+        "sem-esc-01": "equivalent|",
+        "sem-esc-02": "",
+        "sem-esc-03": "equivalent|"
+      }
+    }
+  },
+  "unparsed_cases": []
+}

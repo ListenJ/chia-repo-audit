@@ -908,11 +908,15 @@ check("the README quotes the same claim count as the paper",
 # 快照，它们写的是当时的页数，改了反而是伪造记录；handoff 顶部因此挂了陈旧告示。
 # 正则也必须只匹配"本文有多少页"的句式：裸扫 r"\d+ pages" 会把 README 和邮件里
 # 引用的工作坊规则 "2-4 pages" 一起抓进来，那是别人的限制，不是我们的页数。
+# Only current-state docs are scanned. The organizer letter is a record of what was sent on
+# 2026-09-24, and forcing its page count to track every later rebuild would mean editing a
+# sent letter -- falsifying a record to satisfy a gate is the worse error. The letter is
+# instead required to carry its own date, so a reader cannot mistake it for current state.
 _OUR_LENGTH = (r"our paper is (\d+) pages", r"currently (\d+) pages",
                r"compiles it cleanly -- (\d+) pages")
 _stale_pages = sorted(
     f"{_d} says {m.group(1)}"
-    for _d in ("README.md", "docs/organizer-email-2026-09-24.md")
+    for _d in ("README.md",)
     for _pat in _OUR_LENGTH
     for m in re.finditer(_pat, (REPO / _d).read_text(encoding="utf-8"))
     if int(m.group(1)) != _pin["pages"])
@@ -920,6 +924,8 @@ check("no current-state doc quotes a page count the PDF does not have", [], _sta
 check("and the README does state one, so the gate cannot pass by deletion", True,
       sum(len(re.findall(_p, README_TXT)) for _p in _OUR_LENGTH) >= 2
       and f"{_pin['pages']} pages" in README_TXT)
+check("the sent organizer letter is dated, so its counts read as a record", True,
+      "2026-09-24" in (REPO / "docs/organizer-email-2026-09-24.md").read_text(encoding="utf-8"))
 
 # ---- 决策链第二组：4 条真实决策，判决与作者实际动作对账 ---------------
 _d3spec = load_json("decision_chain/chia-decisions3.json")
@@ -943,6 +949,195 @@ check("every approval score exceeds the 0.5 hint", (4, 0.627, 0.835),
 check("no noul question text is repeated across the set", 4,
       len({q["instructions"] for d in _d3spec["decisions"]
            for q in d["questions"].values() if q["type"] == "noul"}))
+
+# ---- 决策链第五组：1/5 一致，加一个纯倒序对照 --------------------------
+# 这组是本轮唯一"结果不利于我们"的决策实验，所以它更需要回推：一句 "1 of 5" 如果
+# 不能从两份 verdicts 文件里重算出来，它就只是一个我们选择披露的颜色。
+_d5 = load_json("decision_chain/chia-decisions5.json")
+_d5v = load_json("decision_chain/chia-decisions5r.json")
+_d5fwd = load_json("decision_chain/chia-decisions5.verdicts.json")
+_d5rev = load_json("decision_chain/chia-decisions5r.verdicts.json")
+_auth5 = {d["id"]: d["chosen_by_author"] for d in _d5["decisions"]}
+_crit5 = {d["id"]: list(d["questions"]["next_action"]["criteria"]) for d in _d5["decisions"]}
+_ids5 = [r["id"].replace("__reversed", "") for r in _d5fwd["decisions"]]
+check("the set really has five forks, each with the action taken recorded",
+      5, sum(1 for i in _ids5 if _auth5.get(i) in _crit5.get(i, [])))
+check("the control spec is a pure reordering, not a rewording", True,
+      all(_d5v["decisions"][k]["questions"]["next_action"]["instructions"]
+          == _d5["decisions"][k]["questions"]["next_action"]["instructions"]
+          and sorted(_d5v["decisions"][k]["questions"]["next_action"]["criteria"])
+          == sorted(_crit5[_ids5[k]])
+          and list(_d5v["decisions"][k]["questions"]["next_action"]["criteria"])
+          == list(reversed(_crit5[_ids5[k]])) for k in range(5)))
+_fwd = sum(1 for r in _d5fwd["decisions"] if r["chosen_action"] == _auth5[r["id"].replace("__reversed", "")])
+_rev = sum(1 for r in _d5rev["decisions"]
+           if r["chosen_action"] == _auth5[r["id"].replace("__reversed", "")])
+check("forward top-1 equals the action taken", f"{_fwd} of 5", "1 of 5", r"1 of 5")
+check("and so it does under the reversed order", f"{_rev} of 5", "1 of 5")
+_moved = sum(1 for a, b in zip(_d5fwd["decisions"], _d5rev["decisions"])
+             if a["chosen_action"] != b["chosen_action"])
+check("picks that moved under pure reordering", f"{_moved} of 5", "2 of 5", r"2 of 5")
+check("the reversal is not primacy: first-declared option picked", 1,
+      sum(1 for r in _d5rev["decisions"]
+          if r["chosen_action"] == _crit5[r["id"].replace("__reversed", "")][0]))
+check("the margin rule escalated the same count in both orders",
+      (len(_d5fwd["escalate"]), len(_d5rev["escalate"])), (4, 4), r"4 of 5")
+_reg = [r["id"] for r in _d5fwd["decisions"] if "登记为" in " ".join(r["reasons"])]
+check("twice it was the register, not the score, that escalated", 2, len(_reg),
+      r"escalated by the register")
+
+
+# ---- 跨供应商第三评分者：正文引用的 rater 数字以前没有门禁 ------------
+# 两个 Gemini rater 同属一家供应商，它们的 κ 不是独立性证明；论文改用第二家供应商的
+# 模型重打分。这些数字此前只在 scripts/rater_rollup.py 里对账，正文本身没有绑定，
+# 删掉或改动那句话不会有任何检查翻红。
+sys.path.insert(0, str(REPO / "scripts"))
+from independent_audit import combined_label  # noqa: E402
+from atria_audit import declared, gemini_labels  # noqa: E402
+
+_atri = load_json("results/audit_independent_atria/raw.json")["sets"]
+
+
+def _axis(name, axis):
+    """Accuracy on one axis, re-derived from the labels the rater actually said.
+
+    Not from the stored booleans: the first resumed run wrote records before
+    ``matches_combined`` existed, so reading the flag gave 0.0 and 0.0 agreed with the
+    0.0 in the score block. Expected labels are a pure function of fields that were
+    always stored, so they are recomputed here.
+    """
+    cs = _atri[name]["cases"]
+
+    def expected(v):
+        if axis == "verdict":
+            return v.get("expected_verdict")
+        return combined_label({"verdict": v.get("expected_verdict"),
+                               "errors": v.get("expected_errors") or []})
+
+    good = [i for i, v in sorted(cs.items()) if v.get(axis) and v[axis] == expected(v)]
+    return len(good), len(cs)
+
+
+# Bind each fraction to the axis words it must sit next to. The first version allowed a
+# gap ("3 of 6 [^,.;\d]* verdict") and passed against an unrelated sentence before the
+# paper said anything about this rater: an existence test that cannot fail is not a gate.
+_PAT = {"verdict": "verdict labels", "combined": "error-code labels"}
+for _s, _ax, _want in (("measured6", "verdict", "3 of 6"),
+                       ("measured6", "combined", "1 of 6"),
+                       ("spec10", "verdict", "10 of 10"),
+                       ("spec10", "combined", "9 of 10")):
+    _g, _n = _axis(_s, _ax)
+    check(f"cross-provider {_s} {_ax} accuracy", f"{_g} of {_n}", f"{_want}",
+          rf"{_g} of {_n} {_PAT[_ax]}")
+
+_esc = sorted(i for i in _atri["measured6"]["cases"] if i.startswith("sem-esc"))
+check("the escape labels are there to be compared", 3, len(_esc))
+
+
+def _published_digests(set_name):
+    """case id -> the prompt digests the published raters were actually shown."""
+    rows = load_json(declared("LLM_RESULTS")[set_name])
+    return {r["id"]: {l.get("prompt_sha256") for l in (r.get("labels") or [])}
+            for r in rows if isinstance(r, dict) and r.get("id")}
+
+
+# "Same question, different provider" holds only if the question is the same string. Both
+# sides publish a per-case prompt digest, so it is checked rather than asserted in prose.
+_nodig = [(s, i) for s in _atri
+          for i, rec in sorted(_atri[s]["cases"].items())
+          if rec.get("prompt_sha256") not in _published_digests(s).get(i, set())]
+check("every cross-provider case carries a published prompt digest", [], _nodig,
+      r"same prompt digest")
+_gm = gemini_labels(REPO / declared("LLM_RESULTS")["measured6"])
+check("the Gemini reference really holds two raters for these cases", 2, len(_gm))
+_agree = [i for i in _esc
+          if all(_atri["measured6"]["cases"][i]["combined"] == gl.get(i)
+                 for gl in _gm.values())]
+check("the second-provider rater reproduces both Gemini labels on every escape",
+      _esc, _agree, r"reproduces")
+_vmiss = sorted(i for i, v in sorted(_atri["measured6"]["cases"].items())
+                if not (v.get("verdict") and v["verdict"] == v.get("expected_verdict")))
+check("and the cases it misses on the verdict are exactly the escapes", _esc, _vmiss,
+      r"exactly the three escapes")
+check("and it was one model, not a mixture", ["Atria-Dawn-Preview"],
+      sorted({str(v.get("returned_model")) for b in _atri.values()
+              for v in (b.get("cases") or {}).values()}), r"Atria-Dawn-Preview")
+_roll = subprocess.run([sys.executable, "scripts/rater_rollup.py"],
+                       cwd=REPO, capture_output=True, text=True)
+check("the rater artifact passes its own re-derivation gate", 0, _roll.returncode,
+      r"rater_rollup")
+# The re-ask pair, gated. `--reask-unparsed` archives the record it replaces before dropping
+# it, so the same prompt digest can be compared across two requests. Without this check the
+# archive is decoration: the paper's claim that temperature 0 did not give one answer per
+# prompt rests on those two records being about the same question.
+_arc = load_json("results/audit_independent_atria/unparsed_replies.json")
+_ak = "spec10/gold-01"
+_rec = _atri["spec10"]["cases"][_ak.split("/")[1]]
+check("the re-asked case and its archived first attempt share one prompt digest",
+      _arc[_ak]["prompt_sha256"], _rec["prompt_sha256"])
+check("the first attempt produced no content and the retry produced a verdict",
+      (len(_arc[_ak].get("raw_reply_unparsed") or ""), _rec.get("verdict")),
+      (0, "equivalent"), r"no content on the first request")
+# The Limitations sentence used to read "both generative models come from one provider".
+# That became false the moment a second provider was queried, and nothing noticed: a
+# limitation that is stale in the pessimistic direction is still a false claim. These two
+# bind it to the artifact, and the second one is designed to go red the day a human
+# export lands, forcing the sentence to be rewritten rather than left behind.
+check("the second-provider re-labelling is scoped to the cases that exist",
+      len(_atri["measured6"]["cases"]) + len(_atri["spec10"]["cases"]), 16,
+      r"16 measured and canonical")
+check("no rater here is a human, until an export says otherwise", False,
+      (REPO / "web/annotator_result.json").exists(), r"no rater here is a human")
+
+
+# ---- 三方在同一 36 对真实源码上：哪里全对、哪里全错、哪里根本没有答案 ----
+# First draft of this block called sem-34/35/36 "the three cases all three raters miss".
+# That was a category error, not a numerical one: those three are recorded as
+# `unlabellable`, so no answer can match them and "miss" measured nothing. The numbers were
+# right and the sentence they supported was wrong, which is the one thing a re-derivation
+# gate cannot catch on its own. Now: count the labellable subset from the relabelling
+# artifact, score verdict agreement on it, and report the unlabellable three separately as
+# "answered anyway" rather than as "wrong".
+_f36 = {i: dict(v) for i, v in _atri["fact36"]["cases"].items()}
+for _v in _f36.values():
+    _v["expected_combined"] = combined_label({"verdict": _v.get("expected_verdict"),
+                                              "errors": _v.get("expected_errors") or []})
+_gm36 = gemini_labels(REPO / declared("LLM_RESULTS")["fact36"])
+_relabel = load_json("results/semantic_relabel_and_rescore.json")["sets"]["fact36"]["rescored"]
+_unl = sorted(i for i, v in _f36.items() if v.get("expected_verdict") == "unlabellable")
+_lab = sorted(set(_f36) - set(_unl))
+check("the labellable/unlabellable split agrees with the relabelling artifact",
+      (_relabel["n_labellable"], _relabel["n_unlabellable"], len(_f36)),
+      (len(_lab), len(_unl), len(_f36)), r"33 labellable")
+_vok = {m: sum(1 for i in _lab
+               if gl.get(i, "").split("|")[0] == _f36[i]["expected_verdict"])
+        for m, gl in _gm36.items()}
+_vok["Atria"] = sum(1 for i in _lab if _f36[i].get("verdict") == _f36[i]["expected_verdict"])
+check("every rater reproduces the recorded verdict on all 33 labellable pairs",
+      tuple(len(_lab) for _ in _vok), tuple(_vok.values()), r"33/33 each")
+_said = {m: [i for i in _unl if gl.get(i, "").split("|")[0] == "equivalent"
+             and not (gl.get(i, "").split("|")[1] or "").strip()]
+         for m, gl in _gm36.items()}
+_said["Atria"] = [i for i in _unl if _f36[i].get("verdict") == "equivalent"
+                  and not (_f36[i].get("errors") or [])]
+check("and none of them abstains on the three the protocol calls unlabellable",
+      {m: tuple(_unl) for m in _said}, {m: tuple(sorted(v)) for m, v in _said.items()},
+      r"none of them abstains")
+# Denominators here are the labellable subset only. Scoring over all 36 keeps the same
+# numerators (an `unlabellable` pair can never be matched) but hides the fact that three of
+# the "misses" are not misses at all -- see ops-log 45.
+_cok = {m: sum(1 for i in _lab if gl.get(i) == _f36[i]["expected_combined"])
+        for m, gl in _gm36.items()}
+_cok["Atria"] = sum(1 for i in _lab
+                    if _f36[i].get("combined") == _f36[i]["expected_combined"])
+check("error-code agreement per rater over the 33 labellable pairs",
+      (_cok["gemini-2.5-flash"], _cok["gemini-2.5-pro"], _cok["Atria"], len(_lab)),
+      (7, 9, 6, 33), r"7, 9 and 6 of those same 33")
+_mis27 = [i for i in _lab if _f36[i].get("combined") != _f36[i]["expected_combined"]]
+_sup = [i for i in _mis27
+        if set(_f36[i].get("expected_errors") or []) < set(_f36[i].get("errors") or [])]
+check("the second provider over-attributes rather than mis-guessing",
+      (len(_sup), len(_mis27)), (26, 27), r"26 of the 27")
 
 
 def main() -> int:

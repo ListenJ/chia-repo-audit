@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mutation-test the gates that read results/fresh_clone_verification_2026-09-24.json.
+"""Mutation-test the gates that read the delivery and rater evidence files.
 
 Why this is a tracked script and not a scratch file: docs/operations-log.md §32.8
 publishes a table saying "six mutations, all six bite". A claim is only worth
@@ -8,10 +8,11 @@ referenced-path gate and the coverage census -- a reviewer could neither re-run
 it nor see that it existed. So the harness lives here. Run it with
 `python3 scripts/mutation_test_gates.py`; exit 0 means every mutation bit.
 
-Scope, stated plainly: this covers the three checks over the fresh-clone record,
-added in the 187-claim round. The ~10 mutations logged in §32.6 were run ad-hoc
-against the build pin, the retained-PDF block and the README current-state block
-and are not reproduced here.
+Scope, stated plainly: the first six mutations cover the three checks over the fresh-clone
+record, added in the 187-claim round; the last four cover the cross-provider rater layer
+added in the 212-claim round. The ~10 mutations logged in §32.6 were run ad-hoc against the
+build pin, the retained-PDF block and the README current-state block and are not reproduced
+here.
 
 Two things this harness insists on, both learned the hard way:
 
@@ -39,26 +40,42 @@ AND produced no traceback AND the file was restored byte-for-byte.
 from __future__ import annotations
 
 import json
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-TARGET = REPO / "results/fresh_clone_verification_2026-09-24.json"
-BACKUP = REPO / ".tmp/mutation_test_gates.backup.json"
 
+CLONE = "results/fresh_clone_verification_2026-09-24.json"
+RATER = "results/audit_independent_atria/raw.json"
+
+# (label, artifact mutated, mutation). Two artifacts because the checks grew into a second
+# evidence file: the clone record covers the delivery chain, the rater record covers the
+# annotation layer. A harness pinned to one file cannot show that the *other* layer's
+# gates can fail, which is the whole point of running it.
 MUTATIONS = [
-    ("cloned_head invented", lambda d: d.__setitem__("cloned_head", "0" * 40)),
-    ("pin_at_clone tex digest retyped",
+    ("cloned_head invented", CLONE, lambda d: d.__setitem__("cloned_head", "0" * 40)),
+    ("pin_at_clone tex digest retyped", CLONE,
      lambda d: d["pin_at_clone"]["inputs"].__setitem__("paper/paper.tex", "a" * 64)),
-    ("core_autocrlf claimed false", lambda d: d.__setitem__("core_autocrlf", "false")),
-    ("eol rows claim crlf", lambda d: d.__setitem__("eol_table_paper", [
+    ("core_autocrlf claimed false", CLONE, lambda d: d.__setitem__("core_autocrlf", "false")),
+    ("eol rows claim crlf", CLONE, lambda d: d.__setitem__("eol_table_paper", [
         ln.replace("w/lf", "w/crlf") for ln in d["eol_table_paper"]])),
-    ("one eol row dropped",
+    ("one eol row dropped", CLONE,
      lambda d: d.__setitem__("eol_table_paper", d["eol_table_paper"][:-1])),
-    ("attr/-text downgraded to text=auto", lambda d: d.__setitem__("eol_table_paper", [
+    ("attr/-text downgraded to text=auto", CLONE, lambda d: d.__setitem__("eol_table_paper", [
         ln.replace("attr/-text", "attr/text=auto") for ln in d["eol_table_paper"]])),
+    # ---- the cross-provider rater layer -------------------------------
+    ("escape label rewritten as if the rater had not made the shared error", RATER,
+     lambda d: d["sets"]["measured6"]["cases"]["sem-esc-01"].update(
+         {"verdict": "equivalent", "errors": [], "combined": "equivalent|"})),
+    ("one case's prompt digest blanked", RATER,
+     lambda d: d["sets"]["spec10"]["cases"]["av-001"].__setitem__("prompt_sha256", "")),
+    ("a second model string appears in the records", RATER,
+     lambda d: d["sets"]["spec10"]["cases"]["av-002"].__setitem__(
+         "returned_model", "Some-Other-Model")),
+    ("stored accuracy retyped back to the false zero", RATER,
+     lambda d: d["sets"]["spec10"]["scores"].__setitem__(
+         "combined_accuracy_vs_expected", 0.0)),
 ]
 
 
@@ -74,24 +91,23 @@ def run_verifier() -> tuple[int, list[str], list[str]]:
 
 
 def main() -> int:
-    original = TARGET.read_text(encoding="utf-8")
-    BACKUP.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(TARGET, BACKUP)
+    targets = sorted({rel for _, rel, _ in MUTATIONS})
+    originals = {rel: (REPO / rel).read_text(encoding="utf-8") for rel in targets}
     problems: list[str] = []
     try:
         rc, _, _ = run_verifier()
         print(f"baseline: rc={rc}")
         if rc != 0:
             problems.append("baseline is already red; fix that before mutation testing")
-        for name, mutate in MUTATIONS:
-            doc = json.loads(original)
+        for name, rel, mutate in MUTATIONS:
+            doc = json.loads(originals[rel])
             mutate(doc)
             mutated = json.dumps(doc, indent=2, ensure_ascii=False) + "\n"
-            if mutated == original:
+            if mutated == originals[rel]:
                 problems.append(f"{name}: mutation DID NOT APPLY (no-op test)")
                 print(f"[{name}] NO-OP")
                 continue
-            TARGET.write_text(mutated, encoding="utf-8", newline="\n")
+            (REPO / rel).write_text(mutated, encoding="utf-8", newline="\n")
             rc, fails, crashes = run_verifier()
             print(f"[{name}] rc={rc} nfail={len(fails)} crashes={len(crashes)}")
             for f in fails:
@@ -103,8 +119,8 @@ def main() -> int:
             if crashes:
                 problems.append(f"{name}: traceback in output: {crashes[-1][:90]}")
     finally:
-        shutil.copy2(BACKUP, TARGET)
-        BACKUP.unlink(missing_ok=True)
+        for rel, text in originals.items():
+            (REPO / rel).write_text(text, encoding="utf-8", newline="\n")
 
     rc, fails, _ = run_verifier()
     print(f"restored: rc={rc} nfail={len(fails)}")
@@ -112,8 +128,9 @@ def main() -> int:
     # folding "verifier is red" in here made the restore check fire for reasons
     # that had nothing to do with restoration, which is how a harness starts
     # crying wolf and gets ignored.
-    if TARGET.read_text(encoding="utf-8") != original:
-        problems.append("target was not restored byte-for-byte")
+    for rel, text in originals.items():
+        if (REPO / rel).read_text(encoding="utf-8") != text:
+            problems.append(f"{rel} was not restored byte-for-byte")
     for p in problems:
         print(f"PROBLEM  {p}")
     print(f"{len(MUTATIONS)} mutations, {len(problems)} problems")

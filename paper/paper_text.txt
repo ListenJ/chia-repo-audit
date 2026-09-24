@@ -413,17 +413,62 @@ catches it is the nullity check, not the taxonomy. Reading
 a candidate is a poor proxy for running it, and more tex-
 tual auditors buy agreement rather than independence
 when they share a failure mode.
-3.6 Ground truth is generated too
-Five of the defects in this paper (§3.3, this section, §3.11,
-§3.2 and §3.9) are one failure mode seen five times: a
-quantity whose name claims a measurement stops re-
-ferring to the thing measured, and still returns a value
+That account rests on two raters who share a provider,
+so we put the same question to a second provider:
+Atria-Dawn-Previewattemperature0, shown payloads
+carrying the same prompt digest the published raters
+were given, so prompt drift is not an available explana-
+tion for any agreement between them. It reproduces the
+blind spot rather than breaking it. On the six measured
 1The same screening file also carries threeincrementalrows that
 name three different modules while recording one shared binary
 digest and one shared cycle count. Those rows are not attributable
 to a design and none of our claims rest on them; the escape case
 cites that file only as context.
 4
+cases it recovers 3 of 6 verdict labels and 1 of 6 error-code
+labels, and the three verdicts it misses are exactly the
+three escapes, each returned asnot_equivalent/E4. Its
+accuracy then splits along the same seam the publishedκ
+does, and the split is set-dependent: on the ten canonical
+specification cases it reaches 10 of 10 verdict labels and 9
+of 10 error-code labels, its single code miss being a substi-
+tution of one code for another rather than a verdict error.
+That score is the retry’s: the first request for one of the
+ten came back with no content on the first request at all,
+and the retry, shown a prompt whose digest is identical,
+parsed. We report the retry and keep the first reply in
+unparsed_replies.json, because a re-ask that silently
+replaces a failure with a success is exactly the substitu-
+tion this paper is about, and because zero sampling tem-
+perature does not, on this evidence, mean one answer per
+prompt. Agreement aboutwhichcode fired is the scarce
+quantity, not agreement about equivalence, and a rater
+can be right about the first while wrong about the second
+on most of a set. Switching providers buys coverage of
+a different failure mode, not freedom from this one. On
+the 36 real-source pairs the three raters agree completely
+where a label exists and diverge only where one does
+not: on the 33 labellable pairs all three reproduce the
+recorded verdict,33/33each, and they separate on the
+error codes, agreeing with the recorded set on 7, 9 and 6
+ofthosesame33, with26ofthe27second-providermisses
+on that subset strict supersets of it. The remaining three
+pairsaretheonesthisprotocolmarksunlabellable, and
+every rater answersequivalentwith an empty error set
+there: none of them abstains where the rubric derives
+no answer. Code agreement is the scarce quantity, not
+agreement about equivalence, and a rater can be right
+about the first while wrong about the second on most of
+a set.scripts/rater_rollup.pyre-derives every num-
+ber in this paragraph from the per-case labels and refuses
+the artifact when a stored score does not equal the re-
+derivation.
+3.6 Ground truth is generated too
+Five of the defects in this paper (§3.3, this section, §3.11,
+§3.2 and §3.9) are one failure mode seen five times: a
+quantity whose name claims a measurement stops re-
+ferring to the thing measured, and still returns a value
 that reads as a result. In three of the five that value
 was a pass; in the ranking statistic it was merely flatter-
 ing, which is worse to catch because nothing downstream
@@ -486,6 +531,7 @@ internal check could find this), and a generated index
 its consumers and per-module digests; 9 of 15 module
 names carry more than one distinct source. The escape
 case records the correction with both hashes.
+5
 3.8 The harness filled in the missing cells
 itself
 Building that control is also where the loop’s own code
@@ -534,7 +580,6 @@ dence gate finds it a third time from binary digests
 alone(one_design_per_binary:3189efdc1e54e5b5be-
 hind four labels). Stamped labels are self-consistent,
 so a label-only check would have missed the stub fix-
-5
 ture’s version of the same bug: its four-entry cata-
 log carried no labels at all, so all nine levels were
 stamped. The digest witness did catch it. The har-
@@ -595,6 +640,7 @@ Its single non-default answer falls on one of the three
 pairs whose label §3.6 had to withdraw, so even that hit
 is unscoreable. Its agreement with the two generative
 raters isκ= 0.138,−0.364and−0.057across the three
+6
 sets: on two of three sets it is anti-correlated with them,
 not merely uninformative.
 On the escape case itself it answersequivalent, which
@@ -642,7 +688,6 @@ Asecondset, writtenlaterandaboutdecisionsthisses-
 sion actually faced, repeats the result on different text:
 the head’s top-1 choice equalled the action taken4 of 4
 times, the margin rule escalated the two genuinely close
-6
 calls (0.3842vs0.3745;0.4271vs0.3086) and automated
 the two with a clear winner, and the approval head, given
 per-decision wording, spread over0.627–0.835while still
@@ -657,6 +702,25 @@ head return a single constant four times and turned the
 advisorycross-checkintoareadingabouttheoptionlabel
 rather than about the model; rule (1) applied to a check
 written to audit the pipeline, not only to the pipeline.
+A third set breaks the agreement instead of repeat-
+ing it. It holds five forks from the round in which the
+second-provider rater was running, each with the op-
+tion actually taken recorded in the spec: the head’s
+top-1 equalled the action taken1 of 5times, and
+twice its pick was the option with the larger declared
+blast radius (external_writeanddestructiveagainst
+local_reversible), escalated by the register rather
+than by the model’s own score. Since one wording cannot
+separate a preference from a phrasing, the same five deci-
+sions were re-run with every option list written in reverse
+declaration order and nothing else changed:2 of 5picks
+moved, and the reordered pick was the first-declared op-
+tion only once, so this is not primacy. The dispatch layer
+held where the choice did not: the margin rule escalated
+the same4 of 5in both orders. Read together, the two
+sets say the head is usable as a tie-breaker when a real
+ranking exists and unusable as the arbiter of what may
+be destroyed, which is the division the gate implements.
 Metric Gate Measured
 Cross-seed CV (max)<5% 78.16%
 same,2×2grid<5% 23.50%
@@ -688,6 +752,7 @@ the two generative raters on the spec / measured / real-
 pair sets in turn.
 Artifact.A harness that only ever returnsPass
 cannot be distinguished from one that is not look-
+7
 ing, so the release ships the blocked scorecard, raw
 cells and digests: loop, cases, generators, gate and
 scripts/independent_audit.pyas CHIA-compatible
@@ -697,7 +762,7 @@ rather than printed here, so the paper stays anonymous
 while the artifact stays reachable. Every number
 quoted in this paper is re-derived from the commit-
 ted artifacts byscripts/verify_paper_claims.py
-(191 claims, non-zero exit on drift); the defects above
+(220 claims, non-zero exit on drift); the defects above
 were found by reading primary evidence, and this
 script is what turns that into a check, not a coinci-
 dence.scripts/audit_grid_levels.pyis the same
@@ -757,7 +822,6 @@ smallnis reported as a limitation instead.
 A second correction came from running our own ver-
 ifier on the path a reviewer takes rather than the path
 we wrote it on: a fresh clone of the pushed branch. It
-7
 returned 172 of 174 claims with a non-zero exit, and the
 single failure was the gate asserting that the submitted
 PDF is newer than the LATEX source. That gate com-
@@ -800,6 +864,7 @@ nothing. Count distinct digests behind the factor labels
 too: a level whose design is another level’s design mea-
 sures nothing, however consistent its own bookkeeping is.
 (4) Do not let a learned score decide what needs
+8
 human approvalunless it is shown to separate the safe
 action from the destructive one; a rule that escalates ev-
 erything automates nothing.(5) Make a nullity check
@@ -838,41 +903,45 @@ cell (45 runs), but it establishes only that execution is
 deterministic; it says nothing about generation variance,
 which is the axis that fails.Labels:the 33-pairκrests
 on structural labels that survive our own header-parsing
-defect only because we could re-derive them; only the 4-
-casesethasameasurement-groundedlabel, andthethree
-shared errors are the three escapes, so the failure is sys-
-tematic on this set rather than a single coincidence. That
-set carries noequivalentgold case at all, so its verdict-
-axis agreement is reported as degenerate rather than as
-reliability.One series per axis.Each grid draws can-
-didates from a single directory, and the same module
-name denotes different programs across directories, so no
-number here is a cross-series estimate: the78.16%and
-0.0000%cross-seed CVs are bothcorrect and describe dif-
-ferent generated series.Annotators:both generative
-models come from one provider, and §3.10 shows that
-the architecturally different rater we could reach is worse
-than independent rather than better.Annotation va-
-lidity:the raters are large models, and we tested one
-threat and not the other. Exchanging candidate and ref-
-erence leaves every verdict unchanged (0/8), so the layer
-is not reading narrative direction; but we did not test
-whether their verdicts are inflated by exposure to sim-
-ilar C++ prefetcher code in training, which systematic
-reviews of contamination detection treat as the domi-
-nant risk [6]. We name that as uncontrolled rather than
-claim to have ruled it out, and it bears most on the 33-
-pair result since those inputs are real generated source.
-Checker:the cell-level nullity rule conflated per-trace
-with global nullity until this revision; the split is locked
-by four tests. The replicated grids contain no design that
-8
-is inert oneverytrace, so the stricter branch had only a
-synthetic control until a purpose-built one delivered two
-designs equal to the no-op reference on all three traces
-(§3.8). That grid’s factor axes are discarded in the same
-section, sothecontroliscitedasabsoluteequalityagainst
-areferenceandneverasavariancemeasurement.Prove-
+defect only because we could re-derive them; only the
+4-case set has a measurement-grounded label, and the
+three shared errors are the three escapes, so the failure
+is systematic on this set rather than a single coincidence.
+That set carries noequivalentgold case at all, so its
+verdict-axis agreement is reported as degenerate rather
+than as reliability.One series per axis.Each grid
+draws candidates from a single directory, and the same
+module name denotes different programs across directo-
+ries, so no number here is a cross-series estimate: the
+78.16%and0.0000%cross-seed CVs are both correct and
+describe different generated series.Annotators:the
+two generative raters the publishedκrests on come from
+one provider. A second-provider rater now re-labels the
+16 measured and canonical cases (§3.5) and reproduces
+the shared error instead of correcting it, so provider di-
+versity is tested on that subset and not on the 33-pair
+set. The architecturally different rater we could reach
+is worse than independent rather than better (§3.10),
+and no rater here is a human.Annotation validity:
+the raters are large models, and we tested one threat
+and not the other. Exchanging candidate and reference
+leaves every verdict unchanged (0/8), so the layer is not
+reading narrative direction; but we did not test whether
+their verdicts are inflated by exposure to similar C++
+prefetcher code in training, which systematic reviews of
+contamination detection treat as the dominant risk [6].
+We name that as uncontrolled rather than claim to have
+ruled it out, and it bears most on the 33-pair result since
+those inputs are real generated source.Checker:the
+cell-level nullity rule conflated per-trace with global nul-
+lity until this revision; the split is locked by four tests.
+The replicated grids contain no design that is inert on
+everytrace, so the stricter branch had only a synthetic
+control until a purpose-built one delivered two designs
+equal to the no-op reference on all three traces (§3.8).
+That grid’s factor axes are discarded in the same sec-
+tion, so the control is cited as absolute equality against a
+reference and never as a variance measurement.Prove-
 nance:raw.jsonrecords HEAD at write time, not stage
 entry. One supporting screening file carries a binary at-
 tribution defect: three of its incremental rows name three
@@ -904,6 +973,7 @@ tive one, a screening file whose incremental rows cannot
 be attributed to the module they name, a measurement
 attributed to a file that cannot produce it, an escalation
 rule built on an approval score we then measured not to
+9
 separate safe from destructive, a harness that filled an
 absent factor level with some other design and stamped
 the label on it, a ranking statistic that printed its own
@@ -914,27 +984,31 @@ ask of any such loop (§4) and the self-reports are the
 contribution.
 AI assistance in this work
 AI coding and writing tools assisted with implementa-
-tion, experiment plumbing, and the drafting and editing
-of this paper. An AI agent ran the audit loop, wrote and
-revised the scripts and the evidence pipeline, and drafted
-this text under the author’s direction; the author selected
-the claims, checked them against the primary artifacts,
-and is responsible for all code, measurements, citations,
-claims and the final content here. The evaluation layer is
-machine-generated as well: two generative raters, a gen-
-erative labeler that we then showed to be wrong while
-the raters were right (§3.6), a local discriminative head
-used both as a third annotation substrate and as a deci-
-siongate(§3.10, §3.11), andnineself-auditsperformedby
-the same agent that produced the code it was reviewing.
-We state this because the standard this paper applies to
-artifacts is the one it must apply to itself: a generated
-object counts as evidence only with its producer, its ver-
-sion and its failure modes attached. Applied here, that
-means the negative verdicts above were produced by a
-process that was not independently audited, the reposi-
-tory is the thing to check, and this prose is a summary
-of it rather than a substitute for it.
+tion, experiment plumbing, and the drafting and edit-
+ing of this paper. An AI agent ran the audit loop,
+wrote and revised the scripts and the evidence pipeline,
+and drafted this text under the author’s direction; the
+author selected the claims, checked them against the
+primary artifacts, and is responsible for all code, mea-
+surements, citations, claims and the final content here.
+The evaluation layer is machine-generated as well: two
+generative raters from one provider, a third genera-
+tive rater from a second provider (Atria-Dawn-Preview,
+api.atria-asi.ai, queried 2026-09-24 attemperature
+0, per-case prompt digests in the artifact), a generative
+labeler that we then showed to be wrong while the raters
+were right (§3.6), a local discriminative head used both as
+athirdannotationsubstrateandasadecisiongate(§3.10,
+§3.11), and nine self-audits performed by the same agent
+that produced the code it was reviewing. We state this
+because the standard this paper applies to artifacts is the
+one it must apply to itself: a generated object counts as
+evidence only with its producer, its version and its fail-
+ure modes attached. Applied here, that means the nega-
+tive verdicts above were produced by a process that was
+not independently audited, the repository is the thing to
+check, and this prose is a summary of it rather than a
+substitute for it.
 References
 [1] R. Gupta et al. ArchAgent: Agentic AI-driven Computer Archi-
 tecture Discovery. arXiv:2602.22425, 2026.
@@ -955,4 +1029,4 @@ marks Already Contaminated? A Systematic Review of Con-
 tamination Detection Methods. Proc. 5th Generation, Evalua-
 tion and Metrics (GEM) Workshop, Outstanding Paper.https:
 //aclanthology.org/2026.gem-main.50/, 2026.
-9
+10

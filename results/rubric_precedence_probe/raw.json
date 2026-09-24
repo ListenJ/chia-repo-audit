@@ -1,0 +1,313 @@
+{
+  "generated_utc": "2026-09-24T14:15:38.937241+00:00",
+  "protocol_deviation": "conditions B and C show the rater reported cycle counts, which the published protocol never exposes; these labels are NOT comparable with the published kappa and are not merged into it",
+  "requested_model": "Atria-Dawn-Preview",
+  "temperature": 0.0,
+  "conditions": {
+    "A": {
+      "sem-esc-01": {
+        "combined": "not_equivalent|E4",
+        "verdict": "not_equivalent",
+        "errors": [
+          "E4"
+        ],
+        "raw_reply": "{\"id\": \"sem-esc-01\", \"verdict\": \"not_equivalent\", \"errors\": [\"E4\"], \"rationale\": \"The candidate implements a stride-activated prefetcher that calls prefetch_line on repeated nonzero strides, whereas the reference is a no-op prefetcher that never issues prefetches.\"}",
+        "prompt_sha256": "1e8cc3d6cd9af8bffb22bb22775624b00b3464a3cce21236c664a912b7053184",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "prompt_tokens": 733,
+          "total_tokens": 925,
+          "completion_tokens": 192,
+          "prompt_tokens_details": {
+            "cached_tokens": 128,
+            "created_cache_tokens": 576,
+            "multimodal_tokens": null
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 125
+          }
+        },
+        "expected": "equivalent|"
+      },
+      "sem-esc-02": {
+        "combined": "not_equivalent|E4",
+        "verdict": "not_equivalent",
+        "errors": [
+          "E4"
+        ],
+        "raw_reply": "{\"id\": \"sem-esc-02\", \"verdict\": \"not_equivalent\", \"errors\": [\"E4\"], \"rationale\": \"The candidate implements an aggressive offset prefetcher that issues up to four prefetches on confident region hits and maintains region state, whereas the reference is a no-op prefetcher that never prefetches.\"}",
+        "prompt_sha256": "0499f330c24d59bf077e185339d9c1eb6b951db711dbef8b3a9d6c09ce04ccac",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "completion_tokens": 210,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 138,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens": 925,
+          "prompt_tokens_details": null,
+          "total_tokens": 1135
+        },
+        "expected": "equivalent|"
+      },
+      "sem-esc-03": {
+        "combined": "not_equivalent|E4",
+        "verdict": "not_equivalent",
+        "errors": [
+          "E4"
+        ],
+        "raw_reply": "{\"id\": \"sem-esc-03\", \"verdict\": \"not_equivalent\", \"errors\": [\"E4\"], \"rationale\": \"The candidate implements stream tracking, confidence counters, and aggressive prefetch issuance, whereas the reference is a no-op prefetcher that never issues prefetches.\"}",
+        "prompt_sha256": "7cbe60e4ceefbd12ecfaa377301c80c7d255f37684f113e96783d2f7cdbc75b6",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "completion_tokens": 170,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 107,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens": 1659,
+          "prompt_tokens_details": null,
+          "total_tokens": 1829
+        },
+        "expected": "equivalent|"
+      },
+      "sem-01": {
+        "error": "RuntimeError: TimeoutError: The read operation timed out"
+      },
+      "sem-02": {
+        "combined": "equivalent|",
+        "verdict": "equivalent",
+        "errors": [],
+        "raw_reply": "{\"id\": \"sem-02\", \"verdict\": \"equivalent\", \"errors\": [], \"rationale\": \"The candidate and reference prefetchers are behaviorally identical, differing only in the module struct name.\"}",
+        "prompt_sha256": "2059e66675c2b6e0add1e930c5e86f61e894ce950ee1120650580d4335aea1ad",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "completion_tokens": 62,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 15,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens": 673,
+          "prompt_tokens_details": null,
+          "total_tokens": 735
+        },
+        "expected": "equivalent|"
+      },
+      "sem-03": {
+        "error": "RuntimeError: TimeoutError: The read operation timed out"
+      }
+    },
+    "B": {
+      "sem-esc-01": {
+        "combined": "not_equivalent|E4",
+        "verdict": "not_equivalent",
+        "errors": [
+          "E4"
+        ],
+        "raw_reply": "{\"id\": \"sem-esc-01\", \"verdict\": \"not_equivalent\", \"errors\": [\"E4\"], \"rationale\": \"The candidate implements a stride prefetcher that issues prefetch_line calls on repeated strides, whereas the reference is a no-op prefetcher that never prefetches, so the candidate adds behavior the reference lacks despite identical reported cycles.\"}",
+        "prompt_sha256": "dc284adb28556e20e8b5abc96a837c938c68dbacbab287a0af2fc2c41585d15d",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "prompt_tokens": 761,
+          "total_tokens": 958,
+          "completion_tokens": 197,
+          "prompt_tokens_details": {
+            "cached_tokens": 640,
+            "created_cache_tokens": 64,
+            "multimodal_tokens": null
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 120
+          }
+        },
+        "expected": "equivalent|"
+      },
+      "sem-esc-02": {
+        "combined": "not_equivalent|E4",
+        "verdict": "not_equivalent",
+        "errors": [
+          "E4"
+        ],
+        "raw_reply": "{\"id\": \"sem-esc-02\", \"verdict\": \"not_equivalent\", \"errors\": [\"E4\"], \"rationale\": \"The candidate implements an aggressive offset prefetcher with region tracking, confidence counters, and prefetch_line calls, whereas the reference is a no-op prefetcher that never issues prefetches, so the candidate adds behavior the reference lacks.\"}",
+        "prompt_sha256": "3ff429f1204f0cd2da8e0bf08bc6a3ee80c785664a01347ede4f1b857c05fe91",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "completion_tokens": 256,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 178,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens": 953,
+          "prompt_tokens_details": null,
+          "total_tokens": 1209
+        },
+        "expected": "equivalent|"
+      },
+      "sem-esc-03": {
+        "error": "RuntimeError: TimeoutError: The read operation timed out"
+      },
+      "sem-01": {
+        "error": "RuntimeError: TimeoutError: The read operation timed out"
+      },
+      "sem-02": {
+        "combined": "equivalent|",
+        "verdict": "equivalent",
+        "errors": [],
+        "raw_reply": "{\"id\": \"sem-02\", \"verdict\": \"equivalent\", \"errors\": [], \"rationale\": \"The candidate and reference prefetcher implementations are functionally identical, differing only in module naming, and all reported cycles match exactly.\"}",
+        "prompt_sha256": "c0c8584ed9002cb360e489aa42342a8a084a6a1ca92b9542b6255c6c70ff73fd",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "completion_tokens": 76,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 23,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens": 905,
+          "prompt_tokens_details": null,
+          "total_tokens": 981
+        },
+        "expected": "equivalent|"
+      },
+      "sem-03": {
+        "error": "RuntimeError: TimeoutError: The read operation timed out"
+      }
+    },
+    "C": {
+      "sem-esc-01": {
+        "combined": "equivalent|",
+        "verdict": "equivalent",
+        "errors": [],
+        "raw_reply": "{\"id\": \"sem-esc-01\", \"verdict\": \"equivalent\", \"errors\": [], \"rationale\": \"Despite the candidate adding stride-prefetch logic absent from the noop reference, both runs report identical cycles (1138748), so by the behavioural precedence rule the pair is equivalent with no errors.\"}",
+        "prompt_sha256": "6bee8c3830bf4a123d0183111f865367bf3c51bfb9a213694a52056fa10f2288",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "prompt_tokens": 854,
+          "total_tokens": 1148,
+          "completion_tokens": 294,
+          "prompt_tokens_details": {
+            "cached_tokens": 128,
+            "created_cache_tokens": 704,
+            "multimodal_tokens": null
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 224
+          }
+        },
+        "expected": "equivalent|"
+      },
+      "sem-esc-02": {
+        "combined": "",
+        "verdict": null,
+        "errors": null,
+        "raw_reply": "{\"id\": \"sem-esc-02\", \"verdict\": \"equivalent\", \"errors\": [], \"rationale\": \"The candidate and reference report identical cycle counts, so the behavioral result is equivalent despite the candidate's more elaborate prefetcher source.\"",
+        "prompt_sha256": "8290be052a737350194ee2572890ca2c55dd95c8bfec4376db37ad98c5c0b1bf",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "completion_tokens": 100,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 46,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens": 1046,
+          "prompt_tokens_details": null,
+          "total_tokens": 1146
+        },
+        "expected": "equivalent|"
+      },
+      "sem-esc-03": {
+        "combined": "equivalent|",
+        "verdict": "equivalent",
+        "errors": [],
+        "raw_reply": "{\"id\": \"sem-esc-03\", \"verdict\": \"equivalent\", \"errors\": [], \"rationale\": \"Both runs report identical cycles (1138748), so per the behavioural precedence rule the pair is equivalent despite the candidate adding prefetcher logic absent from the no-op reference.\"}",
+        "prompt_sha256": "3d5278c5b12170265dcf29bd4861f1f542541266b18dc247f71a0d22cd03964f",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "prompt_tokens": 1780,
+          "total_tokens": 1933,
+          "completion_tokens": 153,
+          "prompt_tokens_details": {
+            "cached_tokens": 192,
+            "created_cache_tokens": 1536,
+            "multimodal_tokens": null
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 88
+          }
+        },
+        "expected": "equivalent|"
+      },
+      "sem-01": {
+        "combined": "not_equivalent|E3,E4",
+        "verdict": "not_equivalent",
+        "errors": [
+          "E3",
+          "E4"
+        ],
+        "raw_reply": "{\"id\": \"sem-01\", \"verdict\": \"not_equivalent\", \"errors\": [\"E3\", \"E4\"], \"rationale\": \"The candidate omits the reference's demand-fill history tracking and unconditionally prefetches blk+1 on every fill, issuing prefetches the reference would suppress, so the reported cycles differ across all three traces.\"}",
+        "prompt_sha256": "d0b798cd7aa6b505cbd45f2952bcbd426911db0b2c1d183b059fcb914e457a76",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "completion_tokens": 320,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 243,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens": 1104,
+          "prompt_tokens_details": null,
+          "total_tokens": 1424
+        },
+        "expected": "not_equivalent|E3"
+      },
+      "sem-02": {
+        "combined": "equivalent|",
+        "verdict": "equivalent",
+        "errors": [],
+        "raw_reply": "{\"id\": \"sem-02\", \"verdict\": \"equivalent\", \"errors\": [], \"rationale\": \"The prefetcher implementations are behaviorally identical and all reported cycle counts match exactly across every trace.\"}",
+        "prompt_sha256": "af433190a3b3f232606e5313913910d0629572614f1c66150c06d446a29c9b6f",
+        "returned_model": "Atria-Dawn-Preview",
+        "usage": {
+          "completion_tokens": 79,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 32,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens": 998,
+          "prompt_tokens_details": null,
+          "total_tokens": 1077
+        },
+        "expected": "equivalent|"
+      },
+      "sem-03": {
+        "error": "RuntimeError: TimeoutError: The read operation timed out"
+      }
+    }
+  },
+  "verdict": {
+    "C_moved_all_escapes": [
+      "sem-esc-01",
+      "sem-esc-02",
+      "sem-esc-03"
+    ],
+    "C_moved_controls": [
+      "sem-01"
+    ],
+    "strong_confirmation": false,
+    "n_errors": 6
+  }
+}

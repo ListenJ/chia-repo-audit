@@ -3000,3 +3000,343 @@ assert b.count(o) == 1 and b != b0     # 在替换之后数替换之前的模式
 中途每改一次就上传一次会把同一个缺陷类（提交物与源码不同步）做上好几遍。
 #20 收尾时做**一次**重编译并替换，替换后核 HotCRP 自己显示的 sha256 前缀与页数。
 在此之前，凡引用"提交的那一份"必须说清是 190 版。
+
+## §40 跑的是修复前的代码；以及我新写的门禁在它要防的那件事上是错的
+
+### 40.1 一个进程的时间戳，比它的输出更能说明它在干什么
+
+fact36 开了跑，日志里第一格 `sem-01` 打印了，但 `results/audit_independent_atria/raw.json`
+里没有 fact36 这个集合。按 §33 的旧账我第一反应是"增量落盘又坏了"。这次先去量，而不是先想：
+
+```
+powershell (Get-Process -Id 3204).StartTime   -> 2026-09-24T22:04:36
+git log -1 --format='%h %ci' 5939c7e          -> 2026-09-24 22:08:53  (save_set 修复)
+```
+
+进程启动比修复提交**早 4 分 17 秒**。它加载的是修复前的 `atria_audit.py`，所以"每格落盘"
+这件事对它根本不成立；打印是真的，落盘是集合边界才发生的。修好的代码没错，错的是我拿
+修好的代码去解释一个跑在旧代码上的进程。
+
+规则补一条：重启任何会往同一路径写的作业之前，比的不是"进程在不在"，而是
+**脚本 mtime / 引入该修复的 commit 时间 vs 进程 StartTime**。本轮据此杀掉 3204，
+用 `--resume` 重启，代价是 fact36 的第一格（一次调用）。
+
+### 40.2 缺失字段被当成"测出来是 0"
+
+重启后日志立刻给出
+
+```
+measured6: {'verdict_accuracy_vs_expected': 0.5, 'combined_accuracy_vs_expected': 0.0, ...}
+spec10:    {'verdict_accuracy_vs_expected': 0.9, 'combined_accuracy_vs_expected': 0.0, ...}
+```
+
+两个 0.0。这是本仓库第三次撞上"过于干净的 0.0"。回代核查的原因不是轴只有一级，而是
+**`--resume` 读回来的记录是旧 schema 写的**：里面有 `matches_expected`，没有
+`matches_combined`，也没有 `expected_combined`。`v.get("matches_combined")` 取到 `None`，
+`sum()` 当成 0，于是"没有这个字段"被记成"这一格判错了"。真值是
+`expected_combined` 可由 `expected_verdict` + `expected_errors` 纯函数重算：
+
+| 集合 | verdict | combined（重算后） | combined（当时印的） |
+|---|---|---|---|
+| measured6 | 3/6 | **1/6** | 0.0 |
+| spec10 | 9/10 | **8/10** | 0.0 |
+
+修法是 `backfill()`：从一直存在的字段重算派生字段，然后才谈准确率。数据一格没改，
+改的是"缺字段"与"字段为假"的区分。
+
+### 40.3 我为了防 40.2 写的门禁，第一版正是 40.2
+
+`scripts/rater_rollup.py` 的作用是把 artifact 里印的分数重derive 一遍再对账。它第一版写的是
+
+```python
+c_acc = round(sum(1 for v in cases.values() if v.get("matches_combined")) / n, 4)
+```
+
+读的就是那个缺失的布尔位。于是它算出 0.0，与它要核对的 0.0 **相等**，打印
+`[ok] stored combined accuracy equals the re-derivation`。一条为抓假值而写的检查，
+在假值上通过了 —— 因为"重derive"和"被核对的数"共享同一个坏输入。
+
+两处改动缺一不可：先按原样报"字段缺失"，再 `backfill()`，最后从**标签字符串**
+（`combined` 对 `expected_combined`）回推。改完之后同一份 artifact 给出
+`0.0 != 0.1667`、`0.0 != 0.8` 两条红，真值才浮出来。
+
+### 40.4 第四条"只能加分"的绑定，在我写下它的同一轮就被抓到
+
+给论文新增的绑定第一版是 `rf"{_g} of {_n}[^,.;\d]*{_PAT[_ax]}"`。跑验证器时
+`cross-provider measured6 verdict accuracy` 直接 **PASS** —— 那时论文里一个字都还没提
+第二家供应商的 rater。`[^,.;\d]*` 允许跨半句话，于是 `3 of 6` 与远处某个 `verdict`
+拼上了。这是 §34/§37 那一类（存在性、子串式测试只能加分）第四次出现，而且这一次是
+在我正为它写警告的同一轮。改成相邻式 `{_g} of {_n} verdict labels`，
+措辞与数字钉在一起，跨句拼接不再可能。
+
+### 40.5 两个集合共用 case id，指的不是同一个 artifact
+
+`measured6/sem-01` 与 `fact36/sem-01` 的 `prompt_sha256` 不同，
+`prompt_tokens` 是 779 与 2848 —— 同名不同物。κ 只在集合内计算，所以本次结果没错；
+但任何按 id 跨集合 join 的写法都会把两个不同 artifact 当成"同一题测了两次"。
+这是"网格要按 `candidate_sha256` 而不是模块名 join"那一课的 rater 侧版本。
+`rater_rollup.py` 因此多了一条：同一集合内 prompt 摘要不得重复。
+
+### 40.6 重问会把唯一的稳定性证据删掉
+
+`--reask-unparsed` 第一版是 `del cs[i]` 然后重新问。被删掉的那条记录带着它自己的
+`prompt_sha256`：同一个摘要问第二次，两次是否给出同一判决，是 temperature=0 之下
+可得的**唯一**一条稳定性证据。原地删除等于用一个数据点替换另一个，然后宣称信息增加了。
+改成先归档到 `results/audit_independent_atria/unparsed_replies.json`（键 `set/id`，含摘要），
+再删。
+
+### 40.7 新增工具会把已发表的覆盖率拉下来，所以同步顺序要写死
+
+这 9 条新声明（191 → 200）第一次跑就抓到 README 的普查数字过期：
+`[164, 108, 87]` 对实时 `[162, 108, 89]`，散文命中的孤儿 55 对 57。原因不神秘：
+`inventory_vouches.py` 是**全树**普查，我每加一个脚本或结果文件，分母就变，
+已发表百分比就掉。之前没有一条流程规则说明"什么时候允许重印这三个数"。补上：
+**README 的普查数字必须在树定稿之后、编译之前重跑同步**，否则这条门禁会在
+一次正常的工具新增之后自己变红。
+
+### 40.8 一句"限制"在它的悲观方向上过期了
+
+`Limitations` 里原来写 "both generative models come from one provider"。§40 的第二供应商
+rater 一进来，这句话就变成假话 —— 而**没有任何一条检查看它**。它不会自己变红，因为它
+描述的是"我们没做到的事"：这类句子过期时通常是往好的方向过期（其实做到了却还写着没做到），
+所以它比数字过期更隐蔽。改成绑定两条：
+
+```python
+check("the second-provider re-labelling is scoped to the cases that exist", ..., 16,
+      r"16 measured and canonical")
+check("no rater here is a human, until an export says otherwise", False,
+      (REPO / "web/annotator_result.json").exists(), r"no rater here is a human")
+```
+
+第二条是**故意设计成会翻红的**：人工标注一旦交回来，"本文没有人类评分者"就不成立，
+检查立刻逼那句话重写。声明数 202。
+
+### 40.9 fact36 前 4 格：判决全对，错误码是超集
+
+边跑边看的中间值（**只在 4 格上，不作为论文数字**）：verdict 4/4，combined 1/4。
+三格错的形态一致 ——
+
+| case | Atria 给的 codes | 记录的 codes |
+|---|---|---|
+| sem-01 | E1,E2,E3,E4 | E3 |
+| sem-02 | E1,E3,E4 | E3,E4 |
+| sem-04 | E1,E3,E4 | E3,E4 |
+
+不是随机猜错，而是**把所有同时字面成立的码全部列出**。这与 §38.3 的 E0/E4 矛盾是同一件事
+的一般形态：E1–E4 不是一次划分，多个码可同真，于是"报哪个码"没有唯一答案，
+而我们的 combined 分数把它当成有唯一答案。等 36 格齐了再决定是否写进论文；
+现在的 1 of 6 / 8 of 10 两个分数已经在论文里，且都由 `rater_rollup.py` 回推。
+
+### 40.10 探针开跑前的回代核算，改了两处规则文本，也认出一个是空对照
+
+`rubric_precedence_probe.py` 重写完之后先不联网，把三种条件的 payload 在本地拼一遍：
+
+1. **条件 A 与已发表协议逐字节相同**：6 个 case 的
+   `json.dumps(payload(case,'A'), indent=2)` 与 `annotator_payload(case)` 全等。
+   这一条不成立的话，A 就不是"基线必须复现 §38.2"，而是另一个未知协议。
+2. **B/C 注入的周期数没有一个是 `null`**。这是最坏情形的预演：如果 case 文件里
+   `evidence.design_cycles` 缺失，B/C 会送给评分者两个 `null`，那么"B 没有改变判决"
+   就会被读成"给出测量也不足以翻案"，而实际含义是"什么都没给"。三格逃逸是标量
+   `1138748 == 1138748`，三格对照是按 trace 分的字典。
+3. 由此暴露规则文本本身有歧义：对照格送的是**每 trace 一个数**，而 PRECEDENCE 原文说
+   "reported to take the same number of cycles"。改成"identically on every trace
+   reported"。这只动条件 C 的文本，不动 `RUBRIC`，所以已发表 prompt 摘要不受影响
+   （而 §40 新加的那条摘要相等门禁正盯着这件事）。
+4. **`sem-02` 是空对照**：它的候选与参照三 trace 周期全部相同，且本来就该判
+   `equivalent`。也就是说优先规则无论有没有，它都停在原地 —— 能记录"规则误伤"的
+   有效对照只有 `sem-01` 与 `sem-03` 两个。论文里若引用"C 没有翻动任何对照"，
+   有效分母是 2 不是 3；这一句在结果落地后再写，不预先按 3 报。
+
+## §41 决策集 5：模型第一次站在"发布坏数字"那一侧，而派发层没跟着动
+
+第 3 组决策给的是 **4/4 一致**，第 5 组给的是 **1/5**。两组都是真实发生过的分叉，
+差别不在措辞松紧而在题目本身：第 5 组的五个分叉正好落在本文自己批评的那个缺陷类上。
+
+| 决策 | 头部 top-1 | 作者实际选的 | 宣告的爆炸半径 |
+|---|---|---|---|
+| D19 日志有行、artifact 无记录 | wait\_for\_the\_set\_to\_finish | 先量进程启动时间 vs 修复提交时间 | 三项同为 local |
+| D20 干净的一个 0.0 | **accept\_it\_and\_publish** | 从底层标签重算 | external\_write vs local |
+| D21 门禁对它要抓的数打印 ok | keep\_gate\_and\_publish\_true\_numbers | 改门禁取独立输入 | 两项同为 local |
+| D22 重问会覆盖唯一配对 | **reask\_in\_place** | 先归档再重问 | destructive vs local |
+| D23 段落写不写 | write\_stable\_sets\_now\_defer\_third | 同 | local vs external |
+
+五次里两次它挑的正是**半径更大**的那一项，而那两次把它拦下来的是**登记表**，不是它的
+分数（reasons 里"登记为 external\_write / destructive，外写/不可逆由代码判定"）。
+
+### 41.1 纯倒序对照，以及一条我自己写漏的 replace
+
+一份措辞分不清"偏好"与"说法"。于是把同一份 spec 用脚本生成对照版：每个决策的
+`criteria` 字典按声明序**反转**，`instructions` 与 `blast_radius` 一字不改。结果：
+
+- **2/5 的 top-1 随顺序移动**（D20 从错的那项翻到对的那项，D23 从对的翻到错的）；
+- 反转后选中"第一个被列出的选项"只有 1/5 —— 不是首因效应；
+- 正序与逆序 top-1 一致率都是 **1/5**；
+- 派发层稳定：两种顺序下 margin 规则都升级同样的 4/5。
+
+这比"模型不行"更有用：它把**能用的部分**与**不能用的部分**分开了——头部可以当有真实
+排序时的 tie-breaker，不能当"什么可以被销毁"的裁判，而这正是 gate 里那行登记表的职责。
+
+写这段时我自己犯了一次 §37.3 同形的错：`_fwd` 那行写了 `.replace("__reversed","")`，
+复制出来的 `_rev` 行漏了，验证器直接 `KeyError` 崩在半路（不是 FAIL 而是没跑完）。
+两类失败要分开看：崩掉会说"检查没执行"，假绿会说"检查执行且通过"，后者更危险。
+声明数 204 → **212**（新增 8 条全部从两份 verdicts 文件回推，包括"纯倒序"这条本身）。
+
+## §42 变异测试器扩到第二个证据文件，以及一个不能当场跑的原因
+
+`scripts/mutation_test_gates.py` 原本只有一个目标文件（`results/fresh_clone_verification_*.json`）。
+本轮新增的 21 条 rater / 决策集检查全部读另一份 artifact，于是一条 §32.8 的旧规则回来敲门：
+**"某层的门禁能不能失败"这件事，只有跑过的层才算数**。改成 `(标签, 目标文件, 变异)` 三元组，
+共 10 项：前 6 项照旧覆盖交付链，后 4 项覆盖 rater 层。
+
+新增 4 项不是随便挑的，每项都对应一条本文正在主张的东西：
+
+| 变异 | 应抓它的检查 |
+|---|---|
+| 把 `sem-esc-01` 改写成"评分者没有犯共同错误" | 复现断言 + 从标签回推的 combined 准确率 |
+| 抹掉一格的 `prompt_sha256` | "每格必须带 64 位摘要"与"摘要等于已发表摘要" |
+| 记录里出现第二个模型串 | "一个模型答完全部，不是混合" |
+| 把存库的 combined 准确率改回那个假 0.0 | `rater_rollup` 的存库值 vs 回推值 |
+
+### 42.1 为什么不当场跑
+
+harness 的收尾是**用启动时快照的文本原样写回**。rater 作业此刻正在逐格覆写
+`results/audit_independent_atria/raw.json`（非原子：`open('wb')` + write）。两者并发的后果
+不是"读到半个 JSON"而已，而是 harness 恢复时会把这段时间内新落盘的格子**静默回滚**。
+快照式恢复对活着的写者不安全，所以这一轮不在链上跑；建链脚本把 mutation 排在
+`waiter end` 之后，那时已无人写这份 artifact。
+
+顺带把 README 的普查数字同步也留在人工一段：每加一个工具，全树普查的分母就变，
+在链路还在产出文件的当口同步，等于把 40.7 那个错再做一遍。
+
+## §43 我用进程名过滤器把自己的 shell 杀了
+
+为了放宽三段轮询的等待预算，跑了这么一条：
+
+```powershell
+Get-CimInstance Win32_Process -Filter "Name='bash.exe'" |
+  Where-Object { $_.CommandLine -match 'reconcile_after|build_after_chain|finish_after_build' } |
+  Stop-Process -Force
+```
+
+它匹配的三个进程没错，但**我这条命令自己的命令行里也含有那三个脚本名**，于是过滤器把
+承载这次工具调用的 bash 也匹配上了。命令以 `-1` 退出，输出被截断在杀死自己之前。
+
+后果与核查：三段 wrapper 确实停了（这正是我要的），正在写数据的
+`atria_audit.py`（PID 38104）与它的父 `rater_and_probe.sh` 命令行里没有那三个词，没受影响
+——但这不能靠推理，得点名查。用只列不改的过滤器复核，并确认
+`results/audit_independent_atria/raw.json` 的格子数没有倒退：10/36，未回滚。
+
+规则补两条：
+1. **按命令行匹配进程去杀之前，先问"发起这次匹配的进程自己的命令行里有没有这个词"**。
+   把模式串拆成两段（`'reconcile'+'_after'`）或用 PID 白名单，都能避开自匹配。
+2. 轮询预算要按最慢路径算，不是按平均值算。fact36 单格实测 90–225 s，而
+   `call()` 的重试上限是 3 次 × 240 s socket 超时 —— 最坏一格 12 分钟。
+   原来 finisher 只有 130 分钟预算，按最坏路径会在链完成前 ~1 小时先放弃，
+   表现是"什么也没提交"而不是"哪里报错"。三段统一抬到 ~15 小时后重启，
+   日志各自追加一行 `waiter/builder/finisher start`，可核对。
+
+顺带一条与此无关的观察：8 分钟没有落盘 ≠ 卡死。这一轮的单格延迟本来就横跨
+1.5–4 分钟，而重试窗口能到 12 分钟；判活的正确证据是进程存在 + 上一格已落盘 +
+没有回滚，而不是"我等了 8 分钟"。
+
+## §44 三家模型、同一 36 对、同一 prompt 摘要：错的是同样三对
+
+fact36 全部 36 格跑完。把三个评分者放在**同一批 36 对真实源码**上（每格的
+`prompt_sha256` 与已发表那条完全相同，所以"换了个问题"这个解释不成立）：
+
+| 评分者 | 判决与记录一致 | 错误码集合与记录一致 |
+|---|---|---|
+| gemini-2.5-flash | 33/36 | 7/36 |
+| gemini-2.5-pro | 33/36 | 9/36 |
+| Atria-Dawn-Preview（第二家供应商） | 33/36 | 6/36 |
+
+而三家判错的是**同样的三对**：`sem-34`、`sem-35`、`sem-36`——错集完全重合。
+第二家供应商 30 个错误码不符里 **26 个是记录集合的严格超集**（它把当时字面成立的码全列出来），
+不是猜错，而是穷举。E1–E4 不是一次划分，rubric 又没规定谁优先，
+所以"该报哪个码"在这个协议下没有唯一答案。
+
+这条比原发的那个 κ 更有用：κ 只说"有多一致"，不说"错在哪几对"。现在可以直接说
+"三家在同样的三对上一起错，而在其余 33 对上一致"，并且这是跨供应商的。
+写进 §sec:escape 新段落末尾，四句、四个数，各绑一条回推检查（212 → **216**）：
+
+```python
+check("the three raters miss exactly the same verdict cases", 1, len(set(_miss.values())), ...)
+check("and that shared disagreement is three pairs out of 36", (3, 36), ...)
+check("error-code agreement per rater, in the order the paper lists them", (7, 9, 6), ...)
+check("the second provider over-attributes rather than mis-guessing", (26, 30), ...)
+```
+
+一个必须记下的顺序错误：我先写的论文句子引用了 `sem-34}--\texttt{sem-36` 这种区间写法，
+而 `old_string` 是按我记忆里的换行位置拼的，Edit 直接没匹配上。改前先读那 16 行，
+句子才落进去。**这正是 §34/§37 那一类：我以为自己在核对文件，其实在核对印象。**
+
+`sem-34`–`sem-36` 这三对的共同点我没有查就不下结论；它们在 fact36 里是相邻编号，
+但相邻编号不等于同一设计族——归属要按 `candidate_sha256`/`design_sha256` 查，
+本轮不以此为基础提出任何主张。
+
+## §45 我差点把"没有答案的三对"写成"三家都判错的三对"
+
+fact36 全 36 格落盘后，我算出"三家判错的是同样的三对 `sem-34/35/36`"，数字全部有门禁回推，
+句子也写进了 §sec:escape。**然后我去查这三对的共同点，发现它们的 `expected_verdict`
+是字符串 `unlabellable`。**
+
+也就是说这三对是协议自己宣布"推不出标签"的三对（与已发表的 `n_labellable: 33`
+/ `n_unlabellable: 3` 完全对应）。把 `unlabellable` 当成"记录的期望答案"去比，
+任何模型都不可能"对"，所以：
+
+- 所谓"三家都判错"其实是"三家都在没有答案的地方给了答案" —— 全部答
+  `equivalent` 且错误码为空，**没有一个弃权**；
+- 而"33/36 判决正确"这个数被那三对压低了：在 33 个**有标签**的对上，
+  两家 Gemini 与第二家供应商都是 **33/33**。
+
+四条数字一条都没算错，被支撑的句子却是错的。这是本轮第 5 次我自己的判误，
+也是最贵的一次：它会把"评分者不会弃权"这个更强的发现，误写成"三家在同一处一起错"
+这个更弱且不公平的说法。修正方式不是改数字，而是**换一个不能被压分的量**：
+标签子集按 `results/semantic_relabel_and_rescore.json` 的 `n_labellable` 现算，
+判决一致性只在那个子集上度量，无标签的三对单独报"给了答案"。
+
+规则补一条，与 §34/§37/§40.3/§40.4 并列：**当一个分数的分子分母里混进了
+"按构造不可能匹配"的项，任何比值都不能直接引用**。要先看分母里每一项的
+期望值是什么形状（有没有值、是不是哨兵串），再谈准确率。
+声明数 216 → **217**；新那条 `check("the labellable/unlabellable split agrees with the
+relabelling artifact", ...)` 的作用就是把"哪些对算有标签"钉到另一份 artifact 上，
+不许这两处各自漂移。
+
+## §46 重问把那两格改好了，于是数字必须重写，而"改好"本身要披露
+
+`--reask-unparsed` 只重问 gold-01 一格。结果：
+
+```
+归档   spec10/gold-01  prompt_sha256 5ffc38b6edbe…  raw_reply_unparsed = ""
+重问   spec10/gold-01  prompt_sha256 5ffc38b6edbe…  verdict=equivalent errors=[]
+                                    completion_tokens 50, reasoning_tokens 10
+```
+
+**同一个 prompt 摘要，第一次一个字节的内容都没有，第二次给出了可解析的判决。** 于是
+spec10 的分数从 9/10、8/10 变成 **10/10 判决、9/10 错误码**，论文那两句必须重写。
+
+这里有两个方向相反的诱惑，都要拒绝：
+
+1. 只印第二次的好结果。那正是本文批评的"用一个看起来像来源的东西替换失败"。
+   所以正文现在明写"这是重问那次的分数，第一次的回复留在
+   `unparsed_replies.json`"，并加两条门禁把这句话钉在那两份记录上：
+   ```python
+   check("the re-asked case and its archived first attempt share one prompt digest", ...)
+   check("the first attempt produced no content and the retry produced a verdict",
+         (0, "equivalent"), r"no content on the first request")
+   ```
+2. 把它说成"temperature 0 不成立"。证据只支持更窄的一句话：**同一摘要的两次请求，一次空一次
+   非空**。空回复也可能来自传输层或 `finish_reason`（当轮没保留 `finish_reason`，所以无法排除）。
+   因此论文写"zero sampling temperature does not, on this evidence, mean one answer per
+   prompt"，而不是宣称测到了模型级不确定性。
+
+顺带两条被这次运行改出来的事实：`fact36` 三家在 33 个有标签对上判决全对（见 §45 对分母的
+纠正），而探针条件 B（只把周期数摆出来）在四个有答复的格子里一个都没推动，条件 C
+（加显式行为优先规则）把三格逃逸全部翻成 `equivalent`，两个有答复的对照原地不动。
+`strong_confirmation` 这个字段仍为 False，因为条件 A 里两格是超时错误、被"是否移动"当成了
+移动 —— 这一点的正确表述留到 §47 处理，不在本轮顺手改掉，以免动了门禁正在比对的字段。
+
+页数：重编译后 PDF 是 **10 页**（622,257 B），README 两处"9 pages"随之更新。
+另有一条我自己造的排序死锁：路径门要求 README 引用的文件**已被 git 跟踪**，
+而自动收尾链把 `git add` 排在验证之后，于是它永远过不了 —— 已确认它当时的行为是
+"红就停、什么都不提交"，这是这条链第一次在真实红灯下拒绝动作。

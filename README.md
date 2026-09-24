@@ -126,7 +126,7 @@ supplies one here.
   The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (191 claims). Its final check is
+  committed artifact and exits non-zero on drift (220 claims). Its final check is
   self-referential: the paper states the claim count, so editing the verifier without
   updating the prose turns the run red. This sentence is gated too, and the reason is
   that it used not to be --- it read "138 claims" for two rounds after the count had
@@ -135,7 +135,7 @@ supplies one here.
 - `paper/paper.pdf` is built with **pdfTeX** (`pdflatex paper.tex`, twice, so that
   cross-references resolve), not XeLaTeX: the host's `xetex.fmt` disappeared during the
   2026-09-23 session and the source is pure ASCII and loads no `fontspec`, so pdfTeX
-  compiles it cleanly -- 9 pages, no undefined references. Any rebuild must follow the
+  compiles it cleanly -- 10 pages, no undefined references. Any rebuild must follow the
   chain source -> pdflatex x2 -> `uv run --with pypdf python scripts/extract_pdf_text.py`
   -> `uv run --with pypdf python scripts/pin_paper_build.py` -> `python3
   scripts/verify_paper_claims.py`. Use `python`, not `python3`, inside `uv run`: `python3`
@@ -154,11 +154,11 @@ supplies one here.
   passing here. The verifier also re-checks the headline numbers, unresolved-reference
   markers and underscore-bearing identifiers *in the rendered text* -- the text layer is
   where a typesetting regression shows up, not the source.
-- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 359 tracked
-  files, classified by what *code* vouches for each: **45.1% machine-vouched** (162 files
-  a `verify_paper_claims.py` check re-derives or a unit test loads), 30.1% reachable-only
-  (108 files in a set some script globs), and **24.8% with no code reference at all**
-  (89 files; 57 of those are at least named in prose, 51 live under `.tmp/` as run logs
+- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 368 tracked
+  files, classified by what *code* vouches for each: **47.0% machine-vouched** (173 files
+  a `verify_paper_claims.py` check re-derives or a unit test loads), 29.3% reachable-only
+  (108 files in a set some script globs), and **23.6% with no code reference at all**
+  (87 files; 55 of those are at least named in prose, 51 live under `.tmp/` as run logs
   and three container lock files). Regenerate with `python3
   scripts/inventory_vouches.py --markdown REVIEW_COVERAGE.md`. The `--json` and
   `--markdown` flags are mutually exclusive -- `--json` returns before the markdown
@@ -213,6 +213,7 @@ python3 scripts/make_annotator_page.py --sets measured6 spec10
 python3 scripts/atria_audit.py --sets measured6 spec10 fact36
 python3 scripts/score_human_annotations.py --answers web/annotator_result.json
 python3 scripts/rubric_precedence_probe.py
+python3 scripts/rater_rollup.py
 ```
 
 `make_annotator_page.py` writes a self-contained local page (`web/annotator.html`) and a
@@ -231,7 +232,42 @@ author, and `rater_authored_cases` records that rather than describing it away.
 returned and a per-case prompt digest. It exists because both published raters are Google
 models that agree perfectly on the shared cases, which leaves "same provider" as an
 available alternative explanation for any agreement between them. Its output is **not**
-pooled with the published kappa.
+pooled with the published kappa. Two axes are scored separately and neither stands in for
+the other: the verdict (`equivalent` or not) and the error-code set. `--resume` keeps
+already-answered cases so a restart does not re-spend calls;
+`--resume --reask-unparsed` re-asks only the replies that produced no parseable verdict,
+and archives the record it replaces in `results/audit_independent_atria/unparsed_replies.json`
+rather than overwriting it, because the same prompt digest answered twice is the only
+stability evidence available at temperature 0.
+
+Three raters, two providers, one set of 36 real-source pairs (`scripts/rater_rollup.py`
+prints this table; `verify_paper_claims.py` re-derives it from
+`results/audit_independent_atria/raw.json` and the published Gemini rows):
+
+| rater | verdict on the 33 labellable pairs | error-code set | the 3 `unlabellable` pairs |
+|---|---|---|---|
+| gemini-2.5-flash | 33 of 33 | 7 of 33 | `equivalent`, no abstention |
+| gemini-2.5-pro | 33 of 33 | 9 of 33 | `equivalent`, no abstention |
+| Atria-Dawn-Preview | 33 of 33 | 6 of 33 | `equivalent`, no abstention |
+
+Every rater shown a prompt whose digest equals the published one reproduces the recorded
+verdict on every pair where the protocol derives a label, and all three answer
+`equivalent` on the three pairs the protocol marks `unlabellable`. What separates them is
+the code axis, and for the second provider 26 of its 27 code misses on that subset are
+strict supersets of the recorded set: it enumerates every code that is literally true
+rather than picking one. E1-E4 is not a partition and the rubric sets no precedence, so
+"which code" has no unique answer under this protocol. Denominators are the labellable
+subset deliberately -- see docs/operations-log.md 45 for why scoring over all 36 would
+have been a category error.
+
+`rater_rollup.py` is the gate over that artifact: it re-derives every published accuracy
+and kappa from the per-case label strings and compares them with the score block stored in
+the file. It exists because a resumed run published `combined_accuracy_vs_expected = 0.0`
+over 16 cases -- the records predated that field, so a missing field was counted as a
+measured mismatch -- and because the first version of this very script recomputed the same
+0.0 from the missing field and therefore *passed*. Accuracy now comes from labels, never
+from stored booleans. Exit is non-zero on any mismatch, and `verify_paper_claims.py` runs
+it as a subprocess gate.
 
 `rubric_precedence_probe.py` is the causal version: it re-asks the same rater under three
 conditions -- original contract, contract plus the reported cycle counts, and cycle counts
@@ -423,7 +459,7 @@ Not verified — and previously stated here as if it were:
   "Paper length: 2-4 pages with IEEE or ACM format, excluding references", which is
   written for the **workshop paper track** and never mentions the hackathon. So the
   open question is not whether a limit exists but **whether the workshop's 2-4 pages
-  govern hackathon submissions** -- our paper is 9 pages plus 6 references, so if it
+  govern hackathon submissions** -- our paper is 10 pages plus 6 references, so if it
   does, this is desk-reject scale. Asked of the organizers on 2026-09-24
   (`docs/organizer-email-2026-09-24.md`); unanswered as of this writing, and we have
   not cut content on a guess.

@@ -124,6 +124,54 @@ def parse(text: str) -> dict:
         return {}
 
 
+def gemini_labels(path: Path) -> dict[str, dict[str, str]]:
+    """Rater -> case id -> combined label, from one of the published Gemini result files.
+
+    Shape is one row per case: {id, source, expected_verdict, expected_errors,
+    labels:[{model, prompt_sha256, verdict, errors, ...}]}. The rater key is *inside* the
+    case, not at the top level, so a single flat pass over the file silently yields zero
+    shared cases and reports no kappa at all -- which reads like "not computed", not like
+    "wrong code". Shared with the rollup gate so the two cannot drift apart.
+    """
+    rows = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(rows, list):
+        raise SystemExit(f"{path}: expected a list of case rows")
+    out: dict[str, dict[str, str]] = {}
+    for row in rows:
+        rid = row.get("id")
+        for lab in row.get("labels") or []:
+            if rid and isinstance(lab, dict) and lab.get("model"):
+                out.setdefault(lab["model"], {})[rid] = combined_label(lab)
+    return out
+
+
+def backfill(prev: dict) -> int:
+    """Re-derive stored per-case fields that a later scoring change introduced.
+
+    ``--resume`` loads records written by an earlier version of this file, which stored
+    ``matches_expected`` but neither ``expected_combined`` nor ``matches_combined``.
+    Reading an absent field as false turns *missing data* into a *measured mismatch*: the
+    first resumed run published ``combined_accuracy_vs_expected = 0.0`` over 16 cases for
+    exactly that reason, and 0.0 on a two-level axis is the shape this repository has
+    already been burned by twice. The expected label is a pure function of fields that
+    were always stored, so it is recomputed here rather than guessed at.
+    """
+    n = 0
+    for rec in prev.values():
+        if not isinstance(rec, dict):
+            continue
+        exp_c = combined_label({"verdict": rec.get("expected_verdict"),
+                                "errors": rec.get("expected_errors") or []})
+        if rec.get("expected_combined") != exp_c:
+            rec["expected_combined"] = exp_c
+            n += 1
+        rec["matches_expected"] = (bool(rec.get("verdict"))
+                                   and rec["verdict"] == rec.get("expected_verdict"))
+        rec["matches_combined"] = (bool(rec.get("combined"))
+                                   and rec["combined"] == exp_c)
+    return n
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--sets", nargs="*", default=["measured6", "spec10", "fact36"])
@@ -131,6 +179,9 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--limit", type=int, default=0, help="debug: only the first N cases")
     ap.add_argument("--resume", action="store_true",
                     help="keep already-answered cases in the artifact and ask only the rest")
+    ap.add_argument("--reask-unparsed", action="store_true",
+                    help="with --resume, drop records whose reply could not be parsed "
+                         "and ask those cases again (the only way to get their raw text)")
     opts = ap.parse_args(argv)
 
     if not TOKEN_FILE.exists():
@@ -157,7 +208,30 @@ def main(argv: list[str]) -> int:
         # to pick up the first, and re-asking is not free.
         report = json.loads(artifact.read_text(encoding="utf-8"))
         done_before = sum(len(b.get("cases") or {}) for b in report["sets"].values())
-        print(f"resuming: {done_before} cases already answered")
+        fixed = sum(backfill(b.get("cases") or {}) for b in report["sets"].values())
+        print(f"resuming: {done_before} cases already answered, "
+              f"{fixed} stored fields re-derived")
+        if opts.reask_unparsed:
+            kept = out_dir / "unparsed_replies.json"
+            archive = (json.loads(kept.read_text(encoding="utf-8"))
+                       if kept.exists() else {})
+            for name, blk in report["sets"].items():
+                cs = blk.get("cases") or {}
+                bad = [i for i, rec in cs.items()
+                       if isinstance(rec, dict) and not rec.get("verdict")]
+                for i in bad:
+                    # The dropped record is evidence: same prompt digest, and whether the
+                    # retry parses is the temperature-0 stability measurement. Deleting it
+                    # would replace one data point with another and lose the pair.
+                    archive[f"{name}/{i}"] = cs[i]
+                    del cs[i]
+                if bad:
+                    print(f"re-asking {name}: {bad}")
+            if archive:
+                kept.write_bytes((json.dumps(archive, indent=2, ensure_ascii=False)
+                                  + "\n").encode("utf-8"))
+                print(f"archived {len(archive)} dropped records to "
+                      f"{kept.name}, keyed set/id with their prompt digests")
 
     def save() -> None:
         artifact.write_bytes(
@@ -185,19 +259,7 @@ def main(argv: list[str]) -> int:
         gemini: dict[str, dict[str, str]] = {}
         gpath = REPO / llm[name]
         if gpath.exists():
-            # Shape is one row per case: {id, source, expected_verdict, expected_errors,
-            # labels:[{model, prompt_sha256, verdict, errors, ...}]}. The rater key is
-            # inside the case, not at the top level, so a single flat pass over the file
-            # would silently yield zero shared cases and report no kappa at all -- which
-            # reads like "not computed", not like "wrong code".
-            rows = json.loads(gpath.read_text(encoding="utf-8"))
-            if not isinstance(rows, list):
-                raise SystemExit(f"{llm[name]}: expected a list of case rows")
-            for row in rows:
-                rid = row.get("id")
-                for lab in row.get("labels") or []:
-                    if rid and isinstance(lab, dict) and lab.get("model"):
-                        gemini.setdefault(lab["model"], {})[rid] = combined_label(lab)
+            gemini = gemini_labels(gpath)
         prev = (report["sets"].get(name) or {}).get("cases") or {}
         ours: dict[str, str] = {k: v.get("combined", "") for k, v in prev.items()}
         per_case: dict[str, dict] = dict(prev)
@@ -213,11 +275,18 @@ def main(argv: list[str]) -> int:
                 text, data = call(prompt, key)
             except RuntimeError as e:
                 contract_failures.append(f"{name}/{case['id']}: {e}")
+                print(f"!! {name}/{case['id']} transport: {e}", flush=True)
                 save_set(name, per_case)
                 continue
             parsed = parse(text)
             if not parsed.get("verdict"):
+                # "no verdict in reply" is only actionable if the reply survives. The
+                # first version dropped the text, so gold-01's single miss could not be
+                # re-examined without spending the call again -- and the distinction
+                # between truncation, prose-wrapped JSON, and a refusal is the finding.
                 contract_failures.append(f"{name}/{case['id']}: no verdict in reply")
+                print(f"!! {name}/{case['id']} unparseable, reply kept verbatim",
+                      flush=True)
             label = combined_label(parsed) if parsed else ""
             ours[case["id"]] = label
             returned_models.add(str(data.get("model")))
@@ -241,6 +310,8 @@ def main(argv: list[str]) -> int:
                 "prompt_sha256": sha,
                 "returned_model": data.get("model"),
                 "usage": data.get("usage"),
+                **({} if parsed.get("verdict") else
+                   {"raw_reply_unparsed": text[:4000]}),
             }
             # Persist per case, not per set. The first version of this script wrote the
             # artifact only at the end of a 52-call run; a `timeout` killed it at call
@@ -273,8 +344,20 @@ def main(argv: list[str]) -> int:
         save_set(name, per_case, scores)
         print(f"== {name}: {scores}")
 
-    report["returned_model_strings"] = sorted(returned_models)
-    report["contract_failures"] = contract_failures
+    # Both of these describe the artifact, not just this invocation. A zero-call
+    # reconciliation re-run under --resume answers nothing, so rebuilding them from this
+    # run's memory alone would publish "no contract failures" and an empty model set --
+    # a gate that clears because the checker stopped looking. Re-derive from the records
+    # and union in what only this run could know.
+    answered_nothing = [f"{n}/{i}" for n, b in report["sets"].items()
+                        for i, rec in (b.get("cases") or {}).items()
+                        if isinstance(rec, dict) and not rec.get("verdict")]
+    models_seen = {str(rec.get("returned_model"))
+                   for b in report["sets"].values()
+                   for rec in (b.get("cases") or {}).values()
+                   if isinstance(rec, dict) and rec.get("returned_model")}
+    report["returned_model_strings"] = sorted(models_seen | returned_models)
+    report["contract_failures"] = sorted(set(answered_nothing) | set(contract_failures))
     (out_dir / "raw.json").write_bytes(
         (json.dumps(report, indent=2, ensure_ascii=False) + "\n").encode("utf-8"))
     print(f"\nwrote {out_dir.relative_to(REPO)}/raw.json")

@@ -129,3 +129,38 @@ at 137/138 with only the designed-red untracked-file check, and the text layer w
 
 `chia-decisions4.notes.md` holds the per-row reading; `chia-decisions4.verdicts.json` is
 written by the gate.
+
+## Fourth set: `chia-decisions5.json`, five forks from the cross-provider rater round
+
+Set 3 agreed with the author 4 of 4 times. This set agrees **1 of 5**, and the reason it is
+published is precisely that. The five forks are the ones taken while the second-provider
+rater was running, and each records the option actually chosen in `chosen_by_author`, so
+the comparison is re-derived from the two files rather than remembered.
+
+Two of the five picks are the option with the **larger declared blast radius**: for
+`D20_clean_zero_on_a_scored_axis` the head chose `accept_it_and_publish`
+(`external_write`) over recomputing from the underlying labels (`local_reversible`), and
+for `D22_reasking_would_overwrite_the_only_pair` it chose `reask_in_place` (`destructive`)
+over archiving first. In both cases what stopped the action was the register, not the
+model's score: the gate's own reasons read `登记为 external_write ... 外写/不可逆由代码判定`.
+That is the §gate2 division of labour observed from the other side -- the head is usable as
+a tie-breaker where a real ranking exists and not as the arbiter of what may be destroyed.
+
+### `chia-decisions5r.json`: the position control
+
+One wording cannot separate a preference from a phrasing, so the control spec is generated
+by the same script that reads the original: each decision's `criteria` mapping is written in
+reverse declaration order and **nothing else changes** -- the `instructions`, the option
+texts and the blast radii are byte-identical. The `verify_paper_claims.py` gate asserts
+exactly that, so a future edit cannot quietly turn the control into a rewording.
+
+* **2 of 5** top-1 picks move under reordering (`D20` flips to the correct option, `D23`
+  flips away from it).
+* The reordered pick is the first-declared option **1 of 5** times, so this is not a primacy
+  effect.
+* Forward and reversed agreement with the author is the same, **1 of 5**.
+* The dispatch layer is stable where the choice is not: the margin rule escalates the same
+  **4 of 5** in both orders.
+
+`laya_gate2.py` writes the verdicts beside each spec it is given, so `chia-decisions5` and
+`chia-decisions5r` keep separate outputs; neither file is derived from the other.

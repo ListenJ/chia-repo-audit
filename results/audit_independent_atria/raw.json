@@ -1,0 +1,1581 @@
+{
+  "generated_utc": "2026-09-24T14:04:36.487163+00:00",
+  "requested_model": "Atria-Dawn-Preview",
+  "endpoint": "https://api.atria-asi.ai",
+  "temperature": 0.0,
+  "note": "cross-provider rater; NOT merged into the published same-provider kappa",
+  "sets": {
+    "measured6": {
+      "raters_compared": [
+        "gemini-2.5-flash",
+        "gemini-2.5-pro"
+      ],
+      "cases": {
+        "sem-01": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "1214ba662eb027435478b4a6ff87d3967cb10accc0a97f7c6910f19e1855c1f5",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 779,
+            "total_tokens": 975,
+            "completion_tokens": 196,
+            "prompt_tokens_details": {
+              "cached_tokens": 704,
+              "created_cache_tokens": 64,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 117
+            }
+          },
+          "expected_combined": "not_equivalent|E3",
+          "matches_combined": false
+        },
+        "sem-02": {
+          "combined": "equivalent|",
+          "verdict": "equivalent",
+          "errors": [],
+          "expected_verdict": "equivalent",
+          "expected_errors": [],
+          "matches_expected": true,
+          "prompt_sha256": "2059e66675c2b6e0add1e930c5e86f61e894ce950ee1120650580d4335aea1ad",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 673,
+            "total_tokens": 749,
+            "completion_tokens": 76,
+            "prompt_tokens_details": {
+              "cached_tokens": 576,
+              "created_cache_tokens": 64,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 27
+            }
+          },
+          "expected_combined": "equivalent|",
+          "matches_combined": true
+        },
+        "sem-03": {
+          "combined": "not_equivalent|E3",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "f6773e26064d11bc94953f2951c8f1ce0e47f58ba8cb6b25247868df9578fb5d",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 291,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 220,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 779,
+            "prompt_tokens_details": null,
+            "total_tokens": 1070
+          },
+          "expected_combined": "not_equivalent|E4",
+          "matches_combined": false
+        },
+        "sem-esc-01": {
+          "combined": "not_equivalent|E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E4"
+          ],
+          "expected_verdict": "equivalent",
+          "expected_errors": [],
+          "matches_expected": false,
+          "prompt_sha256": "1e8cc3d6cd9af8bffb22bb22775624b00b3464a3cce21236c664a912b7053184",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 733,
+            "total_tokens": 899,
+            "completion_tokens": 166,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 576,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 103
+            }
+          },
+          "expected_combined": "equivalent|",
+          "matches_combined": false
+        },
+        "sem-esc-02": {
+          "combined": "not_equivalent|E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E4"
+          ],
+          "expected_verdict": "equivalent",
+          "expected_errors": [],
+          "matches_expected": false,
+          "prompt_sha256": "0499f330c24d59bf077e185339d9c1eb6b951db711dbef8b3a9d6c09ce04ccac",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 164,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 95,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 925,
+            "prompt_tokens_details": null,
+            "total_tokens": 1089
+          },
+          "expected_combined": "equivalent|",
+          "matches_combined": false
+        },
+        "sem-esc-03": {
+          "combined": "not_equivalent|E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E4"
+          ],
+          "expected_verdict": "equivalent",
+          "expected_errors": [],
+          "matches_expected": false,
+          "prompt_sha256": "7cbe60e4ceefbd12ecfaa377301c80c7d255f37684f113e96783d2f7cdbc75b6",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 269,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 197,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 1659,
+            "prompt_tokens_details": null,
+            "total_tokens": 1928
+          },
+          "expected_combined": "equivalent|",
+          "matches_combined": false
+        }
+      },
+      "scores": {
+        "n_cases": 6,
+        "n_answered": 6,
+        "verdict_accuracy_vs_expected": 0.5,
+        "combined_accuracy_vs_expected": 0.1667,
+        "kappa_vs_gemini-2.5-flash": 0.5,
+        "agreement_vs_gemini-2.5-flash": 0.6667,
+        "kappa_vs_gemini-2.5-pro": 0.7273,
+        "agreement_vs_gemini-2.5-pro": 0.8333
+      }
+    },
+    "spec10": {
+      "raters_compared": [
+        "gemini-2.5-flash",
+        "gemini-2.5-pro"
+      ],
+      "cases": {
+        "gold-02": {
+          "combined": "not_equivalent|E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "b2181c3cf2752103c7ab38ec713411dfc69b2744dd6205091931a81c72edfd4b",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 87,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 38,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 308,
+            "prompt_tokens_details": null,
+            "total_tokens": 395
+          },
+          "expected_combined": "not_equivalent|E4",
+          "matches_combined": true
+        },
+        "gold-03": {
+          "combined": "not_equivalent|E1",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E2"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "b356563ace6d2d40c19a1ad8aedd669d7aed66b7e0e531a1dd05f87f628f7f40",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 297,
+            "total_tokens": 732,
+            "completion_tokens": 435,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 128,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 384
+            }
+          },
+          "expected_combined": "not_equivalent|E2",
+          "matches_combined": false
+        },
+        "gold-04": {
+          "combined": "not_equivalent|E3",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "b81d5898c5b23c8f0095c34836ea8efbdb56a2e5f28e028703ed4b43d1d76660",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 81,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 31,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 287,
+            "prompt_tokens_details": null,
+            "total_tokens": 368
+          },
+          "expected_combined": "not_equivalent|E3",
+          "matches_combined": true
+        },
+        "gold-05": {
+          "combined": "not_equivalent|E1",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E1"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "d932d78b94f0459b85ace2c782cd158fd8b8095ef3220982b08de597561cc50d",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 105,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 40,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 297,
+            "prompt_tokens_details": null,
+            "total_tokens": 402
+          },
+          "expected_combined": "not_equivalent|E1",
+          "matches_combined": true
+        },
+        "av-001": {
+          "combined": "not_equivalent|E1",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E1"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "2fb5ef2a7526917892ca240b13a24ed566a12993fb5a6b9adcada3d1389d68f2",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 277,
+            "total_tokens": 366,
+            "completion_tokens": 89,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 128,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 34
+            }
+          },
+          "expected_combined": "not_equivalent|E1",
+          "matches_combined": true
+        },
+        "av-002": {
+          "combined": "not_equivalent|E2",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E2"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E2"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "717a646191675b0559c95b6ec5fffad95470c1acd3fc31c9617caf9bda8e32b6",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 2848,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2789,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 277,
+            "prompt_tokens_details": null,
+            "total_tokens": 3125
+          },
+          "expected_combined": "not_equivalent|E2",
+          "matches_combined": true
+        },
+        "av-003": {
+          "combined": "not_equivalent|E3",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "5a15828fd5352047ab064726039099d64caddee59d7e624a534f30401c44001c",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 296,
+            "total_tokens": 432,
+            "completion_tokens": 136,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "created_cache_tokens": 256,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 82
+            }
+          },
+          "expected_combined": "not_equivalent|E3",
+          "matches_combined": true
+        },
+        "av-004": {
+          "combined": "not_equivalent|E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "2fe1a584f94fca1a75e9e8836ef7c23dbc2cb8885e5b9c6c3a957635c0c8e407",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 309,
+            "total_tokens": 400,
+            "completion_tokens": 91,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 128,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 38
+            }
+          },
+          "expected_combined": "not_equivalent|E4",
+          "matches_combined": true
+        },
+        "av-005": {
+          "combined": "not_equivalent|E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "prompt_sha256": "83ceadf775467191337c166d7436c09f167451acdc9830ceed444fe646c85ab2",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 557,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 498,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 245,
+            "prompt_tokens_details": null,
+            "total_tokens": 802
+          },
+          "expected_combined": "not_equivalent|E4",
+          "matches_combined": true
+        },
+        "gold-01": {
+          "combined": "equivalent|",
+          "verdict": "equivalent",
+          "errors": [],
+          "expected_verdict": "equivalent",
+          "expected_errors": [],
+          "matches_expected": true,
+          "matches_combined": true,
+          "expected_combined": "equivalent|",
+          "prompt_sha256": "5ffc38b6edbe22d81bb1147529522e6c1e40fc980f5d64401f34a1c80f6bb95f",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 50,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 10,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 297,
+            "prompt_tokens_details": null,
+            "total_tokens": 347
+          }
+        }
+      },
+      "scores": {
+        "n_cases": 10,
+        "n_answered": 10,
+        "verdict_accuracy_vs_expected": 1.0,
+        "combined_accuracy_vs_expected": 0.9,
+        "kappa_vs_gemini-2.5-flash": 0.7297,
+        "agreement_vs_gemini-2.5-flash": 0.8,
+        "kappa_vs_gemini-2.5-pro": 0.8684,
+        "agreement_vs_gemini-2.5-pro": 0.9
+      }
+    },
+    "fact36": {
+      "raters_compared": [
+        "gemini-2.5-flash",
+        "gemini-2.5-pro"
+      ],
+      "cases": {
+        "sem-01": {
+          "combined": "not_equivalent|E1,E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1",
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E3",
+          "prompt_sha256": "e84fc6dfebdc8994dfc04df834cb8341353298e60cb597ab85b0a3f7f33aab49",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 1073,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 977,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 2848,
+            "prompt_tokens_details": null,
+            "total_tokens": 3921
+          }
+        },
+        "sem-02": {
+          "combined": "not_equivalent|E1,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "0446dec8b82484c8dcd92c20c3d4315cabb35cf74547093ea380259cd9a8e72b",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 3487,
+            "total_tokens": 5945,
+            "completion_tokens": 2458,
+            "prompt_tokens_details": {
+              "cached_tokens": 3392,
+              "created_cache_tokens": 64,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 2370
+            }
+          }
+        },
+        "sem-03": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": true,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "8e728a7777d621012862ca317e8fde142b319890944db9283546e0b6921e09d1",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 2241,
+            "total_tokens": 2655,
+            "completion_tokens": 414,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 2112,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 337
+            }
+          }
+        },
+        "sem-04": {
+          "combined": "not_equivalent|E1,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "c322086ccb224139ea12157f9c08a2e64fa24f189f4d59ee2e24d4c8eb6dc894",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 1542,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1467,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 3188,
+            "prompt_tokens_details": null,
+            "total_tokens": 4730
+          }
+        },
+        "sem-05": {
+          "combined": "not_equivalent|E1,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "3b6c29855b6b576db0b822ebb7b76d9bd974019f9ec1e3080532cf6ffed88836",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 2122,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2030,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 2570,
+            "prompt_tokens_details": null,
+            "total_tokens": 4692
+          }
+        },
+        "sem-06": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "5ebc8fe8e883f366d7742eacecd5c0ccda628aa5118df6450fbaca9f5bea417d",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 792,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 724,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 1882,
+            "prompt_tokens_details": null,
+            "total_tokens": 2674
+          }
+        },
+        "sem-07": {
+          "combined": "not_equivalent|E1,E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1",
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "8f1278c0818a76f7e1a1a3b8bec69fe670f011c6362ffe32ea75145b7e1c2eab",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 438,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 329,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 1775,
+            "prompt_tokens_details": null,
+            "total_tokens": 2213
+          }
+        },
+        "sem-08": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "b1ec8e31405042bf8cc6914b45b74a20d4a5834de5e2cfe0497db9e604db98df",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 553,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 489,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 1815,
+            "prompt_tokens_details": null,
+            "total_tokens": 2368
+          }
+        },
+        "sem-09": {
+          "combined": "not_equivalent|E1,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "c97eb3c457f897586bf0c876e5cf28b758178d42968c2f9b97738b778d7f9331",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 2155,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2075,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 3612,
+            "prompt_tokens_details": null,
+            "total_tokens": 5767
+          }
+        },
+        "sem-10": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": true,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "5216f97a99e6dee6cc2b9a49470681a67a6629ffe11d3f2c41ea2fbbd6bb49e9",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 1556,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1456,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 2366,
+            "prompt_tokens_details": null,
+            "total_tokens": 3922
+          }
+        },
+        "sem-11": {
+          "combined": "not_equivalent|E1,E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E1",
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "91c2ca5f67387e508faa02f4bc339242149c7a8eab03e31f6e7f1aa72686f616",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 956,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 839,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 3313,
+            "prompt_tokens_details": null,
+            "total_tokens": 4269
+          }
+        },
+        "sem-12": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": true,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "6617542f5dcdfdc94166ca30a14995e6fdaca80b5125bfa902e1c39d310fe892",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 1196,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1113,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 2695,
+            "prompt_tokens_details": null,
+            "total_tokens": 3891
+          }
+        },
+        "sem-13": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "7753a7919124a48139d862958c6ae8799d611db9fee00d30e0dbecb5032b9e3d",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 856,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 766,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 2007,
+            "prompt_tokens_details": null,
+            "total_tokens": 2863
+          }
+        },
+        "sem-14": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "82309fd658b8da0b77fadafd439364c42d55ed79e032336ce95daabd5784a938",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 973,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 879,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 1900,
+            "prompt_tokens_details": null,
+            "total_tokens": 2873
+          }
+        },
+        "sem-15": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "5bed4af67e374bc10b1bf79d14995783d34fce42ce995dd284d4eb0906144241",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 1940,
+            "total_tokens": 2268,
+            "completion_tokens": 328,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 1792,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 253
+            }
+          }
+        },
+        "sem-16": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": true,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "3a8ce66659289291bcca0f18daacaf523f7aecb00dcc11d2ae8dbe72921f9793",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 511,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 442,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 3005,
+            "prompt_tokens_details": null,
+            "total_tokens": 3516
+          }
+        },
+        "sem-17": {
+          "combined": "not_equivalent|E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "233681b6e9fac95ea5e2d94cf707b522dff6df8367a2bf5a81def4a91e245f32",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 1121,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1053,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 3952,
+            "prompt_tokens_details": null,
+            "total_tokens": 5073
+          }
+        },
+        "sem-18": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": true,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "9598a74b391c042b6a0a214390f5f12a2db39fa3376930cab545b58bc058dfca",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 1124,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1056,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 3334,
+            "prompt_tokens_details": null,
+            "total_tokens": 4458
+          }
+        },
+        "sem-19": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "393d1c8587ad134cc16ae9211633e258fcd1615805a5fe725a87161d7809cb9c",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 2646,
+            "total_tokens": 2758,
+            "completion_tokens": 112,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 2496,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 38
+            }
+          }
+        },
+        "sem-20": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "07748900763e5e0f6bb1a128e16d6cda9fb95adf570fe71f7a342a84db46bfa4",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 2539,
+            "total_tokens": 2863,
+            "completion_tokens": 324,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 2368,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 256
+            }
+          }
+        },
+        "sem-21": {
+          "combined": "not_equivalent|E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "63f3f838211f28851995df474f1bc341c39253c5c25362e3bde0d2bc5eb8e2f4",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 277,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 174,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 2579,
+            "prompt_tokens_details": null,
+            "total_tokens": 2856
+          }
+        },
+        "sem-22": {
+          "combined": "not_equivalent|E3",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "28aae84872fb6cc3fedeb8b7fb8381642739df51f8cd1235567c87e6c8530341",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 934,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 848,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 2706,
+            "prompt_tokens_details": null,
+            "total_tokens": 3640
+          }
+        },
+        "sem-23": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": true,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "8bcd8196aa286b0a6625ef93bfdd2788cb0de36c3d73ad7698aa6899c3ed73a9",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 2088,
+            "total_tokens": 2348,
+            "completion_tokens": 260,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 1920,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 179
+            }
+          }
+        },
+        "sem-24": {
+          "combined": "not_equivalent|E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "b06a7e396032d2fff25912ab236cfbb4be4525ba332887bcbc51946db480176e",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 285,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 200,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 1400,
+            "prompt_tokens_details": null,
+            "total_tokens": 1685
+          }
+        },
+        "sem-25": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "4337d85410bf00795a67aaab02f48e7fed315607c16352fc872c426dbdbe4bd6",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 1293,
+            "total_tokens": 1460,
+            "completion_tokens": 167,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 1152,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 92
+            }
+          }
+        },
+        "sem-26": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "f2a511d9fe71be4c25b4f7a74f591b0cff24f9fd6a0d5363ef4c3827cfd6e022",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 1333,
+            "total_tokens": 1818,
+            "completion_tokens": 485,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 1152,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 408
+            }
+          }
+        },
+        "sem-27": {
+          "combined": "not_equivalent|E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E3",
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E3,E4",
+          "prompt_sha256": "8429904c726485e6cf83902ae0f7932041946b45ea174bfbe69a4960f9d8e7fc",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 1205,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1116,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 3035,
+            "prompt_tokens_details": null,
+            "total_tokens": 4240
+          }
+        },
+        "sem-28": {
+          "combined": "not_equivalent|E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "2893c906ae29badb51aa048be2a1314b3c42871f10d454137d9fc102ed303c24",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 757,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 655,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 2347,
+            "prompt_tokens_details": null,
+            "total_tokens": 3104
+          }
+        },
+        "sem-29": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "20c66a4af240b6f172b45c3c9a4543a38823ef496c5f09b01aa404f3a2ad4f99",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 2240,
+            "total_tokens": 2656,
+            "completion_tokens": 416,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 2112,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 341
+            }
+          }
+        },
+        "sem-30": {
+          "combined": "not_equivalent|E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "4d76ed042687b507dbe9e64bcc2335d6ee89d99df5aba265dfb4938af55b2dcf",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 2280,
+            "total_tokens": 2472,
+            "completion_tokens": 192,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 2112,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 96
+            }
+          }
+        },
+        "sem-31": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "a2a01f10a5fb68e93b3e042c2062d8a8d1c793f5e49254a61d648fdd1662ce20",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 174,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 92,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 1729,
+            "prompt_tokens_details": null,
+            "total_tokens": 1903
+          }
+        },
+        "sem-32": {
+          "combined": "not_equivalent|E2,E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E2",
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "e65f83b1e973f53fdbe758c0673a5901c082813e8335cf51bf8d10133cb607d1",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 831,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 700,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 1622,
+            "prompt_tokens_details": null,
+            "total_tokens": 2453
+          }
+        },
+        "sem-33": {
+          "combined": "not_equivalent|E3,E4",
+          "verdict": "not_equivalent",
+          "errors": [
+            "E3",
+            "E4"
+          ],
+          "expected_verdict": "not_equivalent",
+          "expected_errors": [
+            "E4"
+          ],
+          "matches_expected": true,
+          "matches_combined": false,
+          "expected_combined": "not_equivalent|E4",
+          "prompt_sha256": "b0371d0ab18e18c6b38f54c5170ac5e36855d5d56785437fd4f09de5dbea8b66",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 1662,
+            "total_tokens": 2290,
+            "completion_tokens": 628,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 1472,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 565
+            }
+          }
+        },
+        "sem-34": {
+          "combined": "equivalent|",
+          "verdict": "equivalent",
+          "errors": [],
+          "expected_verdict": "unlabellable",
+          "expected_errors": [],
+          "matches_expected": false,
+          "matches_combined": false,
+          "expected_combined": "unlabellable|",
+          "prompt_sha256": "42ff8e47524cd5e9c15fc5a62ce191bf978164ae215268d85175865cca7bffc5",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 934,
+            "total_tokens": 1731,
+            "completion_tokens": 797,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 768,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 747
+            }
+          }
+        },
+        "sem-35": {
+          "combined": "equivalent|",
+          "verdict": "equivalent",
+          "errors": [],
+          "expected_verdict": "unlabellable",
+          "expected_errors": [],
+          "matches_expected": false,
+          "matches_combined": false,
+          "expected_combined": "unlabellable|",
+          "prompt_sha256": "a0a42e0931e2b09b13cd9a6b11d94fe80583637b2b82791b59be3e572e04a838",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "prompt_tokens": 974,
+            "total_tokens": 1132,
+            "completion_tokens": 158,
+            "prompt_tokens_details": {
+              "cached_tokens": 128,
+              "created_cache_tokens": 832,
+              "multimodal_tokens": null
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 92
+            }
+          }
+        },
+        "sem-36": {
+          "combined": "equivalent|",
+          "verdict": "equivalent",
+          "errors": [],
+          "expected_verdict": "unlabellable",
+          "expected_errors": [],
+          "matches_expected": false,
+          "matches_combined": false,
+          "expected_combined": "unlabellable|",
+          "prompt_sha256": "2e08f73159d3f8542d908f3040914d2378622c0a7b130dc2ff4c6a61c9a17d03",
+          "returned_model": "Atria-Dawn-Preview",
+          "usage": {
+            "completion_tokens": 91,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 41,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens": 867,
+            "prompt_tokens_details": null,
+            "total_tokens": 958
+          }
+        }
+      },
+      "scores": {
+        "n_cases": 36,
+        "n_answered": 36,
+        "verdict_accuracy_vs_expected": 0.9167,
+        "combined_accuracy_vs_expected": 0.1667,
+        "kappa_vs_gemini-2.5-flash": 0.3993,
+        "agreement_vs_gemini-2.5-flash": 0.6111,
+        "kappa_vs_gemini-2.5-pro": 0.4061,
+        "agreement_vs_gemini-2.5-pro": 0.6389
+      }
+    }
+  },
+  "returned_model_strings": [
+    "Atria-Dawn-Preview"
+  ],
+  "contract_failures": []
+}

@@ -366,6 +366,37 @@ claim-to-measurement gap. What catches it is the nullity check, not the taxonomy
 Reading a candidate is a poor proxy for running it, and more textual auditors buy
 agreement rather than independence when they share a failure mode.
 
+That account rests on two raters who share a provider, so we put the same question to a
+second provider: \texttt{Atria-Dawn-Preview} at \texttt{temperature} 0, shown payloads
+carrying the same prompt digest the published raters were given, so prompt drift is not an
+available explanation for any agreement between them. It
+reproduces the blind spot rather than breaking it. On the six measured cases it recovers
+3 of 6 verdict labels and 1 of 6 error-code labels, and the three verdicts it misses are
+exactly the three escapes, each returned as \texttt{not\_equivalent}/\textbf{E4}. Its
+accuracy then splits along the same seam the published $\kappa$ does, and the split is
+set-dependent: on the ten canonical specification cases it reaches 10 of 10 verdict labels
+and 9 of 10 error-code labels, its single code miss being a substitution of one code for
+another rather than a verdict error. That score is the retry's: the first request for one of
+the ten came back with no content on the first request at all, and the retry, shown a prompt
+whose digest is identical, parsed. We report the retry and keep the first reply in
+\texttt{unparsed\_replies.json}, because a re-ask that silently replaces a failure with a
+success is exactly the substitution this paper is about, and because zero sampling temperature
+does not, on this evidence, mean one answer per prompt. Agreement about \emph{which} code fired is the scarce quantity, not
+agreement about equivalence, and a rater can be right about the first while wrong about
+the second on most of a set. Switching providers buys coverage of a different failure
+mode, not freedom from this one. On the 36 real-source pairs the three raters agree
+completely where a label exists and diverge only where one does not: on the 33 labellable
+pairs all three reproduce the recorded verdict, \textbf{33/33} each, and they separate on
+the error codes, agreeing with the recorded set on 7, 9 and 6 of those same 33, with 26 of
+the 27 second-provider misses on that subset strict supersets of it. The remaining three pairs are the ones
+this protocol marks \texttt{unlabellable}, and every rater answers \texttt{equivalent} with
+an empty error set there: none of them abstains where the rubric derives no answer. Code
+agreement is the scarce quantity, not agreement about equivalence, and a rater can be right
+about the first while wrong about the second on most of a set.
+\texttt{scripts/rater\_rollup.py} re-derives every number
+in this paragraph from the per-case labels and refuses the artifact when a stored score
+does not equal the re-derivation.
+
 \subsection{Ground truth is generated too}
 \label{sec:groundtruth}
 
@@ -567,6 +598,20 @@ which made the head return a single constant four times and turned the advisory
 cross-check into a reading about the option label rather than about the model; rule (1)
 applied to a check written to audit the pipeline, not only to the pipeline.
 
+A third set breaks the agreement instead of repeating it. It holds five forks from the
+round in which the second-provider rater was running, each with the option actually taken
+recorded in the spec: the head's top-1 equalled the action taken \textbf{1 of 5} times, and
+twice its pick was the option with the larger declared blast radius (\texttt{external\_write}
+and \texttt{destructive} against \texttt{local\_reversible}), escalated by the register
+rather than by the model's own score. Since one wording cannot separate a preference from a
+phrasing, the same five decisions were re-run with every option list written in reverse
+declaration order and nothing else changed: \textbf{2 of 5} picks moved, and the reordered
+pick was the first-declared option only once, so this is not primacy. The dispatch layer
+held where the choice did not: the margin rule escalated the same \textbf{4 of 5} in both
+orders. Read together, the two sets say the head is usable as a tie-breaker when a real
+ranking exists and unusable as the arbiter of what may be destroyed, which is the
+division the gate implements.
+
 \begin{table}[h]
 \vspace{-0.4em}
 \centering\footnotesize\setlength{\tabcolsep}{2.5pt}
@@ -616,7 +661,7 @@ repository URL is filed in this submission's required open-source-artifact field
 rather than printed here, so the paper stays anonymous while the artifact stays
 reachable. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (191 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (220 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check, not a coincidence. \texttt{scripts/audit\_grid\_levels.py}
 is the same idea aimed at the harness: it refuses a published grid in which some factor
@@ -728,9 +773,12 @@ failure is systematic on this set rather than a single coincidence. That set car
 the same module name denotes different programs across directories, so no number here
 is a cross-series estimate: the $78.16\%$ and $0.0000\%$ cross-seed CVs are both
 correct and describe different generated series.
-\textbf{Annotators:} both generative models come from one
-provider, and \S\ref{sec:substrate} shows that the architecturally different rater
-we could reach is worse than independent rather than better.
+\textbf{Annotators:} the two generative raters the published $\kappa$ rests on come from
+one provider. A second-provider rater now re-labels the 16 measured and canonical cases
+(\S\ref{sec:escape}) and reproduces the shared error instead of correcting it, so
+provider diversity is tested on that subset and not on the 33-pair set. The
+architecturally different rater we could reach is worse than independent rather than
+better (\S\ref{sec:substrate}), and no rater here is a human.
 \textbf{Annotation validity:} the raters are large models, and we tested one threat and
 not the other. Exchanging candidate and reference leaves every verdict unchanged
 ($0/8$), so the layer is not reading narrative direction; but we did not test whether
@@ -782,7 +830,10 @@ drafting and editing of this paper. An AI agent ran the audit loop, wrote and re
 scripts and the evidence pipeline, and drafted this text under the author's direction; the
 author selected the claims, checked them against the primary artifacts, and is responsible
 for all code, measurements, citations, claims and the final content here.
-The evaluation layer is machine-generated as well: two generative raters, a generative
+The evaluation layer is machine-generated as well: two generative raters from one
+provider, a third generative rater from a second provider (\texttt{Atria-Dawn-Preview},
+\texttt{api.atria-asi.ai}, queried 2026-09-24 at \texttt{temperature} 0, per-case prompt
+digests in the artifact), a generative
 labeler that we then showed to be wrong while the raters were right
 (\S\ref{sec:groundtruth}), a local discriminative head used both as a third annotation
 substrate and as a decision gate (\S\ref{sec:substrate}, \S\ref{sec:gate2}), and nine
