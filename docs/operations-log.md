@@ -2237,8 +2237,9 @@ check_documented_commands.py    -> rc=0
 unittest discover               -> Ran 46 tests, OK
 ```
 
-验证器条数 173 → 184 → **187**（−3 mtime +4 pin，+5 留档 PDF，+3 README 当前状态，
-+1 分层计数，+1 页对象对账，+3 干净克隆记录；173+1+5+3+1+1+3=187，且这个数由自指
+验证器条数 173 → 184 → 187 → **188**（−3 mtime +4 pin，+5 留档 PDF，+3 README 当前状态，
++1 分层计数，+1 页对象对账，+3 干净克隆记录，+1 散文点名的孤儿数；
+173+1+5+3+1+1+3+1=188，且这个数由自指
 检查在运行时机器核验，不是我加出来的）。
 184/184 那次是 §32.2 那轮的结果，仍原样记在
 `results/fresh_clone_verification_2026-09-24.json` 的 `gates` 里 —— 那是对 commit
@@ -2427,5 +2428,147 @@ unittest discover -s chia_loop/tests -> Ran 46 tests, OK
 ```
 
 提交物 `paper/paper.pdf`：617,722 B，9 页，
-sha256 `1a442e5998dbd47ce269ee2c4d7c9370840cebf18c3eb52f4cfd2bf13de368c1`。
-声明数仍是 187 —— 本轮加了论文段落和文档，没有加减检查。
+sha256 `6e671485bd8359d15594b2f8eb26921bdeb2f0d71f2eba271987705d017bfb58`。
+上面这一行在写下 20 分钟后就陈旧了一次，见 §34：同一份 `.tex` 加了散文段落但没加减
+检查，重编译后字节数恰好仍是 617,722 B（页数不变，hbox 位置变了），sha256 却从
+`1a442e59…` 变成上面这个。字节数相同这件事本身值得记一句——它是"体积没变所以内容
+没变"这类直觉的反例，也正是为什么 `BUILD_PIN.json` 钉的是摘要而不是大小。
+
+### 33.9 我把一个已入库的 run log 覆盖了（本轮唯一一次真正损坏证据）
+
+`.tmp/` 下有 **119 个已入库文件**，其中 `.tmp/v7.txt` 是早先一轮的 UTF-16 笔记
+（358 B，内容是关于 WSL / localhost / NAT 的）。我这一轮图省事把验证器输出重定向到
+`.tmp/v7.txt`，直接把它覆盖成 28,821 B 的门禁输出，然后 `git add -u` 把这个覆盖
+**一起提交进了 `0af9927`**。
+
+没有任何门报警。`.tmp/` 里的 run log 不在任何摘要清单里
+（`results/compute_host_bookkeeping/MANIFEST.sha256` 只管那 21 个抢救文件），
+所以"覆盖一个已入库文件"和"正常修改一个文件"在门禁看来是同一件事。
+
+已用 `git checkout HEAD~1 -- .tmp/v7.txt` 还原，字节数与 sha256 前缀
+（358 B / `992c6705a72c0be4`）都对回原值，并在 `0af9927` 之后单独一个 commit 记录，
+没有 amend、没有 force push —— 覆盖这件事本身要留在历史里，
+否则"我们从不损坏证据"就变成一句没有反例支撑的话。
+
+规则（写下来才有效）：**往 `.tmp/` 重定向之前先看这个名字是否已被 git 跟踪**，
+`git ls-files .tmp | grep <name>`；本轮之后所有临时输出一律进 `.tmp/scratch/`。
+
+这一条与 §33.5 是同一族的反面：那里是探针错了导致我误判仓库，
+这里是仓库被我的探针损坏。两者都不报警。
+
+---
+
+## §34 一条注释改动了普查表（我自己写的，而且我第一版验证方法是错的）
+
+### 34.1 现象
+
+给 `scripts/verify_paper_claims.py` 加第 188 条检查时，我在新检查上方写了一段中文注释，
+里面为了说明动机，举了一个具体文件名（一个 `.tmp/` 下的笔记）。重跑验证器：**183/188，
+5 条 FAIL**，其中四条是 README 里已发表的普查数字：
+
+```
+FAIL  published machine-vouch rate is recomputed     expect=True actual=False
+FAIL  published unvouched rate is recomputed         expect=True actual=False
+FAIL  the published orphan breakdown is recomputed   expect=True actual=False
+FAIL  and the three tier counts, ...                 expect=[173, 101, 79] actual=[172, 101, 80]
+```
+
+一条注释把 `172/101/80` 变成了 `173/101/79`。
+
+### 34.2 机理
+
+`inventory_vouches.py` 判定 `claimed`（机器担保）的方式是
+`any(t in verifier for t in tokens)` —— 在验证器**源码全文**里做子串匹配。源码全文包含注释。
+于是"我在注释里提到某个文件"被记成"有条检查从这个文件重derive数字"，
+该文件从 code-unreferenced 升到 machine-vouched。
+
+这直接推翻了 `REVIEW_COVERAGE.md` 自己发表的那句话：
+"Tiers are computed from code-side evidence only, so writing about a file cannot change
+this table." 它当时是假的，而且假得正好在读者最需要它成立的地方 —— 这句话的作用就是
+让读者相信这张表不会因为我们写报告而自我污染。
+
+同一族泄漏还有两处，都来自同一个决定：`tested` 匹配单元测试源码全文，
+`reachable_by` 匹配所有 `.py` 源码全文。任何一处注释里出现一个目录名，就能给该目录下
+所有文件发一张"可达"票。
+
+### 34.3 修法：在源头剥注释，而不是改我的措辞
+
+第一轮我只把自己那句注释改含糊了（不再出现具体文件名），普查回到 `172/101/80`。
+**这不算修复**：它只是让这一次没触发，机制原样留着，下一个人（或下一个会话的我）
+再写一句带文件名的注释就会重演，而且不会有任何报警。
+
+真正的修法是给 `inventory_vouches.py` 加 `strip_py_comments()`，用 `tokenize` 剥掉
+`COMMENT` token，并把它套在三个代码语料上（验证器、单元测试、全部 `.py`）。
+用 `tokenize` 而不是正则，是因为路径字符串里的 `#` 必须活下来；
+解析失败时原样返回，不让一次语法错误把整张表清零。
+
+剥完之后普查数字**一个都没变**（仍是 `353 / 172 / 101 / 80`，散文点名 47）。
+这说明此前没有任何文件的分层是靠注释撑起来的 —— 泄漏存在，但还没被别的注释踩中过。
+`REVIEW_COVERAGE.md` 那句话同时改窄了：现在它说的是"写散文、写注释都不动这张表，
+动它的是真的开始读这个文件的代码"。
+
+### 34.4 我第一版验证方法是错的，撤回
+
+修完当然要证明它咬人。我第一版 A/B 是这么做的：把改前的 `inventory_vouches.py`
+备份成 `.tmp/scratch/inv.bak`，再直接执行那个备份路径，拿它的输出当"改前"。
+
+结果"改前"那一支报出 `{'reachable': 96, 'code-unreferenced': 23}`，连 `machine` 键都没有，
+总数 119。我当时差点把它当成"看，改前果然泄漏得更厉害"。
+
+它是**假的**。那个脚本用 `REPO = Path(__file__).resolve().parent.parent` 定位仓库根，
+从 `.tmp/scratch/` 执行时 `REPO` 变成了 `.tmp/`，于是它普查的是 `.tmp/` 下的 119 个
+已入库文件（与 §33.9 记的那个数吻合），根本不是整棵树。差异来自工作目录，不来自我
+要检验的那个变量。这与 §33.5 同族：**探针本身错了，而它的输出看起来像证据。**
+
+第二版只动一个变量：在原地把 `strip_py_comments` 的返回值改成 `return text`（等价于
+关掉剥离），其余字节全同，然后跑同一棵树：
+
+```
+victim: .tmp/audit_fact36.log    baseline: {machine 172, reachable 101, code-unref 80} prose 47
+  往 verify_paper_claims.py 追加一行 "# probe comment naming .tmp/audit_fact36.log"
+  stripping OFF（改前行为）: {machine 173, reachable 101, code-unref 79}   <- 复现了 34.1
+  stripping ON （改后行为）: {machine 172, reachable 101, code-unref 80}   <- 与基线逐键相同
+  还原后复测             : {machine 172, reachable 101, code-unref 80}
+```
+
+`assert` 了三件事：切换真的改了字节（否则就是在拿两份相同代码互比，
+这正是 §32.8 里"变异静默空转"的教训）、OFF 与基线不同、ON 与基线相同。
+两个备份都还原并逐字节核对。
+
+**这是一次性探针，不是常驻门禁**：它没有被固化成脚本，仓库里也没有一条检查会在
+将来有人重新引入注释泄漏时变红。把它写成门禁需要新增一个测试文件，而那会让
+`files_tracked` 从 353 变 354、连带 README 和论文里所有比率重算一遍 —— 在截稿前
+我选择了不做，并在这里明说它没做，而不是让"已验证"三个字涵盖它。
+
+### 34.5 这一条为什么值得单列
+
+它是本轮唯一一处**我写的文档改变了被文档描述的测量**的案例。
+本项目所有门禁的共同前提是"证据落盘、数字重derive"；而普查这张表的前提更强 ——
+它必须对"我们在写关于它的文字"这件事免疫，否则它会随每一轮报告漂移，
+永远收敛不到一个可发表的数。§34.1 那 5 条 FAIL 其实是好事：
+门咬住了，而且咬住的是我自己的注释。
+
+### 34.6 写这一节本身就触发了第 188 条检查
+
+§34.4 引用探针输出时写出了那个受害文件的文件名。重跑验证器：**187/188**，唯一一条 FAIL 是
+
+```
+FAIL  and the prose-named orphan count, stale the moment a log line named a file
+      expect=48 actual=47
+```
+
+也就是说，本轮新加的那条检查，第一次真正咬住的对象是我记录它的那一节。
+`README.md` 里发表的 47 就地陈旧，改成 48 并重生成 `REVIEW_COVERAGE.md` 后回到
+**188/188，rc=0**。
+
+要把这两半分开看，它们不是同一件事：
+
+- **散文点名计数会变**，而且本来就该变 —— 它统计的就是"有多少孤儿至少在散文里被提到"，
+  多提一个就多一个。这是第 188 条检查存在的理由：过去这个数没人重算，
+  所以它可以陈旧而无人知晓（§32 那一族）。
+- **分层不变**，仍是 `172 / 101 / 80`。散文提到一个文件不给它发机器担保票，
+  这是 §34.3 剥注释之后才真正成立的那条不变量。
+
+所以"写报告污染测量"这件事，被压缩到了一个**有检查盯着的、单调的计数字段**里，
+而没有渗进分层。这已经是可以发表的形态：不是"我们的表不受写作影响"，
+而是"受写作影响的那一个字段被机器重算，其余字段被证明不受影响"。

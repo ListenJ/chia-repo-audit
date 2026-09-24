@@ -126,7 +126,7 @@ supplies one here.
   The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (187 claims). Its final check is
+  committed artifact and exits non-zero on drift (188 claims). Its final check is
   self-referential: the paper states the claim count, so editing the verifier without
   updating the prose turns the run red. This sentence is gated too, and the reason is
   that it used not to be --- it read "138 claims" for two rounds after the count had
@@ -158,7 +158,7 @@ supplies one here.
   files, classified by what *code* vouches for each: **48.7% machine-vouched** (172 files
   a `verify_paper_claims.py` check re-derives or a unit test loads), 28.6% reachable-only
   (101 files in a set some script globs), and **22.7% with no code reference at all**
-  (80 files; 46 of those are at least named in prose, 50 live under `.tmp/` as run logs
+  (80 files; 48 of those are at least named in prose, 50 live under `.tmp/` as run logs
   and three container lock files). Regenerate with `python3
   scripts/inventory_vouches.py --markdown REVIEW_COVERAGE.md`. The `--json` and
   `--markdown` flags are mutually exclusive -- `--json` returns before the markdown

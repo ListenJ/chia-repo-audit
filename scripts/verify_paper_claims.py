@@ -835,6 +835,15 @@ check("and the three tier counts, which the rates alone did not pin down",
       [_inv["tiers"]["machine"], _inv["tiers"]["reachable"],
        _inv["tiers"]["code-unreferenced"]],
       [int(x) for x in re.findall(r"\((\d+) files", README_TXT)])
+# 孤儿里"至少被散文点名"的那个数一直没人管，直到我在 ops log 里写下某个 `.tmp/`
+# 笔记的文件名——普查立刻从 46 变 47，README 原地陈旧，而所有门都是绿的。同一句话里的
+# 前两个数（80 files、50 live under）都有检查，偏偏第三个没有。regex 找不到时给
+# None 而不是 .group() 崩掉，这是 §32.6 那个 AttributeError 的同一课。
+_prose_n = re.search(r"\((\d+) files; (\d+) of those are at least named in prose",
+                     README_TXT)
+check("and the prose-named orphan count, stale the moment a log line named a file",
+      len(_inv["unvouched_named_in_prose"]),
+      int(_prose_n.group(2)) if _prose_n else None)
 check("and REVIEW_COVERAGE.md is the generated one", True,
       str(_inv["files_tracked"]) in (REPO / "REVIEW_COVERAGE.md").read_text(encoding="utf-8"))
 

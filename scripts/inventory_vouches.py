@@ -19,13 +19,34 @@ vouch is prose is reported as `prose-only`, not as covered.
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import subprocess
 import sys
+import tokenize
 from collections import Counter
 from pathlib import Path, PurePosixPath
 
 REPO = Path(__file__).resolve().parent.parent
+
+
+def strip_py_comments(text: str) -> str:
+    """Drop `#` comments from Python source, leaving string literals alone.
+
+    `claimed` means a check re-derives a number from the file. A comment that happens
+    to name the file proves no such thing, yet substring matching over raw source counts
+    it -- measured: writing the filename of a `.tmp/` note inside a comment in
+    verify_paper_claims.py moved that file from code-unreferenced to machine-vouched and
+    turned five published numbers stale while every gate stayed green. That also falsified
+    this report's own sentence "writing about a file cannot change this table".
+    tokenize is used rather than a regex so a `#` inside a path string survives.
+    """
+    try:
+        toks = list(tokenize.generate_tokens(io.StringIO(text).readline))
+    except (tokenize.TokenError, IndentationError, SyntaxError):
+        return text
+    return tokenize.untokenize(
+        t for t in toks if t.type != tokenize.COMMENT)
 
 GENERATED_MARKERS = (
     "results/", "paper/fig_", "CANDIDATES.md", "paper/paper.aux", "paper/paper.log",
@@ -62,10 +83,11 @@ def main(argv: list[str]) -> int:
                     help="write the census to PATH as a markdown report")
     # The caller passes sys.argv[1:] already, so slice once here.
     opts = ap.parse_args(argv)
-    verifier = read("scripts/verify_paper_claims.py")
+    verifier = strip_py_comments(read("scripts/verify_paper_claims.py"))
     paper = read("paper/paper.tex").replace("\\_", "_")
     opslog = read("docs/operations-log.md")
-    tests = {p: read(str(p.relative_to(REPO))) for p in (REPO / "chia_loop/tests").glob("*.py")}
+    tests = {p: strip_py_comments(read(str(p.relative_to(REPO))))
+             for p in (REPO / "chia_loop/tests").glob("*.py")}
     index = "".join(read(rel) for rel in
                     ("CANDIDATES.md", "README.md", "ROADMAP.md", "COMPUTE_WINDOW.md",
                      "PRECOMPUTE.md", "KAGGLE_VALIDATION.md", "chia_loop/README.md",
@@ -74,7 +96,8 @@ def main(argv: list[str]) -> int:
     # This script's own source names the directories it inspects, so counting it as a
     # consumer would make everything reachable by self-reference.
     here = str(Path(__file__).resolve().relative_to(REPO)).replace("\\", "/")
-    sources = {str(p.relative_to(REPO)).replace("\\", "/"): read(str(p.relative_to(REPO)))
+    sources = {str(p.relative_to(REPO)).replace("\\", "/"):
+               strip_py_comments(read(str(p.relative_to(REPO))))
                for p in REPO.rglob("*.py")
                if ".git" not in p.parts and "__pycache__" not in p.parts
                and str(p.relative_to(REPO)).replace("\\", "/") != here}
@@ -175,8 +198,12 @@ def main(argv: list[str]) -> int:
             f"{counts['code-unreferenced'] / total:.1%} "
             "| nothing executable reads or names it |",
             "",
-            "Tiers are computed from code-side evidence only, so writing about a file "
-            "cannot change this table. Prose mentions are still recorded: "
+            "Tiers are computed from code-side evidence only, and `#` comments are "
+            "stripped before matching, so *writing about* a file cannot change this "
+            "table -- naming it in the paper, the ops log or an index, or in a comment "
+            "inside the verifier, all leave the tiers alone. What does change them is "
+            "real code: a check that starts reading the file, or a test that loads it. "
+            "Prose mentions are still recorded: "
             f"{len(report['unvouched_named_in_prose'])} of the code-unreferenced files "
             "are at least named somewhere in the paper, ops log or an index.",
             "",

@@ -697,7 +697,7 @@ rather than printed here, so the paper stays anonymous
 while the artifact stays reachable. Every number
 quoted in this paper is re-derived from the commit-
 ted artifacts byscripts/verify_paper_claims.py
-(187 claims, non-zero exit on drift); the defects above
+(188 claims, non-zero exit on drift); the defects above
 were found by reading primary evidence, and this
 script is what turns that into a check, not a coinci-
 dence.scripts/audit_grid_levels.pyis the same

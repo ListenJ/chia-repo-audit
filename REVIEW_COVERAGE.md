@@ -9,7 +9,7 @@ Every tracked file (353) is classified by what currently vouches for it.
 | reachable-only | 101 | 28.6% | executable code references the set it belongs to, but nothing checks this file |
 | code-unreferenced | 80 | 22.7% | nothing executable reads or names it |
 
-Tiers are computed from code-side evidence only, so writing about a file cannot change this table. Prose mentions are still recorded: 46 of the code-unreferenced files are at least named somewhere in the paper, ops log or an index.
+Tiers are computed from code-side evidence only, and `#` comments are stripped before matching, so *writing about* a file cannot change this table -- naming it in the paper, the ops log or an index, or in a comment inside the verifier, all leave the tiers alone. What does change them is real code: a check that starts reading the file, or a test that loads it. Prose mentions are still recorded: 48 of the code-unreferenced files are at least named somewhere in the paper, ops log or an index.
 
 **What this does not claim.** A machine vouch means a check reads the file, not that a human read it; `reachable-only` means some script globs its directory, which is weaker still. Nothing here is a correctness statement.
 
