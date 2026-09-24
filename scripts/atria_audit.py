@@ -129,6 +129,8 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--sets", nargs="*", default=["measured6", "spec10", "fact36"])
     ap.add_argument("--out", default="results/audit_independent_atria")
     ap.add_argument("--limit", type=int, default=0, help="debug: only the first N cases")
+    ap.add_argument("--resume", action="store_true",
+                    help="keep already-answered cases in the artifact and ask only the rest")
     opts = ap.parse_args(argv)
 
     if not TOKEN_FILE.exists():
@@ -140,6 +142,7 @@ def main(argv: list[str]) -> int:
     want = sorted(sets) if opts.sets == ["all"] else opts.sets
     out_dir = REPO / opts.out
     out_dir.mkdir(parents=True, exist_ok=True)
+    artifact = out_dir / "raw.json"
     report: dict = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "requested_model": MODEL, "endpoint": BASE,
@@ -147,6 +150,31 @@ def main(argv: list[str]) -> int:
         "note": "cross-provider rater; NOT merged into the published same-provider kappa",
         "sets": {},
     }
+    done_before = 0
+    if artifact.exists() and opts.resume:
+        # Reconcile against what already landed rather than restarting: a 52-call run
+        # over a reasoning model is long enough that the second attempt should be able
+        # to pick up the first, and re-asking is not free.
+        report = json.loads(artifact.read_text(encoding="utf-8"))
+        done_before = sum(len(b.get("cases") or {}) for b in report["sets"].values())
+        print(f"resuming: {done_before} cases already answered")
+
+    def save() -> None:
+        artifact.write_bytes(
+            (json.dumps(report, indent=2, ensure_ascii=False) + "\n").encode("utf-8"))
+
+    def save_set(name: str, per_case: dict, scores: dict | None = None) -> None:
+        # Publish the in-flight set into `report` before writing. Without this the
+        # per-case save() inside the loop writes a report whose sets[name] is still
+        # absent -- i.e. it persists nothing new, and a crash still costs the whole
+        # set. The first version of this file had exactly that bug: it claimed
+        # incremental persistence on a path that only flushed at set boundaries.
+        blk = report["sets"].setdefault(name, {})
+        blk["cases"] = per_case
+        if scores is not None:
+            blk["scores"] = scores
+        save()
+
     returned_models: set[str] = set()
     contract_failures: list[str] = []
 
@@ -170,10 +198,13 @@ def main(argv: list[str]) -> int:
                 for lab in row.get("labels") or []:
                     if rid and isinstance(lab, dict) and lab.get("model"):
                         gemini.setdefault(lab["model"], {})[rid] = combined_label(lab)
-        ours: dict[str, str] = {}
-        per_case: dict[str, dict] = {}
-        right = 0
+        prev = (report["sets"].get(name) or {}).get("cases") or {}
+        ours: dict[str, str] = {k: v.get("combined", "") for k, v in prev.items()}
+        per_case: dict[str, dict] = dict(prev)
+        right = sum(1 for v in per_case.values() if v.get("matches_expected"))
         for case in cases:
+            if opts.resume and case["id"] in per_case:
+                continue
             prompt = RUBRIC + "\nCase to audit:\n" + json.dumps(
                 annotator_payload(case), indent=2)
             sha = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
@@ -181,6 +212,7 @@ def main(argv: list[str]) -> int:
                 text, data = call(prompt, key)
             except RuntimeError as e:
                 contract_failures.append(f"{name}/{case['id']}: {e}")
+                save_set(name, per_case)
                 continue
             parsed = parse(text)
             if not parsed.get("verdict"):
@@ -199,7 +231,13 @@ def main(argv: list[str]) -> int:
                 "returned_model": data.get("model"),
                 "usage": data.get("usage"),
             }
-            print(f"{case['id']:12s} {label:28s} expected={exp} {'OK' if ok else 'DIFF'}")
+            # Persist per case, not per set. The first version of this script wrote the
+            # artifact only at the end of a 52-call run; a `timeout` killed it at call
+            # six and there was nothing on disk to reconcile against, so the whole run
+            # was worth zero. A crash should cost one case, not an evening.
+            save_set(name, per_case)
+            print(f"{case['id']:12s} {label:28s} expected={exp} "
+                  f"{'OK' if ok else 'DIFF'}", flush=True)
         scores: dict = {
             "n_cases": len(cases), "n_answered": len(ours),
             "accuracy_vs_expected": round(right / len(ours), 4) if ours else None,
@@ -217,8 +255,8 @@ def main(argv: list[str]) -> int:
             # looked". Refuse rather than publish the former reading.
             raise SystemExit(f"{name}: no Gemini raters found in {llm[name]}; "
                              "cannot compute cross-provider kappa")
-        report["sets"][name] = {"scores": scores, "cases": per_case,
-                                "raters_compared": sorted(gemini)}
+        report["sets"][name] = {"raters_compared": sorted(gemini)}
+        save_set(name, per_case, scores)
         print(f"== {name}: {scores}")
 
     report["returned_model_strings"] = sorted(returned_models)
