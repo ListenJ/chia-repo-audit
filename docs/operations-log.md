@@ -2863,3 +2863,83 @@ CRLF 归零）。重编译 x2 → 9 页 / 618,298 B / 一处 §33.3 有意保留
   **拒绝把结果称作 inter-rater reliability 估计**。
 - 论文正文不引用普查比率（`grep 48.7 paper.tex` = 0），所以这次修正**不动提交物**，
   190 条与 PDF 全部原样有效。
+
+---
+
+## §38 第三个评分者复现了共同错误；这指向我自己的 rubric
+
+### 38.1 为什么加第三家
+
+已发表的每一个 κ 都是**两个 Google 模型之间**算的（`gemini-2.5-flash` 与 `gemini-2.5-pro`），
+而它们在共有用例上 `llm_vs_llm_kappa_on_laya_shared = 1.0`。两个同源模型的 κ 分不开
+"任务简单"与"两家一起瞎"，所以这份一致性证据自带一个可得的替代解释。
+本轮接入 `Atria-Dawn-Preview`（`https://api.atria-asi.ai`，2026-09-24 请求，
+`temperature 0.0`，逐例记 `prompt_sha256` 与服务**返回**的 model 串），
+就是要看换一家之后那个解释还成不成立。
+
+### 38.2 measured6 三方对照（已落盘，6/6）
+
+| 用例 | 测量锚 | Atria | gemini-flash | gemini-pro |
+| --- | --- | --- | --- | --- |
+| sem-01 | not_equivalent/E3 | not_equivalent/E3,E4 | not_equivalent/E3 | not_equivalent/E3,E4 |
+| sem-02 | equivalent/— | equivalent/— | equivalent/— | equivalent/— |
+| sem-03 | not_equivalent/E4 | not_equivalent/E3 | not_equivalent/E3,E4 | not_equivalent/E4 |
+| sem-esc-01 | **equivalent/—** | **not_equivalent/E4** | **not_equivalent/E4** | **not_equivalent/E4** |
+| sem-esc-02 | **equivalent/—** | **not_equivalent/E4** | **not_equivalent/E4** | **not_equivalent/E4** |
+| sem-esc-03 | **equivalent/—** | **not_equivalent/E4** | **not_equivalent/E4** | **not_equivalent/E4** |
+
+**三个逃逸，换供应商之后错误逐字符复现，3/3。** 三家在 4/6 例上标签完全相同。
+`kappa(Atria, pro)=0.7273`、`kappa(Atria, flash)=0.5`，都高于已发表的同源 combined
+κ=0.455 —— n=6 下这个差什么都不说明，所以这里只登记不解读。
+
+结论方向与接入前的期待相反：第三家不是打破共同盲区的那一票，而是它的**第二次独立复现**。
+"两家一起错是因为同源"这个解释被排除了。剩下的解释不在模型身上。
+
+### 38.3 剩下那个解释是我们自己的 rubric
+
+rubric 原文两条：
+
+```
+E0 equivalent       - no behavioural difference
+E4 added_component  - the candidate adds something the reference lacks,
+                      or asserts a result it did not derive
+```
+
+对一个 nullity 逃逸，两条**按字面同时成立**：
+
+| 逃逸 | cycles 设计/参考 | `prefetch_line` 设计 vs 参考 | E0 成立 | E4 第一句成立 |
+| --- | --- | --- | --- | --- |
+| sem-esc-01 | 1138748 / 1138748 | 1 vs 0 | 是 | 是 |
+| sem-esc-02 | 1138748 / 1138748 | 1 vs 0 | 是 | 是 |
+| sem-esc-03 | 1138748 / 1138748 | 4 vs 0 | 是 | 是 |
+
+rubric 里没有任何一条优先规则说该以哪个轴裁决。于是三家都答了**意图轴**
+（源码里确实多了一处预取调用，且它"断言了没推出的结果"），而我们的答案键答的是
+**行为轴**（仿真逐位相同）。我们把这记成评分者错误并据此打了 0.455 的分。
+
+这与本文已有各条同形：**一个代理量不再指称它名字声称的东西** —— 这次是
+"标注层 κ"名义上测评分者可靠性，实际测到了我们自己没写清的判据优先级上。
+
+### 38.4 我为了定位它先造了一个无效的代理量（撤回）
+
+想检验"含糊是否恰好落在被漏掉的那几例"，我用
+`prefetch_line`/`prefetch_request` 等**出现次数是否相等**当作"源码轴的答案"，
+量出 42 例里 15 例两轴相左，其中 `semantic` 集 5/6、`semantic_fact` 集 10/36。
+
+**这个代理量是错的，检验作废**：调用次数相等不等于行为等价 —— `sem-01` 双方各 1 次调用
+而行为不同，被它误判成相左；`semantic_fact` 的 36 例文件里**没有落盘测量**（`cycles` 为空），
+根本没有锚来评估"行为差别"这一条。它没能定位到漏掉的那 3 例，
+所以被否证的是探针，不是 §38.3 的假设 —— 后者的依据只有上表那三行直接证据。
+
+正确的定位检验需要"哪些用例存在源码非空而行为为零"这一判据，并且只在
+**有测量锚的用例**上做。`semantic` 集 6 例全有 `evidence.*_cycles`，`semantic_fact` 没有；
+所以这个检验目前只能在 6 例上做，答案是 3/6 含糊、且恰是漏掉的 3 例 —— n 太小，
+不足以支持"rubric 是唯一病因"，只支持"rubric 是一个真实存在的病因"。
+
+### 38.5 本轮还没跑完的部分
+
+`spec10` 与 `fact36` 在分离驱动里继续（逐例落盘已由桩证明：产物在每次调用前依次显示
+`[0,1,2,3,4]` 例）。`gold-01` 首答未产出可解析标签，会记进 `contract_failures` 并使脚本
+非零退出，而不是被静默重试成一次"通过"。跑完再决定论文怎么改：
+若 `fact36` 的 33 例可标注用例上第三家全部与锚一致，那么 §38.3 就从"一个病因"升级为
+"唯一能解释两处结果的病因"。
