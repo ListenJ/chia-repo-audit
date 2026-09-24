@@ -3992,3 +3992,38 @@ Task 2 Step 1 和 Task 7 Step 1 两条扫描就会红，红在一个**故意造�
 
 本条只动 `docs/operations-log.md` 一个跟踪文件，`paper/**` 一字未动，所以钉住的 PDF、241 条
 主张、HotCRP 上那份字节都不受影响；照 §61 的算法，日志里的散文本来也进不了检查数。
+
+## §65 终态重读：抓取在半途也会返回 200，而选择器读空不等于字段没了
+
+HEAD 现在是 `6cacb15`，125 个提交，六条 ref（本地与双远端各自的 branch 与 main）都指向这一个
+哈希，本地 `main` 这个陈旧 ref 也一并前移（`f1a16a9` 是 HEAD 的祖先，纯快进，没有丢任何东西）。
+
+**Task 7 Step 1 在最终提交数上重跑：**125 个提交，`git grep` rc=1、stdout 0 行、stderr 0 字节。
+这条扫描与 §64 的那一条之间只隔着"记录它自己"的那一个提交，而那个提交的 diff 在 `git add`
+之前先过了九模式扫描。于是闭合方式说清楚：历史里每一个提交都被"它当时作为 HEAD 的那一次全
+历史扫描"覆盖，记录扫描的那个提交由它自己的 diff 前扫覆盖 —— 这才是这条规矩能终止的原因，
+否则每写一条日志都要重扫一遍。
+
+**抓取层的两次假信号，同一轮里连踩两次。**不带代理直取 `raw.githubusercontent.com`：Python 侧
+四条全部 `RemoteDisconnected`（本机 CLI 默认不走代理），curl 侧两条 `http_code=000`；更险的是
+其中一次返回了 **200 + 354,112 字节 + 一个不匹配的哈希** —— 真身 592,258 字节。传输在半途断
+掉，而状态行仍是 200：只看"200 且哈希不等"就会得出"GitHub 上是一份残缺文件"这个结论。带上
+`HTTPS_PROXY` 重取，四条全部 **200、字节数与本地相等、sha256 逐条相等**（README `f2cceaad…`
+25,892 B；BUILD_PIN `500031ff…` 561 B；分支上的 `paper/paper.pdf` `de2a990e…` 592,258 B）。
+**读法必须同时比字节数，并且比 rc**，200 只说明服务端意图，不说明传输完成。
+
+**HotCRP #27 在终态 SHA 之下重新只读一遍**（不是引用今天早些时候那次）：服务端 PDF
+`/doc/a3-chia-hackathon-26-paper27.pdf` → 200、`application/pdf`、Content-Length 与实收都是
+592,258、sha256 `de2a990e…`、页面对象 4 —— 与 `paper/BUILD_PIN.json` 的输出哈希、与 GitHub
+分支上的字节、与本地盘上的文件四方一致。表单四要素：标题与 `paper/paper.tex:12` 逐字一致；
+artifact 字段 `.value` 恰为 `https://github.com/ListenJ/chia-repo-audit/tree/codex/colab-cpu-validation`；
+AI 声明勾选 = true；`status:submit` 勾选 = true 且页面写着 "This submission is ready for review"。
+
+**这里 §63 那条教训又兑现了一次，换了个方向。**第一版脚本按 §63 记的字段名去查
+`[name="sf-opt1"]`，返回 null —— 看着正是"表单里 artifact URL 不见了"。真实原因是字段名随页面
+不同：评审页把它渲染成 `opt1`，`sf-opt1` 是另一处读法。**读空是"我的取法没触达对象"，不是
+"对象没有值"** —— 同一条判别力，第一次用于 `innerText` 对 `.value`，这次用于 null 对空串。
+本轮改成同时抓 `opt1`/`sf-opt1` 两种名字并把 `.value` 原文带回来，才拿到上面那行精确匹配。
+
+本条仍然只动 `docs/operations-log.md`，`paper/**` 一字未动，所以 241 条主张、钉住的 PDF、
+HotCRP 上那份字节都不受影响；五道门在本条写入之前于 `5c2598d` 全绿，本条的 diff 见上段前扫。
