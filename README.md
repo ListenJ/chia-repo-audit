@@ -126,7 +126,7 @@ supplies one here.
   The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (184 claims). Its final check is
+  committed artifact and exits non-zero on drift (187 claims). Its final check is
   self-referential: the paper states the claim count, so editing the verifier without
   updating the prose turns the run red. This sentence is gated too, and the reason is
   that it used not to be --- it read "138 claims" for two rounds after the count had
@@ -147,13 +147,15 @@ supplies one here.
   passing here. The verifier also re-checks the headline numbers, unresolved-reference
   markers and underscore-bearing identifiers *in the rendered text* -- the text layer is
   where a typesetting regression shows up, not the source.
-- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 351 tracked
-  files, classified by what *code* vouches for each: **48.7% machine-vouched** (171 files
-  a `verify_paper_claims.py` check re-derives or a unit test loads), 28.8% reachable-only
-  (101 files in a set some script globs), and **22.5% with no code reference at all**
-  (79 files; 45 of those are at least named in prose, 50 live under `.tmp/` as run logs
+- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 353 tracked
+  files, classified by what *code* vouches for each: **48.7% machine-vouched** (172 files
+  a `verify_paper_claims.py` check re-derives or a unit test loads), 28.6% reachable-only
+  (101 files in a set some script globs), and **22.7% with no code reference at all**
+  (80 files; 46 of those are at least named in prose, 50 live under `.tmp/` as run logs
   and three container lock files). Regenerate with `python3
-  scripts/inventory_vouches.py --markdown REVIEW_COVERAGE.md`. Read the rate with its
+  scripts/inventory_vouches.py --markdown REVIEW_COVERAGE.md`. The `--json` and
+  `--markdown` flags are mutually exclusive -- `--json` returns before the markdown
+  is written, so passing both exits 0 having updated only stdout. Read the rate with its
   stated biases. First, entry-point scripts are invoked rather than imported, so they fall
   in the unreferenced bucket and must be judged by hand. Second, the census is static: it
   looks for a path or a glob in code, so a check that reaches files *through data* --- the

@@ -715,6 +715,40 @@ check("and the retained PDF is really that commit's PDF",
       hashlib.sha256(subprocess.run(
           ["git", "show", f"{_build['git_head']}:paper/paper.pdf"],
           cwd=REPO, capture_output=True).stdout).hexdigest())
+
+# ---- 干净克隆的验证记录：说"评审跑文档命令会绿"就得能对着历史核 ------------
+# 这条主张正是 §32 那轮的全部产出，所以它不能只停在散文里。三条检查把记录钉到
+# 它所描述的那个 commit 上：cloned_head 必须是 HEAD 的祖先（不是编出来的 sha），
+# 记录里的四个摘要必须等于那个 commit 的 BUILD_PIN.json blob（不是重抄一遍），
+# 以及那次克隆必须真处在会出问题的配置下（core.autocrlf=true 且三个文本产物
+# 都以 LF 落盘）——否则"在干净克隆里绿"这句话没有对抗性，证明不了任何事。
+_FC = "results/fresh_clone_verification_2026-09-24.json"
+_fc = load_json(_FC)
+check("the recorded clone head is real history, not an invented sha", 0,
+      subprocess.run(["git", "merge-base", "--is-ancestor", _fc["cloned_head"], "HEAD"],
+                     cwd=REPO, capture_output=True).returncode)
+# cloned_head 编出来的时候 git show 什么都不吐，json.loads("") 抛 JSONDecodeError：
+# 整个验证器崩掉，rc=1 但一条 FAIL 都不报。变异测试实测到的。异常也是非零退出，
+# 可评审看不出是哪条主张错了，跟"通过"一样没用。解析失败就退回原始 stdout，
+# 让比对红得有名有姓。
+_pin_blob = subprocess.run(
+    ["git", "show", f"{_fc['cloned_head']}:paper/BUILD_PIN.json"],
+    cwd=REPO, capture_output=True, text=True,
+    encoding="utf-8", errors="replace").stdout
+try:
+    _pin_at_head = json.loads(_pin_blob)
+except json.JSONDecodeError:
+    _pin_at_head = _pin_blob.strip() or None
+check("and the digests it records are that commit's, not a retyped copy",
+      _pin_at_head, _fc["pin_at_clone"])
+# 同理，少一行 eol 记录会让 _eol[f] KeyError。缺就填一个必然对不上的哨兵。
+_eol = {ln.split("\t")[1]: ln.split("\t")[0].split() for ln in _fc["eol_table_paper"]}
+_text_artifacts = ("paper/paper.tex", "paper/paper_text.txt", "paper/BUILD_PIN.json")
+check("the clone really was the adversarial configuration the fix targets",
+      {"core.autocrlf": "true",
+       **{f: ["w/lf", "attr/-text"] for f in _text_artifacts}},
+      {"core.autocrlf": _fc["core_autocrlf"],
+       **{f: _eol.get(f, ["NO-EOL-ROW-RECORDED"])[1:3] for f in _text_artifacts}})
 check("the rendered pages carry the headline numbers", True,
       all(s in _rendered for s in ("78.16", "249.18", "8.3812", "2,261,770")))
 check("no unresolved reference reached the render", 0, _rendered.count("??"))

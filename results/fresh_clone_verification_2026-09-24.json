@@ -1,0 +1,62 @@
+{
+  "bookkeeping_manifest": {
+    "bad": [],
+    "entries": 21,
+    "rehashed_ok": 21
+  },
+  "branch": "codex/colab-cpu-validation",
+  "clone_command": "git clone --branch codex/colab-cpu-validation git@github.com:ListenJ/chia-repo-audit.git",
+  "cloned_head": "66a9705a15b6dc78dbb6d67f13dd1a300d051b09",
+  "cloned_utc": "2026-09-24T~08:23Z",
+  "core_autocrlf": "true",
+  "eol_table_paper": [
+    "i/lf    w/crlf  attr/                 \t.gitattributes",
+    "i/lf    w/lf    attr/-text            \tpaper/BUILD_PIN.json",
+    "i/-text w/-text attr/-text            \tpaper/fig_decomposition.pdf",
+    "i/-text w/-text attr/-text            \tpaper/paper.pdf",
+    "i/lf    w/lf    attr/-text            \tpaper/paper.tex",
+    "i/lf    w/lf    attr/-text            \tpaper/paper_text.txt"
+  ],
+  "gates": {
+    "audit_grid_levels.py": {
+      "rc": 0
+    },
+    "check_documented_commands.py": {
+      "rc": 0
+    },
+    "unittest discover -s chia_loop/tests": {
+      "outcome": "OK",
+      "rc": 0,
+      "tests": 46
+    },
+    "verify_paper_claims.py": {
+      "claims": "184/184",
+      "rc": 0
+    }
+  },
+  "host": "Local Windows 11 host (Git Bash), NOT a GCP instance -- both sponsor instances were deleted on 2026-09-24 and the sponsor account itself was deleted the same day.",
+  "how_the_gate_ties_this_record_to_history": "verify_paper_claims.py checks that cloned_head is an ancestor of HEAD, that pin_at_clone equals the BUILD_PIN.json blob at cloned_head, and that the clone really ran under core.autocrlf=true with all three text artifacts checked out LF. A record whose digests do not match the commit it claims to describe cannot pass.",
+  "pdf_sha256": "0dc490dbdaf96c726780b1f6dff05b3034a9df55c5e1f2328b1d1d5b876bfdb6",
+  "pin_at_clone": {
+    "inputs": {
+      "paper/fig_decomposition.pdf": "3daef5d31472f76fb6bb07b09c5586147b39d452fbdefc3db48542d5210c4ebe",
+      "paper/paper.tex": "40e72b1c7e2eb64318c5a83b581d1ca24a7535f081e148369ff70bc75623a2b6"
+    },
+    "outputs": {
+      "paper/paper.pdf": "0dc490dbdaf96c726780b1f6dff05b3034a9df55c5e1f2328b1d1d5b876bfdb6",
+      "paper/paper_text.txt": "0a9c3dba604f403d5ea6eadb7d0ce9d74be5e413480cad1559affeb8e62a3897"
+    },
+    "pages": 9,
+    "pinned_utc": "2026-09-24T08:20:27Z",
+    "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the four hashes below against the bytes on disk"
+  },
+  "remote_url": "git@github.com:ListenJ/chia-repo-audit.git",
+  "supersedes": {
+    "commit": "d1a7c63",
+    "fix": "commit 66a9705 replaced the three mtime predicates with sha256 comparison against paper/BUILD_PIN.json, and pinned paper/** as -text in .gitattributes after the same clone showed paper.tex and paper_text.txt checking out CRLF there and LF in the authoring tree.",
+    "result": "172/173, rc=1",
+    "the_single_failure": "the PDF is newer than the LaTeX source",
+    "why_it_failed": "mtime comparison. In that clone the four paper artifacts were written within 7 ms of each other and paper.pdf came out 1 ms older than paper.tex. The verdict was decided by checkout write ordering, not by whether the PDF was stale."
+  },
+  "what_this_is": "The documented verification chain run in a fresh clone of the pushed public branch, on the adversarial configuration that broke it: Windows, core.autocrlf=true, no local state."
+}

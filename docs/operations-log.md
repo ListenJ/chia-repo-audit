@@ -2230,19 +2230,65 @@ pdflatex ×2                     -> rc=0, 9 pages, 616,563 B
 extract_pdf_text.py             -> 9 pages, 46,142 chars, LF-only
 pin_paper_build.py              -> 2 inputs + 2 outputs + pages
 inventory_vouches.py            -> 109 lines, 连跑两次逐字节相同（定点）
-verify_paper_claims.py          -> 184/184, rc=0
+verify_paper_claims.py          -> 187/187, rc=0
 audit_grid_levels.py            -> rc=0
 check_documented_commands.py    -> rc=0
 unittest discover               -> Ran 46 tests, OK
 ```
 
-验证器条数 173 → **184**（−3 mtime +4 pin，+5 留档 PDF，+3 README 当前状态，
-+1 分层计数，+1 页对象对账；173+1+5+3+1+1=184，且这个数由自指检查在运行时
-机器核验，不是我加出来的）。普查 tracked 347 → **351**，machine-vouched
-168 → **171**（48.4% → **48.7%**），code-unreferenced 78 → **79**（22.5%）。
+验证器条数 173 → 184 → **187**（−3 mtime +4 pin，+5 留档 PDF，+3 README 当前状态，
++1 分层计数，+1 页对象对账，+3 干净克隆记录；173+1+5+3+1+1+3=187，且这个数由自指
+检查在运行时机器核验，不是我加出来的）。
+184/184 那次是 §32.2 那轮的结果，仍原样记在
+`results/fresh_clone_verification_2026-09-24.json` 的 `gates` 里 —— 那是对 commit
+`66a9705` 的一次测量，不是当前状态声明，所以不随本轮改数。普查 tracked 347 → **353**
+（+ 留档 PDF 与其 provenance、干净克隆记录、`pin_paper_build.py`、
+`mutation_test_gates.py`），machine-vouched 168 → **172**（48.4% → **48.7%**），
+code-unreferenced 78 → **80**（22.5% → **22.7%**）。
+
+顺带一个自己踩到的坑：`inventory_vouches.py` 的 `--json` 和 `--markdown` 是互斥的，
+`--json` 在写 markdown 之前就 `return 0` 了。我一开始两个一起传，命令退出 0、
+JSON 也正常，于是以为普查已经更新 —— 其实 `REVIEW_COVERAGE.md` 还是上一轮的。
+是变异测试脚本的 baseline 检查把它抓出来的（`PROBLEM baseline is already red`），
+不是我看出来的。分开跑两次才对。
 
 `scripts/local_gate.py` 在本会话 rc=1，原因是它的 GPU 探测 shell out 到
 `nvidia-smi`，而该 shell 的 PATH 里没有它（`[WinError 2]`；
 `C:\Windows\System32\nvidia-smi.exe` 确实存在）。这是宿主环境问题，
 不是仓库缺陷，它的 `champsim_node` 子检查照常通过
 （`base_rev 164fdb1e…`, ipc 0.1237）。它也不在交付链的四条门里。
+
+### 32.8 对新增三条克隆记录检查做变异测试，抓到两个我自己刚写进去的缺陷
+
+新检查落盘后立刻做变异测试（`scripts/mutation_test_gates.py`，受版本控制、可复跑，
+退出码 0 当且仅当每个变异都咬人；放在 `.tmp/` 里就等于没有证据，因为那条路径既被
+引用路径门排除、也不进普查）。每个变异都先断言字节真的变了再跑验证器 —— 这条断言
+是必需的，见下第三行。
+
+| 变异 | rc | FAIL 条数 | 报出的检查 |
+| --- | --- | --- | --- |
+| `cloned_head` 换成 `0`×40 | 1 | 2 | 祖先检查 + 摘要检查 |
+| `pin_at_clone` 里 tex 摘要重打一遍 | 1 | 1 | 摘要检查 |
+| `core_autocrlf` 声称 `false` | 1 | 1 | 对抗配置检查 |
+| eol 行全改成 `w/crlf` | 1 | 1 | 对抗配置检查 |
+| 删掉一行 eol 记录 | 1 | 1 | 对抗配置检查 |
+| `attr/-text` 降级成 `attr/text=auto` | 1 | 1 | 对抗配置检查 |
+
+两个缺陷：
+
+1. **`cloned_head` 编出来时验证器崩掉而不是报 FAIL。** `git show <假sha>:…` 什么都不吐，
+   `json.loads("")` 抛 `JSONDecodeError`，rc=1 但 `nfail=0` —— 评审只看到一个 traceback，
+   看不出是哪条主张错了。这跟 §32.6 那个 `AttributeError` 是同一个形状，而我在同一轮里
+   刚写下"异常也是非零退出，但它不告诉你哪条错了"这句话，然后又在三屏之后重犯了一次。
+   修法：解析失败就把原始 stdout 退回给比对，空串退成 `None`，于是红得有名有姓
+   （上表第一行现在报 2 条 FAIL，不是一条 traceback）。
+2. **`_eol[f]` 会 KeyError。** 少一行 eol 记录同样崩掉。改成
+   `_eol.get(f, ["NO-EOL-ROW-RECORDED"])[1:3]`，缺行得到一个必然对不上的空列表。
+
+还有一条不是仓库缺陷而是**我的测试缺陷**：上一轮变异测试里
+"eol claim downgraded to crlf" 报 `rc=0 nfail=0`，我当时的结论是"这条检查的 eol 那一支
+不咬人"。错。那次替换串根本没匹配上，变异是个空操作 —— 没有 `assert mutated != orig`，
+所以我把"测试没跑"读成了"门没用"。这正是本项目一直在查的那类错误的一个新变种：
+**假绿不只出现在被测物里，也出现在测试它的那一步里。** 加了断言之后重跑，
+eol 那一支在三种改法下都咬人（上表 4–6 行）。上一轮"eol 那一支未被证明会咬人"的
+说法在此撤回。

@@ -1,13 +1,13 @@
 {
   "inputs": {
     "paper/fig_decomposition.pdf": "3daef5d31472f76fb6bb07b09c5586147b39d452fbdefc3db48542d5210c4ebe",
-    "paper/paper.tex": "40e72b1c7e2eb64318c5a83b581d1ca24a7535f081e148369ff70bc75623a2b6"
+    "paper/paper.tex": "8d7cd2fe5d53dff61a407d4d514b8a537ad379ef43f848a6b17dce31edc074f6"
   },
   "outputs": {
-    "paper/paper.pdf": "0dc490dbdaf96c726780b1f6dff05b3034a9df55c5e1f2328b1d1d5b876bfdb6",
-    "paper/paper_text.txt": "0a9c3dba604f403d5ea6eadb7d0ce9d74be5e413480cad1559affeb8e62a3897"
+    "paper/paper.pdf": "dd628edfb68918bcc7fa3f75fd738cce74ae6fb09f0810b923adb58e2b88de8e",
+    "paper/paper_text.txt": "88c0cabd2ee48832b42f8ee3fa4d1f97b0d107fc664844bf190fe54b89fadff1"
   },
   "pages": 9,
-  "pinned_utc": "2026-09-24T08:20:27Z",
+  "pinned_utc": "2026-09-24T08:26:31Z",
   "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the four hashes below against the bytes on disk"
 }
