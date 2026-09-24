@@ -6,8 +6,8 @@
   },
   "branch": "codex/colab-cpu-validation",
   "clone_command": "git clone -c core.autocrlf=true --branch codex/colab-cpu-validation git@github.com:ListenJ/chia-repo-audit.git .tmp/scratch/fc4",
-  "cloned_head": "e907393d2fb622dacbfb42e635b2fb225b756688",
-  "cloned_utc": "2026-09-24T09:12:49Z",
+  "cloned_head": "f3ed60c17062a0c3a3caa182a979339c66721363",
+  "cloned_utc": "2026-09-24T11:24:14Z",
   "core_autocrlf": "true",
   "eol_note": "The command that produced this table is `git ls-files --eol paper .gitattributes`. Its first line is the awkward one: .gitattributes itself checks out w/crlf with no attribute, because a file cannot pin itself. What that line does not break is the three artifacts below it, which is the whole point of the table -- they still come out w/lf under core.autocrlf=true, so the pin's hashes reproduce on this machine.",
   "eol_table_paper": [
@@ -36,41 +36,53 @@
       "tests": 46
     },
     "verify_paper_claims.py": {
-      "claims": "188/188",
+      "claims": "190/190",
       "named_failures": 0,
       "rc": 0
     }
   },
   "host": "Local Windows 11 host (Git Bash), NOT a GCP instance -- both sponsor instances were deleted on 2026-09-24 and the sponsor account itself was deleted the same day.",
   "how_the_gate_ties_this_record_to_history": "verify_paper_claims.py checks that cloned_head is an ancestor of HEAD, that pin_at_clone equals the BUILD_PIN.json blob at cloned_head, and that the clone really ran under core.autocrlf=true with all three text artifacts checked out LF. A record whose digests do not match the commit it claims to describe cannot pass.",
-  "pdf_sha256": "6e671485bd8359d15594b2f8eb26921bdeb2f0d71f2eba271987705d017bfb58",
+  "pdf_sha256": "b4acd868d2b955b87937b67ef4d3345dbb72210a84eefbc00c8756a0c62638aa",
   "pin_at_clone": {
     "inputs": {
       "paper/fig_decomposition.pdf": "3daef5d31472f76fb6bb07b09c5586147b39d452fbdefc3db48542d5210c4ebe",
-      "paper/paper.tex": "d65a7f6d849e46608dc5e6b7af23ffd3c32cd8e2712e80976b6e1fb5299f6b66"
+      "paper/paper.tex": "dc39259fc97b4e2fcdcd976935b937fcf38faab3f245cba7f72852ee2c1fb01c"
     },
     "outputs": {
-      "paper/paper.pdf": "6e671485bd8359d15594b2f8eb26921bdeb2f0d71f2eba271987705d017bfb58",
-      "paper/paper_text.txt": "a6fa569a52f34ef8d179d8a2a97b0bbbd7c597d54e308bc89c6fdfe3d520cb5d"
+      "paper/paper.pdf": "b4acd868d2b955b87937b67ef4d3345dbb72210a84eefbc00c8756a0c62638aa",
+      "paper/paper_text.txt": "c4aefebdc36351e777bf54638f4a1218adc7e425353b4ba9ee534f7286cbcfb4"
     },
     "pages": 9,
-    "pinned_utc": "2026-09-24T08:59:03Z",
+    "pinned_utc": "2026-09-24T09:36:16Z",
     "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the four hashes below against the bytes on disk"
   },
   "prior_clone_records": [
     {
+      "cloned_head": "b8df223674fe265aa5af4cae1e0b7b2fc5e1e3ad",
+      "result": "189/189",
+      "what_changed_since": "the nullity-pool exhaustion gate (ops log 35): the escape cases are built from committed screening rows, and all three designs indistinguishable from the no-op control were already cases, so n=6 is the evidence ceiling, not the account ceiling; 188 -> 189 claims",
+      "why_it_is_not_this_one": "it measured the tree before that fix, so its claim count is 187 and its census was still movable by a comment"
+    },
+    {
+      "cloned_head": "e907393d2fb622dacbfb42e635b2fb225b756688",
+      "result": "188/188",
+      "what_changed_since": "census stopped counting Python comments as code-side evidence, and a check began recomputing the prose-named orphan count (ops log 34); 187 -> 188 claims",
+      "why_it_is_not_this_one": "it measured the tree before that fix, so its claim count is 187 and its census was still movable by a comment"
+    },
+    {
       "cloned_head": "32d193f1fdb2f83f1c811cd197beb0534fb378a8",
       "result": "187/187",
-      "what_changed_since": "census stopped counting Python comments as code-side evidence (scripts/inventory_vouches.py strip_py_comments), and a 188th check now recomputes the prose-named orphan count; ops log section 34",
+      "what_changed_since": "scripts/mutation_test_gates.py was promoted out of .tmp/ with crash guards on the fresh-clone checks; 184 -> 187 claims",
       "why_it_is_not_this_one": "it measured the tree before that fix, so its claim count is 187 and its census was still movable by a comment"
     },
     {
       "cloned_head": "66a9705a15b6dc78dbb6d67f13dd1a300d051b09",
       "result": "184/184, rc=0, four gates",
-      "what_changed_since": "32d193f added scripts/mutation_test_gates.py and the crash guards in verify_paper_claims.py, and took the census from 352 to 353 tracked files.",
-      "why_it_is_not_this_one": "That clone validated commit 66a9705, the one that introduced the content pin. This record describes the current submission instead, so the digests, the claim count and the gate list are all re-measured rather than carried over. None of it was re-typed: a collector script ran inside the clone and emitted these fields, and the gate below independently re-derives pin_at_clone from `git show cloned_head:paper/BUILD_PIN.json`, so a hand-copied digest could not pass even by accident."
+      "what_changed_since": "32d193f added scripts/mutation_test_gates.py and the crash guards in verify_paper_claims.py, and took the census from 352 to 353 tracked files."
     }
   ],
+  "prior_clone_records_note": "One entry per measurement this file has superseded, oldest last. Kept as a list because overwriting a prior record deletes the only evidence that an earlier tree was different -- which is the move this paper's gates exist to catch.",
   "remote_url": "git@github.com:ListenJ/chia-repo-audit.git",
   "supersedes": {
     "commit": "d1a7c63",
