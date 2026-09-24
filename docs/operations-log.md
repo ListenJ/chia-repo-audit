@@ -2226,11 +2226,12 @@ claim 数必须等于论文引用的（传递性，不需要知道最终条数�
 ### 32.7 本轮链条
 
 ```
-pdflatex ×2                     -> rc=0, 9 pages, 616,563 B
-extract_pdf_text.py             -> 9 pages, 46,142 chars, LF-only
+pdflatex ×2                     -> rc=0, 9 pages, 617,722 B, 1 overfull hbox（见 §33.2）
+extract_pdf_text.py             -> 9 pages, 47,073 chars, LF-only
 pin_paper_build.py              -> 2 inputs + 2 outputs + pages
-inventory_vouches.py            -> 109 lines, 连跑两次逐字节相同（定点）
+inventory_vouches.py            -> 110 lines, 连跑两次逐字节相同（定点）
 verify_paper_claims.py          -> 187/187, rc=0
+mutation_test_gates.py          -> 6 mutations, 0 problems, rc=0
 audit_grid_levels.py            -> rc=0
 check_documented_commands.py    -> rc=0
 unittest discover               -> Ran 46 tests, OK
@@ -2311,3 +2312,120 @@ JSON 也正常，于是以为普查已经更新 —— 其实 `REVIEW_COVERAGE.m
 **假绿不只出现在被测物里，也出现在测试它的那一步里。** 加了断言之后重跑，
 eol 那一支在三种改法下都咬人（上表 4–6 行）。上一轮"eol 那一支未被证明会咬人"的
 说法在此撤回。
+
+## 33. 账号被删之后：补上"n 为什么停在 6"，以及四次我自己的探针或草稿错了
+
+### 33.1 论文缺一条限制说明
+
+论文一直诚实报告 measurement-grounded 标注集 **n=6**，也从没掩饰它的退化边缘
+（33 条可标注金标全是 `not_equivalent`，所以 verdict κ 不构成可靠性证据）。
+但它**从没解释为什么是 6**。评审一定会问，而答案是可查的事实：赞助账号在
+2026-09-24 被 Google 删除，`scripts/independent_audit.py` 无条件 import
+`vertex_access_token`，拿不到 token 就扩不动第二个评审那一半。
+新段落插在 §7 拆机段之后，说明这是**中途被抬高的天花板，不是设计选择**。
+
+### 33.2 差点用无出处的数字写这一段（假阳性，自己抓住）
+
+第一版我写的是"同一命题换个措辞在 0.30↔0.83 之间翻面、不处理否定、421M 判别头"。
+这些数字来自本机技能文件里的实测记录，**不在这个仓库里** —— 评审无法 re-derive，
+而本文的全部主张就是每个数字都要能 re-derive。
+
+grep 之后发现仓库里早就有更狠也更有据的：`results/substrate_probe_laya.json`，
+而且 `scripts/verify_paper_claims.py` 一直在读它。实测值：
+
+| 集合 | Laya verdict accuracy | κ vs gemini-2.5-flash / pro | 一致率 |
+| --- | --- | --- | --- |
+| fact36（33 条可标注） | **0.0** | **−0.057** | 0.0556 |
+| measured6 | 0.6667 | **−0.364** | 0.1667 |
+| spec10 | 0.5 | **0.138** | 0.5 |
+
+论文 §substrate 已经引用了其中三个数，而且是门控的。于是新段落改成
+**交叉引用 §sec:substrate**，一个数字都不重述。
+
+教训：写"我们试过 X 并且基于测量拒绝了它"之前先 grep 仓库。X 很可能已经被测过、
+已经落盘、已经被门盯着。凭记忆或凭仓库外的笔记填数字，正是本文审计的那类缺陷。
+
+### 33.3 一个 8.9 pt 的 overfull box，故意不修
+
+想修：在长文件名里插 `\allowbreak`。插完才注意到验证器有一条
+`paper_says(r"vm_teardown_precondition_2026-09-24\.json")` —— 要求这个文件名
+逐字出现在论文里。断点会把它劈开，那条门会红。
+
+决定：**留着这 3 mm 出血**，把理由写进 README。门的优先级高于排版。
+这也是"看起来纯粹 cosmetic 的修改实际会破一条门"的实例：门自己抓得到，
+但我不该先把它制造出来。
+
+### 33.4 `uv run` 里必须用 `python`，不能用 `python3`
+
+README 记的链条是对的：`uv run --with pypdf python scripts/pin_paper_build.py`。
+我换成 `python3`，`--with pypdf` 就失效了 —— `python3` 落到宿主解释器，
+不在 uv 的临时 env 里，脚本报 "pypdf is required"，看起来像依赖没装，
+实际是我偏离了文档。
+
+### 33.5 两次探针本身错了
+
+- `python3 -m unittest discover -s tests` → `ImportError`；正确的是 `-s chia_loop/tests`。
+  我又自作主张加了 `-t .`，同样 `ImportError`。两次都是**探针错，不是测试挂**。
+- `inventory_vouches.py --json --markdown X`：`--json` 分支先 `return 0`，
+  markdown 根本没写。命令退出 0、JSON 输出正常，我据此以为普查已更新。
+  是变异脚本的 baseline 检查报 `PROBLEM baseline is already red` 才暴露的。
+
+共同形状：**rc=0 不等于那件事做了，ImportError 不等于测试失败。**
+和 §32.6 那条"异常也是非零退出，但它不告诉你哪条错了"是同一族。
+
+### 33.6 给组织者的邮件草稿：改了三处，并撤回两个我编造的错误串
+
+- 撤回：草稿里我写了 `DELETE_REQUESTED` 和
+  "Sorry, the account you are trying to sign in to has been deleted"。
+  **这两个字符串我都没有实测过**，是凭印象写的。已改成 §32.1 里真有记录的两条：
+  `invalid_grant: Account has been deleted`，以及无凭据 identifier 探测落在
+  `accounts.google.com/v3/signin/deletedaccount`。差点把编造的错误信息发给组织者 ——
+  这是本轮最接近外部损害的一次。
+- "两台实例仍 RUNNING 且在计费" → 已在 2026-09-24 经用户授权销毁，销毁前的
+  whole-home 哈希扫描在 `results/vm_teardown_precondition_2026-09-24.json`。
+- 第一段原本是承诺（"上传后立刻拆机"），改成陈述已完成的事实。
+- 新增**问题 5**：账号被删是否是算力窗口的计划内结束。措辞刻意先说
+  "若是计划内，我们就带着这条限制提交"，再说"若不是，我们只用它跑独立评审这一个实验，
+  不要求额外配额"。反过来写就成了要资源，而且前一句是真的：§33.1 那段就是这条限制。
+
+### 33.7 文本层在字体切换处会吃掉空格（记录，不修）
+
+新段落在 PDF 里排版正常，但抽出来的文本层是这样的：
+
+```
+... deleted by the provider on the same day:gcloud auth print-access-tokenfails with
+invalid_grant, describedas“Accounthasbeendeleted”.
+```
+
+普通散文的空格都在（"That is why the measurement-grounded annotation set stops at six
+cases." 完好），**丢空格只发生在 `\texttt{}` 与 ``...'' 这两种字体切换的边界上**。
+这是 pypdf 抽取的产物，不是排版缺陷：LaTeX 一定把源码里那个空格排出来了，
+9 页、该段无 overfull 也印证了这一点。
+
+不修的理由：修不了，抽取器行为不归我们管；而且它不破任何门 ——
+"identifiers stay searchable in the text layer" 找的是 `gen_default_s0`、
+`audit_grid_levels.py`、`verify_paper_claims.py` 这几个**单个标识符**，
+它们本身不含空格，照样命中。
+
+要记下来的理由是：**评审若拿整句去搜 PDF 文本会搜不到**，例如
+"independent_audit.py imports it unconditionally" 会失配，而
+"independent_audit.py" 会命中。这不是我们说错了话，是抽取层的性质，
+写在这里免得下一轮有人把它当成渲染回归去追。
+
+### 33.8 本轮链条（作者树）
+
+```
+pdflatex ×2                     -> rc=0, 9 pages, 617,722 B, 1 overfull hbox（§33.3）
+extract_pdf_text.py             -> 9 pages, 47,073 chars, LF-only
+pin_paper_build.py              -> 2 inputs + 2 outputs + pages 9
+inventory_vouches.py            -> 110 lines；tracked 353，172/101/80，prose-named 46
+verify_paper_claims.py          -> 187/187, rc=0
+mutation_test_gates.py          -> 6 mutations, 0 problems, rc=0
+audit_grid_levels.py            -> rc=0
+check_documented_commands.py    -> rc=0
+unittest discover -s chia_loop/tests -> Ran 46 tests, OK
+```
+
+提交物 `paper/paper.pdf`：617,722 B，9 页，
+sha256 `1a442e5998dbd47ce269ee2c4d7c9370840cebf18c3eb52f4cfd2bf13de368c1`。
+声明数仍是 187 —— 本轮加了论文段落和文档，没有加减检查。

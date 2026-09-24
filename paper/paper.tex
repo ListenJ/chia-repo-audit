@@ -638,6 +638,20 @@ SHA-256, and re-deriving the number from the files gave 3. The error understated
 coverage, so nothing downstream complained, and it survived until a check tried to
 recompute it.
 
+The sponsoring account itself, not only its two instances, was deleted by the provider on
+the same day: \texttt{gcloud auth print-access-token} fails with
+\texttt{invalid\_grant}, described as ``Account has been deleted''. That is why the
+measurement-grounded
+annotation set stops at six cases. It is a ceiling imposed mid-work, not a design choice:
+growing the set needs the second rater, which is reached through a Vertex token minted by
+that account (\texttt{scripts/independent\_audit.py} imports it unconditionally), and no
+replacement was available before the deadline. Substituting the local discriminative head
+was the obvious move and is not one we can make honestly --- \S\ref{sec:substrate} measures
+it at 0 of 33 on the labellable generated pairs and $\kappa=-0.364$ against the real
+raters on the measurement-grounded set, so an agreement statistic computed with it would be
+uninterpretable in exactly the way this paper is about. The small $n$ is reported as a
+limitation instead.
+
 A second correction came from running our own verifier on the path a reviewer takes
 rather than the path we wrote it on: a fresh clone of the pushed branch. It returned
 172 of 174 claims with a non-zero exit, and the single failure was the gate asserting

@@ -138,10 +138,17 @@ supplies one here.
   compiles it cleanly -- 9 pages, no undefined references. Any rebuild must follow the
   chain source -> pdflatex x2 -> `uv run --with pypdf python scripts/extract_pdf_text.py`
   -> `uv run --with pypdf python scripts/pin_paper_build.py` -> `python3
-  scripts/verify_paper_claims.py`. The pin step is not optional: the verifier compares
+  scripts/verify_paper_claims.py`. Use `python`, not `python3`, inside `uv run`: `python3`
+  resolves to the host interpreter outside uv's ephemeral environment, so `--with pypdf`
+  has no effect and the pin step exits with "pypdf is required" even though the flag was
+  given. The pin step is not optional: the verifier compares
   the SHA-256 of the source, the figure, the PDF and the text render against
   [`paper/BUILD_PIN.json`](paper/BUILD_PIN.json), so a rebuild that skips it leaves four
-  checks red. That gate used to compare modification times instead, which holds in a
+  checks red. One 8.9 pt overfull box remains, on the line carrying
+  `results/vm_teardown_precondition_2026-09-24.json`. It is left alone on purpose: the
+  obvious fix is a break opportunity inside that filename, and the verifier's
+  `paper_says` check for it requires the filename to appear verbatim in the paper.
+  That gate used to compare modification times instead, which holds in a
   working tree and is decided by checkout write ordering in a fresh clone -- measured, and
   it made the documented verification command fail on a clone of the pushed branch while
   passing here. The verifier also re-checks the headline numbers, unresolved-reference

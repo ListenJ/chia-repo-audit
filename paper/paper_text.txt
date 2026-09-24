@@ -725,6 +725,24 @@ nance records pinned a trace SHA-256, and re-deriving
 the number from the files gave 3. The error understated
 our own coverage, so nothing downstream complained,
 and it survived until a check tried to recompute it.
+The sponsoring account itself, not only its two in-
+stances, was deleted by the provider on the same
+day:gcloud auth print-access-tokenfails with
+invalid_grant, describedas“Accounthasbeendeleted”.
+That is why the measurement-grounded annotation set
+stops at six cases. It is a ceiling imposed mid-work,
+not a design choice: growing the set needs the second
+rater, which is reached through a Vertex token minted by
+that account (scripts/independent_audit.pyimports
+it unconditionally), and no replacement was available be-
+fore the deadline. Substituting the local discriminative
+head was the obvious move and is not one we can make
+honestly — §3.10 measures it at 0 of 33 on the labellable
+generated pairs andκ=−0.364against the real raters on
+the measurement-grounded set, so an agreement statis-
+tic computed with it would be uninterpretable in exactly
+the way this paper is about. The smallnis reported as
+a limitation instead.
 A second correction came from running our own ver-
 ifier on the path a reviewer takes rather than the path
 we wrote it on: a fresh clone of the pushed branch. It
@@ -739,6 +757,7 @@ landedinside7msandthePDFcameout1msolderthan
 its source. So the freshness gate had never been a gate:
 its verdict was decided by sub-10ms write ordering, and
 it had been passing here because the coin landed our
+7
 way on the machine we wrote it on. It is now content-
 based —paper/BUILD_PIN.jsonrecords the SHA-256
 of the two inputs the build consumed and the two out-
@@ -754,7 +773,6 @@ pended on who computed them.
 Each rule below is stated as a check an author can run,
 because every one of them was violated by us and caught
 by reading primary evidence rather than by a green gate.
-7
 (1) Report factor levels next to every variance
 statistic.A spread computed over fewer than two lev-
 els of its own axis must be emitted asunexercised, never
@@ -850,6 +868,7 @@ different modules yet record onebinary_sha256and one
 cycle count, so those rows cannot evidence which design
 was measured. Every nullity cited here comes from a
 cold-build row whose digest differs per design, and the
+8
 escape case records the unattributable file only as cor-
 roborating context.Scope:one simulator, one design
 family, three traces; no RTL flow and no gem5 result is
@@ -863,7 +882,6 @@ at78.16%cross-seed CV, showed seeds moving artifacts
 without moving designs, showed trace choice reordering
 candidates (τ= 0.556) and prompt response at249.18%,
 and showed two same-provider language-model auditors
-8
 agreeing and both wrong on a measured simulator es-
 cape, a result that survived re-annotation after we found
 the case had cited a source that cannot compile. It
