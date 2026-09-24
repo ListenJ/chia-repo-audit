@@ -3832,3 +3832,43 @@ HTTPS、无 SSH key、`core.autocrlf=true`，克隆出来 `git status` 干净、
 顺带修正 §59 结尾那句话的适用范围：那条的"跟踪树零改动"只对当时那一个提交成立；本轮动了
 两个跟踪文件（日志与此记录），`paper/**`、README、`decision_chain/` 仍一字未动，HotCRP 上
 被钉住的那份 PDF 因此继续有效，不需要重新上传。
+
+## §61 五道门在作者树上对当前 HEAD 重跑，并且把 §59 那笔代价账从 +1 条更正成 +3 条
+
+触发：§60 量的是克隆里的 `eeef2f0`，而 HEAD 已经是 `a53ad83`。"克隆记录天生滞后一个提交"
+是那条记录的性质，不是"当前这棵树全绿"这句话的证据——后者只能当场跑。2026-09-24T19:21Z
+（`verify_paper_claims.py`）与 19:22–19:23Z（其余四道）在作者树（非克隆）上逐条跑并逐个查
+退出码：`verify_paper_claims.py` 241/241 rc=0、
+`audit_grid_levels.py` rc=0（`0/9 levels substituted`）、`check_documented_commands.py` rc=0
+（6 个脚本的 advertised options 比对、43 个文件字节编译）、
+`unittest discover -s chia_loop/tests` `Ran 46 tests` OK rc=0、`mutation_test_gates.py`
+rc=0（10 mutations, 0 problems）。五道跑完 `git status --short | grep -v '^??'` 是 0 行，
+即变异测试还原成立。跟踪文件零改动，所以本轮没有强制换件。
+
+**§59 把补渲染层的代价记成"加一条 check → 241 变 242"，这个数量级低估了，现在按实测更正。**
+原因不是新增几条义务的函数调用，而是门禁的**条数本身是被钉工件的函数**：
+`scripts/verify_paper_claims.py:713` 是 `for _rel in sorted(_pinned)`，而
+`_pinned = {**_pin["inputs"], **_pin["outputs"]}`（:704）。当前 pin 的 inputs 是
+`paper/paper.tex`、outputs 是 `paper/paper.pdf` 与 `paper/paper_text.txt`，共 3 项，这次
+241 行输出里正好 3 行的名字是 `the <path> on disk is the one the build pin was written
+against`（:714）。所以把扩展报告绑进 pin 的最小有意义版本要加 3 项 —— `paper_extended.tex`
+进 inputs（它是新鲜度的那一半：只钉输出的话，改了 `.tex` 不重编仍然绿），PDF 与文本层进
+outputs —— 于是自指条数 241 → **244**，投稿 PDF 正文里
+`(241 claims, non-zero exit on drift)`（`paper/paper.tex:36`）跟着变，链条是
+改 :36 → 重编译 → `extract_pdf_text.py` → `pin_paper_build.py` → 复验 → **重新换件**，
+外加克隆记录再追一次提交，以及变异套件要补一条能让新绑定翻红的变异。
+我上一轮想找的"扩大既有 check 而不动条数"的零代价路径**不存在**：:705-712 那段注释写明了
+设计意图是"a pin that drops an artifact goes red, one that grows does not"，增长方不自找
+麻烦，但增长必然多出条数。
+
+这条更正不改变 §59 的结论，只改变它的报价，而且报价才是作者能裁定的东西：现存的三条
+`paper/paper_extended.tex` 相关门禁（`verify_paper_claims.py:939` 的 `is_file()`、:941 的
+`is_tracked()`，以及 :851 那条正文绑定）只保证**源码文件随件交付且被正文引用**，不保证评审
+不装 TeX 也能读它。要不要为此付 241→244 加一次换件，交作者决定；不在截稿窗口内由执行者替
+他改已发表数字。
+
+第三件同名的东西澄清一次，免得下一轮误删：`paper/paper_short_acmart.pdf`（未跟踪、615,261
+字节、sha256 前缀 `2b241d78`，与 pin 里那份 `de2a990e` 不同）在 §53 已经处置过（"既不属于
+我生成，也不由我删"），本轮重查它**不是任何门禁的指称物**：留档的前一版投稿件是
+`results/submitted_pdf_history/paper_2026-09-23_173claims.pdf`，实测 sha256 前缀 `97eb5bc4`，
+且 :751-756 那三条检查读的是它。所以这个残留既不红也不证任何东西，照 §53 原样留着。
