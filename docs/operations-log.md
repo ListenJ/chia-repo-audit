@@ -3420,3 +3420,51 @@ bookkeeping 的 21 条重哈希，全部由生成脚本从那份克隆里回读�
 克隆记录天生滞后 HEAD 一个提交这一条性质照旧：这份 json 是被跟踪文件，它描述的提交不可能
 同时包含它自己。门禁从另一边把口子闭上——要求 `cloned_head` 是 HEAD 的祖先、要求
 `pin_at_clone` 等于那个提交的 `BUILD_PIN.json` blob，所以记录不能声称它没量过的树。
+
+## §49 截稿前终检：能核的已核，不能核的写清为什么不能核
+
+终检时刻 2026-09-24T17:44Z 左右，截止前约 18 小时。逐项如下，每项都注明是**重跑出来的**
+还是**引用工件**，因为这两件事在评审眼里不是一回事。
+
+版本一致（重跑）：`HEAD` = `github/codex/colab-cpu-validation` =
+`origin/codex/colab-cpu-validation` = `github/main` = `origin/main` = `0ce2c12`；
+`git ls-remote --symref github HEAD` 返回 `ref: refs/heads/main`，所以仓库首页默认分支
+已经是投稿状态，不再是 9/21 那个 stub。main 的 fast-forward 是本轮**有意推翻** 9/23
+"不合并"裁定的结果，`merge-base --is-ancestor` 先给出 FASTFORWARD_OK 才推，没有制造合并提交。
+
+匿名可见性（重跑，走本机代理）：`https://github.com/ListenJ/chia-repo-audit` 与
+`/tree/codex/colab-cpu-validation` 都返回 200；
+`raw.githubusercontent.com/.../main/README.md` 的 sha256 与本地 README 逐字节相同，
+即匿名访客读到的就是刚重算过覆盖率那一段。注意本机直连 github.com 的 HTML 会被
+连接重置而 raw 与代理都正常，所以这条必须在代理下测。
+
+干净克隆（重跑，见 `results/fresh_clone_verification_2026-09-25.json`）：五条门禁在
+克隆里全 rc=0，主张 241/241，克隆内 PDF 摘要与 pin 相同。
+
+密钥卫生（重跑）：`git grep` 扫全部 `git rev-list --all` 的每个提交，
+`atr_[A-Za-z0-9]{16,}` 在排除扫描器自身的正则字面量之后零命中。Atria 第三评分者
+52 例早已全部完成、rollup 落盘并且被门禁重derive，密钥因此不再有用途，可以去控制台作废；
+作废不影响投稿，因为 artifact 里只有 prompt 摘要，没有任何凭据。
+
+GCP 计费面（**不能重跑，只能引用**）：`gcloud compute instances list` 现在返回
+`invalid_grant: Account has been deleted`，因为赞助账户本身已被删除。所以"实例 list 为空"
+这句在本机不可核验；唯一证据是
+`results/compute_host_lifecycle_2026-09-22_to_24.json` 的 `teardown.post_delete_verification`：
+删除动作发生在 2026-09-23T21:52Z 且 delete 返回 rc=0，删除之后当场复核
+instances / disks / static addresses / snapshots / custom images 全部为 0，
+剩下的四条 firewall 规则是 GCP 默认项且不计费，旧 IP 的 SSH 连接超时符合预期。
+拆除前置条件（两台主机整树内容哈希清单、唯一自撰文件已救回并哈希核对）在
+`results/vm_teardown_precondition_2026-09-24.json`，本轮逐条读过，没有一条被跳过。
+
+人工标注（重跑）：`web/annotator_result.json` 仍不存在，打分整条按预案跳过，
+论文里那句"人类标注尚未交付"因此不需要改动。
+
+HotCRP #27（**当前不可核验**）：浏览器桥接现在停在登录页——
+`/paper/27` 返回 401 并打印 "You must sign in to access this page"，首页给出的是
+HotCRP.com 的登录表单。投稿站上的 PDF 是哪一版无法读出。能被读出的是本地谱系：
+17:09Z 上传的那一版是 `fa03014` 所 pin 的构建（PDF 前缀 `430dda7e`，正文写 220 条主张），
+而 `63049ca` 之后 pin 变成 `de2a990e…`（4 页、592,258 字节、正文 241 条）。
+两者都还是 4 页，差的是主张条数与随之改动的三个表单字段。除非 17:19Z 之后有人重传过，
+站上就是 `430dda7e` 那一版。这一项必须由作者登录后完成：上传 `paper/paper.pdf`，
+下载回来核对 sha256 等于 `de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6`，
+再把摘要/正文/artifact 三个字段对齐 241 条与 4 页，确认 AI 协助声明与 ready for review。
