@@ -1,0 +1,155 @@
+{
+  "generated_utc": "2026-09-24T11:59:58.026061+00:00",
+  "shuffle_seed": 20260924,
+  "display_sha256": "2e29a16cdab2057f46763b37c6b080470fe0d8346952326de220e362c07939fc",
+  "n_slots": 16,
+  "visible_keys_shown": [
+    "id",
+    "design",
+    "reference"
+  ],
+  "forbidden_keys_gated": [
+    "expected_verdict",
+    "expected_errors",
+    "category",
+    "variant",
+    "rationale",
+    "planting"
+  ],
+  "slots": [
+    {
+      "slot": "Q1",
+      "case_id": "gold-04",
+      "path": "chia_loop/gold/gold-04.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E3"
+      ]
+    },
+    {
+      "slot": "Q2",
+      "case_id": "sem-esc-02",
+      "path": "chia_loop/semantic/sem-esc-02.json",
+      "expected_verdict": "equivalent",
+      "expected_errors": []
+    },
+    {
+      "slot": "Q3",
+      "case_id": "sem-02",
+      "path": "chia_loop/semantic/sem-02.json",
+      "expected_verdict": "equivalent",
+      "expected_errors": []
+    },
+    {
+      "slot": "Q4",
+      "case_id": "sem-esc-03",
+      "path": "chia_loop/semantic/sem-esc-03.json",
+      "expected_verdict": "equivalent",
+      "expected_errors": []
+    },
+    {
+      "slot": "Q5",
+      "case_id": "sem-esc-01",
+      "path": "chia_loop/semantic/sem-esc-01.json",
+      "expected_verdict": "equivalent",
+      "expected_errors": []
+    },
+    {
+      "slot": "Q6",
+      "case_id": "gold-02",
+      "path": "chia_loop/gold/gold-02.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E4"
+      ]
+    },
+    {
+      "slot": "Q7",
+      "case_id": "av-001",
+      "path": "chia_loop/adversarial/av-001.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E1"
+      ]
+    },
+    {
+      "slot": "Q8",
+      "case_id": "gold-01",
+      "path": "chia_loop/gold/gold-01.json",
+      "expected_verdict": "equivalent",
+      "expected_errors": []
+    },
+    {
+      "slot": "Q9",
+      "case_id": "av-005",
+      "path": "chia_loop/adversarial/av-005.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E4"
+      ]
+    },
+    {
+      "slot": "Q10",
+      "case_id": "av-002",
+      "path": "chia_loop/adversarial/av-002.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E2"
+      ]
+    },
+    {
+      "slot": "Q11",
+      "case_id": "sem-03",
+      "path": "chia_loop/semantic/sem-03.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E4"
+      ]
+    },
+    {
+      "slot": "Q12",
+      "case_id": "av-004",
+      "path": "chia_loop/adversarial/av-004.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E4"
+      ]
+    },
+    {
+      "slot": "Q13",
+      "case_id": "gold-03",
+      "path": "chia_loop/gold/gold-03.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E2"
+      ]
+    },
+    {
+      "slot": "Q14",
+      "case_id": "gold-05",
+      "path": "chia_loop/gold/gold-05.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E1"
+      ]
+    },
+    {
+      "slot": "Q15",
+      "case_id": "av-003",
+      "path": "chia_loop/adversarial/av-003.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E3"
+      ]
+    },
+    {
+      "slot": "Q16",
+      "case_id": "sem-01",
+      "path": "chia_loop/semantic/sem-01.json",
+      "expected_verdict": "not_equivalent",
+      "expected_errors": [
+        "E3"
+      ]
+    }
+  ]
+}

@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import re
 import subprocess
 import sys
 import tokenize
@@ -47,6 +48,28 @@ def strip_py_comments(text: str) -> str:
         return text
     return tokenize.untokenize(
         t for t in toks if t.type != tokenize.COMMENT)
+
+
+def _whole_word(token: str, corpus: str) -> bool:
+    """Does `token` occur in `corpus` as a whole word, not inside a longer identifier?
+
+    Second false-vouch shape found in this classifier, and the same direction of error
+    as the comment leak: substring matching let any file whose stem is a prefix or a
+    fragment of unrelated text earn a machine vouch. Measured instances --
+    `web/annotator.html` matched because the verifier names JSON fields like
+    `annotators_agree_with_each_and_wrong` (5 occurrences, none a path), and
+    `.tmp/cand*/gen_aggressive_offset_s1.json` matched as a prefix of the *different*
+    module `gen_aggressive_offset_s1_r1`. Both inflate published coverage.
+    Lookarounds rather than \\b because tokens like `grid_fact.json` begin after a `/`
+    or a quote, and \\b would also break on a leading digit.
+    Applied to the two machine vouches only. `cited`/`logged`/`indexed` feed
+    `named_in_prose`, which does not classify a tier, so leaving prose matching loose
+    cannot move a file between tiers -- tightening it there would change a reported
+    count for no gain in what the tiers mean.
+    """
+    if not token:
+        return False
+    return re.search(r"(?<!\w)" + re.escape(token) + r"(?!\w)", corpus) is not None
 
 GENERATED_MARKERS = (
     "results/", "paper/fig_", "CANDIDATES.md", "paper/paper.aux", "paper/paper.log",
@@ -116,9 +139,10 @@ def main(argv: list[str]) -> int:
             return any(t in corpus for t in tokens)
 
         vouches = []
-        if any(t in verifier for t in tokens):
+        if any(_whole_word(t, verifier) for t in tokens):
             vouches.append("claimed")
-        if any(stem and stem in body for body in tests.values()) or rel.startswith("chia_loop/tests/"):
+        if any(stem and _whole_word(stem, body) for body in tests.values()) \
+                or rel.startswith("chia_loop/tests/"):
             vouches.append("tested")
         if mentioned(paper):
             vouches.append("cited")

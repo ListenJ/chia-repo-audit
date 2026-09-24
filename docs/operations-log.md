@@ -2790,3 +2790,76 @@ CRLF 归零）。重编译 x2 → 9 页 / 618,298 B / 一处 §33.3 有意保留
 抽取 47,710 字符；重新 pin；**190 条**。
 提交 LF 修复之前验证器有意停在 **188/190**，两条 FAIL 都是"`HEAD` 里还是 CRLF"，
 修复本身入 `HEAD` 才能消掉 —— 中间态记录在此，不事后抹平。
+
+---
+
+## §37 第三个假担保：文件名作为前缀撞进了别的标识符
+
+### 37.1 触发
+
+给盲标注页落盘（`scripts/make_annotator_page.py`、`web/annotator.html`、
+`results/annotator_human_key.json`）之后重跑普查，machine-vouched 从 172 变 **173** ——
+但没有任何一条检查读过那份 HTML。
+
+查语料命中：验证器里 `annotator` 出现 5 次，**一次都不是路径**，全是别的产物的 JSON
+字段名（`annotators_agree_with_each_and_wrong` 之类）和一句检查名。`claimed` 的判据是
+`any(t in verifier for t in {name, stem})`，`annotator` 是 `annotators_agree...` 的子串，
+于是那份 HTML 白得一张机器担保票。
+
+同一批还捞出一个更早的：`extra.log` 的 stem 是 `extra`，命中的地方是注释与字符串里的
+"extract"。**方向与 §34 那一次相同 —— 都是把已发表覆盖率往高里推。**
+这不是巧合：担保判据是"文本里出现过这个名字"，而"出现过"对噪声没有约束，
+所以每一次误判都只会加分不会减分。
+
+### 37.2 修法与代价
+
+机器担保的两票（`claimed`/`tested`）改成**词边界**匹配（`(?<!\w)tok(?!\w)`，
+不用 `\b` 是因为 `grid_fact.json` 这类 token 前面是 `/` 或引号，且 `\b` 在数字开头处会失效）。
+
+影响面先量后改：
+
+| 规则 | 验证器语料命中的文件数 |
+| --- | --- |
+| 子串（旧） | 141 |
+| 仅字符串字面量 | 140 —— 不够，检查名本身就是字面量，`annotator` 仍命中 |
+| 词边界（采用） | 129 |
+
+所以"只认字面量"是**修不住的**，我先试了它并发现它漏掉 annotator.html —— 这一步没跳。
+
+分层结果：`353/172/101/80` → **`356/162/108/86`**，已发表比率
+**48.7% → 45.5%**（reachable 30.3%，无代码引用 24.2%，散文点名 52）。
+掉的 11 个全是前缀碰撞：`annotation_role_swap` 撞 `annotation_role_swap_v3`、
+`substrate_probe` 撞 `substrate_probe_laya`、三个 `.tmp/cand*/gen_aggressive_offset_s1`
+撞 `..._s1_r1`。丢票不等于没人检查，只是没人**按这个名字**检查。
+
+散文匹配（`cited`/`logged`/`indexed`）**故意没收紧**：它们只喂 `named_in_prose`，
+不参与分层，收紧它只会改动一个被报告的数字，而不改变任何一层的意思。
+
+### 37.3 我在这一步里又犯了 §32.8 那个错
+
+给 `inventory_vouches.py` 加 `import re` 时，我用
+`bytes.replace(b"import json\n", b"import json\nimport re\n")`，
+而这个文件的工作树是 **CRLF**，模式根本没匹配上。脚本却打印了 "added import re"，
+因为我断言的是"新内容尚不存在"，不是"字节确实变了"。下一次运行 `NameError: re`，
+才暴露改动是空操作。
+
+**与 §32.8 完全同形**：一次静默空转的改动，看起来像做过了。规矩早就写了 ——
+任何"我改了东西"的断言必须比对改前改后的字节 —— 这次是我自己在生产改动上没执行它。
+最后用 Edit 工具落的这一行。
+
+### 37.4 盲标注页本身
+
+- 页面数据由 `annotator_payload` 生成，**复用** `independent_audit.py` 的白名单
+  （只给 `id`/`design`/`reference`），不另抄一份守卫。
+- 构建期双向断言并做了变异测试：把禁键塞进可见载荷 → 拒绝；
+  把 `expected_verdict` 的**值**塞进源码注释里 → 也拒绝；
+  多一个顶层禁键（`planting`）→ 放行且 `display_sha256` 与基线**逐字符相同**，
+  即"被白名单丢弃"有摘要为证，不是一句断话。
+- 用例号会泄题（`sem-esc-01` 直说"这是仿真器逃逸"），所以页面只给 `Q1..Qn`，
+  槽位↔用例映射单独落在 `results/annotator_human_key.json`，页面不引用它。
+- 导出件带 `shuffle_seed` 与 `display_sha256`，用来事后判断这份答案属于这次显示。
+- 诚实边界写进页面与导出字段：本机关闭不了篡改，而且评分者就是造过用例的人。
+  页面强制一个 `authored` 勾选框，打分脚本在 `rater_authored_cases` 为真时
+  **拒绝把结果称作 inter-rater reliability 估计**。
+- 论文正文不引用普查比率（`grep 48.7 paper.tex` = 0），所以这次修正**不动提交物**，
+  190 条与 PDF 全部原样有效。
