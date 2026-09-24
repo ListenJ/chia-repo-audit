@@ -3474,3 +3474,22 @@ HotCRP.com 的登录表单。投稿站上的 PDF 是哪一版无法读出。能�
 描述的提交"，任何后续提交都会加大滞后量；把它钉回可核验的是门禁那三条——`cloned_head`
 必须是 HEAD 的祖先、`pin_at_clone` 必须等于 `cloned_head` 上的 pin blob，
 所以记录只能声称一棵它确实量过的、更早的树，不能反过来。
+
+## §50 终检之后又重做一次干净克隆：因为终检的那个克隆用的是旧门禁
+
+§48 那份记录描述的是 `9703c4b`，而它跑的是**当时 HEAD 里的验证器**。本节的三条改动（记录名
+按 glob 取最新、README/普查数字重算）本身就动了那份验证器，所以"克隆里全绿"这句话在
+`9703c4b` 上成立之后，HEAD 已经往前走了两个提交——旧记录不能替新代码说话。
+
+于是在 2026-09-24T17:49Z 又做了一次全新 HTTPS 克隆，checkout 到
+`codex/colab-cpu-validation` 得 `2fe69df`，跟踪文件干净，`core.autocrlf=true` 下
+`paper/paper.tex`、`paper/paper_text.txt`、`paper/BUILD_PIN.json` 仍然是
+`i/lf w/lf attr/-text`。四条门禁 + 变异套件全在这份克隆里跑：
+`verify_paper_claims.py` 241/241 rc=0、`audit_grid_levels.py` rc=0、
+`check_documented_commands.py` rc=0、`unittest discover` Ran 46 tests OK、
+`mutation_test_gates.py` 10 mutations 0 problems，跑完之后克隆仍然干净（逐字节还原成立）。
+
+没有为这次测量再开一份 json 记录，理由不是省事：`_FC` 取的是文件名排序最新的那一份，再加一份
+同日记录就会立刻成为被审计对象，而它一旦提交，HEAD 又前进、普查又漂移一层——这套自指代价在 §48
+已经付过一次。`2026-09-25.json` 仍然准确描述它所量过的那棵树，本节说的是另一棵更晚的树，
+两条都是"被 clone 过并且全绿"，只是被门禁钉住的是前者。
