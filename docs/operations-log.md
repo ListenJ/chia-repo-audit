@@ -3340,3 +3340,51 @@ spec10 的分数从 9/10、8/10 变成 **10/10 判决、9/10 错误码**，论�
 另有一条我自己造的排序死锁：路径门要求 README 引用的文件**已被 git 跟踪**，
 而自动收尾链把 `git add` 排在验证之后，于是它永远过不了 —— 已确认它当时的行为是
 "红就停、什么都不提交"，这是这条链第一次在真实红灯下拒绝动作。
+
+
+## §47 接管另一个会话：门禁不是红，是崩；而"没红"和"没在跑"是两件事
+
+2026-09-24T17:00Z 起接手另一个会话的收尾工作（用户指令：那个会话不再执行，由我继续）。
+接手时盘上状态与收尾计划写的前提已经不一致，逐条以盘上为准：
+
+- 分支已推进到 `fa03014`（4 页 ACM 稿）并推送双远端；两台 VM 当天早已销毁，
+  `gcloud` 因赞助账号被删返回 `invalid_grant: Account has been deleted`，
+  所以"实例 list 为空"这条在本机**不可复验**，只能引用
+  `results/vm_teardown_precondition_2026-09-24.json` 与 `results/compute_host_bookkeeping/`。
+- 页数规则不再靠问：`agentic-arch.org/hackathon.html` 逐字写着 "A 4-page paper"
+  与 "The paper should be in 2-column ACM/IEEE style, submitted as a PDF."，
+  另加 "Use of AI-assistance in paper writing is welcomed, but must be acknowledged
+  at the end of the paper."。我这次是独立抓取核对的，不是转述。§19 撤回的那条
+  "无出处的 4 页要求"仍然算撤回成立——现在这条成立是因为它有了出处。
+
+**真正的缺陷是门禁崩溃，不是门禁红。** `scripts/verify_paper_claims.py` 在未提交状态下
+跑到 `_pinned['paper/fig_decomposition.pdf']` 抛 KeyError，rc=1、**一条 FAIL 都不报、
+连主张总数都不输出**。评审照 README 给的命令跑，拿到的是 traceback。病因：
+4 页稿去掉了图，`pin_paper_build.py` 于是正确地只钉 1 输入 + 2 输出，而验证器那个循环
+还带着自己的一份硬编码工件清单——两份清单在任何一次改版里都会各自漂移。
+
+修法没有放松任何东西：把"投稿构建的哪些工件必须被 pin 覆盖"提成一条**不依赖 pin 自报**
+的断言（pin 想少钉一个就翻红），逐文件摘要比对改为由 pin 的键集派生（不再有两份清单可漂）。
+检查条数仍是 4 条，刻意不变——自指条数那一条会因为新增检查而震荡。
+`paper/fig_decomposition.pdf` 仍是 `paper/paper_extended.tex` 的 `\includegraphics` 输入，
+而那本报告完全没有 pin：这是一个已知缺口，写在这里，不在收尾的当口顺手补，
+补它要动 `pin_paper_build.py` 的输入声明与整条重编译链。
+
+措辞门禁改绑"投稿稿 + 扩展报告"这一对之后，归属是量出来的而不是推定的：
+117 条 `in_paper` 里 **74 条由 4 页投稿稿承担、43 条只在扩展报告、0 条两边都没有**。
+最后那个 0 才是允许放宽绑定的依据；43 条也确实说明压缩把一部分论证挪出了正文，
+这笔代价应当披露而不是掩盖。
+
+条数从 220 变 241（新增的是语料归属与 pin 覆盖那几条），同一个数出现在三处：
+论文正文、README、HotCRP 摘要字段。改任何一条门禁都要重编译 + 重传，
+这条耦合记在这里，免得下一个人以为改个断言是本地的事。
+
+并行写入的教训：17:07 一次取样显示 `verify_paper_claims.py` 的 mtime "2435 秒未动"，
+`git status` 也没列它，我就判定安全并下了 Edit；结果 17:06 与 17:08 之间它已被对方
+重写过（单文档 `PAPER` 变成 `SUBMITTED`/`REPORT` 配对）。Edit 因 old_string 不再匹配而失败，
+才没有把别人的半成品盖掉。此后判定静置一律用两次内容哈希，不用 mtime。
+
+本轮终态：`paper/paper.pdf` 4 页，sha256
+de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6，
+`pinned_utc` 2026-09-24T17:19:15Z；`verify_paper_claims.py` 241/241 rc=0；
+46 单元测试 OK。`web/annotator_result.json` 仍不存在，人工标注那一格仍未交付。
