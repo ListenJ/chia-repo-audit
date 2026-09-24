@@ -1,13 +1,13 @@
 {
   "bookkeeping_manifest": {
-    "bad": 0,
+    "bad": [],
     "entries": 21,
     "rehashed_ok": 21
   },
   "branch": "codex/colab-cpu-validation",
-  "clone_command": "git clone -c core.autocrlf=true --branch codex/colab-cpu-validation git@github.com:ListenJ/chia-repo-audit.git",
-  "cloned_head": "32d193f1fdb2f83f1c811cd197beb0534fb378a8",
-  "cloned_utc": "2026-09-24T~08:41Z",
+  "clone_command": "git clone -c core.autocrlf=true --branch codex/colab-cpu-validation git@github.com:ListenJ/chia-repo-audit.git .tmp/scratch/fc4",
+  "cloned_head": "e907393d2fb622dacbfb42e635b2fb225b756688",
+  "cloned_utc": "2026-09-24T09:12:49Z",
   "core_autocrlf": "true",
   "eol_note": "The command that produced this table is `git ls-files --eol paper .gitattributes`. Its first line is the awkward one: .gitattributes itself checks out w/crlf with no attribute, because a file cannot pin itself. What that line does not break is the three artifacts below it, which is the whole point of the table -- they still come out w/lf under core.autocrlf=true, so the pin's hashes reproduce on this machine.",
   "eol_table_paper": [
@@ -36,32 +36,41 @@
       "tests": 46
     },
     "verify_paper_claims.py": {
-      "claims": "187/187",
+      "claims": "188/188",
+      "named_failures": 0,
       "rc": 0
     }
   },
   "host": "Local Windows 11 host (Git Bash), NOT a GCP instance -- both sponsor instances were deleted on 2026-09-24 and the sponsor account itself was deleted the same day.",
   "how_the_gate_ties_this_record_to_history": "verify_paper_claims.py checks that cloned_head is an ancestor of HEAD, that pin_at_clone equals the BUILD_PIN.json blob at cloned_head, and that the clone really ran under core.autocrlf=true with all three text artifacts checked out LF. A record whose digests do not match the commit it claims to describe cannot pass.",
-  "pdf_sha256": "dd628edfb68918bcc7fa3f75fd738cce74ae6fb09f0810b923adb58e2b88de8e",
+  "pdf_sha256": "6e671485bd8359d15594b2f8eb26921bdeb2f0d71f2eba271987705d017bfb58",
   "pin_at_clone": {
     "inputs": {
       "paper/fig_decomposition.pdf": "3daef5d31472f76fb6bb07b09c5586147b39d452fbdefc3db48542d5210c4ebe",
-      "paper/paper.tex": "8d7cd2fe5d53dff61a407d4d514b8a537ad379ef43f848a6b17dce31edc074f6"
+      "paper/paper.tex": "d65a7f6d849e46608dc5e6b7af23ffd3c32cd8e2712e80976b6e1fb5299f6b66"
     },
     "outputs": {
-      "paper/paper.pdf": "dd628edfb68918bcc7fa3f75fd738cce74ae6fb09f0810b923adb58e2b88de8e",
-      "paper/paper_text.txt": "88c0cabd2ee48832b42f8ee3fa4d1f97b0d107fc664844bf190fe54b89fadff1"
+      "paper/paper.pdf": "6e671485bd8359d15594b2f8eb26921bdeb2f0d71f2eba271987705d017bfb58",
+      "paper/paper_text.txt": "a6fa569a52f34ef8d179d8a2a97b0bbbd7c597d54e308bc89c6fdfe3d520cb5d"
     },
     "pages": 9,
-    "pinned_utc": "2026-09-24T08:26:31Z",
+    "pinned_utc": "2026-09-24T08:59:03Z",
     "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the four hashes below against the bytes on disk"
   },
-  "prior_clone_record": {
-    "cloned_head": "66a9705a15b6dc78dbb6d67f13dd1a300d051b09",
-    "result": "184/184, rc=0, four gates",
-    "what_changed_since": "32d193f added scripts/mutation_test_gates.py and the crash guards in verify_paper_claims.py, and took the census from 352 to 353 tracked files.",
-    "why_it_is_not_this_one": "That clone validated commit 66a9705, the one that introduced the content pin. This record describes the current submission instead, so the digests, the claim count and the gate list are all re-measured rather than carried over. None of it was re-typed: a collector script ran inside the clone and emitted these fields, and the gate below independently re-derives pin_at_clone from `git show cloned_head:paper/BUILD_PIN.json`, so a hand-copied digest could not pass even by accident."
-  },
+  "prior_clone_records": [
+    {
+      "cloned_head": "32d193f1fdb2f83f1c811cd197beb0534fb378a8",
+      "result": "187/187",
+      "what_changed_since": "census stopped counting Python comments as code-side evidence (scripts/inventory_vouches.py strip_py_comments), and a 188th check now recomputes the prose-named orphan count; ops log section 34",
+      "why_it_is_not_this_one": "it measured the tree before that fix, so its claim count is 187 and its census was still movable by a comment"
+    },
+    {
+      "cloned_head": "66a9705a15b6dc78dbb6d67f13dd1a300d051b09",
+      "result": "184/184, rc=0, four gates",
+      "what_changed_since": "32d193f added scripts/mutation_test_gates.py and the crash guards in verify_paper_claims.py, and took the census from 352 to 353 tracked files.",
+      "why_it_is_not_this_one": "That clone validated commit 66a9705, the one that introduced the content pin. This record describes the current submission instead, so the digests, the claim count and the gate list are all re-measured rather than carried over. None of it was re-typed: a collector script ran inside the clone and emitted these fields, and the gate below independently re-derives pin_at_clone from `git show cloned_head:paper/BUILD_PIN.json`, so a hand-copied digest could not pass even by accident."
+    }
+  ],
   "remote_url": "git@github.com:ListenJ/chia-repo-audit.git",
   "supersedes": {
     "commit": "d1a7c63",
@@ -70,5 +79,6 @@
     "the_single_failure": "the PDF is newer than the LaTeX source",
     "why_it_failed": "mtime comparison. In that clone the four paper artifacts were written within 7 ms of each other and paper.pdf came out 1 ms older than paper.tex. The verdict was decided by checkout write ordering, not by whether the PDF was stale."
   },
-  "what_this_is": "The documented verification chain run in a fresh clone of the pushed public branch, on the adversarial configuration that broke it: Windows, core.autocrlf=true, no local state."
+  "what_this_is": "The documented verification chain run in a fresh clone of the pushed public branch, on the adversarial configuration that broke it: Windows, core.autocrlf=true, no local state.",
+  "why_the_record_lags_head_by_one_commit": "This file is tracked, so the commit it describes cannot also contain it. The gate closes the gap from the other side: it requires cloned_head to be an ancestor of HEAD and requires pin_at_clone to equal the BUILD_PIN.json blob at cloned_head, so a record cannot claim a newer tree than the one it measured."
 }

@@ -2572,3 +2572,36 @@ FAIL  and the prose-named orphan count, stale the moment a log line named a file
 所以"写报告污染测量"这件事，被压缩到了一个**有检查盯着的、单调的计数字段**里，
 而没有渗进分层。这已经是可以发表的形态：不是"我们的表不受写作影响"，
 而是"受写作影响的那一个字段被机器重算，其余字段被证明不受影响"。
+
+### 34.7 本轮完整链（作者树 + 干净克隆，都绿）
+
+作者树 `e907393`：
+
+```
+verify_paper_claims.py            -> 188/188, rc=0, named FAIL 0
+mutation_test_gates.py            -> 6 mutations, 0 problems, rc=0
+audit_grid_levels.py              -> rc=0
+check_documented_commands.py      -> rc=0
+unittest discover -s chia_loop/tests -> Ran 46 tests, OK
+```
+
+推送后按评审走的那条路重测：`git clone -c core.autocrlf=true --branch
+codex/colab-cpu-validation`，克隆到 `e907393`，在克隆目录里跑同样五条 ——
+**188/188 rc=0（named FAIL 0）、6 mutations 0 problems、grid rc=0、doccmd rc=0、
+46 tests OK**，`MANIFEST.sha256` 21 条逐条重算 21 通过 0 失败，
+`paper/paper.pdf` sha256 `6e671485bd8359d15594b2f8eb26921bdeb2f0d71f2eba271987705d017bfb58`。
+记录已写回 `results/fresh_clone_verification_2026-09-24.json`，
+`prior_clone_record`（单数）改成 `prior_clone_records`（列表），把 `32d193f`/187 那次
+和更早的 `66a9705`/184 那次都留着 —— 顶掉一条测量等于删掉一次反例。
+
+收集器把 manifest 解析写错了第一版：那份清单是 `<sha256> <size> <repo 相对路径>` 三列，
+我按 `sha256sum` 的两列去 `partition(" ")`，于是把 size 当成了路径的一部分，
+21 条全判失败。改成与 `verify_paper_claims.py` 里那段完全一致的
+`ln.split(None, 2)` 并同时比对 hash 与 size 之后 21/21。
+两处解析故意不共用代码：共用的话它们永远一致，而不一致恰恰是唯一值得报警的信号。
+
+这一轮的克隆记录仍然比 HEAD 落后一个 commit（记录本身是被跟踪文件，
+描述它的那个 commit 不可能同时包含它）。这一点写进了记录里的
+`why_the_record_lags_head_by_one_commit`，门禁从另一侧封口：
+`cloned_head` 必须是 HEAD 的祖先，且 `pin_at_clone` 必须等于该 commit 上的
+`paper/BUILD_PIN.json` blob，所以记录不能声称自己测的是比实际更新的树。
