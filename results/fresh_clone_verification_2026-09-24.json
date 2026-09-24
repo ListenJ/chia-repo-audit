@@ -1,14 +1,15 @@
 {
   "bookkeeping_manifest": {
-    "bad": [],
+    "bad": 0,
     "entries": 21,
     "rehashed_ok": 21
   },
   "branch": "codex/colab-cpu-validation",
-  "clone_command": "git clone --branch codex/colab-cpu-validation git@github.com:ListenJ/chia-repo-audit.git",
-  "cloned_head": "66a9705a15b6dc78dbb6d67f13dd1a300d051b09",
-  "cloned_utc": "2026-09-24T~08:23Z",
+  "clone_command": "git clone -c core.autocrlf=true --branch codex/colab-cpu-validation git@github.com:ListenJ/chia-repo-audit.git",
+  "cloned_head": "32d193f1fdb2f83f1c811cd197beb0534fb378a8",
+  "cloned_utc": "2026-09-24T~08:41Z",
   "core_autocrlf": "true",
+  "eol_note": "The command that produced this table is `git ls-files --eol paper .gitattributes`. Its first line is the awkward one: .gitattributes itself checks out w/crlf with no attribute, because a file cannot pin itself. What that line does not break is the three artifacts below it, which is the whole point of the table -- they still come out w/lf under core.autocrlf=true, so the pin's hashes reproduce on this machine.",
   "eol_table_paper": [
     "i/lf    w/crlf  attr/                 \t.gitattributes",
     "i/lf    w/lf    attr/-text            \tpaper/BUILD_PIN.json",
@@ -24,31 +25,42 @@
     "check_documented_commands.py": {
       "rc": 0
     },
+    "mutation_test_gates.py": {
+      "mutations": 6,
+      "problems": 0,
+      "rc": 0
+    },
     "unittest discover -s chia_loop/tests": {
       "outcome": "OK",
       "rc": 0,
       "tests": 46
     },
     "verify_paper_claims.py": {
-      "claims": "184/184",
+      "claims": "187/187",
       "rc": 0
     }
   },
   "host": "Local Windows 11 host (Git Bash), NOT a GCP instance -- both sponsor instances were deleted on 2026-09-24 and the sponsor account itself was deleted the same day.",
   "how_the_gate_ties_this_record_to_history": "verify_paper_claims.py checks that cloned_head is an ancestor of HEAD, that pin_at_clone equals the BUILD_PIN.json blob at cloned_head, and that the clone really ran under core.autocrlf=true with all three text artifacts checked out LF. A record whose digests do not match the commit it claims to describe cannot pass.",
-  "pdf_sha256": "0dc490dbdaf96c726780b1f6dff05b3034a9df55c5e1f2328b1d1d5b876bfdb6",
+  "pdf_sha256": "dd628edfb68918bcc7fa3f75fd738cce74ae6fb09f0810b923adb58e2b88de8e",
   "pin_at_clone": {
     "inputs": {
       "paper/fig_decomposition.pdf": "3daef5d31472f76fb6bb07b09c5586147b39d452fbdefc3db48542d5210c4ebe",
-      "paper/paper.tex": "40e72b1c7e2eb64318c5a83b581d1ca24a7535f081e148369ff70bc75623a2b6"
+      "paper/paper.tex": "8d7cd2fe5d53dff61a407d4d514b8a537ad379ef43f848a6b17dce31edc074f6"
     },
     "outputs": {
-      "paper/paper.pdf": "0dc490dbdaf96c726780b1f6dff05b3034a9df55c5e1f2328b1d1d5b876bfdb6",
-      "paper/paper_text.txt": "0a9c3dba604f403d5ea6eadb7d0ce9d74be5e413480cad1559affeb8e62a3897"
+      "paper/paper.pdf": "dd628edfb68918bcc7fa3f75fd738cce74ae6fb09f0810b923adb58e2b88de8e",
+      "paper/paper_text.txt": "88c0cabd2ee48832b42f8ee3fa4d1f97b0d107fc664844bf190fe54b89fadff1"
     },
     "pages": 9,
-    "pinned_utc": "2026-09-24T08:20:27Z",
+    "pinned_utc": "2026-09-24T08:26:31Z",
     "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the four hashes below against the bytes on disk"
+  },
+  "prior_clone_record": {
+    "cloned_head": "66a9705a15b6dc78dbb6d67f13dd1a300d051b09",
+    "result": "184/184, rc=0, four gates",
+    "what_changed_since": "32d193f added scripts/mutation_test_gates.py and the crash guards in verify_paper_claims.py, and took the census from 352 to 353 tracked files.",
+    "why_it_is_not_this_one": "That clone validated commit 66a9705, the one that introduced the content pin. This record describes the current submission instead, so the digests, the claim count and the gate list are all re-measured rather than carried over. None of it was re-typed: a collector script ran inside the clone and emitted these fields, and the gate below independently re-derives pin_at_clone from `git show cloned_head:paper/BUILD_PIN.json`, so a hand-copied digest could not pass even by accident."
   },
   "remote_url": "git@github.com:ListenJ/chia-repo-audit.git",
   "supersedes": {

@@ -2250,7 +2250,19 @@ code-unreferenced 78 → **80**（22.5% → **22.7%**）。
 `--json` 在写 markdown 之前就 `return 0` 了。我一开始两个一起传，命令退出 0、
 JSON 也正常，于是以为普查已经更新 —— 其实 `REVIEW_COVERAGE.md` 还是上一轮的。
 是变异测试脚本的 baseline 检查把它抓出来的（`PROBLEM baseline is already red`），
-不是我看出来的。分开跑两次才对。
+不是我看出来的。分开跑两次才对。同一轮里我还两次跑错了单测命令
+（`-s tests`，以及自己加的 `-t .`），两次都是 `ImportError` 而不是"测试失败"；
+文档里写的那条 `python3 -m unittest discover -s chia_loop/tests -v` 才是对的。
+
+推上去之后又按评审的路径重克隆了一次（`32d193f`，`-c core.autocrlf=true`），
+五条门全绿：`verify_paper_claims.py` **187/187 rc=0**、`mutation_test_gates.py`
+**6 mutations / 0 problems**、`audit_grid_levels.py` rc=0、
+`check_documented_commands.py` rc=0、单测 46 OK；21 条 bookkeeping 摘要重算 21/21。
+`results/fresh_clone_verification_2026-09-24.json` 已改成描述这次克隆而不是上一次
+（上一次记的是 `66a9705` / 184 条，作为 `prior_clone_record` 保留），四个摘要由采集
+脚本从克隆里读出，没有一个是我手抄的。那张 eol 表第一行是 `.gitattributes` 自己
+`w/crlf attr/` —— 一个文件钉不住它自己；它下面三行才是重点，三个文本产物在
+`core.autocrlf=true` 下仍然是 `w/lf attr/-text`，所以 pin 的哈希在这台机器上复现。
 
 `scripts/local_gate.py` 在本会话 rc=1，原因是它的 GPU 探测 shell out 到
 `nvidia-smi`，而该 shell 的 PATH 里没有它（`[WinError 2]`；
