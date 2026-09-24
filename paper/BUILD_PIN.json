@@ -1,12 +1,12 @@
 {
   "inputs": {
-    "paper/paper.tex": "42e8d48d1665adb84bbf3a0deda1e90218b55ca0cc830851c0688d251ce06a94"
+    "paper/paper.tex": "6ee12f364ba3a7a5d44e94342c3d5afe5a4ff054367018f491b2b9b4e3c45879"
   },
   "outputs": {
-    "paper/paper.pdf": "430dda7e89c56072092f356d5868ec694cbaeeac35058e429060ff3cf86e93a4",
-    "paper/paper_text.txt": "fe2b07d5f24577af752f19036730e683cb8eee780cca1af11fe2e22447bb4c3f"
+    "paper/paper.pdf": "de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6",
+    "paper/paper_text.txt": "b676a51e50564ad0b3a15ca1f32f53054b58d8c6cdba9002aeb4f127c4b14b24"
   },
   "pages": 4,
-  "pinned_utc": "2026-09-24T17:06:07Z",
+  "pinned_utc": "2026-09-24T17:19:15Z",
   "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the 3 hashes below against the bytes on disk"
 }

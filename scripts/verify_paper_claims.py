@@ -28,7 +28,20 @@ def _flatten(tex: str) -> str:
     return re.sub(r"\s+", " ", out)
 
 
-PAPER = _flatten((REPO / "paper/paper.tex").read_text(encoding="utf-8"))
+def _tex(rel):
+    """A missing document must come back empty so it FAILs by name, not crash the run: an
+    exception exits non-zero like a verdict but prints no failing claim (see §32.6, §45)."""
+    p = REPO / rel
+    return p.read_text(encoding="utf-8") if p.exists() else ""
+
+
+SUBMITTED = _flatten(_tex("paper/paper.tex"))
+REPORT = _flatten(_tex("paper/paper_extended.tex"))
+# A claim about the 4-page submission must be in the submission; a claim about the
+# audit narrative is bound to the full report that ships beside it. Which corpus a
+# fragment was found in is reported, because a gate that cannot say which document
+# satisfied it is a gate on two documents at once.
+PAPER = SUBMITTED + " " + REPORT
 
 
 def load_json(rel):
@@ -47,9 +60,12 @@ def load_jsonl(rel):
     return rows
 
 
-def paper_says(fragment):
-    """claim 是否真的写在论文里——防止验了一个论文已经不说的数字。"""
-    return re.search(fragment, PAPER) is not None
+def paper_says(fragment, corpus=None):
+    """claim 是否真的写在论文里——防止验了一个论文已经不说的数字。
+
+    `corpus` defaults to the paired document (see the two-corpora note above); pass
+    SUBMITTED to ask the 4-page paper itself, not the report standing in for it."""
+    return re.search(fragment, PAPER if corpus is None else corpus) is not None
 
 
 def pct(x):
@@ -57,10 +73,16 @@ def pct(x):
 
 
 CHECKS = []
+# Every in_paper binding, recorded as it is used rather than enumerated by hand: a hand-kept
+# list goes stale the day a check is added, and a census of the stale list is the defect this
+# paper is about -- a proxy that stops measuring the thing named in its own name.
+PROSE_FRAGMENTS = []
 
 
 def check(name, expect, actual, in_paper=None):
     ok = expect == actual
+    if in_paper is not None:
+        PROSE_FRAGMENTS.append(in_paper)
     if in_paper is not None and not paper_says(in_paper):
         ok = False
         actual = f"{actual} (但论文里找不到 {in_paper!r})"
@@ -216,12 +238,12 @@ check("the evidence gate now rejects it", True,
 # ---- 两个散文计数以前没有任何检查看着（operations-log §30 登记过）----
 # 这里钉的是"论文说的数字"，不是从 artifact derive 出来的数字；derive 的部分是上面
 # 那几条 3/4/2。至少漂移会翻红，不再是改错了没人知道。
-check("paper counts nine automation defects", True, paper_says(r"nine defects"),
-      r"nine defects")
-check("conclusion counts nine silent defects", True, paper_says(r"nine silent defects"),
-      r"nine silent defects")
-check("disclosure counts nine self-audits", True, paper_says(r"nine self-audits"),
-      r"nine\s+self-audits")
+check("paper counts ten automation defects", True, paper_says(r"ten defects"),
+      r"ten defects")
+check("conclusion counts ten silent defects", True,
+      paper_says(r"ten silent defects"), r"ten silent defects")
+check("disclosure counts ten self-audits", True, paper_says(r"ten self-audits"),
+      r"ten\s+self-audits")
 check("the shared failure shape is stated as five instances", True,
       paper_says(r"seen five times"), r"seen five times")
 
@@ -680,22 +702,39 @@ check("no markdown doc cites a bare numeric paper section", [],
 # checkout 改不了答案。改了 tex 不重编，tex 的哈希就对不上，红得确定、原因明确。
 _pin = load_json("paper/BUILD_PIN.json")
 _pinned = {**_pin["inputs"], **_pin["outputs"]}
-for _rel, _what in (("paper/paper.tex", "LaTeX source"),
-                    ("paper/fig_decomposition.pdf", "embedded figure"),
-                    ("paper/paper.pdf", "submitted PDF"),
-                    ("paper/paper_text.txt", "committed text render")):
-    check(f"the {_what} on disk is the one the build pin was written against",
+# This loop used to carry its own hard-coded list of build artifacts, and that is what crashed
+# the run: the 4-page submission has no figure, so the pin legitimately dropped
+# `fig_decomposition.pdf` while this loop still demanded it -- and a KeyError exits non-zero
+# naming no failing claim, which reads to a reviewer exactly like a gate that failed on
+# evidence. The obligation is now stated once against the pin (a pin that drops an artifact
+# goes red, one that grows does not), and the per-file digests are derived from the pin.
+check("the build pin covers the submission's source, its PDF and its text render", True,
+      {"paper/paper.tex", "paper/paper.pdf", "paper/paper_text.txt"} <= set(_pinned))
+for _rel in sorted(_pinned):
+    check(f"the {_rel} on disk is the one the build pin was written against",
           _pinned[_rel],
           hashlib.sha256((REPO / _rel).read_bytes()).hexdigest())
 check("the PDF reports its own page count somewhere readable", True,
       (REPO / "paper/paper.pdf").read_bytes().count(b"/Type /Page") > 1)
+
+
+def _pdf_page_count(rel="paper/paper.pdf"):
+    """Page objects counted out of the PDF bytes. `/Type /Page` not followed by a letter, so
+    the `/Type /Pages` tree nodes are not counted."""
+    return len(re.findall(rb"/Type\s*/Page(?![A-Za-z])", (REPO / rel).read_bytes()))
+
+
 # pin 里的 pages 是自报字段：原来没人拿它跟 PDF 对账，把 9 改成 8 再顺手改掉
 # README，页数门就整体绿了。页对象数是从字节里独立数出来的（/Type /Page 后面不
 # 接字母，这样 /Type /Pages 那三个树节点不会被算进来），所以它给 pages 一个指称物。
 check("and the pin's page count is really the number of page objects in the PDF",
-      _pin["pages"],
-      len(re.findall(rb"/Type\s*/Page(?![A-Za-z])",
-                     (REPO / "paper/paper.pdf").read_bytes())))
+      _pin["pages"], _pdf_page_count())
+# The 4-page cap is an official requirement of the venue now, so it is gated rather than
+# trusted. It is read out of the PDF bytes and not out of _pin["pages"]: the pin is the
+# self-reported field, so a page count attested by the number that claims it would let the
+# witness attest itself. The check above only makes the pin honest about the render; it
+# cannot also make the paper short.
+check("the submitted paper renders within the 4-page limit", True, _pdf_page_count() <= 4)
 _render = REPO / "paper/paper_text.txt"
 _rendered = re.sub(r"\s+", " ", _render.read_text(encoding="utf-8"))
 
@@ -783,6 +822,50 @@ check("identifiers stay searchable in the text layer", True,
       all(s in _rendered for s in ("gen_default_s0", "audit_grid_levels.py",
                                    "verify_paper_claims.py")))
 
+# ---- 两条散文语料：合并语料能证明"这个仓库说过这句话"，不能证明投稿页说过 ----
+# Merging the two documents is what stopped 47 correct measurements reading as drift, and a
+# merged search is also how a headline claim quietly stops being in the submitted pages: the
+# report carries it, the gate stays green, and the reviewer opens a 4-page paper that never
+# said it. So every fragment below is one this file already binds a re-derived number to,
+# re-pointed at SUBMITTED instead of the pair -- a re-scoped claim, not an invented sentence.
+_SUBMITTED_HEADLINES = [
+    ("cross-seed CV 78.16%", r"78\.16"),
+    ("repeated-run CV 0.0000%", r"0\.0000"),
+    ("the trace CV that completes the decomposition", r"163\.33"),
+    ("prompt spread 249.18%", r"249\.18"),
+    ("the six measurement-grounded pairs", r"six measurement-grounded"),
+    ("the 3-of-6 same-provider escape result", r"right on only 3 of 6"),
+    ("that the second provider repeats the three escapes", r"exactly the three escapes"),
+    ("the second provider by its model name", r"Atria-Dawn-Preview"),
+    ("the 33 labellable pairs", r"33 labellable"),
+    ("that every rater reproduces 33/33 of them", r"33/33 each"),
+    ("the error-code agreement over those same 33", r"7, 9 and 6 of those same 33"),
+    ("the Blocked publish gate", r"publish gate"),
+    ("the evidence gate that rejects the unpinned grid", r"commit_sha_retained"),
+    ("the AI-disclosure section title", r"AI assistance in this work"),
+    ("that the full report ships in the artifact", r"paper/paper_extended\.tex"),
+    # The report still narrates nine defects, so the merged corpus cannot see the submission
+    # reverting to nine; only a check aimed at the 4-page source can.
+    ("the ten-defect catalogue count", r"ten defects"),
+]
+for _claim, _frag in _SUBMITTED_HEADLINES:
+    check(f"the submission itself carries {_claim}", True,
+          True if paper_says(_frag, SUBMITTED) else f"no {_frag!r} in paper/paper.tex")
+
+
+def prose_corpus_split():
+    """Where the prose bindings actually live, judged once every check has supplied its
+    fragment. Returns (carried by the submission, carried only by the report, in neither)."""
+    in_sub = sum(1 for f in PROSE_FRAGMENTS if paper_says(f, SUBMITTED))
+    report_only = [f for f in PROSE_FRAGMENTS
+                   if not paper_says(f, SUBMITTED) and paper_says(f, REPORT)]
+    neither = sorted({f for f in PROSE_FRAGMENTS
+                      if not paper_says(f, SUBMITTED) and not paper_says(f, REPORT)})
+    # A fragment in neither corpus is a claim no shipped document makes, which is exactly what
+    # the merged search would otherwise hide behind the other 111.
+    check("every prose binding is carried by at least one shipped document", [], neither)
+    return in_sub, len(report_only), len(neither)
+
 # ---- 文档里每一个 64 位十六进制串都必须真是某个东西的哈希 --------------
 # 触发这条的原因是一次真实的自我伪造：ops log 里先写下了一个凭格式编出来的 sha256，
 # 之后才跑命令拿到真值。形如证据不等于证据。
@@ -838,6 +921,21 @@ check("every referenced path exists on disk", [],
 check("and every referenced path is tracked by git", [],
       sorted(r for r in _refs if (REPO / r).exists() and not r.startswith(".tmp")
              and not _is_tracked(r)))
+
+# ---- 扩展报告是提交物的一部分，不是一句指向空气的话 ----------------------
+# paper.tex cites paper/paper_extended.tex as the document carrying the per-defect narratives
+# its table compresses, and the merged prose corpus above rests on that file existing. Citing
+# a document that is not in the artifact is this paper's own defect class, so the three things
+# that make the citation true get asserted: the bytes are on disk, they are tracked (a
+# `git commit -a` silently skips an untracked file, and reviewers would get a 4-page paper
+# pointing at nothing), and it is the full report rather than a stub -- measured against the
+# submission itself, because a report shorter than its own summary is not a report.
+check("the extended audit report is on disk", True,
+      (REPO / "paper/paper_extended.tex").is_file())
+check("and it is tracked, so the pushed artifact really carries it", True,
+      _is_tracked("paper/paper_extended.tex"))
+check("and it is the full report, longer than the paper it expands", True,
+      len(REPORT) > len(SUBMITTED))
 
 # 本轮开始向第三方推理端点发请求，凭据存在仓库之外。风险不在"引用了不存在的路径"这一类，
 # 而在另一次 `git add -p` 手滑：一个 bearer token 一旦进了被跟踪的文件，它就随公开
@@ -1141,6 +1239,9 @@ check("the second provider over-attributes rather than mis-guessing",
 
 
 def main() -> int:
+    # The corpus split can only be judged once every check has run and supplied its fragment,
+    # and it is a check itself, so it is evaluated before the self-count below.
+    _n_sub, _n_report_only, _n_neither = prose_corpus_split()
     # The paper states how many claims this script checks, so that number is itself a
     # claim. Include this check in its own count, or the sentence can never be right.
     stated = re.search(r"\((\d+) claims, non-zero exit on drift\)", PAPER)
@@ -1151,7 +1252,13 @@ def main() -> int:
     for name, expect, actual, ok in CHECKS:
         print(f"{'PASS' if ok else 'FAIL'}  {name:<{width}}  expect={expect!r} actual={actual!r}")
         failed += not ok
-    print(f"\n{len(CHECKS) - failed}/{len(CHECKS)} claims re-derived from artifacts")
+    # Which document satisfied each prose binding, printed rather than assumed: a gate that
+    # cannot say which of the two shipped documents carried a claim is a gate on both at once,
+    # and the submission is the one a reviewer reads.
+    print(f"\nprose bindings: {_n_sub} carried by the submitted 4-page paper, "
+          f"{_n_report_only} by the extended report only, {_n_neither} by neither "
+          f"(of {len(PROSE_FRAGMENTS)} recorded)")
+    print(f"{len(CHECKS) - failed}/{len(CHECKS)} claims re-derived from artifacts")
     return 1 if failed else 0
 
 

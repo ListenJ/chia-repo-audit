@@ -87,7 +87,7 @@ gate and scripts/independent_audit.py as CHIA-compatible
 blocks (BSD-3-Clause). The repository URL is filed in the submis-
 sion form rather than printed here, so the paper stays anonymous.
 Every number quoted here is re-derived from the committed arti-
-facts byscripts/verify_paper_claims.py (220 claims, non-zero
+facts byscripts/verify_paper_claims.py (241 claims, non-zero
 exit on drift), The full audit report behind Table 1 ships in the same
 repository as paper/paper_extended.tex. Reproduce the head-
 line grid with

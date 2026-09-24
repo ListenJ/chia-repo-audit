@@ -126,7 +126,7 @@ supplies one here.
   The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (220 claims). Prose checks bind to one of
+  committed artifact and exits non-zero on drift (241 claims). Prose checks bind to one of
   two corpora -- the 4-page submission (`paper/paper.tex`) and the full audit report
   (`paper/paper_extended.tex`) that ships beside it -- and the script reports which
   document carried each fragment, because a gate that cannot say which document satisfied
@@ -139,8 +139,7 @@ supplies one here.
 - `paper/paper.pdf` is built with **pdfTeX** (`pdflatex paper.tex`, twice, so that
   cross-references resolve), not XeLaTeX: the host's `xetex.fmt` disappeared during the
   2026-09-23 session and the source is pure ASCII and loads no `fontspec`, so pdfTeX
-  compiles it cleanly -- 4 pages, no undefined references. The submitted document is now a
-  4-page two-column ACM paper (\documentclass[sigconf,anonymous,nonacm]{acmart}), because the
+  compiles it cleanly -- 4 pages, no undefined references. The submitted document is a two-column ACM paper (\documentclass[sigconf,anonymous,nonacm]{acmart}) -- our paper is 4 pages -- because the
   organizers page states "A 4-page paper" and "The paper should be in 2-column ACM/IEEE
   style, submitted as a PDF." The 10-page version it was cut from remains in the artifact
   as `paper/paper_extended.tex`. Any rebuild must follow the
@@ -162,8 +161,8 @@ supplies one here.
   passing here. The verifier also re-checks the headline numbers, unresolved-reference
   markers and underscore-bearing identifiers *in the rendered text* -- the text layer is
   where a typesetting regression shows up, not the source.
-- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 368 tracked
-  files, classified by what *code* vouches for each: **47.0% machine-vouched** (173 files
+- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 369 tracked
+  files, classified by what *code* vouches for each: **47.1% machine-vouched** (174 files
   a `verify_paper_claims.py` check re-derives or a unit test loads), 29.3% reachable-only
   (108 files in a set some script globs), and **23.6% with no code reference at all**
   (87 files; 55 of those are at least named in prose, 51 live under `.tmp/` as run logs
