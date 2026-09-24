@@ -2264,6 +2264,13 @@ JSON 也正常，于是以为普查已经更新 —— 其实 `REVIEW_COVERAGE.m
 `w/crlf attr/` —— 一个文件钉不住它自己；它下面三行才是重点，三个文本产物在
 `core.autocrlf=true` 下仍然是 `w/lf attr/-text`，所以 pin 的哈希在这台机器上复现。
 
+这份记录永远比 HEAD 落后一个 commit，而且无法修好：记录"我克隆了 X 并且绿"这句话
+本身要写进 X 之后的某个 commit。这不是漏洞，但得说清楚为什么不是。祖先检查只要求
+`cloned_head` 是 HEAD 的祖先，所以落后的那一版仍然对得上真历史；而 pin 检查盯的是
+盘上字节，`paper/` 四个文件在落后的这一个 commit 里没有变，所以"评审那条路是绿的"
+这句话对当前提交物仍然成立。真正会失效的情形是有人改了 `paper/` 又不重编 ——
+那正是 pin 要抓的，跟克隆记录落后一个 commit 无关。
+
 `scripts/local_gate.py` 在本会话 rc=1，原因是它的 GPU 探测 shell out 到
 `nvidia-smi`，而该 shell 的 PATH 里没有它（`[WinError 2]`；
 `C:\Windows\System32\nvidia-smi.exe` 确实存在）。这是宿主环境问题，
