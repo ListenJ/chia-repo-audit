@@ -697,7 +697,7 @@ rather than printed here, so the paper stays anonymous
 while the artifact stays reachable. Every number
 quoted in this paper is re-derived from the commit-
 ted artifacts byscripts/verify_paper_claims.py
-(188 claims, non-zero exit on drift); the defects above
+(189 claims, non-zero exit on drift); the defects above
 were found by reading primary evidence, and this
 script is what turns that into a check, not a coinci-
 dence.scripts/audit_grid_levels.pyis the same
@@ -729,23 +729,35 @@ The sponsoring account itself, not only its two in-
 stances, was deleted by the provider on the same
 day:gcloud auth print-access-tokenfails with
 invalid_grant, describedas“Accounthasbeendeleted”.
-That is why the measurement-grounded annotation set
-stops at six cases. It is a ceiling imposed mid-work,
-not a design choice: growing the set needs the second
-rater, which is reached through a Vertex token minted by
-that account (scripts/independent_audit.pyimports
-it unconditionally), and no replacement was available be-
-fore the deadline. Substituting the local discriminative
-head was the obvious move and is not one we can make
-honestly — §3.10 measures it at 0 of 33 on the labellable
-generated pairs andκ=−0.364against the real raters on
-the measurement-grounded set, so an agreement statis-
-tic computed with it would be uninterpretable in exactly
-the way this paper is about. The smallnis reported as
-a limitation instead.
+That is why the measurement-grounded annotation
+set stops at six cases, though the cause is narrower
+than we first wrote. An earlier draft of this para-
+graph blamed the loss of the second rater, which
+scripts/independent_audit.pyreaches through a Ver-
+tex token minted by that account. Re-deriving it from
+the retained screening records gives a different answer:
+those records contain exactly three generated designs
+whose measured cycle count is indistinguishable from the
+no-op control, and all three are already cases, so the es-
+cape half of the set is exhausted rather than truncated —
+a check now recomputes the pool and asserts it equals the
+set of cases drawn from it. The other three cases are the
+three unordered pairs of the cross-seed designs that com-
+piled to an identical artifact, which is likewise all of them.
+Growing the set therefore needs new simulation runs over
+newly generated candidates, not merely a rater, and that
+is what the deleted account removed. Substituting the
+local discriminative head was the obvious move and is
+not one we can make honestly — §3.10 measures it at 0
+of 33 on the labellable generated pairs andκ=−0.364
+against the real raters on the measurement-grounded set,
+so an agreement statistic computed with it would be un-
+interpretable in exactly the way this paper is about. The
+smallnis reported as a limitation instead.
 A second correction came from running our own ver-
 ifier on the path a reviewer takes rather than the path
 we wrote it on: a fresh clone of the pushed branch. It
+7
 returned 172 of 174 claims with a non-zero exit, and the
 single failure was the gate asserting that the submitted
 PDF is newer than the LATEX source. That gate com-
@@ -757,7 +769,6 @@ landedinside7msandthePDFcameout1msolderthan
 its source. So the freshness gate had never been a gate:
 its verdict was decided by sub-10ms write ordering, and
 it had been passing here because the coin landed our
-7
 way on the machine we wrote it on. It is now content-
 based —paper/BUILD_PIN.jsonrecords the SHA-256
 of the two inputs the build consumed and the two out-
@@ -855,6 +866,7 @@ pair result since those inputs are real generated source.
 Checker:the cell-level nullity rule conflated per-trace
 with global nullity until this revision; the split is locked
 by four tests. The replicated grids contain no design that
+8
 is inert oneverytrace, so the stricter branch had only a
 synthetic control until a purpose-built one delivered two
 designs equal to the no-op reference on all three traces
@@ -868,7 +880,6 @@ different modules yet record onebinary_sha256and one
 cycle count, so those rows cannot evidence which design
 was measured. Every nullity cited here comes from a
 cold-build row whose digest differs per design, and the
-8
 escape case records the unattributable file only as cor-
 roborating context.Scope:one simulator, one design
 family, three traces; no RTL flow and no gem5 result is

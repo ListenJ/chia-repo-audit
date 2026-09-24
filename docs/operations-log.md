@@ -2605,3 +2605,105 @@ codex/colab-cpu-validation`，克隆到 `e907393`，在克隆目录里跑同样�
 `why_the_record_lags_head_by_one_commit`，门禁从另一侧封口：
 `cloned_head` 必须是 HEAD 的祖先，且 `pin_at_clone` 必须等于该 commit 上的
 `paper/BUILD_PIN.json` blob，所以记录不能声称自己测的是比实际更新的树。
+
+---
+
+## §35 "n=6 是账号造成的"这个归因是错的，而且错得偏向我们
+
+### 35.1 论文原话与它的毛病
+
+`paper.tex` 里那段解释为什么测量接地标注集停在 6 例，原来写的是：
+
+> It is a ceiling imposed mid-work, not a design choice: growing the set needs the second
+> rater, which is reached through a Vertex token minted by that account.
+
+用户问了一句"没有 Vertex 账号有没有别的方案，以及现在的数据够不够"。为了回答，我去查了
+**这 6 个用例到底是从什么造出来的**，而不是接着复述这句话。
+
+`scripts/escape_cases_from_measurements.py` 的 docstring 自己写着：
+"剩下两个的源码与测量都已经在仓库里，不需要再花一次仿真。"
+也就是说用例不是 Vertex 产物，是从**已入库的 screening 测量**里挑出来的。
+那么真正的问题变成：盘上还有没有没被用掉的可标注逃逸？
+
+### 35.2 数出来是 0
+
+判据（与用例生成器一致）：`build_success` 为真、且 `cycles` 等于 no-op 参考
+（1138748，由 `sem-esc-01.json` 的 `evidence.reference_cycles` 提供，本来就有检查钉着）。
+扫 `results/*.jsonl` 全部 34 行，编译通过 20 行，命中判据的 `gen_*` 设计恰好 3 个：
+`gen_default_s0`、`gen_aggressive_offset_s1_r1`、`gen_aggressive_offset_s1`。
+而 `chia_loop/semantic/sem-esc-0{1,2,3}.json` 的 `design.module_name` 正好是这三个。
+
+**逃逸池已用尽，不是被截断。** 另外 3 个非逃逸用例是三个 cross-seed 设计
+（`gen_fill_only_conservative_s1/s2/s3`，因子网格里编译产物相同那三个）的全部
+C(3,2)=3 个无序对 —— 同样用尽。
+
+所以正确的归因是：要扩充，需要**新的仿真 + 新的候选生成**，第二评分者只是其中一环；
+被删掉的账号拿走的正是"造出新证据"的能力，而不是"给已有证据打标"的能力。
+原话把因果说反了一半，而反的那一半对我们有利 —— 它让 n=6 听起来像"外部条件打断了我们"，
+而不是"我们手里的证据本来就只有这么多"。这类偏差正是本文要抓的东西，出现在本文自己的
+Limitations 里。
+
+### 35.3 我为了得到这个判据先错了两次
+
+第一次：把所有 `probe_noop` 行的 cycles 收成一个集合当"no-op 参考"。
+`probe_noop` 在四种条件下各有一行（2000001 指令下还有 1129305 与 1138748 两个值，
+400000 指令下是 227700），混在一起会把 `probe_next_line` 这个**控制探针**判成逃逸设计。
+输出看起来像发现了第 4 个未使用用例 —— 那是假阳性，与 §33.5、§34.4 同族。
+
+第二次：改成"同一个文件里的 no-op 行"作条件。也不对 ——
+`gen_default_s0` 与 `gen_aggressive_offset_s1_r1` 的 1138748 出现在
+`candidate_compile_screening`，而同值的 `probe_noop` 行在 `module_effect_control`，
+按文件配对会把真逃逸漏掉。
+
+最后用的判据是最窄也最有据的那个：只认 `noop_ref=1138748` 这一个值，
+它来自 `sem-esc-01.json` 自己记录的 `evidence.reference_cycles`，
+并且 `verify_paper_claims.py:128` 已经在钉它。这样新检查与既有检查共用同一个锚，
+不会引入第二套"什么算 no-op"的定义。
+
+### 35.4 落成第 189 条检查
+
+```python
+_esc_used = sorted({load_json(f"chia_loop/semantic/{p.name}")["design"]["module_name"]
+                    for p in sorted((REPO / "chia_loop/semantic").glob("sem-esc-*.json"))})
+check("the nullity pool is exhausted, not truncated: every escaping design is a case",
+      sorted(null), _esc_used, r"exhausted")
+```
+
+`null` 是既有代码算出的"与 no-op 同周期的设计 -> 其 binary 集合"，
+所以这条不新增判据，只把"池子大小是 3"升级成"池子里每一个都做成了用例"。
+第四个参数 `r"exhausted"` 强制论文里必须出现这个词 —— 也就是说，
+哪天有人往证据里加了第 4 个逃逸设计而没做用例，或者把论文里"用尽"那句删了，这里翻红。
+
+`paper.tex` 那段同时改写：明确说早先版本归因归错了、给出重derive的结论、
+并说明扩充需要新仿真与新候选而不只是评分者。声明数 188 → **189**，
+`README.md` 与论文里的自指计数同步。
+
+本轮完整链（作者树）：
+
+```
+pdflatex x2                       -> rc=0, 9 页, 618,298 B, 一处 8.93858pt overfull（§33.3 有意保留）
+extract_pdf_text.py               -> 9 pages, 47,710 chars
+pin_paper_build.py                -> pinned 2 inputs + 2 outputs
+verify_paper_claims.py            -> 189/189, rc=0
+mutation_test_gates.py            -> 6 mutations, 0 problems
+audit_grid_levels.py              -> rc=0
+check_documented_commands.py      -> rc=0
+unittest discover -s chia_loop/tests -> Ran 46 tests, OK
+普查                              -> 353 / 172 / 101 / 80，散文点名 48（未变动）
+```
+
+### 35.5 顺带回答"数据够不够"
+
+按主张逐条看，而不是笼统说够或不够：
+
+- **头条结论（发布门禁对自己给出 Blocked）不依赖 n。** 它由预注册轴上的网格证据决定
+  （cross-seed CV、repeated-run CV、prompt spread、trace CV、top-1 stability、
+  leave-one-out Kendall τ），这些轴的量都远大于 6。
+- **标注层不可靠这个结论也不单独依赖 n=6。** 门禁表里四行 κ 有两行低于预注册的 0.7：
+  真实生成对（33 可标注）0.636，与测量接地 6 例 0.455。
+  较大那一组独立地越过了同一条线，所以"未达标"不是小样本的产物。
+- **真正受 n 限制的是 0.455 这个数的精度**，以及"共同盲区"那三个用例的 n=3。
+  论文已经把这两处写成 limitation，且 §35.2 证明这是证据上限而不是没做完。
+- **唯一会让 n 变大而方向可疑的做法**：往集合里加"周期数明显不同"的设计对。
+  那种对的标签由测量直接决定、两个评分者几乎必然一致，加进去会把 κ 往上推、
+  让门禁看起来通过。这在技术上可行，在做证据的意义上不可接受，本文批评的正是这类操作。

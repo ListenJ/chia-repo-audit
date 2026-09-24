@@ -147,6 +147,16 @@ check("genuine prefetchers all differ from the no-op", True,
       all(r["cycles"] != noop_ref for r in runs
           if r["module"].startswith("gen_fill_only")))
 
+# "停在 6 例"是账号造成的还是证据造成的，两者性质完全不同，而论文早先归因归错了：
+# 原文写的是"缺第二评分者"。可标注的逃逸池能从落盘 screening 直接重算，上面那条已经
+# 钉住池子大小是 3；这条钉住池子里每一个都已做成用例。合起来的结论是：即便第二评分者
+# 还在，也造不出第四个测量接地逃逸用例，除非重新仿真并重跑候选生成 —— 而那需要已被
+# 删除的账号。没有这条时，"n 小"读起来像我们没做完，而实际是证据已经用尽。
+_esc_used = sorted({load_json(f"chia_loop/semantic/{p.name}")["design"]["module_name"]
+                    for p in sorted((REPO / "chia_loop/semantic").glob("sem-esc-*.json"))})
+check("the nullity pool is exhausted, not truncated: every escaping design is a case",
+      sorted(null), _esc_used, r"exhausted")
+
 # 反向检查：module_effect_control 的 incremental 行能不能按模块归属
 mec = load_jsonl("results/module_effect_control_2026-09-22.jsonl")
 inc = [r for r in mec if r.get("incremental") and r.get("binary_sha256")]

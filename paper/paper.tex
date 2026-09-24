@@ -616,7 +616,7 @@ repository URL is filed in this submission's required open-source-artifact field
 rather than printed here, so the paper stays anonymous while the artifact stays
 reachable. Every number quoted in this paper
 is re-derived from the committed artifacts by
-\texttt{scripts/verify\_paper\_claims.py} (188 claims, non-zero exit on drift); the
+\texttt{scripts/verify\_paper\_claims.py} (189 claims, non-zero exit on drift); the
 defects above were found by reading primary evidence, and this script is what turns
 that into a check, not a coincidence. \texttt{scripts/audit\_grid\_levels.py}
 is the same idea aimed at the harness: it refuses a published grid in which some factor
@@ -642,10 +642,18 @@ The sponsoring account itself, not only its two instances, was deleted by the pr
 the same day: \texttt{gcloud auth print-access-token} fails with
 \texttt{invalid\_grant}, described as ``Account has been deleted''. That is why the
 measurement-grounded
-annotation set stops at six cases. It is a ceiling imposed mid-work, not a design choice:
-growing the set needs the second rater, which is reached through a Vertex token minted by
-that account (\texttt{scripts/independent\_audit.py} imports it unconditionally), and no
-replacement was available before the deadline. Substituting the local discriminative head
+annotation set stops at six cases, though the cause is narrower than we first wrote. An
+earlier draft of this paragraph blamed the loss of the second rater, which
+\texttt{scripts/independent\_audit.py} reaches through a Vertex token minted by that
+account. Re-deriving it from the retained screening records gives a different answer: those
+records contain exactly three generated designs whose measured cycle count is
+indistinguishable from the no-op control, and all three are already cases, so the escape
+half of the set is exhausted rather than truncated --- a check now recomputes the pool and
+asserts it equals the set of cases drawn from it. The other three cases are the three
+unordered pairs of the cross-seed designs that compiled to an identical artifact, which is
+likewise all of them. Growing the set therefore needs new simulation runs over newly
+generated candidates, not merely a rater, and that is what the deleted account removed.
+Substituting the local discriminative head
 was the obvious move and is not one we can make honestly --- \S\ref{sec:substrate} measures
 it at 0 of 33 on the labellable generated pairs and $\kappa=-0.364$ against the real
 raters on the measurement-grounded set, so an agreement statistic computed with it would be

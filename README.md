@@ -126,7 +126,7 @@ supplies one here.
   The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (188 claims). Its final check is
+  committed artifact and exits non-zero on drift (189 claims). Its final check is
   self-referential: the paper states the claim count, so editing the verifier without
   updating the prose turns the run red. This sentence is gated too, and the reason is
   that it used not to be --- it read "138 claims" for two rounds after the count had
