@@ -3388,3 +3388,35 @@ spec10 的分数从 9/10、8/10 变成 **10/10 判决、9/10 错误码**，论�
 de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6，
 `pinned_utc` 2026-09-24T17:19:15Z；`verify_paper_claims.py` 241/241 rc=0；
 46 单元测试 OK。`web/annotator_result.json` 仍不存在，人工标注那一格仍未交付。
+
+## §48 干净克隆全绿，但门禁把文件名冻在了自己身上：新记录落盘即无人审计
+
+按 README 的命令在 `https://github.com/ListenJ/chia-repo-audit.git` 上做了一次全新克隆
+（HTTPS，不是 SSH，和评审能粘的地址一致），checkout 到 `codex/colab-cpu-validation` 得
+`9703c4b`，克隆时间 2026-09-24T17:29:07Z（取自克隆自身的 reflog，不是手记的）。五条门禁
+全在这份克隆里跑：`verify_paper_claims.py` 241/241 rc=0、`audit_grid_levels.py` rc=0、
+`check_documented_commands.py` rc=0、`unittest discover` Ran 46 tests OK、
+`mutation_test_gates.py` 10 mutations 0 problems。克隆里 `paper/paper.pdf` 的 sha256
+`de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6` 与 pin 的输出一致，
+`core.autocrlf=true`，三个文本提交物仍是 `i/lf w/lf attr/-text`。结果落盘在
+`results/fresh_clone_verification_2026-09-25.json`，其中 pin 摘要、eol 表、克隆 sha、
+bookkeeping 的 21 条重哈希，全部由生成脚本从那份克隆里回读，没有一个数是抄的。
+
+写这份记录时才撞见一个自指缺口：验证器把被审计的记录文件名**冻成了字面量**
+`results/fresh_clone_verification_2026-09-24.json`。也就是说，新记录一落盘就不再被那三条
+检查读——门禁继续_certify_ 上一棵树，而评审真正会翻开的是这一棵。它不会变红，只会一直绿着
+不再指向被测对象，正是本文自己列的那一类"代理量停止测量后仍返回通过"。
+修法是把名字改为按 ISO 文件名取最新（`glob` + `sorted[-1]`），并让
+`scripts/mutation_test_gates.py` 用同一套解析，否则变异测试会去敲一份没人读的记录。
+三条检查、六条断言的**条数一条没动**，所以主张总数仍是 241，不需要重编译或重传。
+
+代价是量出来的，不是推定的：普查按"代码里是否点名"分层，改成 glob 之后没有任何代码再
+逐字点名克隆记录，于是 `9/24` 那份从 machine-vouched 掉到 code-unreferenced，新记录的
+落盘又把 tracked 文件数推到 370。README 里那组数被随之重写（三层计数、两个比率），
+因为这几条检查的存在意义就是"发布出去的覆盖率必须当场重算得出来"。被点名的孤儿数我没有
+写进这一节：这一节的散文本身就是点名动作，把该数写进被自己影响的位置会自指，
+它只在 README 那一句里出现，那里有门禁盯着。
+
+克隆记录天生滞后 HEAD 一个提交这一条性质照旧：这份 json 是被跟踪文件，它描述的提交不可能
+同时包含它自己。门禁从另一边把口子闭上——要求 `cloned_head` 是 HEAD 的祖先、要求
+`pin_at_clone` 等于那个提交的 `BUILD_PIN.json` blob，所以记录不能声称它没量过的树。

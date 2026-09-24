@@ -1,0 +1,108 @@
+{
+  "bookkeeping_manifest": {
+    "bad": [],
+    "entries": 21,
+    "rehashed_ok": 21
+  },
+  "branch": "codex/colab-cpu-validation",
+  "clone_command": "git clone https://github.com/ListenJ/chia-repo-audit.git .tmp/fresh_clone_0925/repo && git checkout codex/colab-cpu-validation -- over HTTPS, the same URL a reviewer can paste, with no SSH key and no local state on the path",
+  "cloned_head": "9703c4b683eb23f3c42cef68c722c26614b2dacc",
+  "cloned_utc": "2026-09-24T17:29:07Z",
+  "core_autocrlf": "true",
+  "eol_note": "Produced by `git ls-files --eol paper .gitattributes` inside the clone. The submission is now two documents, so the table is one row longer than the 9/24 record: paper_extended.tex arrived with the format split and checks out i/lf w/lf attr/-text like the other text sources. The awkward first line is unchanged -- .gitattributes cannot pin itself, and that still does not disturb the artifacts below it.",
+  "eol_table_paper": [
+    "i/lf    w/crlf  attr/                 \t.gitattributes",
+    "i/lf    w/lf    attr/-text            \tpaper/BUILD_PIN.json",
+    "i/-text w/-text attr/-text            \tpaper/fig_decomposition.pdf",
+    "i/-text w/-text attr/-text            \tpaper/paper.pdf",
+    "i/lf    w/lf    attr/-text            \tpaper/paper.tex",
+    "i/lf    w/lf    attr/-text            \tpaper/paper_extended.tex",
+    "i/lf    w/lf    attr/-text            \tpaper/paper_text.txt"
+  ],
+  "gates": {
+    "audit_grid_levels.py": {
+      "last": "OK  results: 0/9 levels substituted, 4 distinct compiled designs for 9 levels (disclosed=False)",
+      "rc": 0
+    },
+    "check_documented_commands.py": {
+      "last": "scripts whose advertised options were compared: 6",
+      "rc": 0
+    },
+    "mutation_test_gates.py": {
+      "last": "10 mutations, 0 problems",
+      "rc": 0
+    },
+    "unittest discover -s chia_loop/tests": {
+      "last": "Ran 46 tests in 0.790s -- OK",
+      "rc": 0
+    },
+    "verify_paper_claims.py": {
+      "last": "241/241 claims re-derived from artifacts",
+      "rc": 0
+    }
+  },
+  "host": "Local Windows 11 host (Git Bash), NOT a GCP instance -- the sponsor account and both instances were deleted on 2026-09-24, so this is the only reproducible execution path left for the documented chain.",
+  "how_the_gate_ties_this_record_to_history": "verify_paper_claims.py resolves the newest results/fresh_clone_verification_*.json by name and checks three things against it: cloned_head is an ancestor of HEAD, pin_at_clone equals the BUILD_PIN.json blob at cloned_head, and the clone really ran under core.autocrlf=true with the three textual submission artifacts checked out LF. The filename is resolved rather than written down: with a frozen name the gate kept certifying the 9/24 tree after a newer record existed, which measures nothing a reviewer can land on. The same resolution is used by scripts/mutation_test_gates.py so the six clone-record mutations knock down the document that is actually read.",
+  "pdf_sha256": "de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6",
+  "pin_at_clone": {
+    "inputs": {
+      "paper/paper.tex": "6ee12f364ba3a7a5d44e94342c3d5afe5a4ff054367018f491b2b9b4e3c45879"
+    },
+    "outputs": {
+      "paper/paper.pdf": "de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6",
+      "paper/paper_text.txt": "b676a51e50564ad0b3a15ca1f32f53054b58d8c6cdba9002aeb4f127c4b14b24"
+    },
+    "pages": 4,
+    "pinned_utc": "2026-09-24T17:19:15Z",
+    "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the 3 hashes below against the bytes on disk"
+  },
+  "prior_clone_records": [
+    {
+      "cloned_head": "595aebcc02a67f10d2a2970854fbd236428c2ae1",
+      "result": "220/220 claims re-derived from artifacts",
+      "what_changed_since": "the submission was cut from 10 pages to the 4 pages the organizers page actually asks for, the figure left the submitted document, the phrase gates were re-scoped to bind to a named corpus instead of one document, and a gate that had been crashing on a stale input list was fixed -- 220 claims became 241",
+      "why_it_is_not_this_one": "it measured the tree before the format split, so its pin still names fig_decomposition.pdf as an input of a build that no longer includes it"
+    },
+    {
+      "cloned_head": "f3ed60c17062a0c3a3caa182a979339c66721363",
+      "result": "",
+      "what_changed_since": "described the 190-claim build; the rater round, decision set 5 and the corrected denominators all landed after it",
+      "why_it_is_not_this_one": ""
+    },
+    {
+      "cloned_head": "b8df223674fe265aa5af4cae1e0b7b2fc5e1e3ad",
+      "result": "189/189",
+      "what_changed_since": "the nullity-pool exhaustion gate (ops log 35): the escape cases are built from committed screening rows, and all three designs indistinguishable from the no-op control were already cases, so n=6 is the evidence ceiling, not the account ceiling; 188 -> 189 claims",
+      "why_it_is_not_this_one": "it measured the tree before that fix, so its claim count is 187 and its census was still movable by a comment"
+    },
+    {
+      "cloned_head": "e907393d2fb622dacbfb42e635b2fb225b756688",
+      "result": "188/188",
+      "what_changed_since": "census stopped counting Python comments as code-side evidence, and a check began recomputing the prose-named orphan count (ops log 34); 187 -> 188 claims",
+      "why_it_is_not_this_one": "it measured the tree before that fix, so its claim count is 187 and its census was still movable by a comment"
+    },
+    {
+      "cloned_head": "32d193f1fdb2f83f1c811cd197beb0534fb378a8",
+      "result": "187/187",
+      "what_changed_since": "scripts/mutation_test_gates.py was promoted out of .tmp/ with crash guards on the fresh-clone checks; 184 -> 187 claims",
+      "why_it_is_not_this_one": "it measured the tree before that fix, so its claim count is 187 and its census was still movable by a comment"
+    },
+    {
+      "cloned_head": "66a9705a15b6dc78dbb6d67f13dd1a300d051b09",
+      "result": "184/184, rc=0, four gates",
+      "what_changed_since": "32d193f added scripts/mutation_test_gates.py and the crash guards in verify_paper_claims.py, and took the census from 352 to 353 tracked files."
+    }
+  ],
+  "prior_clone_records_note": "One entry per measurement this file supersedes, oldest last, carried forward rather than rewritten: overwriting the list deletes the only evidence that an earlier tree was different, which is the move these gates exist to catch.",
+  "remote_url": "https://github.com/ListenJ/chia-repo-audit.git",
+  "supersedes": {
+    "commit": "595aebc",
+    "fix": "this record is the same chain re-run at the commit that carries the 4-page submission, the two-corpus phrase gates and the repaired build-pin gate",
+    "result": "220/220 claims re-derived from artifacts",
+    "the_single_failure": "none -- the 9/24 record was green too",
+    "why_it_failed": "it did not fail. What it could no longer say is the thing the current tree claims: its pin covers a 10-page build with an embedded figure, and that document is not what was submitted."
+  },
+  "what_this_is": "The documented verification chain run in a fresh clone of the pushed public branch, on the configuration that broke it before: Windows, core.autocrlf=true, no local state. Four pages, two documents, five gates.",
+  "what_this_record_cannot_show": "It shows the gate chain reproduces from the pushed bytes. It cannot show that HotCRP serves those bytes -- that is a separate comparison against the PDF the site returns, and it is recorded in the operations log, not here.",
+  "why_the_record_lags_head_by_one_commit": "This file is tracked, so the commit it describes cannot also contain it. The gate closes the gap from the other side: it requires cloned_head to be an ancestor of HEAD and requires pin_at_clone to equal the BUILD_PIN.json blob at cloned_head, so a record cannot claim a newer tree than the one it measured."
+}

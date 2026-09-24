@@ -771,7 +771,12 @@ check("and the retained PDF is really that commit's PDF",
 # 记录里的四个摘要必须等于那个 commit 的 BUILD_PIN.json blob（不是重抄一遍），
 # 以及那次克隆必须真处在会出问题的配置下（core.autocrlf=true 且三个文本产物
 # 都以 LF 落盘）——否则"在干净克隆里绿"这句话没有对抗性，证明不了任何事。
-_FC = "results/fresh_clone_verification_2026-09-24.json"
+# The name has to follow the newest record instead of a date typed into the gate: with a
+# frozen filename these three checks go on auditing the 9/24 tree forever, while the record
+# a reviewer actually lands on is never measured -- a proxy that keeps passing after it
+# stopped pointing at the thing it was written to vouch for. ISO names sort chronologically.
+_FC = sorted(str(p.relative_to(REPO)).replace("\\", "/")
+             for p in (REPO / "results").glob("fresh_clone_verification_*.json"))[-1]
 _fc = load_json(_FC)
 check("the recorded clone head is real history, not an invented sha", 0,
       subprocess.run(["git", "merge-base", "--is-ancestor", _fc["cloned_head"], "HEAD"],

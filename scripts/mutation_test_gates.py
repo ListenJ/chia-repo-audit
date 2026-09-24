@@ -46,7 +46,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 
-CLONE = "results/fresh_clone_verification_2026-09-24.json"
+# Same reason as in verify_paper_claims.py: mutate the record the gate actually reads.
+# A frozen filename here would knock down a record nothing is auditing any more.
+CLONE = sorted(str(p.relative_to(REPO)).replace("\\", "/")
+               for p in (REPO / "results").glob("fresh_clone_verification_*.json"))[-1]
 RATER = "results/audit_independent_atria/raw.json"
 
 # (label, artifact mutated, mutation). Two artifacts because the checks grew into a second
