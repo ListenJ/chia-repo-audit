@@ -3586,3 +3586,40 @@ Abstract）出现的每个数字回代到钉住的渲染文本层：`78.16`、`5
 本节写入后重算仍逐字节复现。仍然敞开的四项如实列在这里——空实例清单不可产出（账号已删）、
 08:00 UTC 时间盒未达成、人工标注与 Atria 密钥作废在作者手里、
 以及 `paper/paper_short_acmart.pdf` 这个上一会话留下的未跟踪文件（既不属于我生成，也不由我删）。
+
+## §54 把 Task 8 的前提读完了，而不是继续引用：拆除早已发生，而那条 reproduce 命令不是主机无关的
+
+§49/§52 一直把"GCP 实例 list 为空"列为只能引用。这次真去读引用指向的两个文件，结果推翻了我
+自己在 §52 里的措辞。`results/compute_host_lifecycle_2026-09-22_to_24.json` 的
+`instances[]` 逐台记着 `deleted: 2026-09-23T21:52Z (approx, delete returned rc=0)`，
+`teardown.post_delete_verification` 记着 instances/disks/static addresses/snapshots/custom
+images **全为 0**、只剩四条 GCP 默认防火墙规则（不计费）、`ssh_to_old_ip` 超时符合预期。
+也就是说计划的基线行"两台 GCP VM 仍在运行"在写它的时候（2026-09-24 ~16:40Z）就已经是错的——
+拆除发生在它前一天晚上。Task 8 不是"做不了"，是**早已做完**；本机现在缺的只是一条能刷新令牌的
+凭据去独立复现那条空列表（§53 量的 `rc=1` 就是这件事的边界）。
+
+顺带把前置证据里两条可重推导的主张真跑了一遍：
+1. `orphans_disposed.watch_grid_sh`：`results/compute_host_bookkeeping/shared_watch_grid.sh`
+   实算 sha256 `c63b031bef78d19e87d53a86c5f14ff9fd8c5bf78347e01716850e2d317fb34f`，与记录一致。
+2. `home_workspace_snapshot.reproduce` = `git archive --format=tar b85b38c | tar -x`，
+   记录称"66/66 逐字节一致"。本机（Windows，`core.autocrlf=true`）重放：66 个文件都物化了，
+   但**只有 1 个逐字节一致**（`paper/paper.pdf`，82,376 字节，git 视其为二进制），其余 65 个
+   全部等于"原 blob 把 LF 换成 CRLF"。原因量到了：`git show b85b38c:.gitattributes` 报
+   `fatal: path exists on disk, but not in 'b85b38c'`——`.gitattributes` 是后来 `66a9705`
+   才加的，所以在那个提交上没有任何 `-text` 钉住，归档管道路径会按 autocrlf 改写行尾。
+
+为了不把这条误读成"证据有问题"，做了两个对照实验（同一台机器、同一个归档管道）：
+HEAD 的 `results/**` + `paper/**` 重放 **116/116 逐字节一致**（`-text` 钉住在归档路径下同样成立，
+不只是 checkout 成立）；HEAD 未被钉住的 `chia_loop/`+`docs/`+`scripts/` **0/107 一致，107 个全是
+纯 LF→CRLF**。所以准确的结论是：那条 `reproduce` 不是主机无关的，且 `-text` 的覆盖面是
+"被哈希的证据字节"（results/paper/.tmp），不是整棵树。这不推翻删除时的 66/66——那次比较发生在
+快照自己的主机上、删除之前——但它意味着评审若在 Windows+autocrlf 上照抄那条命令，会看到 65
+个假差异；安全的复现路径始终是 §50/§53 量的那种全新克隆。
+
+没有去改 `results/vm_teardown_precondition_2026-09-24.json` 里那行 reproduce：它被
+`results/compute_host_lifecycle_…json` 用 `precondition_sha256 = ea1d1fa4…` 钉着，而且
+`verify_paper_claims.py` 直接 load 它——改记录正是"改门禁迁就结论"那个动作，所以限定条件写在这条
+只增不改的日志里。也没有扩 `.gitattributes` 到 `chia_loop/** docs/** scripts/**`：计划明令该行尾
+钉法已由变异套件与干净克隆记录证明、不要手改，而扩钉会改变 107 个文件的 checkout 语义，使已发表的
+克隆记录里的 eol 断言需要重测。要做的收益是"任意主机上 archive 复现逐字节一致"，代价是重跑一遍
+Task 4 并考虑重新投稿口径，留给作者决定（距截止仍有约 18 小时）。
