@@ -5,9 +5,9 @@
     "rehashed_ok": 21
   },
   "branch": "codex/colab-cpu-validation",
-  "clone_command": "git clone -c core.autocrlf=true --branch codex/colab-cpu-validation git@github.com:ListenJ/chia-repo-audit.git .tmp/scratch/fc4",
-  "cloned_head": "f3ed60c17062a0c3a3caa182a979339c66721363",
-  "cloned_utc": "2026-09-24T11:24:14Z",
+  "clone_command": "git clone --branch codex/colab-cpu-validation git@github.com:ListenJ/chia-repo-audit.git  (core.autocrlf came from the host's global config, measured as true inside the clone)",
+  "cloned_head": "595aebcc02a67f10d2a2970854fbd236428c2ae1",
+  "cloned_utc": "2026-09-24T16:31:30Z",
   "core_autocrlf": "true",
   "eol_note": "The command that produced this table is `git ls-files --eol paper .gitattributes`. Its first line is the awkward one: .gitattributes itself checks out w/crlf with no attribute, because a file cannot pin itself. What that line does not break is the three artifacts below it, which is the whole point of the table -- they still come out w/lf under core.autocrlf=true, so the pin's hashes reproduce on this machine.",
   "eol_table_paper": [
@@ -19,45 +19,46 @@
     "i/lf    w/lf    attr/-text            \tpaper/paper_text.txt"
   ],
   "gates": {
-    "audit_grid_levels.py": {
-      "rc": 0
-    },
-    "check_documented_commands.py": {
-      "rc": 0
+    "verify_paper_claims.py": {
+      "rc": 0,
+      "last": "220/220 claims re-derived from artifacts"
     },
     "mutation_test_gates.py": {
-      "mutations": 6,
-      "problems": 0,
-      "rc": 0
-    },
-    "unittest discover -s chia_loop/tests": {
-      "outcome": "OK",
       "rc": 0,
-      "tests": 46
+      "last": "10 mutations, 0 problems"
     },
-    "verify_paper_claims.py": {
-      "claims": "190/190",
-      "named_failures": 0,
-      "rc": 0
+    "check_documented_commands.py": {
+      "rc": 0,
+      "last": "scripts whose advertised options were compared: 6"
+    },
+    "audit_grid_levels.py": {
+      "rc": 0,
+      "last": "OK  results: 0/9 levels substituted, 4 distinct compiled designs for 9 levels (disclosed=False)"
     }
   },
   "host": "Local Windows 11 host (Git Bash), NOT a GCP instance -- both sponsor instances were deleted on 2026-09-24 and the sponsor account itself was deleted the same day.",
   "how_the_gate_ties_this_record_to_history": "verify_paper_claims.py checks that cloned_head is an ancestor of HEAD, that pin_at_clone equals the BUILD_PIN.json blob at cloned_head, and that the clone really ran under core.autocrlf=true with all three text artifacts checked out LF. A record whose digests do not match the commit it claims to describe cannot pass.",
-  "pdf_sha256": "b4acd868d2b955b87937b67ef4d3345dbb72210a84eefbc00c8756a0c62638aa",
+  "pdf_sha256": "39c3e63f7a8dd373276a835948d00bbd8481c61f053cbf3f617cbc79217694a1",
   "pin_at_clone": {
     "inputs": {
       "paper/fig_decomposition.pdf": "3daef5d31472f76fb6bb07b09c5586147b39d452fbdefc3db48542d5210c4ebe",
-      "paper/paper.tex": "dc39259fc97b4e2fcdcd976935b937fcf38faab3f245cba7f72852ee2c1fb01c"
+      "paper/paper.tex": "2d921512c7287f1a4cb559e6a3c7afce519cbd415d6ea307f9ef64a7eed8c655"
     },
     "outputs": {
-      "paper/paper.pdf": "b4acd868d2b955b87937b67ef4d3345dbb72210a84eefbc00c8756a0c62638aa",
-      "paper/paper_text.txt": "c4aefebdc36351e777bf54638f4a1218adc7e425353b4ba9ee534f7286cbcfb4"
+      "paper/paper.pdf": "39c3e63f7a8dd373276a835948d00bbd8481c61f053cbf3f617cbc79217694a1",
+      "paper/paper_text.txt": "7a8ef39cf22ccc099a4014525f57e6bb992304773bf3e150784fb543f5178955"
     },
-    "pages": 9,
-    "pinned_utc": "2026-09-24T09:36:16Z",
+    "pages": 10,
+    "pinned_utc": "2026-09-24T16:27:22Z",
     "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the four hashes below against the bytes on disk"
   },
   "prior_clone_records": [
+    {
+      "cloned_head": "f3ed60c17062a0c3a3caa182a979339c66721363",
+      "result": "",
+      "what_changed_since": "described the 190-claim build; the rater round, decision set 5 and the corrected denominators all landed after it",
+      "why_it_is_not_this_one": ""
+    },
     {
       "cloned_head": "b8df223674fe265aa5af4cae1e0b7b2fc5e1e3ad",
       "result": "189/189",
