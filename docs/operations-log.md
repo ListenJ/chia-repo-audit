@@ -3801,3 +3801,34 @@ pin 的输出字节，同样要走重钉，本条只记录。
 
 HEAD 起点 `68f7755`，本条追加后 `verify_paper_claims.py` 仍 241/241、46 单测 OK、内容普查
 不变（370 跟踪文件 / 89 未vouched）。本轮只在 `.tmp/` 留了暂存物，跟踪树除本日志外零改动。
+
+## §60 把克隆记录追到刚推上去的那个提交，并且让行尾表是克隆自己报的
+
+§59 那条日志入库并推到五个 ref 相等之后，`results/fresh_clone_verification_2026-09-25.json`
+描述的还是 `9703c4b`。它没有失效（门禁要求 `cloned_head` 是 HEAD 的祖先，这条成立），但它
+说的是"三天前那棵树能重跑"，而评审今天 pasted clone 拿到的是 `eeef2f0`。所以按 §59 记录
+里同样的规矩重跑一次，并把记录本身更新到那个提交。
+
+克隆方式与记录里写的一致：`git clone https://github.com/ListenJ/chia-repo-audit.git` 走
+HTTPS、无 SSH key、`core.autocrlf=true`，克隆出来 `git status` 干净、HEAD 就是 `eeef2f0`。五道门禁在克隆里各自 rc=0：
+`verify_paper_claims.py` 241/241、`audit_grid_levels.py` 0/9 substituted、
+`check_documented_commands.py` 6 个脚本的 advertised options 全部比对、
+`unittest discover -s chia_loop/tests` Ran 46 OK、`mutation_test_gates.py` 10 mutations
+0 problems。
+
+三处刻意没有"顺手抄一下"：
+- `pin_at_clone` 保持原值。依据不是"看起来没改"，而是 `git diff --name-only
+  9703c4b..HEAD -- paper/` 输出为空——投稿那两个文档从那次克隆起一个字节都没动，所以
+  门禁要求"pin 等于 `cloned_head` 处的 BUILD_PIN.json blob"仍然成立，改它反而是伪造。
+- `eol_table_paper` 不是手写的：脚本把更新后的表与克隆内现跑的 `git ls-files --eol paper
+  .gitattributes` 逐行 `assert` 相同，行数或字段不一致就直接抛错。这次通过。
+- 被取代的那次测量没有删：`9703c4b` 连同它的 241/241 结果和"这之后落了哪些东西"一起挪进
+  `prior_clone_records` 头部。覆盖它等于抹掉"曾经有一棵树长那样"的唯一证据，而那正是这些
+  门禁要拦的动作。
+
+记录天生还是滞后 HEAD 一个提交（它描述的那个提交不可能同时装着它自己），这一点由门禁从
+另一侧闭合，性质与 §59 无关，照旧。
+
+顺带修正 §59 结尾那句话的适用范围：那条的"跟踪树零改动"只对当时那一个提交成立；本轮动了
+两个跟踪文件（日志与此记录），`paper/**`、README、`decision_chain/` 仍一字未动，HotCRP 上
+被钉住的那份 PDF 因此继续有效，不需要重新上传。

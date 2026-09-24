@@ -6,8 +6,8 @@
   },
   "branch": "codex/colab-cpu-validation",
   "clone_command": "git clone https://github.com/ListenJ/chia-repo-audit.git .tmp/fresh_clone_0925/repo && git checkout codex/colab-cpu-validation -- over HTTPS, the same URL a reviewer can paste, with no SSH key and no local state on the path",
-  "cloned_head": "9703c4b683eb23f3c42cef68c722c26614b2dacc",
-  "cloned_utc": "2026-09-24T17:29:07Z",
+  "cloned_head": "eeef2f0e3783e58938ecf4c2c2ef5d544d3a569d",
+  "cloned_utc": "2026-09-24T19:12:33Z",
   "core_autocrlf": "true",
   "eol_note": "Produced by `git ls-files --eol paper .gitattributes` inside the clone. The submission is now two documents, so the table is one row longer than the 9/24 record: paper_extended.tex arrived with the format split and checks out i/lf w/lf attr/-text like the other text sources. The awkward first line is unchanged -- .gitattributes cannot pin itself, and that still does not disturb the artifacts below it.",
   "eol_table_paper": [
@@ -33,7 +33,7 @@
       "rc": 0
     },
     "unittest discover -s chia_loop/tests": {
-      "last": "Ran 46 tests in 0.790s -- OK",
+      "last": "Ran 46 tests in 0.422s -- OK",
       "rc": 0
     },
     "verify_paper_claims.py": {
@@ -57,6 +57,12 @@
     "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the 3 hashes below against the bytes on disk"
   },
   "prior_clone_records": [
+    {
+      "cloned_head": "9703c4b683eb23f3c42cef68c722c26614b2dacc",
+      "result": "241/241 claims re-derived from artifacts, five gates rc=0",
+      "what_changed_since": "ops log 55-59 landed after it: the server-side byte proof, the credential-free VM corroboration, the compute-path and credential-vocabulary sweeps, the .tmp premise correction, and the extended report's render-layer measurement. Every one of them is prose or a tracked result file; paper/** was not touched, which is why the pin below is unchanged.",
+      "why_it_is_not_this_one": "it measured the tree before those appends, so its gate lines are not this commit's."
+    },
     {
       "cloned_head": "595aebcc02a67f10d2a2970854fbd236428c2ae1",
       "result": "220/220 claims re-derived from artifacts",
