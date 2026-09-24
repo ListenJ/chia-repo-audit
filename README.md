@@ -120,11 +120,17 @@ supplies one here.
   (`scripts/real_candidate_generate.py`, SiliconFlow or the funded Vertex AI path).
 - Deterministic stub backend and the pinned source-build smoke, both retained as
   explicitly-labelled protocol validation.
-- 44 unit tests pass in-tree and, re-verified on 2026-09-24, inside the pinned
-  official image (`results/in_image_tests_2026-09-24.json`, which supersedes the
-  43-test run recorded the previous day against the tree before the 44th test).
-  The suite is pure Python,
-  so an in-image run establishes compatibility, not that any measurement reproduced.
+- 46 unit tests pass in-tree and, re-measured at 2026-09-23T22:09Z, inside the pinned
+  official image (`results/in_image_tests_2026-09-24_r3.json`). It supersedes the 45-, 44-
+  and 43-test runs (`results/in_image_tests_2026-09-24_r2.json`,
+  `results/in_image_tests_2026-09-24.json`, `results/in_image_tests_2026-09-23.json`),
+  each of which was correct against its own tree, so all four are kept -- overwriting an
+  earlier record deletes the only evidence that the tree was ever different. These file
+  names carry the author's local date, which is why the three dated 2026-09-24 were all
+  measured on 2026-09-23 UTC. The same 46 is what the paper claims, and
+  `verify_paper_claims.py` counts `def test_` in `chia_loop/tests` rather than trusting
+  either sentence. The suite is pure Python, so an in-image run establishes
+  compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
   committed artifact and exits non-zero on drift (241 claims). Prose checks bind to one of
   two corpora -- the 4-page submission (`paper/paper.tex`) and the full audit report

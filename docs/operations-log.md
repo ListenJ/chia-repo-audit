@@ -3493,3 +3493,38 @@ HotCRP.com 的登录表单。投稿站上的 PDF 是哪一版无法读出。能�
 同日记录就会立刻成为被审计对象，而它一旦提交，HEAD 又前进、普查又漂移一层——这套自指代价在 §48
 已经付过一次。`2026-09-25.json` 仍然准确描述它所量过的那棵树，本节说的是另一棵更晚的树，
 两条都是"被 clone 过并且全绿"，只是被门禁钉住的是前者。
+
+## §51 HotCRP 换件：服务端哈希第一次和 HEAD 的 pin 对上，顺带修掉 README 里一个没有门禁看守的 44
+
+2026-09-24T17:57Z 在 `#27/edit` 用 `paper/paper.pdf` 替换了投稿件，然后带 cache-buster
+重新 GET `/doc/a3-chia-hackathon-26-paper27.pdf`，在页面里用 `crypto.subtle` 对**响应字节**
+算 sha256：`de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6`，592,258 字节，
+4 页——与 `paper/BUILD_PIN.json` 的 `outputs["paper/paper.pdf"]` 逐字节相同。替换前服务端那份
+是 `430dda7e…`（页面标注 Sep 24, 2026, 10:09:14 AM PDT），即 pin 血缘里更早的一节：同一个
+4 页版面，但 `.tex` 与图在其后又动过。哈希取的是服务端返回的字节而不是本地文件，所以这条
+不是"我上传了什么"，而是"评审下载到会得到什么"。
+
+终检四要素在 `/paper/27`（评审视角那一页）上核过：标题原文、artifact URL 精确等于
+`https://github.com/ListenJ/chia-repo-audit/tree/codex/colab-cpu-validation`、AI Review
+Consent 勾选、"Save and resubmit" 之后 ready for review 仍然成立。Summary 字段里的
+"220 numeric claims" 改成 "241 claims in the paper and the extended report beside it"，
+因为那条自指检查要求正文数字 == `len(CHECKS) + 1`，而投稿表单里的这句话和 README 一样是
+抄的旧数字——它在门禁的输入域之外，不会自己变红。
+
+换件过程中撞见第二类同形缺陷：README 写"44 unit tests pass in-tree"，而 `verify_paper_claims.py`
+的 `check("test count matches paper", 46, static, ...)` 是现场数 `chia_loop/tests` 里的
+`def test_`，本机 `unittest discover` 也是 `Ran 46 tests / OK`，`results/in_image_tests_2026-09-24_r3.json`
+记录镜像里同样跑了 46 条并通过。也就是说 44 不是错在证据，而是错在被替换掉的措辞：它指向
+`results/in_image_tests_2026-09-24.json`（r1，ran 44）并把"当前套件有几条"这件事说成了那个数。
+修的是事实不是门禁——README 现在写 46，并把 43/44/45/46 四份记录按 supersession 链列全，另注明
+这些文件名带的是作者本地日期，所以三份"09-24"的 `run_utc` 都落在 09-23 UTC。
+
+没有为 README 的这个数字加门禁，理由是代价而不是省事：多一条 check 就把自指条数从 241 变成
+242，而 241 是已经写进那份刚钉上 HotCRP 的 PDF 正文的已发表数字，计划里明令冻结；重钉链要走完
+还得再换一次件。于是把残余风险写在这里：README 的测试数是 prose 抄来的、由论文侧门禁间接保证
+（两边数字若再分叉，论文门禁先红），但没有一条检查直接读 README。
+
+这条记录也不能自证：仓库没有任何门禁能重算 HotCRP 服务端的哈希（那需要一个已登录会话），
+所以"服务端 == pin"这句话在本 artifact 里是**只能由投稿人当场演示、由评审下载后自行核验**的
+外部状态，与 §49 里 GCP 实例清单同一类。能重 derive 的部分是本地这一侧：
+`sha256sum paper/paper.pdf` 对 `BUILD_PIN.json`。
