@@ -3736,3 +3736,68 @@ artifact"只对了一半：收尾过程确实进了公开 artifact，路径就�
 
 另外清掉了自己这轮造的临时物：一次干净克隆落在 `.tmp/` 里有 11 MB，连脚本一起删了，跟踪树保持
 零改动。只增不改的规矩保护的是入库的证据，不包括我随手堆在暂存区里的克隆。
+
+## §59 扩展报告没有渲染层：现编一份，把 112 个正文绑定回放到 PDF 上，先校准测量再下结论
+
+触发这次测量的是一条不对称：4 页投稿有 `paper/BUILD_PIN.json` 钉住 `paper/paper.pdf` 与
+`paper/paper_text.txt`，而被 README 和正文当成"随投稿一起交付的完整报告"引用的
+`paper/paper_extended.tex` 在仓库里**没有任何 PDF**，也没有任何门禁读它的渲染。所以
+"这句话由扩展报告承载"目前只是关于一个 `.tex` 文件的断言，而评审打开的是 PDF。
+
+现编一份（`.tmp/` 暂存，不入库）：在 `paper/` 目录里 `pdflatex -interaction=nonstopmode
+paper_extended.tex` 跑三遍、`-output-directory` 指到 `.tmp/extended_build`，rc=0，
+`Output written … (10 pages, 622805 bytes)`，0 个未解析引用，1 条无害的 `'h' float
+specifier changed to 'ht'`。落盘 PDF 的 sha256 前缀 `a983ce15ebf7352f`，源文件
+`paper/paper_extended.tex` 的 sha256 前缀 `85efa1b09e5a6bf1`（这条克隆里可复算，前一条不
+是入库工件所以只留前缀：把暂存产物的完整哈希写进日志，就是那条"文档里每个 64 位十六进制
+串都必须真是某个东西的哈希"门禁专门要拦的形状——它在别的机器上会查无指称物）。
+
+回放方法：从 `scripts/verify_paper_claims.py` 里把 `PROSE_FRAGMENTS` 拿出来（它是第 82 行
+`check()` 在用到 `in_paper=` 时自动登记的，不是手抄清单），去重得 112 条，逐条 `re.search`
+到两份渲染文本上——投稿用已入库的 `paper/paper_text.txt`，报告用上面现编的 PDF。
+
+**直接回放会误判，而且误判方向是"判论文没有其实有"。** pypdf 在这份文档上会吞掉词间空格
+（抽出 `twodistinctbinaries`、`scored0.126`），数学式里的负号抽成 U+2212，源码里的 `{,}`
+千位分隔符渲染成逗号。所以第二轮回放做了四件事：正则原子之间允许插入空白或连字符、模式
+里的空格改成可选（渲染丢空格也能命中）、裸 `.` 视作 0 或 1 个字符、`{,}` 折成 `,`。这种
+放宽只会把"缺失"翻成"命中"，不会反向，因此**命中数是上界，缺失清单才是结论**。
+
+先校准测量本身，再谈结论：
+- 投稿侧 69 条去重绑定（门禁自报"74 carried by the submitted 4-page paper"是按使用次数，
+  117 次使用去重成 112 条，其中 69 条在 4 页源码里），**69/69 全部能在投稿渲染里找到**，
+  其中 59 条逐字命中、10 条必须靠放宽才命中（全是 pypdf 丢空格那一类）。
+- 反向对照：5 个编造的近似短语（`nine defects`、`47 unit tests`、`Cohen kappa 1.000` 等）
+  全部正确判为缺失。放宽后的匹配器不会把虚构的东西认成在页上。
+
+没有这两步，我就会把"提取器丢空格"汇报成"论文的正文绑定没落进渲染层"。这是本轮第 N 次
+遇到同一形状：信号先归给被测对象，而它其实来自测量层。
+
+结果：43 条"只在扩展报告里"的绑定，**41 条在报告渲染里找得到**。两条找不到的，原因都是
+绑定串自己带了永不打印的字符，而不是页面上少了那句话：
+1. `\$0\.126\$, below the safe local rewrite at \$0\.160\$`——这里的 `\$` 是正则里的"字面
+   美元符"，而 `paper/paper_extended.tex:578` 写的是数学定界符 `$0.126$`（这些数字是审批
+   分数，不是钱）。PDF 上印的是 "Editing a conference submission scored 0.126, below the
+   safe local rewrite at 0.160."，句子完整，美元符本来就不该出现。
+2. `fig_decomposition` 命中的位置是 `paper/paper_extended.tex:145` 的
+   `\includegraphics[width=0.99\textwidth]{fig_decomposition.pdf}`——图形文件名。图在 PDF
+   里，文件名不作为文本出现，评审在 PDF 里搜这个词搜不到。
+
+两条都不是"论文说了但渲染没有"，而是"门禁的字符串匹配到了 markup 而不是句子"，正是这篇
+论文自己命名的缺陷形状落在了自己的验收脚本上；危害方向是假红（换个提取器就会红），不是
+假绿，所以不在窗口内动它。
+
+**剩下的缺口照实记下，交作者裁定：**没有任何门禁读扩展报告的渲染，仓库里也没有
+`paper_extended.pdf`。要堵它就得把 10 页 PDF 入库并加一条新鲜度/内容门禁，而加一条 check
+会让自指条数从 241 变 242，投稿 PDF 正文里那句 `(241 claims, non-zero exit on drift)` 就
+跟着变 → 重编译 → extract → pin → verify → 重新上传 HotCRP。那是"改已发表数字"，不在截
+稿窗口里由执行者替作者决定。
+
+提取层的事实顺带钉在这里：同一份 `paper/paper.pdf`，pypdf 抽出 25,004 字符，poppler 的
+`pdftotext` 抽出 25,201 字符（多出的 197 个几乎全是词间空格）；上面那 10 条需要放宽的绑定
+全部是 pypdf 丢空格造成，poppler 侧 `two distinct binaries`、`46 unit tests`、
+`correct on all` 都完整。**也就是说交付给评审的 PDF 文本层是可搜索的，退化发生在仓库自己
+入库的那份 `paper/paper_text.txt` 上**（它是 BUILD_PIN 的一个 output）。换提取器会改这个
+pin 的输出字节，同样要走重钉，本条只记录。
+
+HEAD 起点 `68f7755`，本条追加后 `verify_paper_claims.py` 仍 241/241、46 单测 OK、内容普查
+不变（370 跟踪文件 / 89 未vouched）。本轮只在 `.tmp/` 留了暂存物，跟踪树除本日志外零改动。
