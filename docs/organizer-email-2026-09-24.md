@@ -32,7 +32,7 @@ rather ask than guess:
    call states "Paper length: 2-4 pages with IEEE or ACM format, excluding references", and
    the hackathon announcement states a one-page maximum for the Aug 25 proposals, but we
    could not find a length rule for the final hackathon submission in either place. Our
-   paper is currently 8 pages in two-column ACM format (plus 6 references). If the 2-4 page
+   paper is currently 9 pages in two-column ACM format (plus 6 references). If the 2-4 page
    workshop rule applies to the hackathon track, we will compress it -- we would rather cut
    the right sections on your guidance than guess and risk a desk reject.
 

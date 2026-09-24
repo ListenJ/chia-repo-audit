@@ -1,0 +1,18 @@
+{
+  "what_this_is": "The paper.pdf that commit d1a7c63 shipped, retained under its own name after paper/paper.pdf was recompiled on 2026-09-24.",
+  "retained_utc": "2026-09-24T~08:06Z",
+  "sha256": "97eb5bc45b8fef81ec03352b2268015ddc9c16d9e3a874675cefdf87099b042b",
+  "bytes": 614968,
+  "why_retained": "docs/operations-log.md quotes that digest as the output of the 173-claim delivery chain, and scripts/verify_paper_claims.py enforces that every 64-hex string quoted in the docs is a real digest of something on disk. Recompiling paper/paper.pdf would have left the log quoting a hash with no referent, so the gate would have gone red -- or, worse, been loosened. Keeping the bytes is the option that leaves both the history and the gate intact. The digest is also recoverable from git (git show d1a7c63:paper/paper.pdf), but the gate scans the working tree, not the object store.",
+  "the_build_it_came_from": {
+    "git_head": "d1a7c63",
+    "claims": "173/173, rc=0",
+    "paper/paper.tex": "d22eea752d3645d24d2e738061df2923cdbc303130d96dc9f0aaf4001d705673",
+    "paper/fig_decomposition.pdf": "3daef5d31472f76fb6bb07b09c5586147b39d452fbdefc3db48542d5210c4ebe",
+    "paper/paper.pdf": "97eb5bc45b8fef81ec03352b2268015ddc9c16d9e3a874675cefdf87099b042b",
+    "paper/paper_text.txt": "cc7ef8716c09d9d5d4cc784aa122f58c884e37661a0632b65a6dae9713c5539e",
+    "hashes_taken_from": "git show d1a7c63:<path> | sha256sum, i.e. the committed blob bytes, not this working tree",
+    "freshness_gate_at_that_commit": "mtime-based, and therefore not reproducible from a clone. That is the defect that produced this file: see paper/BUILD_PIN.json and the 'second correction' paragraph in paper/paper.tex."
+  },
+  "not_the_current_submission": "paper/paper.pdf is current. This copy is a referent for a quoted digest and a record of what the 173-claim chain certified."
+}

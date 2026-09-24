@@ -31,7 +31,11 @@ def main() -> int:
     reader = PdfReader(str(pdf))
     text = "\n".join(page.extract_text() or "" for page in reader.pages)
     out = REPO / "paper/paper_text.txt"
-    out.write_text(text, encoding="utf-8")
+    # newline="\n" because paper/** is pinned -text in .gitattributes and
+    # BUILD_PIN.json hashes this file's bytes. Without it a Windows run writes
+    # CRLF and a Linux run writes LF, and the same committed PDF pins to two
+    # different hashes depending on who extracted it.
+    out.write_text(text, encoding="utf-8", newline="\n")
     print(f"{len(reader.pages)} pages, {len(text)} chars -> {out.relative_to(REPO)}")
     return 0
 

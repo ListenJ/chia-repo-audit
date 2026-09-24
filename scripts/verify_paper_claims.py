@@ -659,21 +659,62 @@ check("no markdown doc cites a bare numeric paper section", [],
               for line in f.read_text(encoding="utf-8", errors="ignore").splitlines()
               for _ in [0] if re.search(r"§3\.\d|\bsection 3\.\d", line)}))
 
-# ---- 提交物本身：PDF 必须比它渲染的源新，否则就是在引用上一轮产物 ------
-_tex = (REPO / "paper/paper.tex").stat().st_mtime
-_fig = (REPO / "paper/fig_decomposition.pdf").stat().st_mtime
-_pdf = (REPO / "paper/paper.pdf").stat().st_mtime
-check("the PDF is newer than the LaTeX source", True, _pdf > _tex)
-check("and newer than the figure it embeds", True, _pdf > _fig)
+# ---- 提交物本身：PDF 必须真是当前源的渲染，不是上一轮的产物 ------------
+# 这里原来是三条 mtime 比较（pdf>tex、pdf>fig、render>=pdf）。在自己的工作树里
+# 它们成立，所以看着像个门。但在一次干净克隆里所有文件都是 checkout 时几毫秒内
+# 先后落盘的，先后由 git 决定：实测推送分支的 Windows 克隆里四个文件在 7ms 内写
+# 完，paper.pdf 比 paper.tex 早 1ms，于是文档给出的验证命令在评审机器上返回
+# 172/173 rc=1、在我这里返回 173/173 rc=0。判决由 10ms 以内的写盘顺序决定的门
+# 不是门，是一次恰好落在我们这边的掷硬币。改成按内容钉住：BUILD_PIN.json 记录
+# 编译当时吃进去和吐出来的字节，这里只问"盘上还是不是那一套"，而这个问题
+# checkout 改不了答案。改了 tex 不重编，tex 的哈希就对不上，红得确定、原因明确。
+_pin = load_json("paper/BUILD_PIN.json")
+_pinned = {**_pin["inputs"], **_pin["outputs"]}
+for _rel, _what in (("paper/paper.tex", "LaTeX source"),
+                    ("paper/fig_decomposition.pdf", "embedded figure"),
+                    ("paper/paper.pdf", "submitted PDF"),
+                    ("paper/paper_text.txt", "committed text render")):
+    check(f"the {_what} on disk is the one the build pin was written against",
+          _pinned[_rel],
+          hashlib.sha256((REPO / _rel).read_bytes()).hexdigest())
 check("the PDF reports its own page count somewhere readable", True,
       (REPO / "paper/paper.pdf").read_bytes().count(b"/Type /Page") > 1)
+# pin 里的 pages 是自报字段：原来没人拿它跟 PDF 对账，把 9 改成 8 再顺手改掉
+# README，页数门就整体绿了。页对象数是从字节里独立数出来的（/Type /Page 后面不
+# 接字母，这样 /Type /Pages 那三个树节点不会被算进来），所以它给 pages 一个指称物。
+check("and the pin's page count is really the number of page objects in the PDF",
+      _pin["pages"],
+      len(re.findall(rb"/Type\s*/Page(?![A-Za-z])",
+                     (REPO / "paper/paper.pdf").read_bytes())))
 _render = REPO / "paper/paper_text.txt"
-if not _render.exists():
-    raise SystemExit("paper/paper_text.txt is missing -- run "
-                     "scripts/extract_pdf_text.py; this gate does not skip itself")
 _rendered = re.sub(r"\s+", " ", _render.read_text(encoding="utf-8"))
-check("the committed text render is newer than the PDF", True,
-      _render.stat().st_mtime >= _pdf)
+
+# ---- 留档的上一版提交 PDF：它是 ops log 里那个摘要唯一的指称物 ------------
+# 重编 paper/paper.pdf 之后，docs/operations-log.md 引用的 97eb5bc4… 就不再是盘上
+# 任何文件的哈希，下面那条"文档里每个 64 位十六进制串都必须真是某个东西的哈希"
+# 就会红。放松那条门是错的方向；留住字节是对的，但"留住了"本身也得可验证，
+# 否则它只是一个没人检查的 615KB 装饰，而留档的理由恰恰是它要当证据的指称物。
+_HIST_PROV = "results/submitted_pdf_history/provenance.json"
+_HIST_PDF = "results/submitted_pdf_history/paper_2026-09-23_173claims.pdf"
+_hp = load_json(_HIST_PROV)
+_hbytes = (REPO / _HIST_PDF).read_bytes()
+_hsha = hashlib.sha256(_hbytes).hexdigest()
+check("the retained prior submission hashes to the digest the ops log quotes",
+      _hp["sha256"], _hsha)
+check("and the ops log still quotes it, so the retention has a referent", True,
+      _hsha in (REPO / "docs/operations-log.md").read_text(encoding="utf-8"))
+check("the retained copy is not passed off as the current submission", True,
+      _hsha != _pinned["paper/paper.pdf"])
+_build = _hp["the_build_it_came_from"]
+_blob = subprocess.run(["git", "show", f"{_build['git_head']}:paper/paper.tex"],
+                       cwd=REPO, capture_output=True)
+check("the superseded build's recorded source digest is really that commit's blob",
+      _build["paper/paper.tex"], hashlib.sha256(_blob.stdout).hexdigest())
+check("and the retained PDF is really that commit's PDF",
+      _build["paper/paper.pdf"],
+      hashlib.sha256(subprocess.run(
+          ["git", "show", f"{_build['git_head']}:paper/paper.pdf"],
+          cwd=REPO, capture_output=True).stdout).hexdigest())
 check("the rendered pages carry the headline numbers", True,
       all(s in _rendered for s in ("78.16", "249.18", "8.3812", "2,261,770")))
 check("no unresolved reference reached the render", 0, _rendered.count("??"))
@@ -754,8 +795,44 @@ check("the published orphan breakdown is recomputed", True,
       f"({len(_inv['unvouched'])} files;" in README_TXT
       and f"{sum(1 for f in _inv['unvouched'] if f.startswith('.tmp/'))} live under"
       in README_TXT)
+# 上面几条只管住了比率和总数，README 里三个分层的绝对计数仍然没人核对——
+# 138 就是这么在原地陈旧的。这里把三个计数按出现顺序一次钉死。
+check("and the three tier counts, which the rates alone did not pin down",
+      [_inv["tiers"]["machine"], _inv["tiers"]["reachable"],
+       _inv["tiers"]["code-unreferenced"]],
+      [int(x) for x in re.findall(r"\((\d+) files", README_TXT)])
 check("and REVIEW_COVERAGE.md is the generated one", True,
       str(_inv["files_tracked"]) in (REPO / "REVIEW_COVERAGE.md").read_text(encoding="utf-8"))
+
+# ---- README 里那些描述"当前状态"的数字，同样得是重算出来的 ----------------
+# 找到这两条的原因：README 写着 "(138 claims)" 和 "8 pages"，而验证器当时已经是
+# 179 条、PDF 已经是 9 页。两个数字都没有门。论文里的 claim 数是自指门禁管着的，
+# README 里的同一个数字没人管，于是它在原地陈旧了两轮。页数更糟：它同时出现在
+# 给主办方的邮件草稿里，而那封信是要发出去的。
+_readme_n = re.search(r"\((\d+) claims\)", README_TXT)
+_paper_n = re.search(r"\((\d+) claims, non-zero exit on drift\)", PAPER)
+# 两边都可能搜不到，那就是要报的错本身。变异测试实测过：论文里那句被改坏时，
+# 直接 .group(1) 会让整个验证器抛 AttributeError 崩掉，而不是留下一条 FAIL——
+# 一个因为异常而退出的门看起来也是"非零退出"，但它没有告诉你哪条错了。
+check("the README quotes the same claim count as the paper",
+      _paper_n.group(1) if _paper_n else None,
+      _readme_n.group(1) if _readme_n else None)
+# 只列描述当前状态的文档。ops log、decision_chain/README 和带日期的 handoff 是历史
+# 快照，它们写的是当时的页数，改了反而是伪造记录；handoff 顶部因此挂了陈旧告示。
+# 正则也必须只匹配"本文有多少页"的句式：裸扫 r"\d+ pages" 会把 README 和邮件里
+# 引用的工作坊规则 "2-4 pages" 一起抓进来，那是别人的限制，不是我们的页数。
+_OUR_LENGTH = (r"our paper is (\d+) pages", r"currently (\d+) pages",
+               r"compiles it cleanly -- (\d+) pages")
+_stale_pages = sorted(
+    f"{_d} says {m.group(1)}"
+    for _d in ("README.md", "docs/organizer-email-2026-09-24.md")
+    for _pat in _OUR_LENGTH
+    for m in re.finditer(_pat, (REPO / _d).read_text(encoding="utf-8"))
+    if int(m.group(1)) != _pin["pages"])
+check("no current-state doc quotes a page count the PDF does not have", [], _stale_pages)
+check("and the README does state one, so the gate cannot pass by deletion", True,
+      sum(len(re.findall(_p, README_TXT)) for _p in _OUR_LENGTH) >= 2
+      and f"{_pin['pages']} pages" in README_TXT)
 
 # ---- 决策链第二组：4 条真实决策，判决与作者实际动作对账 ---------------
 _d3spec = load_json("decision_chain/chia-decisions3.json")

@@ -5,3 +5,10 @@
 # the files still look identical in an editor. -text pins the bytes as committed.
 results/** -text
 .tmp/** -text
+# paper/BUILD_PIN.json records sha256 over paper.tex, paper.pdf, the figure and
+# the extracted text render, so those four are evidence bytes too. The PDFs git
+# already treats as binary; paper.tex and paper_text.txt it does not, and on a
+# fresh core.autocrlf=true clone both come out CRLF while this working tree has
+# them LF -- measured, and it is the reason the pin would have hashed to
+# different values here and on a reviewer's machine.
+paper/** -text

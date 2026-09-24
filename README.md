@@ -126,24 +126,32 @@ supplies one here.
   The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (138 claims). Its final check is
+  committed artifact and exits non-zero on drift (184 claims). Its final check is
   self-referential: the paper states the claim count, so editing the verifier without
-  updating the prose turns the run red.
+  updating the prose turns the run red. This sentence is gated too, and the reason is
+  that it used not to be --- it read "138 claims" for two rounds after the count had
+  moved past that, while the identical number in the paper stayed correct because a
+  check re-derived it.
 - `paper/paper.pdf` is built with **pdfTeX** (`pdflatex paper.tex`, twice, so that
   cross-references resolve), not XeLaTeX: the host's `xetex.fmt` disappeared during the
   2026-09-23 session and the source is pure ASCII and loads no `fontspec`, so pdfTeX
-  compiles it cleanly -- 8 pages, 0 overfull boxes, no undefined references. Any rebuild
-  must follow the chain source -> pdflatex x2 -> `uv run --with pypdf python
-  scripts/extract_pdf_text.py` -> `python3 scripts/verify_paper_claims.py`. The verifier
-  fails if the PDF is older than the source or the figure it embeds, or if the committed
-  text render (`paper/paper_text.txt`) is older than the PDF, and it re-checks the headline
-  numbers, unresolved-reference markers and underscore-bearing identifiers *in the rendered
-  text* -- the text layer is where a typesetting regression shows up, not the source.
-- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 347 tracked
-  files, classified by what *code* vouches for each: **48.4% machine-vouched** (168 files
-  a `verify_paper_claims.py` check re-derives or a unit test loads), 29.1% reachable-only
+  compiles it cleanly -- 9 pages, no undefined references. Any rebuild must follow the
+  chain source -> pdflatex x2 -> `uv run --with pypdf python scripts/extract_pdf_text.py`
+  -> `uv run --with pypdf python scripts/pin_paper_build.py` -> `python3
+  scripts/verify_paper_claims.py`. The pin step is not optional: the verifier compares
+  the SHA-256 of the source, the figure, the PDF and the text render against
+  [`paper/BUILD_PIN.json`](paper/BUILD_PIN.json), so a rebuild that skips it leaves four
+  checks red. That gate used to compare modification times instead, which holds in a
+  working tree and is decided by checkout write ordering in a fresh clone -- measured, and
+  it made the documented verification command fail on a clone of the pushed branch while
+  passing here. The verifier also re-checks the headline numbers, unresolved-reference
+  markers and underscore-bearing identifiers *in the rendered text* -- the text layer is
+  where a typesetting regression shows up, not the source.
+- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 351 tracked
+  files, classified by what *code* vouches for each: **48.7% machine-vouched** (171 files
+  a `verify_paper_claims.py` check re-derives or a unit test loads), 28.8% reachable-only
   (101 files in a set some script globs), and **22.5% with no code reference at all**
-  (78 files; 44 of those are at least named in prose, 50 live under `.tmp/` as run logs
+  (79 files; 45 of those are at least named in prose, 50 live under `.tmp/` as run logs
   and three container lock files). Regenerate with `python3
   scripts/inventory_vouches.py --markdown REVIEW_COVERAGE.md`. Read the rate with its
   stated biases. First, entry-point scripts are invoked rather than imported, so they fall
@@ -362,7 +370,7 @@ Not verified — and previously stated here as if it were:
   "Paper length: 2-4 pages with IEEE or ACM format, excluding references", which is
   written for the **workshop paper track** and never mentions the hackathon. So the
   open question is not whether a limit exists but **whether the workshop's 2-4 pages
-  govern hackathon submissions** -- our paper is 8 pages plus 6 references, so if it
+  govern hackathon submissions** -- our paper is 9 pages plus 6 references, so if it
   does, this is desk-reject scale. Asked of the organizers on 2026-09-24
   (`docs/organizer-email-2026-09-24.md`); unanswered as of this writing, and we have
   not cut content on a guess.

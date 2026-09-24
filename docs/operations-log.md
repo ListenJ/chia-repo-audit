@@ -2091,3 +2091,158 @@ README 里那句覆盖率同时补了第二条偏差说明：**普查是静态�
 
 **唯一还红过的检查是那条设计性红**（"引用了未 git add 的文件"），
 在本轮 `git add` 之后转绿。
+
+## 32. 算力账号被删；以及一条判决由写盘顺序决定的"新鲜度门"
+
+### 32.1 赞助账号 `devstar7744@gcplab.me` 已被 Google 删除
+
+两层独立证据，2026-09-24 取得：
+
+- OAuth 端点：`gcloud auth print-access-token` →
+  `ERROR: ... ('invalid_grant: Account has been deleted', {'error': 'invalid_grant',
+  'error_description': 'Account has been deleted'})`；
+  由 `gcloud compute instances list --project=a3-chia-hack26ath-7744` 独立复现。
+  注意 `gcloud auth list` **仍然**列出该账号并带 `*`——本地凭据缓存的存在
+  不能推出账号在服务端还存在，所以一层不够。
+- Google 登录 UI：无凭据的 identifier 探测落在
+  `accounts.google.com/v3/signin/deletedaccount`，页面文字
+  "此账号最近已被删除，但或许可以再恢复"。**没有点"下一步"**：
+  恢复需要密码与 2SV，那是用户的动作。
+
+两台实例（`chia-grid`、`chia-grid2`）在此之前已按用户授权销毁，销毁前的
+whole-home 内容哈希扫描记录在 `results/vm_teardown_precondition_2026-09-24.json`，
+只在 VM 上存在的文件已抢救进 `results/compute_host_bookkeeping/`。
+所以**销毁不是损失，账号被删才是**：`scripts/independent_audit.py:24` 硬 import
+`vertex_access_token`（`real_candidate_generate.py:247-253`，运行时 shell out 到
+`gcloud auth print-access-token`），独立评审那一半因此跑不了。
+测量那一半可以本地跑：Docker Desktop 29.5.3 linux/amd64 拉得动那个钉死的 digest，
+`results/in_image_tests_2026-09-24_r3.json` 就是这么在 VM 消失之后产生的。
+
+**Laya 不能顶替独立评审。** 实测它不推理输入里的数值、不处理否定、跨措辞会翻面，
+由它产出的 κ 不可解释，而且那恰好是本文审计的缺陷类型。
+
+### 32.2 干净克隆把"PDF 比源新"这条门证伪了
+
+推送分支后克隆了一份，跑文档给出的验证命令：**172/173，rc=1**，
+唯一那条红是 `the PDF is newer than the LaTeX source`。量了克隆里的 mtime：
+
+```
+paper/paper.tex              15:47:50.702
+paper/fig_decomposition.pdf  15:47:50.698
+paper/paper.pdf              15:47:50.701
+paper/paper_text.txt         15:47:50.704
+pdf > tex  -> False   (差 1 ms)
+```
+
+四个文件在 **7 ms** 内落盘，先后完全由 git checkout 决定。所以这条门不是
+"在克隆里必然红"，而是**由 10 ms 以内的写盘顺序掷硬币**：在我这台机器上
+它一直绿，只因为硬币落在我们这边。三条 mtime 门（`pdf>tex`、`pdf>fig`、
+`render>=pdf`）都是这个性质。一个判决随机的门比没有门更糟，因为它给出的是
+"我们检查过新鲜度"的错觉。
+
+改成按内容钉住：`scripts/pin_paper_build.py` 写 `paper/BUILD_PIN.json`，
+记录编译吃进去的两个输入和吐出来的两个输出的 sha256 以及页数；验证器只问
+"盘上还是不是那一套"。这个问题 checkout 改不了答案。改了 tex 不重编，
+tex 的哈希就对不上，红得确定、原因写在 FAIL 行里。pin 脚本自己会失败：
+缺 pypdf 直接非零退出，并且在写 pin 之前重新抽一遍文本层、与
+`paper/paper_text.txt` 逐字节比对，不一致就不写——一个会自我跳过的门等于通过。
+
+### 32.3 克隆还暴露了第二处平台相关：`paper/` 的行尾
+
+同一份推送分支，两边索引 blob 都是 LF，工作树却不是：
+
+```
+                        主仓          干净克隆
+paper/paper.tex         w/lf          w/crlf
+paper/paper_text.txt    w/crlf        w/crlf
+.gitattributes          w/lf          w/crlf
+```
+
+也就是说**任何按工作树字节算的哈希都依赖机器**。§31.7 已经为 `results/`
+和 `.tmp/` 修过同一个坑，`paper/` 当时不在名单里，而 BUILD_PIN 恰恰要哈希
+`paper.tex` 和 `paper_text.txt`。修法是 `.gitattributes` 增加 `paper/** -text`，
+并让 `extract_pdf_text.py` 用 `newline="\n"` 写文件——不改后者的话，
+Windows 上抽一次是 CRLF、Linux 上抽一次是 LF，同一个 PDF 会钉出两个哈希。
+
+### 32.4 留档上一版 PDF，因为一条门需要它的字节当指称物
+
+重编 `paper/paper.pdf` 之后，本文 §31.9 引用的 `97eb5bc4…` 就不再是盘上任何
+文件的哈希，而"文档里每一个 64 位十六进制串都必须真是某个东西的哈希"会红。
+放松那条门是错的方向。旧 PDF 留在
+`results/submitted_pdf_history/paper_2026-09-23_173claims.pdf`，
+带 provenance，并加了 5 条检查把它钉到 git 历史上（它自己的哈希、ops log 仍在
+引用它、它不等于当前提交物、以及记录里的 tex 与 pdf 摘要真的等于
+`git show d1a7c63:<path>` 的 blob）。"留了档"本身也得可验证，
+否则只是一个没人检查的 615 KB 装饰。
+
+### 32.5 顺手撞见的两处陈旧数字，都没有门
+
+改 README 的构建链时发现同一句话里两个数字都是旧的：
+
+- `(138 claims)` —— 验证器当时已经是 179 条。**同一个数字在论文里是对的**，
+  因为论文那条被自指门禁管着；README 这条没人管，于是在原地陈旧了两轮。
+- `8 pages` —— PDF 从 173-claim 那轮起就是 9 页（§31.9 自己写着
+  "9 pages, 614,968 B"）。这个错数字还出现在另外三处：README 的页数上限段、
+  **给主办方那封尚未发出的邮件草稿**、以及带日期的 handoff。
+
+处理：README 与邮件草稿改成 9 页；handoff 是带日期的快照，改掉它等于伪造当时
+的记录，所以在顶部挂了陈旧告示并指向当前权威来源。新增三条门：README 引用的
+claim 数必须等于论文引用的（传递性，不需要知道最终条数）、描述当前状态的文档
+不得引用 PDF 没有的页数、以及 README 必须真的写了页数（防止靠删除通过）。
+页数正则只匹配"本文有多少页"的句式——裸扫 `\d+ pages` 会把 README 和邮件里
+引用的工作坊规则 "2-4 pages" 一起抓进来，实测就是这么误报的。
+
+`pin["pages"]` 起初也是自报字段：把它从 9 改成 8、再顺手把 README 改成 8，
+页数门整体绿。补了一条从字节里独立数页对象的检查
+（`/Type /Page` 后不接字母，这样 `/Type /Pages` 那三个树节点不算进来），
+合谋情形现在报 1 条干净的 FAIL。另一个自报字段
+`text_layer_rederived_from_pdf` 翻成 false 也全绿——它断言不了任何事，
+**删掉比留着诚实**。
+
+### 32.6 变异测试，含我自己新写的代码里的两个洞
+
+8 + 3 条变异，全部 rc=1 且报出可读的 FAIL，还原后 rc=0：
+
+| 变异 | 结果 |
+| --- | --- |
+| 论文 claim 短语改坏 | rc=1，3 FAIL（**起初是 AttributeError 崩溃**，见下） |
+| 论文 claim 数差一 | rc=1，3 FAIL |
+| README claim 数与论文不一致 | rc=1，1 FAIL |
+| README 页数说谎 | rc=1，1 FAIL |
+| README 分层计数说谎 | rc=1，1 FAIL |
+| README 页数声明被删 | rc=1，1 FAIL |
+| 文本渲染被改 | rc=1，1 FAIL |
+| pin 页数被篡改 | rc=1，2 FAIL |
+| pin 页数 + README + 邮件草稿一起改成 8 | rc=1，1 FAIL（页对象对账） |
+| `text_layer_rederived_from_pdf` 翻成 false | **rc=0**（因此删除该字段） |
+
+第一条起初不是 FAIL 而是崩溃：我新写的
+`re.search(..., PAPER).group(1)` 在论文那句被改坏时抛 AttributeError。
+原有的自指检查有 `stated is not None` 守卫，我抄语义时没抄守卫。
+这值得单记一句——**一个因为异常而非零退出的门，看起来也是"非零退出"**，
+但它不告诉你哪条错了，而"非零退出"正是我们用来当失败信号的东西。
+现在两边都取不到时返回 `None` 并作为正常 FAIL 报出。
+
+### 32.7 本轮链条
+
+```
+pdflatex ×2                     -> rc=0, 9 pages, 616,563 B
+extract_pdf_text.py             -> 9 pages, 46,142 chars, LF-only
+pin_paper_build.py              -> 2 inputs + 2 outputs + pages
+inventory_vouches.py            -> 109 lines, 连跑两次逐字节相同（定点）
+verify_paper_claims.py          -> 184/184, rc=0
+audit_grid_levels.py            -> rc=0
+check_documented_commands.py    -> rc=0
+unittest discover               -> Ran 46 tests, OK
+```
+
+验证器条数 173 → **184**（−3 mtime +4 pin，+5 留档 PDF，+3 README 当前状态，
++1 分层计数，+1 页对象对账；173+1+5+3+1+1=184，且这个数由自指检查在运行时
+机器核验，不是我加出来的）。普查 tracked 347 → **351**，machine-vouched
+168 → **171**（48.4% → **48.7%**），code-unreferenced 78 → **79**（22.5%）。
+
+`scripts/local_gate.py` 在本会话 rc=1，原因是它的 GPU 探测 shell out 到
+`nvidia-smi`，而该 shell 的 PATH 里没有它（`[WinError 2]`；
+`C:\Windows\System32\nvidia-smi.exe` 确实存在）。这是宿主环境问题，
+不是仓库缺陷，它的 `champsim_node` 子检查照常通过
+（`base_rev 164fdb1e…`, ipc 0.1237）。它也不在交付链的四条门里。

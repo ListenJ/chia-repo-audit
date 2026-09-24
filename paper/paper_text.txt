@@ -697,7 +697,7 @@ rather than printed here, so the paper stays anonymous
 while the artifact stays reachable. Every number
 quoted in this paper is re-derived from the commit-
 ted artifacts byscripts/verify_paper_claims.py
-(173 claims, non-zero exit on drift); the defects above
+(184 claims, non-zero exit on drift); the defects above
 were found by reading primary evidence, and this
 script is what turns that into a check, not a coinci-
 dence.scripts/audit_grid_levels.pyis the same
@@ -725,10 +725,36 @@ nance records pinned a trace SHA-256, and re-deriving
 the number from the files gave 3. The error understated
 our own coverage, so nothing downstream complained,
 and it survived until a check tried to recompute it.
+A second correction came from running our own ver-
+ifier on the path a reviewer takes rather than the path
+we wrote it on: a fresh clone of the pushed branch. It
+returned 172 of 174 claims with a non-zero exit, and the
+single failure was the gate asserting that the submitted
+PDF is newer than the LATEX source. That gate com-
+pared file modification times, which hold in a working
+tree and mean nothing after a checkout, where every file
+is written within milliseconds of the others in whatever
+order git happens to use. On the clone all four artifacts
+landedinside7msandthePDFcameout1msolderthan
+its source. So the freshness gate had never been a gate:
+its verdict was decided by sub-10ms write ordering, and
+it had been passing here because the coin landed our
+way on the machine we wrote it on. It is now content-
+based —paper/BUILD_PIN.jsonrecords the SHA-256
+of the two inputs the build consumed and the two out-
+puts it produced, and the verifier asks only whether the
+bytes on disk are still that set, which a checkout cannot
+change. Cloning the branch also showedpaper.texand
+the extracted text render coming out CRLF on Windows
+while our tree had them LF, so those bytes are pinned in
+.gitattributesalongside the result files, for the same
+reason: two of the four hashes would otherwise have de-
+pended on who computed them.
 4 What this should change
 Each rule below is stated as a check an author can run,
 because every one of them was violated by us and caught
 by reading primary evidence rather than by a green gate.
+7
 (1) Report factor levels next to every variance
 statistic.A spread computed over fewer than two lev-
 els of its own axis must be emitted asunexercised, never
@@ -754,7 +780,6 @@ ifier weaker than a comparison against a no-op reference
 will pass them too. Two designs in the artifact equal
 that reference exactly on all three traces (§3.8), so the
 branch is now exercised by a real control rather than a
-7
 synthetic one.(6) Record a source digest beside
 every measurement.A delivered-binary digest says a
 build happened, not which source produced it; a module
@@ -838,6 +863,7 @@ at78.16%cross-seed CV, showed seeds moving artifacts
 without moving designs, showed trace choice reordering
 candidates (τ= 0.556) and prompt response at249.18%,
 and showed two same-provider language-model auditors
+8
 agreeing and both wrong on a measured simulator es-
 cape, a result that survived re-annotation after we found
 the case had cited a source that cannot compile. It
@@ -860,7 +886,6 @@ contribution.
 AI assistance in this work
 AI coding and writing tools assisted with implementa-
 tion, experiment plumbing, and the drafting and editing
-8
 of this paper. An AI agent ran the audit loop, wrote and
 revised the scripts and the evidence pipeline, and drafted
 this text under the author’s direction; the author selected
