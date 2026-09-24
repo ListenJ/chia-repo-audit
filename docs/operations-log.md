@@ -2707,3 +2707,86 @@ unittest discover -s chia_loop/tests -> Ran 46 tests, OK
 - **唯一会让 n 变大而方向可疑的做法**：往集合里加"周期数明显不同"的设计对。
   那种对的标签由测量直接决定、两个评分者几乎必然一致，加进去会把 κ 往上推、
   让门禁看起来通过。这在技术上可行，在做证据的意义上不可接受，本文批评的正是这类操作。
+
+---
+
+## §36 我自己的脚本把整份论文源码改成了 CRLF，而且门禁当时抓不到
+
+### 36.1 事故
+
+§35 那轮之后 HEAD 是 `b8df223`。做干净克隆复测时，`results/fresh_clone_verification_2026-09-24.json`
+里记到 `paper/paper.tex` 是 `i/crlf w/crlf attr/-text`，于是那条 eol 检查翻红：
+
+```
+FAIL  the clone really was the adversarial configuration the fix targets
+      expect={...'paper/paper.tex': ['w/lf','attr/-text']...}
+      actual={...'paper/paper.tex': ['w/crlf','attr/-text']...}
+```
+
+查 `git ls-tree`：`d6f2cf3` 的 `paper.tex` blob 里 CRLF 计数是 **0**，
+`b8df223` 是 **816**（全文 816 行，逐行翻转）。也就是说提交物本身变了，
+而 PDF 是 9 页、字节数 618,298 与 LF 版完全一致 —— 渲染层什么都看不出来。
+
+### 36.2 归属：实测出来的，不是猜的
+
+我第一反应是"编辑器在 Windows 上整文件改写"。这个说法如果写进日志就是又一次凭印象归因，
+所以做了一个三方式探针（同一份三行 LF 文本，各写一次，量落盘字节）：
+
+| 写入方式 | 结果 |
+| --- | --- |
+| Edit 工具改一行 | 36 B，CRLF **0** —— 保留原行尾 |
+| `pathlib.Path.write_text(s)` | 9 B，CRLF **3** —— 每一行都被转换 |
+| `pathlib.Path.write_bytes(b)` | 6 B，CRLF **0** —— 原样 |
+
+元凶是我自己那段声明数递增脚本里的 `p.write_text(...)`：
+Windows 上它等价于 `newline=None`，把 `'\n'` 全量翻译成 `os.linesep`。
+`paper/**` 在 `.gitattributes` 里是 `-text`，git 因而不做任何规范化，
+那些 CRLF 就原样进了 blob。`README.md` 也一起被转了 389 处，
+但它是普通 text 规则，索引会归一回 LF，所以只有 `paper.tex` 真的污染到提交物。
+
+早先在 §35 的 commit message 里我把这件事说成"编辑器把整份 .tex 改写成 CRLF"。
+**那句归因错了，在此更正**：不是编辑器，是我的脚本。
+
+### 36.3 为什么既有门禁差点放过它
+
+`BUILD_PIN.json` 是照着**盘上字节**重新生成输入摘要的。CRLF 版 `paper.tex` 编译、抽取、
+pin 之后，四份摘要自洽得无懈可击 —— `verify_paper_claims.py` 里
+"the digests it records are that commit's" 那条绿得发亮。
+唯一抓住它的是那条 eol 检查**恰好**把 `w/lf` 写成了硬编码期望。
+也就是说，这一次是过期的期望帮了忙，而不是设计。过期期望不可依赖：
+哪天有人把它改成 `w/crlf`（"本地就是 CRLF 啊"），这条防线就没了。
+
+### 36.4 两处收紧
+
+1. eol 那条现在查**三个**字段 `i/`、`w/`、`attr/`，不只查 `w/`。
+   `attr/-text` 的含义是"索引字节 == 工作树字节"，所以真正不变量是三者一致且索引为 LF。
+2. 新增第 190 条，直接在作者树上查提交物本身：
+
+```python
+_tex_blob = subprocess.run(["git", "show", "HEAD:paper/paper.tex"], cwd=REPO,
+                           capture_output=True).stdout
+check("the submitted LaTeX source is committed with LF line endings",
+      0, _tex_blob.count(b"\r\n"))
+```
+
+它不依赖工作树、不依赖一次干净克隆的记录（那个记录天生落后 HEAD 一个 commit）。
+`git show` 拿到的就是评审会 checkout 到的字节。
+
+故意**没有**加"盘上 == HEAD"那条检查。写了又删：它在每一次正常的编辑中途都会翻红，
+那是在报"你有未提交改动"，不是在任何主张上发现问题。会把人训练成忽略红字的检查，
+等于没有检查。
+
+### 36.5 规则
+
+- 这个仓库里改被 `-text` 钉住的文件，**只用 `write_bytes`**，或者用保留行尾的 Edit 工具；
+  `write_text` / `open(...,'w')` 一律不用。
+- 任何"声明数变了所以要重编译"的轮次，收尾必须看一眼
+  `git ls-files --eol paper/`，三行都应是 `i/lf w/lf attr/-text`。
+
+### 36.6 本轮链
+
+`paper.tex` 与 `README.md` 已按字节还原（53,808→52,992 B 与 19,445→19,056 B，
+CRLF 归零）。重编译 x2 → 9 页 / 618,298 B / 一处 §33.3 有意保留的 overfull；
+抽取 47,710 字符；重新 pin；**190 条**。
+提交 LF 修复之前验证器有意停在 **188/190**，两条 FAIL 都是"`HEAD` 里还是 CRLF"，
+修复本身入 `HEAD` 才能消掉 —— 中间态记录在此，不事后抹平。

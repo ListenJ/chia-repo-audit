@@ -754,11 +754,26 @@ check("and the digests it records are that commit's, not a retyped copy",
 # 同理，少一行 eol 记录会让 _eol[f] KeyError。缺就填一个必然对不上的哨兵。
 _eol = {ln.split("\t")[1]: ln.split("\t")[0].split() for ln in _fc["eol_table_paper"]}
 _text_artifacts = ("paper/paper.tex", "paper/paper_text.txt", "paper/BUILD_PIN.json")
+# 三个字段全查（i/、w/、attr/），不只查 w/。理由不是洁癖：paper/** 是 -text，
+# git 原样存字节，所以"索引里是什么"就是提交物本身。上一版只断言 w/lf，而 w 是本地
+# 检出结果，它恰好抓住了 b8df223 那次事故（编辑器把整份 .tex 改写成 CRLF 后入库），
+# 但那是运气 —— 如果检出端也是 CRLF，两边一致，这条就绿了，而提交物已经变了 816 处行尾。
 check("the clone really was the adversarial configuration the fix targets",
       {"core.autocrlf": "true",
-       **{f: ["w/lf", "attr/-text"] for f in _text_artifacts}},
+       **{f: ["i/lf", "w/lf", "attr/-text"] for f in _text_artifacts}},
       {"core.autocrlf": _fc["core_autocrlf"],
-       **{f: _eol.get(f, ["NO-EOL-ROW-RECORDED"])[1:3] for f in _text_artifacts}})
+       **{f: _eol.get(f, ["NO-EOL-ROW-RECORDED"])[0:3] for f in _text_artifacts}})
+
+# 上面那条要等一次干净克隆的记录才生效，而克隆记录天生落后 HEAD 一个 commit。
+# 这条直接在作者树上查提交物字节：paper/** 是 -text，所以 HEAD 里的 blob 就是评审
+# 会拿到的东西。CRLF 混进 .tex 不会让 pdflatex 报错、不会改渲染结果，只会悄悄改掉
+# BUILD_PIN 里的输入摘要 —— 而 pin 是照着盘上字节重新生成的，于是它永远自洽、永远绿。
+# 只查 HEAD 的 blob，不查工作树：查"盘上==HEAD"会在每一次正常的编辑中途翻红，
+# 那不是门禁，是"你有未提交改动"的提示器，而会喊狼来了的检查等于没有检查。
+_tex_blob = subprocess.run(["git", "show", "HEAD:paper/paper.tex"], cwd=REPO,
+                           capture_output=True).stdout
+check("the submitted LaTeX source is committed with LF line endings",
+      0, _tex_blob.count(b"\r\n"))
 check("the rendered pages carry the headline numbers", True,
       all(s in _rendered for s in ("78.16", "249.18", "8.3812", "2,261,770")))
 check("no unresolved reference reached the render", 0, _rendered.count("??"))
