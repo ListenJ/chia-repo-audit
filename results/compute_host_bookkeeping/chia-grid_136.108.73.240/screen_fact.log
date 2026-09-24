@@ -1,0 +1,86 @@
+2026-09-23 01:04:39,515	INFO usage_lib.py:447 -- Usage stats collection is disabled.
+2026-09-23 01:04:39,515	INFO scripts.py:936 -- [37mLocal node IP[39m: [1m172.17.0.2[22m
+2026-09-23 01:04:42,783	SUCC scripts.py:975 -- [32m--------------------[39m
+2026-09-23 01:04:42,783	SUCC scripts.py:976 -- [32mRay runtime started.[39m
+2026-09-23 01:04:42,783	SUCC scripts.py:977 -- [32m--------------------[39m
+2026-09-23 01:04:42,784	INFO scripts.py:979 -- [36mNext steps[39m
+2026-09-23 01:04:42,784	INFO scripts.py:982 -- To add another node to this Ray cluster, run
+2026-09-23 01:04:42,784	INFO scripts.py:985 -- [1m  ray start --address='172.17.0.2:6379'[22m
+2026-09-23 01:04:42,784	INFO scripts.py:996 -- To connect to this Ray cluster:
+2026-09-23 01:04:42,784	INFO scripts.py:998 -- [35mimport[39m[26m ray
+2026-09-23 01:04:42,784	INFO scripts.py:999 -- ray[35m.[39m[26minit()
+2026-09-23 01:04:42,784	INFO scripts.py:1013 -- To submit a Ray job using the Ray Jobs CLI:
+2026-09-23 01:04:42,784	INFO scripts.py:1014 -- [1m  RAY_API_SERVER_ADDRESS='http://127.0.0.1:8265' ray job submit --working-dir . -- python my_script.py[22m
+2026-09-23 01:04:42,784	INFO scripts.py:1023 -- See https://docs.ray.io/en/latest/cluster/running-applications/job-submission/index.html 
+2026-09-23 01:04:42,784	INFO scripts.py:1027 -- for more information on submitting Ray jobs to the Ray cluster.
+2026-09-23 01:04:42,784	INFO scripts.py:1032 -- To terminate the Ray runtime, run
+2026-09-23 01:04:42,784	INFO scripts.py:1033 -- [1m  ray stop[22m
+2026-09-23 01:04:42,784	INFO scripts.py:1036 -- To view the status of the cluster, use
+2026-09-23 01:04:42,784	INFO scripts.py:1037 --   [1mray status[22m[26m
+2026-09-23 01:04:42,784	INFO scripts.py:1041 -- To monitor and debug Ray, view the dashboard at 
+2026-09-23 01:04:42,784	INFO scripts.py:1042 --   [1m127.0.0.1:8265[22m[26m
+2026-09-23 01:04:42,784	INFO scripts.py:1049 -- [4mIf connection to the dashboard fails, check your firewall settings and network configuration.[24m
+=== gen_aggressive_offset_s1 start 2026-09-23T01:04:42-07:00 ===
+2026-09-23 01:04:43,636	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 01:04:43,646	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "gen_aggressive_offset_s1", "module": "gen_aggressive_offset_s1", "incremental": false, "build_success": true, "build_s": 797.0, "binary_sha256": "e4d8a8fdf55c2d95", "binary_bytes": 37945016, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 16.0, "success": true, "instructions": 2000001, "cycles": 1138748, "ipc": 1.7563157081285763}
+=== gen_aggressive_offset_s1 end 2026-09-23T01:18:17-07:00 rc=0 ===
+=== gen_aggressive_offset_s2 start 2026-09-23T01:18:17-07:00 ===
+2026-09-23 01:18:17,978	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 01:18:17,988	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "gen_aggressive_offset_s2", "module": "gen_aggressive_offset_s2", "incremental": false, "build_success": false, "build_s": 13.3, "diagnostics_tail": " from src/module_inst_1.cc:4:\n/home/ray/champsim/inc/modules.h:103:12: note: candidate: ‘champsim::modules::prefetcher::prefetcher(CACHE*)’\n      |            ^~~~~~~~~~\n/home/ray/champsim/inc/modules.h:103:12: note:   candidate expects 1 argument, 0 provided\n/home/ray/champsim/inc/modules.h:102:8: note: candidate: ‘constexpr champsim::modules::prefetcher::prefetcher(const champsim::modules::prefetcher&)’\n      |        ^~~~~~~~~~\n/home/ray/champsim/inc/modules.h:102:8: note:   candidate expects 1 argument, 0 provided\n/home/ray/champsim/inc/modules.h:102:8: note: candidate: ‘constexpr champsim::modules::prefetcher::prefetcher(champsim::modules::prefetcher&&)’\n/home/ray/champsim/inc/modules.h:102:8: note:   candidate expects 1 argument, 0 provided\n                 from src/module_inst_1.cc:14:\n/home/ray/champsim/prefetcher/gen_aggressive_offset_s2/gen_aggressive_offset_s2.h: In member function ‘uint32_t gen_aggressive_offset_s2::prefetcher_cache_operate(champsim::address, champsim::address, uint8_t, bool, access_type, uint32_t)’:\n      |                                        ~~~~~~~~~~~~^~~~\n/home/ray/champsim/prefetcher/gen_aggressive_offset_s2/gen_aggressive_offset_s2.h: In member function ‘uint32_t gen_aggressive_offset_s2::prefetcher_cache_fill(champsim::address, long int, long int, uint8_t, champsim::address, uint32_t)’:\n      |                                                       ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~\nmake: *** [Makefile:236: .csconfig/module_inst_1.o] Error 1"}
+=== gen_aggressive_offset_s2 end 2026-09-23T01:18:32-07:00 rc=0 ===
+=== gen_aggressive_offset_s3 start 2026-09-23T01:18:32-07:00 ===
+2026-09-23 01:18:32,737	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 01:18:32,748	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "gen_aggressive_offset_s3", "module": "gen_aggressive_offset_s3", "incremental": false, "build_success": true, "build_s": 805.9, "binary_sha256": "436dd0c7c5776000", "binary_bytes": 38045320, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 15.7, "success": true, "instructions": 2000001, "cycles": 1127807, "ipc": 1.7733539515183006}
+=== gen_aggressive_offset_s3 end 2026-09-23T01:32:15-07:00 rc=0 ===
+=== gen_default_s1 start 2026-09-23T01:32:15-07:00 ===
+2026-09-23 01:32:15,849	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 01:32:15,860	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "gen_default_s1", "module": "gen_default_s1", "incremental": false, "build_success": true, "build_s": 799.1, "binary_sha256": "e6becc5cedc3c222", "binary_bytes": 37904288, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 16.2, "success": true, "instructions": 2000001, "cycles": 1129965, "ipc": 1.7699672113738036}
+=== gen_default_s1 end 2026-09-23T01:45:52-07:00 rc=0 ===
+=== gen_default_s2 start 2026-09-23T01:45:52-07:00 ===
+2026-09-23 01:45:52,690	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 01:45:52,700	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "gen_default_s2", "module": "gen_default_s2", "incremental": false, "build_success": false, "build_s": 13.2, "diagnostics_tail": "on for call to ‘champsim::modules::prefetcher::prefetcher()’\n                 from src/module_inst_1.cc:4:\n/home/ray/champsim/inc/modules.h:103:12: note: candidate: ‘champsim::modules::prefetcher::prefetcher(CACHE*)’\n      |            ^~~~~~~~~~\n/home/ray/champsim/inc/modules.h:103:12: note:   candidate expects 1 argument, 0 provided\n/home/ray/champsim/inc/modules.h:102:8: note: candidate: ‘constexpr champsim::modules::prefetcher::prefetcher(const champsim::modules::prefetcher&)’\n      |        ^~~~~~~~~~\n/home/ray/champsim/inc/modules.h:102:8: note:   candidate expects 1 argument, 0 provided\n/home/ray/champsim/inc/modules.h:102:8: note: candidate: ‘constexpr champsim::modules::prefetcher::prefetcher(champsim::modules::prefetcher&&)’\n/home/ray/champsim/inc/modules.h:102:8: note:   candidate expects 1 argument, 0 provided\n                 from src/module_inst_1.cc:14:\n/home/ray/champsim/prefetcher/gen_default_s2/gen_default_s2.h: In member function ‘uint32_t gen_default_s2::prefetcher_cache_operate(champsim::address, champsim::address, uint8_t, bool, access_type, uint32_t)’:\n                 from src/module_inst_1.cc:14:\n/home/ray/champsim/prefetcher/gen_default_s2/gen_default_s2.h: In member function ‘uint32_t gen_default_s2::prefetcher_cache_fill(champsim::address, long int, long int, uint8_t, champsim::address, uint32_t)’:\n      |                                                       ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~\nmake: *** [Makefile:236: .csconfig/module_inst_1.o] Error 1"}
+=== gen_default_s2 end 2026-09-23T01:46:06-07:00 rc=0 ===
+=== gen_default_s3 start 2026-09-23T01:46:06-07:00 ===
+2026-09-23 01:46:07,444	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 01:46:07,453	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "gen_default_s3", "module": "gen_default_s3", "incremental": false, "build_success": false, "build_s": 13.3, "diagnostics_tail": "                 from src/module_inst_1.cc:14:\n/home/ray/champsim/prefetcher/gen_default_s3/gen_default_s3.h: In member function ‘uint32_t gen_default_s3::prefetcher_cache_operate(champsim::address, champsim::address, uint8_t, bool, access_type, uint32_t)’:\n/home/ray/champsim/prefetcher/gen_default_s3/gen_default_s3.h:34:80: error: ‘STORE’ is not a member of ‘access_type’\n      |                                                         ~~~~~^~~~~~~~~~~~~~~\n/home/ray/champsim/prefetcher/gen_default_s3/gen_default_s3.h: In member function ‘uint32_t gen_default_s3::prefetcher_cache_fill(champsim::address, long int, long int, uint8_t, champsim::address, uint32_t)’:\n      |                                                     ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~\nmake: *** [Makefile:236: .csconfig/module_inst_1.o] Error 1"}
+=== gen_default_s3 end 2026-09-23T01:46:21-07:00 rc=0 ===
+=== gen_fill_only_conservative_s1 start 2026-09-23T01:46:21-07:00 ===
+2026-09-23 01:46:22,272	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 01:46:22,283	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "gen_fill_only_conservative_s1", "module": "gen_fill_only_conservative_s1", "incremental": false, "build_success": true, "build_s": 807.0, "binary_sha256": "2fd9bfdeebd0fa75", "binary_bytes": 37869560, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 18.4, "success": true, "instructions": 2000001, "cycles": 1129110, "ipc": 1.7713074899699763}
+=== gen_fill_only_conservative_s1 end 2026-09-23T02:00:08-07:00 rc=0 ===
+=== gen_fill_only_conservative_s2 start 2026-09-23T02:00:08-07:00 ===
+2026-09-23 02:00:09,141	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 02:00:09,151	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "gen_fill_only_conservative_s2", "module": "gen_fill_only_conservative_s2", "incremental": false, "build_success": true, "build_s": 797.0, "binary_sha256": "b83f003a913605b7", "binary_bytes": 37869584, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 18.2, "success": true, "instructions": 2000001, "cycles": 1129110, "ipc": 1.7713074899699763}
+=== gen_fill_only_conservative_s2 end 2026-09-23T02:13:45-07:00 rc=0 ===
+=== gen_fill_only_conservative_s3 start 2026-09-23T02:13:45-07:00 ===
+2026-09-23 02:13:45,882	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 02:13:45,892	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+{"design": "gen_fill_only_conservative_s3", "module": "gen_fill_only_conservative_s3", "incremental": false, "build_success": true, "build_s": 799.7, "binary_sha256": "4c5ecd8b11b81549", "binary_bytes": 37869544, "base_rev": "164fdb1ed01185a21a39c292937bf26bb7f4c694", "run_s": 18.2, "success": true, "instructions": 2000001, "cycles": 1129110, "ipc": 1.7713074899699763}
+=== gen_fill_only_conservative_s3 end 2026-09-23T02:27:24-07:00 rc=0 ===
+screened_records=9 expected=9

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "purpose": "Lifecycle record for the sponsor-funded GCP compute used by this audit.",
+  "project": "a3-chia-hack26ath-7744",
+  "funding": "organizer-provided free compute; the author was told the accounts \"shouldn't have restrictions nor budget caps ... use whats reasonable for your project\"",
+  "region_zone": "us-east1-b",
+  "instances": [
+    {
+      "name": "chia-grid",
+      "external_ip": "136.108.73.240",
+      "machine_type": "c2d-standard-8",
+      "cpu": 8,
+      "ram_gb": 32,
+      "boot_disk_gb": 200,
+      "created": "2026-09-22T09:51:35.777-07:00",
+      "deleted": "2026-09-23T21:52Z (approx, delete returned rc=0)",
+      "wall_clock": "~36 hours",
+      "containers_run": [
+        "chia-grid7 (exited 0)",
+        "chia-fact (exited 0)",
+        "chia-both (exited 0)"
+      ],
+      "grids_produced": [
+        "grid_fact_prompt",
+        "grid_both_axes",
+        "grid_x_aggressive_s3",
+        "grid_x_fill_only_s2s3"
+      ],
+      "held_a_full_checkout_of_commit_b85b38c_at": "~/workspace"
+    },
+    {
+      "name": "chia-grid2",
+      "external_ip": "34.73.33.65",
+      "machine_type": "c2d-standard-8",
+      "cpu": 8,
+      "ram_gb": 32,
+      "boot_disk_gb": 200,
+      "created": "2026-09-23T04:55:50.387-07:00",
+      "deleted": "2026-09-23T21:52Z (approx, delete returned rc=0)",
+      "wall_clock": "~17 hours",
+      "containers_run": [
+        "chia-nullctl (exited 0)"
+      ],
+      "grids_produced": [
+        "grid_nullity_control"
+      ],
+      "git_sha_recorded_on_host": "c89ce8161bc365389c0383d56c7a948928d324c9"
+    }
+  ],
+  "image": "ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4 (pinned by digest; the image ID observed on the host equalled that digest)",
+  "access_path": "`gcloud compute ssh` does NOT work against these instances: it offers an ssh-rsa key that is not in instance metadata. The working path was `ssh -i ~/.ssh/chia_grid_deploy devstar7744@<extIP>` (ssh-ed25519, the only authorised key), with `sudo -n docker` for container work.",
+  "teardown": {
+    "authorized_by": "author, 2026-09-24: \"空闲先清掉，然后在需要时在使用保证我们的数据安全即可\"",
+    "precondition_evidence": "results/vm_teardown_precondition_2026-09-24.json",
+    "precondition_sha256": "ea1d1fa46748075251d56d258797b4d9440700d2c62ee59d9be571dd78cdfe45",
+    "post_delete_verification": {
+      "instances_remaining": 0,
+      "disks_remaining": 0,
+      "static_addresses_remaining": 0,
+      "snapshots_remaining": 0,
+      "custom_images_remaining": 0,
+      "firewall_rules_remaining": [
+        "default-allow-icmp",
+        "default-allow-internal",
+        "default-allow-rdp",
+        "default-allow-ssh"
+      ],
+      "firewall_note": "all four are GCP defaults and are not billable",
+      "ssh_to_old_ip": "connection timed out, as expected"
+    },
+    "conclusion": "no billable resource was orphaned by the deletion; the project is at zero running compute"
+  },
+  "recreation": "both instances are reproducible from the pinned image digest plus the tracked grid configs in .tmp/cfg/ and the launcher scripts in .tmp/; nothing needed to recreate them survived only on the VMs",
+  "bookkeeping_recovered_before_delete": "results/compute_host_bookkeeping/ (21 files + manifest)"
+}

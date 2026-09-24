@@ -1,0 +1,23 @@
+{
+  "what": "Unit suite executed inside the pinned official CHIA image, read-only mount, no simulator run.",
+  "command": "docker run --rm -e OMP_NUM_THREADS=2 -v <repo>\\.tmp\\imgtest_r3_mount:/work:ro -w /work ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4 python3 -m unittest discover -s chia_loop/tests",
+  "image": "ghcr.io/ucb-bar/chia-champsim",
+  "image_digest": "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "image_id_observed_on_host": "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "image_created": "2026-09-01T01:16:54.342451873Z",
+  "interpreter": "Python 3.10.19 | packaged by conda-forge | (main, Jan 26 2026, 23:45:08) [GCC 14.3.0]",
+  "host": "Local Windows 11 host, Docker Desktop server 29.5.3 linux/amd64. NOT a GCP compute instance: both sponsor instances (chia-grid, chia-grid2) were deleted on 2026-09-24 under the user's authorization, recorded in results/compute_host_lifecycle_2026-09-22_to_24.json. The image was pulled fresh to this host from ghcr.io and its digest verified against the pinned value before the run.",
+  "run_utc": "2026-09-23T22:09Z",
+  "result": {
+    "ran": 46,
+    "outcome": "OK",
+    "exit_code": 0,
+    "duration_s": 8.089,
+    "wall_s": 9.981
+  },
+  "tree_tested": "chia_loop/ and scripts/ from the working tree after the commit-pinning gate defect was fixed (the literal string 'unknown', which _git_head() returns when git rev-parse fails, satisfied a truthiness test named commit_sha_retained) and its regression test added; 36 Python files, 9 of them test modules, shipped as tarball sha256 89c809b7fd2f4e8f0454aec442d6e1a4f4effb01649ec50babf94e1ea2480796, extracted into a fresh .tmp/imgtest_r3_mount and mounted read-only. No __pycache__ was shipped. The working tree was not modified by the run.",
+  "supersedes": "results/in_image_tests_2026-09-24_r2.json recorded 'Ran 45 tests / OK' against the tree before the 46th test existed. 45 was correct then; that file is kept as the record of the earlier state.",
+  "note": "The suite is pure Python and does not exercise the simulator; running it in the image establishes interpreter and dependency compatibility, not that any measurement reproduced.",
+  "why_the_count_moved": "The 46th test is test_a_git_sha_of_unknown_is_not_a_pinned_commit. It was added because check_grid_evidence.py tested raw.json['git_sha'] for truthiness only, and _git_head() in chia_loop/loops/audit_repro.py falls back to the literal string 'unknown' when git rev-parse fails, which is truthy. A grid whose commit was never captured therefore passed a check named commit_sha_retained. Measured over the 7 retained grids: 3 have git_sha='unknown' in raw.json, 4 of 8 env_pin.json records read 'unknown', and 2 grids internally disagree between the two files, including the grid that carries the headline 249.18% prompt spread. The gate now requires a full match on [0-9a-f]{7,40}. The test also had to correct its own fixture, which passed git_sha='abc' as the valid case and so modelled the loophole it was meant to police.",
+  "not_backfilled": "The three historical 'unknown' values were left as they are. The compute hosts are deleted and the true commits are not recoverable from the artifacts; writing a plausible SHA into an env_pin.json that never measured one would be the defect this record describes. scripts/verify_paper_claims.py asserts all three still read 'unknown'."
+}

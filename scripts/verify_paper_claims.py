@@ -11,6 +11,7 @@
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -158,6 +159,169 @@ check("incremental rows still collide on one digest (defect present)", True, col
 check("and the paper discloses it", True, collision and paper_says(r"binary attribution defect"),
       r"binary attribution defect")
 
+# ---- 缺陷 8：排序统计把填充值当测量打印 ------------------------------
+# 单候选网格无从排序，_trace_ranking_stability 过去返回 0.0 填充值，scorecard 照印，
+# 于是"无法测量"读起来像"排序极不稳定"——偏向本文自己的论点，所以必须钉住。
+rank = load_json("results/grid_x_aggressive_s3/audit_report.json")["ranking_stability"]
+check("one-candidate grid reports itself unrankable",
+      (False, "fewer_than_two_candidates"),
+      (rank["rankable"], rank["unrankable_reason"]), r"unrankable")
+card = (REPO / "results/grid_x_aggressive_s3/scorecard.txt").read_text(encoding="utf-8")
+check("its scorecard prints unrankable instead of tau=0.0",
+      (True, False),
+      ("unrankable (fewer_than_two_candidates)" in card, "Kendall tau: 0.0" in card),
+      r"unrankable")
+check("and the paper discloses the fill value", True, paper_says(r"fill values?"),
+      r"fill value")
+
+# ---- 缺陷 9：commit pin 被字符串 "unknown" 满足 ----------------------
+SHA = re.compile(r"[0-9a-f]{7,40}")
+GRIDS = ["grid_both_axes", "grid_fact_prompt", "grid_nullity_control", "grid_v6",
+         "grid_v7_gcp", "grid_x_aggressive_s3", "grid_x_fill_only_s2s3"]
+raws = {g: load_json(f"results/{g}/raw.json") for g in GRIDS}
+pins = {g: load_json(f"results/{g}/env_pin.json") for g in GRIDS}
+unpinned = [g for g in GRIDS if not SHA.fullmatch(str(raws[g].get("git_sha") or ""))]
+unpinned_env = [g for g in GRIDS if not SHA.fullmatch(str(pins[g].get("git_sha") or ""))]
+disagree = [g for g in GRIDS if str(raws[g].get("git_sha")) != str(pins[g].get("git_sha"))]
+check("grid artifacts counted", 7, len(GRIDS), r"seven grid artifacts")
+check("grids whose raw.json does not pin a real commit", 3, len(unpinned), r"three record")
+check("grids whose env_pin.json does not", 4, len(unpinned_env), r"four in")
+check("grids whose two provenance records disagree", 2, len(disagree), r"two of the seven")
+check("the headline prompt-spread grid is among the unpinned", True,
+      "grid_fact_prompt" in unpinned, r"grid_fact_prompt")
+check("and the paper discloses the sentinel", True,
+      paper_says(r"unknown") and paper_says(r"commit pin"), r"commit pin")
+# 历史值不修：主机已销毁，真 SHA 不可从 artifact 恢复。谁往 env_pin 里填了一个
+# 像样的 SHA，这条就翻红——那会是本节描述的那个缺陷本身。
+check("the three historical values were not backfilled", 3,
+      sum(1 for g in unpinned if str(raws[g].get("git_sha")) == "unknown"), r"unknown")
+gate = subprocess.run(
+    [sys.executable, "scripts/check_grid_evidence.py",
+     "--raw", "results/grid_fact_prompt/raw.json",
+     "--reference", "results/reference_designs_2026-09-22.jsonl"],
+    cwd=REPO, capture_output=True, text=True)
+check("the evidence gate now rejects it", True,
+      "commit_sha_retained" in gate.stdout, r"commit_sha_retained")
+
+# ---- 两个散文计数以前没有任何检查看着（operations-log §30 登记过）----
+# 这里钉的是"论文说的数字"，不是从 artifact derive 出来的数字；derive 的部分是上面
+# 那几条 3/4/2。至少漂移会翻红，不再是改错了没人知道。
+check("paper counts nine automation defects", True, paper_says(r"nine defects"),
+      r"nine defects")
+check("conclusion counts nine silent defects", True, paper_says(r"nine silent defects"),
+      r"nine silent defects")
+check("disclosure counts nine self-audits", True, paper_says(r"nine self-audits"),
+      r"nine\s+self-audits")
+check("the shared failure shape is stated as five instances", True,
+      paper_says(r"seen five times"), r"seen five times")
+
+# ---- 销毁前的证据链：这两台机器已经不存在了，所以这些文件是唯一记录 ----
+# 唯一记录尤其不能只是"放在那里"。下面每条都从落盘字节重算，包括那个"打包归档是冗余的、
+# 所以删掉 VM 不丢数据"的主张——它是这次不可逆动作的正当性来源。
+BK = REPO / "results/compute_host_bookkeeping"
+_prov = load_json("results/compute_host_bookkeeping/provenance.json")
+_td = load_json("results/vm_teardown_precondition_2026-09-24.json")
+_life = load_json("results/compute_host_lifecycle_2026-09-22_to_24.json")
+_man = [ln.split(None, 2) for ln in
+        (BK / "MANIFEST.sha256").read_text(encoding="utf-8").splitlines()]
+_payload = sorted(str(p.relative_to(REPO)).replace("\\", "/") for p in BK.rglob("*")
+                  if p.is_file() and p.name not in ("MANIFEST.sha256", "provenance.json"))
+check("the manifest covers exactly the rescued files, no more and no fewer",
+      sorted(rel for _, _, rel in _man), _payload)
+_bad = []
+for _h, _size, _rel in _man:
+    _p = REPO / _rel
+    _b = _p.read_bytes() if _p.exists() else b""
+    if hashlib.sha256(_b).hexdigest() != _h or str(len(_b)) != _size:
+        _bad.append(_rel)
+check("every rescued file still hashes to what the manifest says", [], _bad)
+_hashes = [h for h, _, _ in _man]
+_dups = sorted({h for h in _hashes if _hashes.count(h) > 1})
+check("its declared file and distinct-hash counts are the real ones",
+      (len(_payload), len(set(_hashes))), (_prov["files"], _prov["distinct_sha256"]))
+check("and the duplicate contents it declares are the duplicates there are",
+      sorted(x[2] for x in _prov["identical_content_pairs"]), _dups)
+check("the stale count is corrected on the record, not silently", True,
+      "count_correction" in _prov and "20" in _prov["count_correction"])
+# 冗余主张：VM 打包回来的两个 .tgz 与已提交的 results/ 逐字节相同。
+import tarfile  # noqa: E402  (used once, kept next to the claim it serves)
+_redundant, _differing = 0, []
+for _grid, _host in (("grid_both_axes", "chia-grid_136.108.73.240"),
+                     ("grid_nullity_control", "chia-grid2_34.73.33.65")):
+    with tarfile.open(BK / _host / "repo/.tmp/done" / f"{_grid}.tgz") as _t:
+        for _m in _t.getmembers():
+            if not _m.isfile():
+                continue
+            _local = REPO / _m.name
+            if _local.exists() and _local.read_bytes() == _t.extractfile(_m).read():
+                _redundant += 1
+            else:
+                _differing.append(_m.name)
+check("the packed VM archives are byte-identical to the committed results",
+      (10, []), (_redundant, _differing))
+_per = _td["orphans_disposed"]
+check("the disposed-orphan classes add up", 75, sum(v["count"] for v in _per.values()))
+_git_archive = subprocess.run(
+    "git archive --format=tar b85b38c | tar -t | grep -v '/$' | wc -l",
+    cwd=REPO, shell=True, capture_output=True, text=True)
+check("the 66-file snapshot really is that commit, and the commit still exists",
+      _per["home_workspace_snapshot"]["count"], int(_git_archive.stdout.strip()))
+check("the one authored file rescued from the VM hashes to the recorded value",
+      _per["watch_grid_sh"]["sha256"],
+      hashlib.sha256((REPO / _per["watch_grid_sh"]["rescued_to"]).read_bytes()).hexdigest())
+_cov = _td["trace_hash_corroboration"]
+
+
+def _trace_hashes(grid):
+    """provenance.json 有两种 traces 形状：{"source":..,"sha256":{name:h}} 和
+    {name:{"path":..,"sha256":h}}。写检测时只认一种，就会把覆盖率数错——
+    这里两种都认，因为数错的那次就是这么错的。"""
+    t = load_json(f"results/{grid}/provenance.json").get("traces") or {}
+    if isinstance(t.get("sha256"), dict):
+        return dict(t["sha256"])
+    return {n: v["sha256"] for n, v in t.items()
+            if isinstance(v, dict) and "sha256" in v}
+
+
+_pinning = [g for g in GRIDS
+            if (REPO / f"results/{g}/provenance.json").exists() and _trace_hashes(g)]
+_per_trace = {}
+for _g in _pinning:
+    for _n, _h in _trace_hashes(_g).items():
+        _per_trace.setdefault(_n, set()).add(_h)
+check("the grids that pin trace hashes are the grids the record names",
+      _cov["grids_pinning_trace_sha256"], _pinning)
+check("every pinned trace agrees across the grids that pinned it",
+      [1] * len(_per_trace), sorted(len(v) for v in _per_trace.values()))
+check("the live-host re-hash covered all of them",
+      (len(_per_trace), len(_per_trace)), (_cov["n_traces"], _cov["n_matching"]))
+check("and the caveat it was corrected against is kept, not overwritten", True,
+      "coverage_caveat_original" in _cov and "coverage_correction" in _cov)
+_ph = _prov["hosts"]
+check("the three host records describe the same two machines", [],
+      [h for h in _ph
+       if (_ph[h]["external_ip"], _ph[h]["zone"], _ph[h]["machine_type"], _ph[h]["created"])
+       != (_td["hosts"][h]["ip"], _td["hosts"][h]["zone"],
+           _td["hosts"][h]["machine_type"], _td["hosts"][h]["created"])]
+      + [h for h in _ph if h not in str(_life)])
+# MANIFEST 的哈希是逐字节的。core.autocrlf=true 且没有 .gitattributes 时，
+# Windows 上重新 checkout 会把 LF 改成 CRLF，上面那条"仍然哈希相符"就会在评审手里翻红，
+# 而在我们这里永远是绿的——正是本文写的那个失效形状。
+check("the evidence bytes are pinned against line-ending rewrite", True,
+      "results/** -text" in (REPO / ".gitattributes").read_text(encoding="utf-8"))
+# 论文现在解释了这两个目录为什么在 artifact 里。没有检查看着的散文计数就是上一节
+# 刚补掉的那个缺口，所以这里同样钉住。
+check("the paper says the compute hosts are gone", True,
+      paper_says(r"compute hosts were deleted"), r"hosts were deleted")
+check("and names the sweep that gated it", True,
+      paper_says(r"vm_teardown_precondition_2026-09-24\.json"))
+# 论文引用了那个错的旧数字，是作为更正引用的。所以这里断言的是"两个数字都在、
+# 并且是被当成更正写的"，而不是断言旧数字消失了。
+check("the paper carries the trace-pin correction, old number and new",
+      (True, True, 3),
+      (paper_says(r"1 of 6 grid provenance"), paper_says(r"gave 3"), len(_pinning)),
+      r"gave 3")
+
 # ---- 编译率与测试数 -------------------------------------------------
 fac = [r for r in load_jsonl("results/factorial_screening_2026-09-23.jsonl")
        if r.get("build_success") is not None]
@@ -165,13 +329,22 @@ n_ok = sum(1 for r in fac if r.get("build_success"))
 check("factorial compile rate", "6 of 9", f"{n_ok} of {len(fac)}", r"6 of 9")
 static = sum(1 for p in (REPO / "chia_loop/tests").glob("*.py")
              for _ in re.finditer(r"^\s*def test_", p.read_text(encoding="utf-8"), re.M))
-check("test count matches paper", 43, static, r"43 unit tests")
-img = load_json("results/in_image_tests_2026-09-23.json")
-check("in-image suite really ran 43 and passed", (43, "OK"),
+check("test count matches paper", 46, static, r"46 unit tests")
+img = load_json("results/in_image_tests_2026-09-24_r3.json")
+check("in-image suite really ran 46 and passed", (46, "OK"),
       (img["result"]["ran"], img["result"]["outcome"]), r"inside the pinned image")
 check("in-image run used the pinned digest",
       "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
       img["image_digest"], r"pinned image")
+# The image is pinned by digest, so the interpreter it ships is part of the claim.
+check("in-image interpreter is the one the paper names", "Python 3.10.19",
+      img["interpreter"].split(" |")[0], r"Python 3\.10\.19")
+# r2 measured 45 against the tree before the commit-pin test existed. It is kept as a
+# record, not silently overwritten, and the supersession is asserted rather than assumed.
+check("the earlier in-image record is retained and superseded, not edited",
+      (45, "results/in_image_tests_2026-09-24_r2.json"),
+      (load_json("results/in_image_tests_2026-09-24_r2.json")["result"]["ran"],
+       img["supersedes"].split(" ")[0]), r"45")
 
 # ---- 复现命令确实存在 -----------------------------------------------
 # The reviewer copies this out of the PDF, so both the script and the config it names
@@ -403,6 +576,209 @@ check("fill_only reproduces across seeds inside the 2x2 grid", True,
           == cell(_b2, 3, "fill_only_conservative", t) for t in ("fotonik", "BFSCC", "imagick")))
 check("aggressive_offset does not", False,
       cell(_b2, 1, "aggressive_offset", "BFSCC") == cell(_b2, 3, "aggressive_offset", "BFSCC"))
+
+
+# ---- 第八个缺陷：空实现正例网格与它被丢弃的方差轴 ---------------------
+_nc_raw = load_json("results/grid_nullity_control/raw.json")
+_nc_report = load_json("results/grid_nullity_control/audit_report.json")
+_nc_noop = {}
+for _r in load_jsonl("results/reference_designs_2026-09-22.jsonl"):
+    if _r.get("design") == "noop":
+        _nc_noop = {Path(_x["trace"]).name: _x["cycles"] for _x in _r["runs"]}
+_nc_by_level = {}
+for _c in _nc_raw["cells"].values():
+    _nc_by_level.setdefault((_c["prompt"], _c["seed"]), []).append(_c)
+
+
+def _nc_cycles(prompt, seed):
+    return {Path(_c["trace"]).name: _c["median"]["cycles"]
+            for _c in _nc_by_level[(prompt, seed)]}
+
+
+check("the no-op reference has three traces", 3, len(_nc_noop))
+check("gen_default_s0 equals the no-op on every trace", True,
+      _nc_cycles("default", 0) == _nc_noop, re.escape("2{,}261{,}770"))
+check("gen_aggressive_offset_s1_r1 equals it too", True,
+      _nc_cycles("aggressive_offset", 1) == _nc_noop)
+check("so the nullity branch has a real positive control", 2,
+      len({_nc_by_level[k][0]["design_sha256"] for k in _nc_by_level
+           if _nc_cycles(*k) == _nc_noop}),
+      r"[Tt]wo designs equal the cold no-op reference")
+check("gen_fill_only_conservative_s0 is live on all three", 0,
+      sum(1 for t, v in _nc_cycles("fill_only_conservative", 0).items()
+          if v == _nc_noop[t]), r"live on all three traces")
+check("and faster than the no-op on every one", True,
+      all(v < _nc_noop[t] for t, v in _nc_cycles("fill_only_conservative", 0).items()),
+      r"faster than the no-op on every one")
+sys.path.insert(0, str(REPO / "scripts"))
+import audit_grid_levels  # noqa: E402  the published-grid gate, reused as the oracle
+
+_nc_audit = audit_grid_levels.audit_grid(REPO / "results/grid_nullity_control/raw.json")
+check("six labelled levels hide three compiled designs", (6, 3),
+      (_nc_audit["n_design_levels"], _nc_audit["n_distinct_digests"]),
+      r"three distinct compiled designs\s+behind six levels")
+check("three levels carry another level's design", 3, _nc_audit["n_substituted"],
+      r"three of its six factor levels")
+_shared = list(_nc_audit["shared_digest_levels"].values())
+check("all three substitutions land on one design", 1, len(_shared))
+check("and that design is named by four levels", ["aggressive_offset/0", "default/0",
+      "default/1", "fill_only_conservative/1"], sorted(_shared[0]))
+check("and the artifact discloses them", True, _nc_audit["disclosed"])
+check("no other published grid substitutes or duplicates a level", {},
+      {a["grid"]: (a["n_substituted"], a["levels_not_distinct"])
+       for a in (audit_grid_levels.audit_grid(x)
+                 for x in sorted((REPO / "results").glob("grid*/raw.json")))
+       if a["grid"] != "grid_nullity_control"
+       and (a["n_substituted"] or a["levels_not_distinct"])},
+      r"the other five are clean")
+check("the discarded cross-seed CV is the value the paper quotes", 8.3812,
+      round(100.0 * _nc_report["max_seed_cv"], 4), r"8\.3812")
+check("that CV is the only nonzero one on the seed axis", 3,
+      sum(1 for v in _nc_report["seed_cv"].values() if v))
+check("and it is what blocked that grid", ("NON-REPRODUCIBLE", "BLOCKED"),
+      (_nc_report["verdict"], _nc_report["publish_gate"]), r"8\.3812")
+check("the one axis substitution cannot touch is determinism", 0.0,
+      _nc_report["max_repeat_cv"], r"repeated-run axis survives")
+_h1 = {}
+_h2 = {}
+for _path, _into in (("results/grid_both_axes/raw.json", _h1),
+                     ("results/grid_x_fill_only_s2s3/raw.json", _h2)):
+    for _c in load_json(_path)["cells"].values():
+        _into[(_c["design"]["module_name"], Path(_c["trace"]).name)] = \
+            _c["median"]["cycles"]
+_overlap = sorted(set(_h1) & set(_h2))
+check("the two hosts overlap on three cells", 3, len(_overlap))
+check("and they agree to the cycle on all of them", True,
+      all(_h1[k] == _h2[k] for k in _overlap), r"they agree to the cycle")
+
+
+# ---- 文档不许写数字节号：插一小节就会全部失效，且失效是静默的 ----------
+check("no markdown doc cites a bare numeric paper section", [],
+      sorted({str(f.relative_to(REPO)) for f in REPO.rglob("*.md")
+              if ".git" not in f.parts and "operations-log" not in f.name
+              for line in f.read_text(encoding="utf-8", errors="ignore").splitlines()
+              for _ in [0] if re.search(r"§3\.\d|\bsection 3\.\d", line)}))
+
+# ---- 提交物本身：PDF 必须比它渲染的源新，否则就是在引用上一轮产物 ------
+_tex = (REPO / "paper/paper.tex").stat().st_mtime
+_fig = (REPO / "paper/fig_decomposition.pdf").stat().st_mtime
+_pdf = (REPO / "paper/paper.pdf").stat().st_mtime
+check("the PDF is newer than the LaTeX source", True, _pdf > _tex)
+check("and newer than the figure it embeds", True, _pdf > _fig)
+check("the PDF reports its own page count somewhere readable", True,
+      (REPO / "paper/paper.pdf").read_bytes().count(b"/Type /Page") > 1)
+_render = REPO / "paper/paper_text.txt"
+if not _render.exists():
+    raise SystemExit("paper/paper_text.txt is missing -- run "
+                     "scripts/extract_pdf_text.py; this gate does not skip itself")
+_rendered = re.sub(r"\s+", " ", _render.read_text(encoding="utf-8"))
+check("the committed text render is newer than the PDF", True,
+      _render.stat().st_mtime >= _pdf)
+check("the rendered pages carry the headline numbers", True,
+      all(s in _rendered for s in ("78.16", "249.18", "8.3812", "2,261,770")))
+check("no unresolved reference reached the render", 0, _rendered.count("??"))
+check("the rendered paper carries an AI-assistance disclosure", True,
+      "AI assistance in this work" in _rendered)
+check("identifiers stay searchable in the text layer", True,
+      all(s in _rendered for s in ("gen_default_s0", "audit_grid_levels.py",
+                                   "verify_paper_claims.py")))
+
+# ---- 文档里每一个 64 位十六进制串都必须真是某个东西的哈希 --------------
+# 触发这条的原因是一次真实的自我伪造：ops log 里先写下了一个凭格式编出来的 sha256，
+# 之后才跑命令拿到真值。形如证据不等于证据。
+def _hex_in(*suffixes, skip=()) -> set:
+    """Every 64-hex string appearing in machine-written files of these suffixes."""
+    found = set()
+    for f in REPO.rglob("*"):
+        if not f.is_file() or ".git" in f.parts or "__pycache__" in f.parts:
+            continue
+        if f.suffix not in suffixes or any(s in f.parts for s in skip):
+            continue
+        try:
+            found.update(re.findall(r"[0-9a-f]{64}",
+                                    f.read_text(encoding="utf-8", errors="ignore")))
+        except OSError:
+            continue
+    return found
+
+
+# A hash quoted in prose is trustworthy only if some machine-written artifact carries the
+# same value, or it hashes a file on disk. Provenance, not value overlap: subtracting the
+# prose set by value would delete a shared digest just because the log also quotes it.
+_machine_hex = _hex_in({".json", ".jsonl", ".yaml", ".csv"}) | {
+    hashlib.sha256(f.read_bytes()).hexdigest()
+    for f in REPO.rglob("*") if f.is_file() and ".git" not in f.parts}
+_doc_quoted = {}
+for _f in (REPO / "docs/operations-log.md", REPO / "README.md", REPO / "paper/paper.tex"):
+    for _h in re.findall(r"[0-9a-f]{64}", _f.read_text(encoding="utf-8")):
+        _doc_quoted.setdefault(_h, _f.name)
+check("every 64-hex hash quoted in the docs is a real digest of something", [],
+      sorted({f"{h[:12]}.. quoted in {src}" for h, src in _doc_quoted.items()
+              if h not in _machine_hex}))
+
+# ---- 论文/README 指向的每个路径都必须真的在盘上、且真的被 git 跟踪 ------
+# A `git commit -a` silently skips untracked files, and the pushed artifact would then
+# cite a script that is not in the repository -- which is this paper's own defect class,
+# applied to the submission itself.
+_tracked = set(subprocess.run(["git", "ls-files"], capture_output=True, text=True,
+                              encoding="utf-8", errors="replace").stdout.split())
+_refs = set()
+for _m in re.finditer(r"(?:scripts|chia_loop|results|decision_chain|docs|paper|\.tmp)/"
+                      r"[A-Za-z0-9_.\\\-/]+",
+                      (REPO / "paper/paper.tex").read_text(encoding="utf-8")
+                      + (REPO / "README.md").read_text(encoding="utf-8")
+                      + (REPO / "REVIEW_COVERAGE.md").read_text(encoding="utf-8")):
+    # LaTeX escapes underscores inside \texttt{}, so a naive pattern truncates every
+    # script name at the first one and the gate reports fiction as missing.
+    _refs.add(_m.group(0).rstrip(".,;").replace("\\_", "_").rstrip("/"))
+def _is_tracked(rel: str) -> bool:
+    return rel in _tracked or any(t.startswith(rel + "/") for t in _tracked)
+check("every referenced path exists on disk", [],
+      sorted(r for r in _refs if not (REPO / r).exists()))
+check("and every referenced path is tracked by git", [],
+      sorted(r for r in _refs if (REPO / r).exists() and not r.startswith(".tmp")
+             and not _is_tracked(r)))
+
+# ---- 覆盖率必须是重算出来的，否则 README 里那句又是一个陈旧字符串 -------
+_inv = json.loads(subprocess.run(
+    [sys.executable, str(REPO / "scripts/inventory_vouches.py"), "--json"],
+    capture_output=True, text=True, encoding="utf-8").stdout)
+README_TXT = (REPO / "README.md").read_text(encoding="utf-8")
+check("published file count matches the tree", True,
+      f"all {_inv['files_tracked']} tracked" in README_TXT)
+check("published machine-vouch rate is recomputed", True,
+      f"{_inv['machine_vouched_rate']:.1%}" in README_TXT)
+check("published unvouched rate is recomputed", True,
+      f"{_inv['unvouched_rate']:.1%}" in README_TXT)
+check("the published orphan breakdown is recomputed", True,
+      f"({len(_inv['unvouched'])} files;" in README_TXT
+      and f"{sum(1 for f in _inv['unvouched'] if f.startswith('.tmp/'))} live under"
+      in README_TXT)
+check("and REVIEW_COVERAGE.md is the generated one", True,
+      str(_inv["files_tracked"]) in (REPO / "REVIEW_COVERAGE.md").read_text(encoding="utf-8"))
+
+# ---- 决策链第二组：4 条真实决策，判决与作者实际动作对账 ---------------
+_d3spec = load_json("decision_chain/chia-decisions3.json")
+_d3 = load_json("decision_chain/chia-decisions3.verdicts.json")
+_d3_auth = {d["id"]: d["chosen_by_author"] for d in _d3spec["decisions"]}
+check("the set really has four decisions", 4, len(_d3["decisions"]))
+check("the head's top-1 equals what the author did", 4,
+      sum(1 for d in _d3["decisions"] if d["chosen_action"] == _d3_auth[d["id"]]),
+      r"equalled the action taken 4 of 4 times")
+_marg = [float(m.group(1)) for d in _d3["decisions"]
+         for m in [re.search(r"margin ([\d.]+) < ", " ".join(d["reasons"]))] if m]
+check("the two escalations are the two thin margins", [0.01, 0.118], sorted(_marg),
+      r"escalated the two genuinely close calls")
+check("both clear winners ran automatically",
+      ["D15_launch_the_fix_before_testing_it", "D17_publish_state_with_uncompiled_paper"],
+      sorted(_d3["auto"]))
+_noul = sorted(float(n) for d in _d3["decisions"]
+               for n in re.findall(r"noul=([\d.]+)", " ".join(d["reasons"])))
+check("every approval score exceeds the 0.5 hint", (4, 0.627, 0.835),
+      (len(_noul), _noul[0], _noul[-1]), r"hint on all four")
+check("no noul question text is repeated across the set", 4,
+      len({q["instructions"] for d in _d3spec["decisions"]
+           for q in d["questions"].values() if q["type"] == "noul"}))
 
 
 def main() -> int:

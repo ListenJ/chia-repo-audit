@@ -1,0 +1,20 @@
+{
+  "what": "Unit suite executed inside the pinned official CHIA image, read-only mount, no simulator run.",
+  "command": "sudo docker run --rm -e OMP_NUM_THREADS=2 -v /tmp/imgtest2:/work:ro -w /work ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4 python3 -m unittest discover -s chia_loop/tests",
+  "image": "ghcr.io/ucb-bar/chia-champsim",
+  "image_digest": "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "interpreter": "Python 3.10.19",
+  "host": "GCP compute instance chia-grid2, us-east1-b (sponsor-funded project, compute idle at run time)",
+  "run_utc": "2026-09-23T17:35Z",
+  "result": {
+    "ran": 44,
+    "outcome": "OK",
+    "exit_code": 0,
+    "duration_s": 5.969,
+    "wall_s": 6.7
+  },
+  "tree_tested": "chia_loop/ and scripts/ from the working tree after defect 8 (the harness substituting a candidate for a missing factor level) was closed and its regression test added; 33 Python files, 9 of them test modules, shipped as a tarball, extracted into a fresh /tmp/imgtest2 and mounted read-only. The VM working tree was not touched and nothing on it was deleted.",
+  "supersedes": "results/in_image_tests_2026-09-23.json recorded 'Ran 43 tests / OK' against the tree before the 44th test existed. 43 was correct then; that file is kept as the record of the earlier commit.",
+  "note": "The suite is pure Python and does not exercise the simulator; running it in the image establishes interpreter and dependency compatibility, not that any measurement reproduced.",
+  "method_note": "The first attempt reported files=0 for the extracted tree and a docker permission error. Both were measurement artefacts, not state: the count came from a find pattern mangled by nested quoting, and the daemon socket needs sudo for this account. Re-checked with a heredoc script on the remote host, which showed 33 files extracted. A zero from your own probe is a harness-bug hypothesis before it is a finding."
+}

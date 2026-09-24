@@ -1,10 +1,10 @@
 {
   "config_version": 5,
-  "timestamp": 1789745768.651106,
-  "git_sha": "d2cedfa",
-  "python": "3.12.3",
-  "cwd": "/home/listen/CHIA/chia-repo-audit",
-  "config_sha256": "f4864a0a2c541d907584a82d80eae0120798aae3bfaf563ec27cd7e82c1466db",
+  "timestamp": 1790184194.0711389,
+  "git_sha": "feab008",
+  "python": "3.14.7",
+  "cwd": "/mnt/d/chia-repo-audit-from-linux-20260922/chia-repo-audit",
+  "config_sha256": "e06798fc7b4dfd35e61566854099b4dfb750c5585a46f7a574e9451b873bc235",
   "backend": "stub",
   "audit_protocol": "double-blind semantics adapted from Axiom (kappa=0.954, N=100, 20% re-audit)",
   "pre_registered": true

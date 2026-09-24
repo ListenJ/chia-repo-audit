@@ -16,12 +16,13 @@ _UNSET = object()
 
 
 def raw_for(digest="a" * 16, cycles=980.0, backend="champsim_node", prompt="default",
-            module="gen_default_s0", trial_cycles=_UNSET, instructions=5_000_001):
+            module="gen_default_s0", trial_cycles=_UNSET, instructions=5_000_001,
+            git_sha="d3033f5"):
     trial = {"cycles": cycles, "ipc": 1.7, "instructions": instructions,
              "binary_sha256": digest}
     trials = [trial, dict(trial, cycles=cycles if trial_cycles is _UNSET else trial_cycles)]
     return {
-        "schema_version": 2, "backend": backend, "git_sha": "abc",
+        "schema_version": 2, "backend": backend, "git_sha": git_sha,
         "config_sha256": "def",
         "cells": {f"0/{prompt}/t1.xz": {
             "seed": 0, "prompt": prompt, "trace": "t1.xz", "candidate_id": "c",
@@ -42,6 +43,13 @@ class CheckGridEvidenceTest(unittest.TestCase):
         out = check.verdicts(raw_for(backend="stub"), REFERENCE)
         self.assertIn("backend_is_real", out["failures"])
         self.assertFalse(out["passed"])
+
+    def test_a_git_sha_of_unknown_is_not_a_pinned_commit(self):
+        for bad in ("unknown", "", "abc", "HEAD", "d3033f5-dirty"):
+            out = check.verdicts(raw_for(git_sha=bad), REFERENCE)
+            self.assertIn("commit_sha_retained", out["failures"], bad)
+            self.assertFalse(out["passed"], bad)
+        self.assertEqual(check.verdicts(raw_for(), REFERENCE)["failures"], {})
 
     def test_a_design_measured_with_the_image_default_binary_is_rejected(self):
         out = check.verdicts(raw_for(digest=check.IMAGE_DEFAULT_BINARY), REFERENCE)

@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "purpose": "Precondition evidence for an irreversible action: deleting the two sponsor-funded GCP compute instances. Re-measured fresh rather than reusing the earlier sweep's conclusion.",
+  "authorized_by": "author, 2026-09-24: \"空闲先清掉，然后在需要时在使用保证我们的数据安全即可\" (clear the idle ones first, keep our data safe)",
+  "sweep_utc": {
+    "chia-grid": "2026-09-23T21:46:28Z",
+    "chia-grid2": "2026-09-23T21:46:27Z"
+  },
+  "project": "a3-chia-hack26ath-7744",
+  "hosts": {
+    "chia-grid": {
+      "ip": "136.108.73.240",
+      "zone": "us-east1-b",
+      "machine_type": "c2d-standard-8",
+      "created": "2026-09-22T09:51:35.777-07:00",
+      "uptime_at_sweep": "up 1 day, 4 hours, 54 minutes",
+      "loadavg": "0.00 0.00 0.00",
+      "logged_in_users": 0,
+      "disk_used": "8.8G of 193G (5%)",
+      "containers": [
+        "chia-both Exited(0) 5h ago",
+        "chia-fact Exited(0) 10h ago",
+        "chia-grid7 Exited(0) 24h ago"
+      ],
+      "screens": "none",
+      "user_processes": "none (only dockerd + OS daemons)"
+    },
+    "chia-grid2": {
+      "ip": "34.73.33.65",
+      "zone": "us-east1-b",
+      "machine_type": "c2d-standard-8",
+      "created": "2026-09-23T04:55:50.387-07:00",
+      "uptime_at_sweep": "up 9 hours, 50 minutes",
+      "loadavg": "0.00 0.00 0.00",
+      "logged_in_users": 0,
+      "disk_used": "8.2G of 193G (5%)",
+      "containers": [
+        "chia-nullctl Exited(0) 5h ago"
+      ],
+      "screens": "none",
+      "user_processes": "none (only dockerd + OS daemons)"
+    }
+  },
+  "liveness_verdict": "Both hosts idle: load 0.00 on all three averages, zero logged-in users, zero screens, every container Exited(0), no python/ray/grid process. Nothing was mid-write, so no partial artifact could be lost.",
+  "classification_method": "Whole-home content-hash manifest per host (excluding .git internals, ~/.cache, conda pkgs, venvs, and shell dotfiles on both sides symmetrically), compared against a local index built from the repo tree AND the workspace-root scratch tree, by sha256 first and by path second.",
+  "per_host": {
+    "chia-grid": {
+      "files_hashed_on_host": 299,
+      "considered_after_exclusions": 259,
+      "content_identical_to_a_local_file": 123,
+      "same_path_older_content": 63,
+      "no_local_counterpart": 73
+    },
+    "chia-grid2": {
+      "files_hashed_on_host": 208,
+      "considered_after_exclusions": 176,
+      "content_identical_to_a_local_file": 108,
+      "same_path_older_content": 62,
+      "no_local_counterpart": 6
+    }
+  },
+  "orphans_disposed": {
+    "python_bytecode": {
+      "count": 5,
+      "verdict": "regenerable from tracked sources; not data"
+    },
+    "dpc4_traces": {
+      "count": 3,
+      "verdict": "public DPC-4/SPEC17 trace files, identical hash on both hosts, re-downloadable; not authored by us",
+      "note": "see trace_hash_corroboration below"
+    },
+    "watch_grid_sh": {
+      "count": 1,
+      "verdict": "authored on the VM, no local counterpart -> RESCUED",
+      "same_hash_on_both_hosts": true,
+      "rescued_to": "results/compute_host_bookkeeping/shared_watch_grid.sh",
+      "sha256": "c63b031bef78d19e87d53a86c5f14ff9fd8c5bf78347e01716850e2d317fb34f"
+    },
+    "home_workspace_snapshot": {
+      "count": 66,
+      "host": "chia-grid",
+      "verdict": "an exact extraction of local git commit b85b38c ('docs: backfill commit hashes in the export and re-verification records'), which is in local history; fully reproducible with `git archive b85b38c`",
+      "proof": "git archive b85b38c materialised locally and hash-compared file by file: 66/66 byte-identical, 0 differing, 0 absent",
+      "reproduce": "git archive --format=tar b85b38c | tar -x"
+    }
+  },
+  "trace_hash_corroboration": {
+    "claim": "the three trace sha256 values recorded in results/grid_fact_prompt/provenance.json were re-hashed on the live host during this sweep and matched exactly",
+    "recorded_in": "results/grid_fact_prompt/provenance.json",
+    "n_traces": 3,
+    "n_matching": 3,
+    "coverage_caveat": "3 of the 6 grid provenance.json files pin trace sha256 (grid_fact_prompt, grid_v6, grid_v7_gcp); the other 3 record trace names without hashes and grid_x_aggressive_s3 has no provenance.json at all. Across the three that do pin, all three traces agree on one hash each, and those hashes are the ones re-verified on the live host. So the corroboration covers half the grids that kept a provenance record, not the whole measurement set.",
+    "coverage_caveat_original": "only 1 of the 6 grid provenance.json files pins trace sha256 at all; the other 5 record trace names without hashes. This corroboration therefore covers one grid, not the measurement set.",
+    "coverage_correction": "This caveat originally read 'only 1 of the 6 grid provenance.json files pins trace sha256 at all'. That was wrong: the real number is 3. It was wrong in the direction nobody complains about, since it understated our own coverage rather than overstating it. Caught when scripts/verify_paper_claims.py tried to re-derive the '1' from the files and got 3. The original wording is kept above rather than deleted.",
+    "grids_pinning_trace_sha256": [
+      "grid_fact_prompt",
+      "grid_v6",
+      "grid_v7_gcp"
+    ],
+    "cross_grid_agreement": {
+      "n_traces": 3,
+      "n_distinct_hashes_per_trace": [
+        1,
+        1,
+        1
+      ],
+      "verdict": "all agree"
+    }
+  },
+  "earlier_rescue": {
+    "when": "2026-09-24 ~04:50 local",
+    "files": 20,
+    "hash_verified": "20/20",
+    "now_at": "results/compute_host_bookkeeping/",
+    "note": "the two packed archives among them (grid_both_axes.tgz, grid_nullity_control.tgz) were unpacked and compared to the committed results/: 10/10 files byte-identical, the only local-only file being provenance.json, which is authored locally after transfer and was never on a VM"
+  },
+  "sweep_artifacts": {
+    "chia-grid": {
+      "stdout_sha256": "0c1a0eb4d531b8088f760a26c42446dedeb1593bafbbba9d2f835db26326f93a",
+      "bytes": 35662
+    },
+    "chia-grid2": {
+      "stdout_sha256": "8e6716ebebe6131c6585da3218c757644e689ccd2f76ecf0670a106ea4b0a496",
+      "bytes": 25153
+    },
+    "note": "raw sweep stdout kept in untracked .tmp/; this file records its hash"
+  },
+  "conclusion": "No unique measurement, result, config, log or authored script remains only on either VM. The single unique authored file (watch_grid.sh) was rescued and hash-verified before deletion. Teardown is safe."
+}

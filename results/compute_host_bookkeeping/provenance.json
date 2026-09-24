@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "purpose": "Compute-host bookkeeping recovered from the two sponsor-funded GCP VMs before teardown. These are the VM-side launch logs, watcher logs, status files and packed result archives behind grids whose results/ directories are already committed. Nothing here is a new measurement.",
+  "recovered_utc": "2026-09-24T~04:50Z",
+  "recovery_method": "tar over ssh using the deploy key (~/.ssh/chia_grid_deploy, ssh-ed25519, the only key present in instance metadata); the file list was piped with `tr -d '\r'` because a python text-mode write had emitted CRLF and made the first tar abort with rc=2. Every file was re-hashed locally after transfer and matched its source hash. Two transfers, not one: the first tar carried 20 files (re-hashed 20/20); shared_watch_grid.sh was rescued separately during the teardown sweep and matches the sha256 recorded for it in results/vm_teardown_precondition_2026-09-24.json (c63b031bef78d19e87d53a86c5f14ff9fd8c5bf78347e01716850e2d317fb34f). MANIFEST.sha256 covers all 21 and every entry re-hashes.",
+  "selection_rule": "A whole-home content-hash manifest (494 file instances) was compared against the local tree by sha256, not by path. 193 were stale versions of files already present locally; the 20 that sweep found were the ones with no local counterpart. Excluded: the two root-level transport bundles I created for the transfer, two empty .err files, and four scratch file-lists superseded by MANIFEST.sha256. That sweep found 20; the 21st (shared_watch_grid.sh) came from the separate whole-home comparison run as the teardown precondition, which is recorded in results/vm_teardown_precondition_2026-09-24.json.",
+  "hosts": {
+    "chia-grid": {
+      "external_ip": "136.108.73.240",
+      "machine_type": "c2d-standard-8",
+      "zone": "us-east1-b",
+      "created": "2026-09-22T09:51:35.777-07:00"
+    },
+    "chia-grid2": {
+      "external_ip": "34.73.33.65",
+      "machine_type": "c2d-standard-8",
+      "zone": "us-east1-b",
+      "created": "2026-09-23T04:55:50.387-07:00"
+    }
+  },
+  "project": "a3-chia-hack26ath-7744",
+  "files": 21,
+  "distinct_sha256": 19,
+  "identical_content_pairs": [
+    [
+      "chia-grid2_34.73.33.65/repo/.tmp/done/grid_nullity_control.status",
+      "chia-grid2_34.73.33.65/repo/.tmp/done/watch_nullctl2.log",
+      "9db6a30bad3a8cf556634274d683d0f3b62d5928b35d790bd73bce16ddf21ae2"
+    ],
+    [
+      "chia-grid_136.108.73.240/repo/.tmp/done/grid_both_axes.status",
+      "chia-grid_136.108.73.240/repo/.tmp/done/watch_both.log",
+      "7f7fe242225546ec03f8c33ceedb988f0b02eb96a0f52ba599ef96f5c7faac40"
+    ]
+  ],
+  "count_correction": "This record originally said files: 20 and 're-hashed 20/20'. Both were true of the first transfer and stale by the time the directory was published: shared_watch_grid.sh had been added from the teardown sweep, making 21. The count is corrected here rather than left to disagree with MANIFEST.sha256, and the two transfers are now named separately. 21 files carry 19 distinct hashes because each host's watcher wrote the same line into both a .status file and a .log file; that is a property of the recovered data, not a copy error, and both pairs are listed above so the duplication is checkable.",
+  "packed_archives_are_redundant": {
+    "grid_both_axes": {
+      "n_compared": 5,
+      "n_identical": 5,
+      "differing": [],
+      "only_local": [
+        "provenance.json"
+      ]
+    },
+    "grid_nullity_control": {
+      "n_compared": 5,
+      "n_identical": 5,
+      "differing": [],
+      "only_local": [
+        "provenance.json"
+      ]
+    }
+  },
+  "redundancy_note": "grid_both_axes.tgz and grid_nullity_control.tgz each pack the 5-file result set the VM shipped back; all 10 packed files are byte-identical to the committed copies under results/. The only local-only file in each is provenance.json, which is authored locally after transfer and was never on the VM. This is also why results/grid_x_aggressive_s3/ has 5 files instead of 6.",
+  "not_evidence_for": "No claim in the paper depends on this directory. Traces are public DPC-4 data and re-downloadable. The config_sha256 recorded in each grid's audit_report.json binds the config object retained inside that grid's own raw.json, not the loose launch file; for grid_fact_prompt that recomputes to 2bca9e05... exactly."
+}

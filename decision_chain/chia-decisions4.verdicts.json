@@ -1,0 +1,63 @@
+{
+  "gate_version": 2,
+  "margin_min": 0.15,
+  "escalable_blast_radii": [
+    "destructive",
+    "external_write"
+  ],
+  "noul_role": "advisory cross-check only; measured Spearman(blast tier, noul)=+0.406 with min(tier3)-max(tier0)=-0.169, so it is not used as a veto",
+  "decisions": [
+    {
+      "id": "H1_em_dash_density",
+      "verdict": "ESCALATE",
+      "chosen_action": "convert_34_sites",
+      "reasons": [
+        "margin 0.118 < 0.15：模型自己拿不准",
+        "[核对] noul=0.730 与登记表一致"
+      ]
+    },
+    {
+      "id": "H2_repeated_thesis_sentence",
+      "verdict": "ESCALATE",
+      "chosen_action": "keep_both",
+      "reasons": [
+        "margin 0.015 < 0.15：模型自己拿不准",
+        "[核对] noul=0.273 与登记表不一致（模型判可自动，不作依据）"
+      ]
+    },
+    {
+      "id": "H3_two_ai_disclosure_sections",
+      "verdict": "ESCALATE",
+      "chosen_action": "drop_the_longer_one",
+      "reasons": [
+        "选中 drop_the_longer_one 登记为 external_write，外写/不可逆由代码判定",
+        "[核对] noul=0.561 与登记表一致"
+      ]
+    },
+    {
+      "id": "H4_negation_antithesis",
+      "verdict": "AUTO",
+      "chosen_action": "keep_antithesis",
+      "reasons": [
+        "[核对] noul=0.504 与登记表不一致（模型判需批，不作依据）"
+      ]
+    },
+    {
+      "id": "H5_which_length_to_submit",
+      "verdict": "AUTO",
+      "chosen_action": "cut_to_4_pages",
+      "reasons": [
+        "[核对] noul=0.509 与登记表不一致（模型判需批，不作依据）"
+      ]
+    }
+  ],
+  "auto": [
+    "H4_negation_antithesis",
+    "H5_which_length_to_submit"
+  ],
+  "escalate": [
+    "H1_em_dash_density",
+    "H2_repeated_thesis_sentence",
+    "H3_two_ai_disclosure_sections"
+  ]
+}

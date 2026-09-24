@@ -17,11 +17,15 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import statistics
 from pathlib import Path
 
 SMOKE_INSTRUCTION_FLOOR = 1_000_000
 IMAGE_DEFAULT_BINARY = "688278205d6c9fa4"
+# `_git_head()` falls back to the literal "unknown" when `git rev-parse` fails,
+# which is truthy, so a presence test alone accepts an unpinned artifact.
+COMMIT_SHA_RE = re.compile(r"[0-9a-f]{7,40}")
 
 
 def load_cells(raw: dict) -> list[dict]:
@@ -60,8 +64,10 @@ def verdicts(raw: dict, reference: list[dict] | None,
 
     if raw.get("backend") != "champsim_node":
         fail("backend_is_real", f"backend={raw.get('backend')!r}")
-    if not raw.get("git_sha"):
-        fail("commit_sha_retained", "raw.json has no git_sha")
+    git_sha = str(raw.get("git_sha") or "").strip()
+    if not COMMIT_SHA_RE.fullmatch(git_sha):
+        fail("commit_sha_retained",
+             f"raw.json git_sha={git_sha!r} is not a commit id")
     if not raw.get("config_sha256"):
         fail("config_sha_retained", "raw.json has no config_sha256")
 

@@ -1,0 +1,145 @@
+{
+  "project": "chia-repo-audit / HotCRP #27 / MICRO 2026 A3 workshop hackathon",
+  "provenance": {
+    "set": 4,
+    "written": "2026-09-23T20:05Z",
+    "author": "the same agent that performed the polish; the human selects the final action",
+    "why": "The user asked for a Humanizer-zh pass over paper/paper.tex with disagreements adjudicated by the local Laya head. This spec holds only the choices where a real alternative exists and the tradeoff is not settled by measurement.",
+    "gate": "decision_chain/laya_gate2.py, gate_version 2, MARGIN_MIN 0.15, blast radius declared per option in code, noul advisory only",
+    "prior_sets": ["chia-decisions2.json", "chia-decisions3.json"]
+  },
+  "state": {
+    "compute": "Local Windows host, no compute needed for any option here. Two GCP VMs (chia-grid, chia-grid2) are still RUNNING and idle; none of these options touches them. Teardown is a separate, already-registered decision the human owns.",
+    "deadline": "Final hackathon submissions are due Sept 24 AoE, which is 2026-09-25T11:59:59Z. At the time of writing 40.0 hours remain.",
+    "submission_facts": {
+      "hackathon_page_limit": "Not stated anywhere in the hackathon announcement or the A3 workshop post. The only page limit found is 'Proposals are short - 1 page max - and are due Aug 25, 2026', which governs the proposal round that already closed.",
+      "workshop_paper_rule": "The A3 workshop CFP states 2-4 pages excluding references for its own paper track. Whether the hackathon track inherits that rule is not stated.",
+      "current_length": "paper.pdf renders 8 pages, 40146 characters of text layer, 6 bibliography entries.",
+      "measured_cut_cost": "docs/length-cut-plan-2026-09-24.md measures that reaching 4 pages needs roughly half the body removed, not a trim. Seven defect subsections, the substitution finding and the decision-chain result would all go."
+    },
+    "polish_measurement": {
+      "em_dash": "48 occurrences of '---' in the body over 220 sentences, one every 4.6 sentences. 34 of them are appositive or causal sites that a colon, comma, parenthesis or sentence break can carry without changing a word of meaning; 1 is a table placeholder meaning not-applicable.",
+      "rather_than": "21 occurrences. 16 carry a substantive contrast; 5 are decorative.",
+      "which_is": "10 occurrences, 6 of them sentence tails that add no measurement.",
+      "duplicate_disclosure": "The paper currently has TWO AI-disclosure sections: 'AI Assistance Disclosure' (4 lines, placed before the bibliography) and 'AI assistance in this work' (14 lines, placed after it). The second subsumes the first. Only one is machine-checked: scripts/verify_paper_claims.py line 509 requires the string 'AI assistance in this work' in the rendered PDF text layer.",
+      "epigram": "'Determinism is not reproducibility.' appears verbatim twice, once in the figure caption and once in section 3.1. It is the paper's thesis and it is backed by 0.0000% repeated-run CV against 78.16% cross-seed CV.",
+      "antithesis": "'A rule built on that score is not conservative, it is constant' is a negation-antithesis, the pattern Humanizer-zh flags as overused. Here it states a measured result: the head escalated 6 of 6 decisions including a local reversible rewrite.",
+      "invariant": "No number, citation, \\ref or \\label changes in any option. The gate scripts/verify_paper_claims.py (138 checks) must stay at 137/138 with only the designed-red untracked-file check, and the PDF must be rebuilt and its hash re-derived."
+    }
+  },
+  "decisions": [
+    {
+      "id": "H1_em_dash_density",
+      "questions": {
+        "next_action": {
+          "type": "choice",
+          "instructions": "An 8-page academic paper body contains 48 em-dashes across 220 sentences. A de-AI style guide lists em-dash overuse as a tell and recommends replacing them with commas, colons, parentheses or sentence breaks. 34 sites can be converted with no change to meaning, numbers or references; the remaining 14 are places where the dash carries a genuine interruption. Reviewers read the PDF, and the deadline is in 40 hours.",
+          "criteria": {
+            "convert_34_sites": "apply all 34 conversions, leaving about 14 em-dashes in the body, then rebuild and re-run the 138-check verifier",
+            "convert_paired_only": "convert only the 12 paired appositive sites and leave the causal ones, leaving about 24 em-dashes",
+            "leave_punctuation_alone": "make no punctuation change and spend the remaining time on evidence instead"
+          }
+        },
+        "needs_approval": {
+          "type": "noul",
+          "instructions": "Rewriting punctuation across 34 sites of a paper that is due in 40 hours, where every rewrite must be re-checked by a 138-assertion verifier before the PDF is rebuilt."
+        }
+      },
+      "blast_radius": {
+        "convert_34_sites": "local_reversible",
+        "convert_paired_only": "local_reversible",
+        "leave_punctuation_alone": "local_reversible"
+      }
+    },
+    {
+      "id": "H2_repeated_thesis_sentence",
+      "questions": {
+        "next_action": {
+          "type": "choice",
+          "instructions": "The sentence 'Determinism is not reproducibility.' appears verbatim in a figure caption and again in the first results subsection. A style guide treats a repeated quotable one-liner as an AI tell and says to rewrite anything that sounds like a pull quote. But this sentence states the paper's central finding, and the finding is measured: repeated-run CV is 0.0000% over 45 runs while cross-seed CV is 78.16%.",
+          "criteria": {
+            "keep_both": "leave the sentence in both places because it is a claim with numbers behind it, not decoration",
+            "keep_body_drop_caption": "keep it in section 3.1 and rewrite the figure caption to state the two CV numbers without the slogan",
+            "keep_caption_drop_body": "keep it in the figure caption and rewrite section 3.1 to state the numbers plainly"
+          }
+        },
+        "needs_approval": {
+          "type": "noul",
+          "instructions": "Deleting one of two verbatim occurrences of the paper's thesis sentence, where the sentence is supported by two measured coefficient-of-variation values."
+        }
+      },
+      "blast_radius": {
+        "keep_both": "local_reversible",
+        "keep_body_drop_caption": "local_reversible",
+        "keep_caption_drop_body": "local_reversible"
+      }
+    },
+    {
+      "id": "H3_two_ai_disclosure_sections",
+      "questions": {
+        "next_action": {
+          "type": "choice",
+          "instructions": "The paper ships two separate AI-disclosure sections: a 4-line 'AI Assistance Disclosure' before the bibliography and a 14-line 'AI assistance in this work' after it. The longer one says everything the shorter one says and adds the disclosure that the evaluation layer itself is machine-generated. The workshop requires an AI-use acknowledgment. One machine check requires the string 'AI assistance in this work' to appear in the rendered text.",
+          "criteria": {
+            "merge_into_one": "fold the shorter section's wording into the longer one, keep the heading 'AI assistance in this work', place the single section before the bibliography, and re-run the verifier",
+            "keep_both_sections": "leave both sections in place so no disclosure sentence is at risk of being lost",
+            "drop_the_longer_one": "keep only the short conventional disclosure and remove the 14-line section that also discloses the machine-generated evaluation layer"
+          }
+        },
+        "needs_approval": {
+          "type": "noul",
+          "instructions": "Editing the AI-use disclosure of a submission under a workshop requirement, where one of the two existing sections discloses that the annotation layer and the label generator were themselves machine-generated."
+        }
+      },
+      "blast_radius": {
+        "merge_into_one": "local_reversible",
+        "keep_both_sections": "local_reversible",
+        "drop_the_longer_one": "external_write"
+      }
+    },
+    {
+      "id": "H4_negation_antithesis",
+      "questions": {
+        "next_action": {
+          "type": "choice",
+          "instructions": "The sentence 'A rule built on that score is not conservative, it is constant: it escalates everything, so the automation delivers nothing and the human sees no more signal than before' uses the not-X-but-Y antithesis that the style guide flags as overused. The claim itself is measured: a local decision head escalated 6 of 6 decisions and scored a reversible local rewrite 0.895 against 0.848 for a push to a public artifact.",
+          "criteria": {
+            "keep_antithesis": "leave the sentence as written because the contrast is the finding and the numbers are in the preceding sentences",
+            "rewrite_plain": "rewrite it as a plain causal statement with the same content and no antithesis, for example that a rule escalating every decision automates nothing"
+          }
+        },
+        "needs_approval": {
+          "type": "noul",
+          "instructions": "Rewriting one sentence of a results subsection for style while preserving its measured content about an escalation rule that fired on all six decisions."
+        }
+      },
+      "blast_radius": {
+        "keep_antithesis": "local_reversible",
+        "rewrite_plain": "local_reversible"
+      }
+    },
+    {
+      "id": "H5_which_length_to_submit",
+      "questions": {
+        "next_action": {
+          "type": "choice",
+          "instructions": "The hackathon announcement states no page limit for final submissions; the co-located workshop CFP states 2-4 pages excluding references for its own paper track and does not say whether the hackathon track inherits it. The paper is 8 pages. A measured cut plan shows that reaching 4 pages requires removing roughly half the body, which would delete seven self-found defect subsections, the substitution finding and the decision-chain result. 40 hours remain. Organizers have been responsive by email and the user has an unsent draft asking exactly this question.",
+          "criteria": {
+            "ship_8_pages": "upload the 8-page PDF as the final submission and rely on the absence of a stated hackathon limit",
+            "ask_then_ship": "send the organizer email asking whether the hackathon track inherits the 2-4 page rule, and prepare both variants while waiting",
+            "cut_to_4_pages": "cut the paper to 4 pages now, removing about half the body including the seven-defect record"
+          }
+        },
+        "needs_approval": {
+          "type": "noul",
+          "instructions": "Choosing the length of the PDF that gets uploaded to the conference submission site, where the format requirement for this track is not published and the content that would be cut is the paper's main contribution."
+        }
+      },
+      "blast_radius": {
+        "ship_8_pages": "external_write",
+        "ask_then_ship": "external_write",
+        "cut_to_4_pages": "local_reversible"
+      }
+    }
+  ]
+}

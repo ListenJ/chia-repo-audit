@@ -101,18 +101,47 @@ class AuditMetricTests(unittest.TestCase):
         config = {
             "generator_mode": "catalog",
             "candidate_catalog": [
-                {"candidate_id": "a", "design": {"replacement": "LRU"}},
-                {"candidate_id": "b", "design": {"replacement": "MRU"}},
+                {"candidate_id": "a", "generator_seed": 0, "prompt": "default",
+                 "design": {"replacement": "LRU"}},
+                {"candidate_id": "b", "generator_seed": 1, "prompt": "cot",
+                 "design": {"replacement": "MRU"}},
             ],
         }
 
         first = audit_repro.generate_candidate(config, seed=0, prompt="default")
         second = audit_repro.generate_candidate(config, seed=1, prompt="cot")
 
-        self.assertNotEqual(first["candidate_id"], second["candidate_id"])
+        self.assertEqual(first["candidate_id"], "a")
+        self.assertEqual(second["candidate_id"], "b")
         self.assertEqual(first["generator_seed"], 0)
         self.assertEqual(second["prompt"], "cot")
         self.assertEqual(len(first["candidate_sha256"]), 64)
+
+    def test_missing_cell_is_refused_instead_of_substituted(self):
+        """A factor level with no candidate must fail closed, not borrow one.
+
+        The harness used to fall back to the whole pool whenever the requested
+        (seed, prompt) pair was absent, then stamp the missing labels onto whatever
+        it picked. One published grid reported a cross-seed CV computed partly by
+        re-running a single design under four different names.
+        """
+        config = {
+            "generator_mode": "catalog",
+            "candidate_catalog": [
+                {"candidate_id": "a", "generator_seed": 0, "prompt": "default",
+                 "design": {"replacement": "LRU"}},
+                {"candidate_id": "b", "generator_seed": 1, "prompt": "default",
+                 "design": {"replacement": "MRU"}},
+            ],
+        }
+
+        with self.assertRaises(ValueError) as caught:
+            audit_repro.generate_candidate(config, seed=7, prompt="cot")
+
+        message = str(caught.exception)
+        self.assertIn("cot", message)
+        self.assertIn("0/default", message)
+        self.assertIn("1/default", message)
 
     def test_directory_generator_loads_agent_candidate(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -178,6 +207,44 @@ class AuditMetricTests(unittest.TestCase):
         self.assertEqual(result["n_candidates"], 2)
         self.assertEqual(result["full_top_candidate"], "b")
         self.assertLess(result["top1_stability"], 1.0)
+
+    def test_single_candidate_ranking_is_unrankable_not_zero(self):
+        cells = {}
+        for trace, cycles in {"t1": 100, "t2": 400, "t3": 250}.items():
+            cells[f"only/{trace}"] = {
+                "candidate_id": "only",
+                "trace": trace,
+                "median": {"cycles": cycles},
+                "trials": [{"cycles": cycles}],
+            }
+
+        result = audit_repro._trace_ranking_stability(cells)
+
+        self.assertFalse(result["rankable"])
+        self.assertEqual(result["unrankable_reason"], "fewer_than_two_candidates")
+        self.assertEqual(result["n_traces"], 0)
+
+        report = {
+            "version": 6,
+            "backend": "champsim_node",
+            "acceptance_threshold": 0.05,
+            "max_seed_cv": 0.0,
+            "max_repeat_cv": 0.0,
+            "max_prompt_spread": 0.0,
+            "max_trace_cv": 0.64,
+            "verdict": "NON-REPRODUCIBLE",
+            "cohen_kappa": 1.0,
+            "publish_gate": "BLOCKED",
+            "publish_blockers": ["axis_not_exercised:prompt,seed"],
+            "adversarial_detection": 1.0,
+            "gold_calibration": "5/5",
+            "error_distribution": {},
+            "ranking_stability": result,
+        }
+        scorecard = audit_repro._format_scorecard(report, {"kappa_gate": 0.7})
+
+        self.assertIn("unrankable (fewer_than_two_candidates)", scorecard)
+        self.assertNotIn("Kendall tau: 0.0", scorecard)
 
 
 class AuditCliTests(unittest.TestCase):

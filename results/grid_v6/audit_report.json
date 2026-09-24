@@ -1,109 +1,126 @@
 {
-  "version": 6,
-  "backend": "champsim_node",
-  "config_sha256": "680d37438caff1aa6aee4c6b51d54bd5d0d42def6452d738de6684538f7d378c",
-  "acceptance_threshold": 0.05,
-  "max_seed_cv": 0.781641,
-  "max_repeat_cv": 0.0,
-  "max_prompt_spread": 0.0,
-  "max_trace_cv": 1.633321,
-  "seed_cv": {
-    "fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.012999,
-    "fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.000883,
-    "fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.781641
-  },
-  "repeatability_cv": {
-    "1/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
-    "1/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
-    "1/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
-    "2/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
-    "2/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
-    "2/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
-    "3/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
-    "3/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
-    "3/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
-  },
-  "prompt_spread": {
-    "1/638.imagick_s-4128B.champsimtrace.xz": 0.0,
-    "1/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
-    "1/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
-    "2/638.imagick_s-4128B.champsimtrace.xz": 0.0,
-    "2/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
-    "2/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
-    "3/638.imagick_s-4128B.champsimtrace.xz": 0.0,
-    "3/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
-    "3/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
-  },
-  "trace_cv": {
-    "1/fill_only_conservative": 1.633321,
-    "2/fill_only_conservative": 0.770105,
-    "3/fill_only_conservative": 1.633321
-  },
-  "ranking_stability": {
-    "n_candidates": 3,
-    "n_traces": 3,
-    "full_ranking": [
-      "gen_fill_only_conservative_s2",
-      "gen_fill_only_conservative_s1",
-      "gen_fill_only_conservative_s3"
-    ],
-    "full_top_candidate": "gen_fill_only_conservative_s2",
-    "full_scores": {
-      "gen_fill_only_conservative_s1": 33134423.666667,
-      "gen_fill_only_conservative_s2": 3412369.333333,
-      "gen_fill_only_conservative_s3": 33134423.666667
-    },
-    "top1_stability": 0.666667,
-    "mean_kendall_tau": 0.555556,
-    "leave_one_out": [
-      {
-        "held_out_trace": "638.imagick_s-4128B.champsimtrace.xz",
-        "ranking": [
-          "gen_fill_only_conservative_s2",
-          "gen_fill_only_conservative_s1",
-          "gen_fill_only_conservative_s3"
-        ],
-        "top_candidate": "gen_fill_only_conservative_s2",
-        "top1_matches_full": true,
-        "kendall_tau": 1.0
-      },
-      {
-        "held_out_trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
-        "ranking": [
-          "gen_fill_only_conservative_s2",
-          "gen_fill_only_conservative_s1",
-          "gen_fill_only_conservative_s3"
-        ],
-        "top_candidate": "gen_fill_only_conservative_s2",
-        "top1_matches_full": true,
-        "kendall_tau": 1.0
-      },
-      {
-        "held_out_trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
-        "ranking": [
-          "gen_fill_only_conservative_s1",
-          "gen_fill_only_conservative_s3",
-          "gen_fill_only_conservative_s2"
-        ],
-        "top_candidate": "gen_fill_only_conservative_s1",
-        "top1_matches_full": false,
-        "kendall_tau": -0.333333
-      }
-    ]
-  },
-  "verdict": "NON-REPRODUCIBLE",
-  "cohen_kappa": 1.0,
-  "publish_gate": "BLOCKED",
-  "publish_blockers": [
-    "reproducibility_threshold"
+ "version": 6,
+ "backend": "champsim_node",
+ "config_sha256": "680d37438caff1aa6aee4c6b51d54bd5d0d42def6452d738de6684538f7d378c",
+ "acceptance_threshold": 0.05,
+ "axis_levels": {
+  "seed": 3,
+  "prompt": 1,
+  "trace": 3,
+  "repeat_min": 2
+ },
+ "axes_measured": {
+  "seed": true,
+  "prompt": false,
+  "trace": true,
+  "repeat": true
+ },
+ "unexercised_axes": [
+  "prompt"
+ ],
+ "max_seed_cv": 0.781641,
+ "max_repeat_cv": 0.0,
+ "max_prompt_spread": 0.0,
+ "max_trace_cv": 1.633321,
+ "seed_cv": {
+  "fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.012999,
+  "fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.000883,
+  "fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.781641
+ },
+ "repeatability_cv": {
+  "1/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "1/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "1/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
+  "2/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "2/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "2/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
+  "3/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "3/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "3/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+ },
+ "prompt_spread": {
+  "1/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "1/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "1/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
+  "2/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "2/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "2/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
+  "3/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+  "3/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+  "3/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+ },
+ "trace_cv": {
+  "1/fill_only_conservative": 1.633321,
+  "2/fill_only_conservative": 0.770105,
+  "3/fill_only_conservative": 1.633321
+ },
+ "ranking_stability": {
+  "n_candidates": 3,
+  "n_traces": 3,
+  "rankable": true,
+  "full_ranking": [
+   "gen_fill_only_conservative_s2",
+   "gen_fill_only_conservative_s1",
+   "gen_fill_only_conservative_s3"
   ],
-  "adversarial_detection": 1.0,
-  "gold_calibration": "5/5",
-  "error_distribution": {
-    "E0": 0,
-    "E1": 2,
-    "E2": 2,
-    "E3": 2,
-    "E4": 3
-  }
+  "full_top_candidate": "gen_fill_only_conservative_s2",
+  "full_scores": {
+   "gen_fill_only_conservative_s1": 33134423.666667,
+   "gen_fill_only_conservative_s2": 3412369.333333,
+   "gen_fill_only_conservative_s3": 33134423.666667
+  },
+  "top1_stability": 0.666667,
+  "mean_kendall_tau": 0.555556,
+  "leave_one_out": [
+   {
+    "held_out_trace": "638.imagick_s-4128B.champsimtrace.xz",
+    "ranking": [
+     "gen_fill_only_conservative_s2",
+     "gen_fill_only_conservative_s1",
+     "gen_fill_only_conservative_s3"
+    ],
+    "top_candidate": "gen_fill_only_conservative_s2",
+    "top1_matches_full": true,
+    "kendall_tau": 1.0
+   },
+   {
+    "held_out_trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+    "ranking": [
+     "gen_fill_only_conservative_s2",
+     "gen_fill_only_conservative_s1",
+     "gen_fill_only_conservative_s3"
+    ],
+    "top_candidate": "gen_fill_only_conservative_s2",
+    "top1_matches_full": true,
+    "kendall_tau": 1.0
+   },
+   {
+    "held_out_trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+    "ranking": [
+     "gen_fill_only_conservative_s1",
+     "gen_fill_only_conservative_s3",
+     "gen_fill_only_conservative_s2"
+    ],
+    "top_candidate": "gen_fill_only_conservative_s1",
+    "top1_matches_full": false,
+    "kendall_tau": -0.333333
+   }
+  ]
+ },
+ "verdict": "NON-REPRODUCIBLE",
+ "cohen_kappa": 1.0,
+ "publish_gate": "BLOCKED",
+ "publish_blockers": [
+  "axis_not_exercised:prompt",
+  "reproducibility_threshold"
+ ],
+ "adversarial_detection": 1.0,
+ "gold_calibration": "5/5",
+ "error_distribution": {
+  "E0": 0,
+  "E1": 2,
+  "E2": 2,
+  "E3": 2,
+  "E4": 3
+ }
 }

@@ -1,0 +1,21 @@
+{
+  "what": "Unit suite executed inside the pinned official CHIA image, read-only mount, no simulator run.",
+  "command": "sudo docker run --rm -e OMP_NUM_THREADS=2 -v /tmp/imgtest_r2:/work:ro -w /work ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4 python3 -m unittest discover -s chia_loop/tests",
+  "image": "ghcr.io/ucb-bar/chia-champsim",
+  "image_digest": "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "image_id_observed_on_host": "sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4",
+  "interpreter": "Python 3.10.19",
+  "host": "GCP compute instance chia-grid, us-east1-b (sponsor-funded project, load average 0.00 at run time)",
+  "run_utc": "2026-09-23T20:54Z",
+  "result": {
+    "ran": 45,
+    "outcome": "OK",
+    "exit_code": 0,
+    "duration_s": 6.014,
+    "wall_s": 6.788
+  },
+  "tree_tested": "chia_loop/ and scripts/ from the working tree after the ranking-stability fill-value defect was fixed (a grid with fewer than two candidates returned top1_stability 0.0 and mean_kendall_tau 0.0, which the scorecard printed as if measured) and its regression test added; 36 Python files, 9 of them test modules, shipped as tarball sha256 c49c40820ce51b49a8a7ac22178d03e6f0b943988332e7e3dd6d64a2bd0ed20d, extracted into a fresh /tmp/imgtest_r2 and mounted read-only. The VM working tree was not touched and nothing on it was deleted.",
+  "supersedes": "results/in_image_tests_2026-09-24.json recorded 'Ran 44 tests / OK' against the tree before the 45th test existed. 44 was correct then; that file is kept as the record of the earlier commit.",
+  "note": "The suite is pure Python and does not exercise the simulator; running it in the image establishes interpreter and dependency compatibility, not that any measurement reproduced.",
+  "why_the_count_moved": "The 45th test is test_single_candidate_ranking_is_unrankable_not_zero. It was added because a grid retained only on the compute host (results/grid_x_aggressive_s3, one candidate x three traces) had a scorecard reading 'Trace ranking Kendall tau: 0.0' and 'PUBLISHABLE'. tau 0.0 is the value the helper returns when there is nothing to rank, so it reads as 'maximally unstable ranking' while meaning 'never measured'. The test asserts both the flag and the printed line, because a test that checked only the JSON key would not catch a printer that still emits 0.0."
+}

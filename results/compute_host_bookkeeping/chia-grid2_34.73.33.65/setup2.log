@@ -1,0 +1,142 @@
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+dpkg-preconfigure: unable to re-open stdin: 
+Selecting previously unselected package pigz.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 80283 files and directories currently installed.)
+Preparing to unpack .../0-pigz_2.8-1_amd64.deb ...
+Unpacking pigz (2.8-1) ...
+Selecting previously unselected package bridge-utils.
+Preparing to unpack .../1-bridge-utils_1.7.1-1ubuntu2_amd64.deb ...
+Unpacking bridge-utils (1.7.1-1ubuntu2) ...
+Selecting previously unselected package runc.
+Preparing to unpack .../2-runc_1.3.4-0ubuntu1~24.04.1_amd64.deb ...
+Unpacking runc (1.3.4-0ubuntu1~24.04.1) ...
+Selecting previously unselected package containerd.
+Preparing to unpack .../3-containerd_2.2.1-0ubuntu1~24.04.3_amd64.deb ...
+Unpacking containerd (2.2.1-0ubuntu1~24.04.3) ...
+Selecting previously unselected package dns-root-data.
+Preparing to unpack .../4-dns-root-data_2024071801~ubuntu0.24.04.1_all.deb ...
+Unpacking dns-root-data (2024071801~ubuntu0.24.04.1) ...
+Selecting previously unselected package dnsmasq-base.
+Preparing to unpack .../5-dnsmasq-base_2.91-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking dnsmasq-base (2.91-0ubuntu0.24.04.1) ...
+Selecting previously unselected package docker.io.
+Preparing to unpack .../6-docker.io_29.1.3-0ubuntu3~24.04.2_amd64.deb ...
+Unpacking docker.io (29.1.3-0ubuntu3~24.04.2) ...
+Selecting previously unselected package ubuntu-fan.
+Preparing to unpack .../7-ubuntu-fan_0.12.16+24.04.1_all.deb ...
+Unpacking ubuntu-fan (0.12.16+24.04.1) ...
+Setting up dnsmasq-base (2.91-0ubuntu0.24.04.1) ...
+Setting up runc (1.3.4-0ubuntu1~24.04.1) ...
+Setting up dns-root-data (2024071801~ubuntu0.24.04.1) ...
+Setting up bridge-utils (1.7.1-1ubuntu2) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+Setting up pigz (2.8-1) ...
+Setting up containerd (2.2.1-0ubuntu1~24.04.3) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/containerd.service → /usr/lib/systemd/system/containerd.service.
+Setting up ubuntu-fan (0.12.16+24.04.1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/ubuntu-fan.service → /usr/lib/systemd/system/ubuntu-fan.service.
+Setting up docker.io (29.1.3-0ubuntu3~24.04.2) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+info: Selecting GID from range 100 to 999 ...
+info: Adding group `docker' (GID 113) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+Created symlink /etc/systemd/system/sockets.target.wants/docker.socket → /usr/lib/systemd/system/docker.socket.
+Processing triggers for dbus (1.14.10-4ubuntu4.1) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+latest: Pulling from ucb-bar/chia-champsim
+ffe38f1d5f72: Pulling fs layer
+dec84425ae2e: Pulling fs layer
+4a9c93911c9c: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+83ea84fd6da6: Pulling fs layer
+677e7798bcc6: Pulling fs layer
+d31c2b5f1c97: Pulling fs layer
+30e7946f4722: Pulling fs layer
+5d1190f163bb: Pulling fs layer
+99e81faa54b4: Pulling fs layer
+a329ccc79c86: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+3713183dfc58: Pulling fs layer
+e37fda7a1d20: Pulling fs layer
+af0d0245a856: Pulling fs layer
+cc8b10dcf176: Pulling fs layer
+4b30603355ae: Pulling fs layer
+e94f9afc1d38: Pulling fs layer
+342583e789dd: Pulling fs layer
+56e8cf7257d2: Pulling fs layer
+44136fa355b3: Download complete
+4f4fb700ef54: Download complete
+d837d9823436: Download complete
+342583e789dd: Download complete
+cc8b10dcf176: Download complete
+677e7798bcc6: Download complete
+99e81faa54b4: Download complete
+af0d0245a856: Download complete
+3713183dfc58: Download complete
+a329ccc79c86: Download complete
+e94f9afc1d38: Download complete
+5d1190f163bb: Download complete
+83ea84fd6da6: Download complete
+5d1190f163bb: Pull complete
+e37fda7a1d20: Download complete
+30e7946f4722: Download complete
+56e8cf7257d2: Download complete
+4b30603355ae: Download complete
+d31c2b5f1c97: Download complete
+dec84425ae2e: Download complete
+ffe38f1d5f72: Download complete
+4a9c93911c9c: Download complete
+4f4fb700ef54: Pull complete
+cc8b10dcf176: Pull complete
+677e7798bcc6: Pull complete
+ffe38f1d5f72: Pull complete
+4a9c93911c9c: Pull complete
+30e7946f4722: Pull complete
+dec84425ae2e: Pull complete
+d31c2b5f1c97: Pull complete
+342583e789dd: Pull complete
+99e81faa54b4: Pull complete
+e37fda7a1d20: Pull complete
+3713183dfc58: Pull complete
+4b30603355ae: Pull complete
+af0d0245a856: Pull complete
+56e8cf7257d2: Pull complete
+e94f9afc1d38: Pull complete
+a329ccc79c86: Pull complete
+83ea84fd6da6: Pull complete
+Digest: sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4
+Status: Downloaded newer image for ghcr.io/ucb-bar/chia-champsim:latest
+ghcr.io/ucb-bar/chia-champsim:latest
+sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4 [ghcr.io/ucb-bar/chia-champsim@sha256:610951d382f9e6cdfc51a4526ba70e36c80f3375b1dc19d60117bc47f20e94c4]

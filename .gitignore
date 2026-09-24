@@ -25,8 +25,6 @@ paper/*.aux
 paper/*.log
 paper/*.out
 
-# LaTeX build logs and intermediates
-paper/*.txt
-paper/*.aux
-paper/*.log
-paper/*.out
+# paper_text.txt is deliberately NOT ignored: it is the searchable plain-text render the
+# claim verifier gates against, so `paper/*.txt` used to swallow it (and would hand a
+# fresh clone a repository whose own gate cannot run).

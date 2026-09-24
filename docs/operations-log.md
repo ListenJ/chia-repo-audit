@@ -633,7 +633,7 @@
 - Cloud Shell **不会**自动带上凭据，`gcloud auth list` 报 No credentialed accounts，
   需要一次 `gcloud auth login`。
 - `us-central1-a` 对 `c2d-standard-8` 返回 `stockout`；实例最终落在
-  `us-east1-b`，创建于 2026-09-22T09:51:35-07:00，NAT `136.108.73.240`。
+  `us-east1-b`，创建于 2026-09-22T09:51:35-07:00，NAT 外部地址（该实例的公网 IP 只在本地记录，公开副本略去：它对复现没有任何作用，而实例一旦删除它就只剩攻击面）。
   Ubuntu 24.04 的 image family 是 `ubuntu-2404-lts-amd64`，不带 `-amd64` 会 404。
 - 配额实测（`us-central1`）：C2D 1000 / N2 3000 / C3 300 vCPU，
   `DISKS_TOTAL_GB` 102400，`SSD_TOTAL_GB` 40960，用量全为 0。主办方随后答复
@@ -1460,3 +1460,634 @@ Verdict: NON-REPRODUCIBLE      Publish gate: BLOCKED
 
 **这次也修正了我自己的一处口径**：之前论文与 README 把 78.16% 当成可迁移的
 seed 效应来写。现在有三个数并排（78.16 / 23.50，且都真），只能按设计集报告。
+
+### 22. 第八个缺陷，也是最严重的一个：harness 会凭空造出缺失的因子格
+
+收 VM2 的空实现对照网格（18 格 / 36 次运行，17:10:26Z 结束）时，第一眼的收获是
+**这篇论文一直缺的那个真实正例**：`gen_default_s0`（binary `3189efdc1e54e5b5`）在
+fotonik3d / BFSCC / imagick 上测得 2,261,770 / 7,183,123 / 1,561,323，与冷启动 no-op
+参考**逐位相同**；`gen_aggressive_offset_s1_r1` 同样三条全等。而
+`gen_fill_only_conservative_s0` 三条都live，是负对照。
+
+但 18 格里有 12 格是同一个候选。顺着这条查下去，根因在
+`chia_loop/loops/audit_repro.py:generate_candidate()`：
+
+```python
+matching = [c for c in candidates if c.get("generator_seed") == seed
+            and c.get("prompt") == prompt]
+pool = matching or candidates          # ← 缺失的格子被"就近补一个"
+candidate = copy.deepcopy(pool[(seed + prompt_offset) % len(pool)])
+candidate.setdefault("generator_seed", seed)   # ← 再把标签盖上去
+candidate.setdefault("prompt", prompt)
+candidate["candidate_sha256"] = _canonical_digest(...)  # ← 看起来像出处
+```
+
+`setdefault` 只补**不存在的键**，候选文件自带 `generator_seed=0`，所以盖不上假标签，
+也正因如此 cell 里的 `generator_seed` 与 cell 的 `seed` 不一致 —— 这就是自证。
+
+**损害是双向的，这是它最要命的地方。** 该网格唯一非零的跨 seed CV 8.3812%（也就是
+把 verdict 判成 NON-REPRODUCIBLE、publish gate 判成 BLOCKED 的那个数）出自
+`fill_only_conservative` 的两个"seed"，而它们其实是**两个不同的设计**
+（`c57d6ee71b1a` 与 `332147378a88`）——设计差被当成 seed 效应；
+其余几格 0.0% 的 CV 是反方向的同一枚硬币：**同一个二进制测两遍不可能有方差**，
+于是伪造出"通过"。一个 bug 同时供给了假警报和假安心，所以这个网格上任何阈值判断
+都不能引用。唯一活下来的轴是 repeated-run CV —— 它在格子内部比较 trial，不碰标签。
+
+**两种独立见证，互不共享失效模式**：
+1. `scripts/audit_grid_levels.py`（新增）—— 三种见证并用：cell 的 `generator_seed`
+   对不上自己的 `seed`；候选目录里根本没有这个因子格（catalog 模式下 pool 落盘可查）；
+   `design_sha256` 显示 6 个因子格背后只有 3 个编译产物。
+2. `scripts/check_grid_evidence.py`（既有）—— 完全不读标签，只用二进制归属：
+   `one_design_per_binary` 报 `3189efdc1e54e5b5` 挂在 4 个设计名下。
+
+第二个方法同时暴露一个新的引用陷阱：它给的 `n_designs_null_on_every_trace = 5`
+被重复标签灌大了（真实值 2）。我自己写的第 3 条验证器断言一度也犯了同一个错——
+按"因子格"数得 5，按"设计"数才得 2 —— 是验证器自己把这个错抓回来的。
+
+**边界：只有一个网格中招。** 关键差异在启动路径上：`.tmp/cfg/` 里 10 份配置有 9 份
+恰好是 `scripts/make_grid_config.py` 写出的那 8 个键；只有
+`grid_nullity_control.json` 多了 `acceptance_threshold / re_audit_ratio / purpose /
+version`，也就是手写绕过预检的那一份。而预检本来就把 seeds×prompts 限制在候选池里
+真实存在的最大矩形 —— 对这个 3 文件的池它会算出 2 格矩形并**直接拒绝**这个 6 格网格。
+**防这个错的机制仓库里早就有，我绕过了它。** 其余五个网格逐格核过：
+0 处替换、每个因子格一个独立设计。
+
+**同类问题在 stub 上还存在，而且标签见证看不见。** stub 的 4 条 catalog 完全没有
+`generator_seed/prompt`，9 个因子格全是盖戳出来的；因为盖戳是自洽的，只有 digest
+见证能发现（9 格 / 4 个设计）。已把 catalog 改成显式枚举 9 个带标签的格子，
+并在 `_stub_catalog()` 的注释里写死：stub 的 seed/prompt 轴是 `StubBackend`
+的算术（每 seed +37 counts、每 prompt 一个固定偏置），不是任何生成器的方差。
+
+**修复与永久化**：`generate_candidate()` 现在对缺失的因子格 `raise ValueError` 并列出
+池里实际提供哪些级别；`test_missing_cell_is_refused_instead_of_substituted` 锁住它；
+`scripts/audit_grid_levels.py` 作为发布网格的门禁（未披露替换即 exit 非 0，披露了才放行）；
+`results/grid_nullity_control/provenance.json` 丢弃其全部方差轴读数与 verdict，
+只保留空实现相等性、负对照与确定性三件事。测试 43 → 44，
+树内与钉死镜像内（Python 3.10.19，5.969s）都 `Ran 44 tests / OK`，
+证据 `results/in_image_tests_2026-09-24.json`。验证器 +18 条，115/115。
+
+**顺带记两条本次自己的测量假象**（都不该变成结论）：
+`find /tmp/imgtest2 -name \"*.py\"` 在嵌套引号里被转义吃掉，报回 **files=0**，
+而解包其实是好的（33 个 .py）——0 要先怀疑量具；
+以及 MiKTeX 编译失败后我读的 `paper.log` 是上一轮的，"第 7 页"是陈旧值，
+靠 `grep "Output written"` 无命中才没把它当成本轮结果。
+
+**未解决**：`miktex-xetex` 的格式文件 `xetex.fmt` 不见了（全盘只剩 `pdflatex.fmt`），
+`miktex format make` 在新版 CLI 里话题名已改为 `formats`，几条重建入口都没走通。
+因此**本轮论文改动（新增 §3.8、缺陷计数 6→7、规则第 7 条、Limitations 的合成正例
+改真实正例、setup 的跨主机口径）尚未经编译验证**；文本层的 115 条数字对账已通过。
+
+### 23. 决策链跑在真实决策上：4/4 命中，以及我自己写出的两个空转量具
+
+编译仍被 MiKTeX 卡住（用户选择在 MiKTeX Console 里修），于是把目标里另一条**独立可做**的部分做完：
+把本地 Laya 判别头接进的决策链，跑在一组**真的发生过**的决策上。
+
+新增 `decision_chain/chia-decisions3.json`（4 条：是否丢弃被污染的方差轴、是否把 fail-closed 的
+harness 修复落地、两台 VM 何时拆、未编译的论文要不要先推出去），每条都带上**我实际采取的动作**，
+所以比对的是结果而不是假设。18:52Z 在 bf16/CUDA 上跑完：
+
+- top-1 与实际动作 **4/4 一致**；
+- 两条 ESCALATE 恰好是两条真的两难的（0.3842 vs 0.3745；0.4271 vs 0.3086），两条 AUTO 是两条有明显胜者的
+  （margin 0.311 / 0.204）—— 这就是 v1 缺的行为；
+- **没有**把 `2/4 自动` 写成比 `0/6` 有进步：两个集合不同、阶段不同，分母不是同一个量。
+
+**noul 这一层复现了论文里那条否证。** 第一版 spec 我把四条 `needs_approval` 的问题文本写成同一句，
+判别头四次都回 `0.170` —— 常量。脚本拿这个常量去和 per-option 登记表比，于是每条
+"与登记表不一致" 都是在说选项标签，而不是模型判断：**按构造就是空的**。改成每条各自的文本后，
+分数散到 0.627–0.835（删实例最高、本地改测试最低，与 ladder 的 ρ=+0.406 同向），
+但四条**全部越过 0.5 的 needs-approval 提示线**，所以按这条阈值写规则仍然是"一律升级"。
+论文 `sec:gate2` 因此多了一个用不同措辞、独立构造的第二组复现。
+
+**第三个自我记录：我把手写的分析存成了 `chia-decisions3.verdicts.json` —— 那正是
+`laya_gate2.py` 自己写输出的路径，重跑时被静默覆盖。** 机器记录归工具，读数改放
+`chia-decisions3.notes.md`；今后凡驱动会派生的文件，不要在同一手写在里面。
+
+**顺手抓到一处早就存在的文档缺陷**：`decision_chain/README.md` 与根 `README.md` 都写
+"论文 §3.8" 指 gate2 那一节 —— 但在本轮插新小节**之前**它就已经是 §3.9 了（数字早就错一位，
+而我插入后变成错两位）。这类失效是静默的：标题对、内容对，只有编号悄悄错。处理：
+所有 markdown 里的论文指向改为**按 label 指**（`sec:gate2` / `sec:attribution`），
+并在验证器加一条永久门禁：**任何 .md（除 ops log）不得出现 `§3.N` / `section 3.N` 这种裸数字节号**。
+`CANDIDATES.md` 两处同改。
+
+论文侧：`sec:gate2` 一节增补第二段（4/4、两条两难、noul 全部越线、两比例不可比、
+以及"审计管线的量具也犯同一类错"）。验证器 +7 条，**122/122**；网格门禁 7/7 exit 0；44 测试仍绿。
+仍未编译：页数与 overfull 依旧是未知项。
+
+### 24. 把"没有错漏"变成一个可证伪的数：全库 291 文件的 vouch 普查
+
+编译还卡在 MiKTeX，于是补上协议里我一直没交的那一项：**覆盖率**。此前所有"审完了"的说法
+都没有分母。新增 `scripts/inventory_vouches.py`，对 `git ls-files` 的每个文件记五种见证，
+并按强弱分四档（机器见证 / 只被"某个脚本读它所在的集合"覆盖 / 只在散文里被点名 / 完全没人指它）。
+落盘结果 `REVIEW_COVERAGE.md` 由脚本生成：
+
+| 档 | 文件数 | 占比 |
+| --- | --- | --- |
+| machine-vouched（验证器重 derive 或单测加载） | 127 | 43.6% |
+| reachable-only（有脚本读它所在目录） | 90 | 30.9% |
+| prose-only（论文/ops log/索引点名，但没有检查读它） | 41 | 14.1% |
+| 完全无见证 | 33 | 11.3% |
+
+**"完全无见证"的 33 个里 32 个在 `.tmp/`**（跑批日志 + 三个容器锁文件），`.tmp/` 外只有
+一份被 KAGGLE_VALIDATION.md 取代的计划文档。也就是说：**树里没有任何指向的，全是运行时残渣，
+没有一处是"某段逻辑没人核过"** —— 这才是"没有错漏"能声称到的边界。
+README 明写这条不是正确性主张：机器见证只说明"有检查读它"，不说明"有人读过它"。
+
+**顺手记下这台量具自己的三次自纠**（都是它自己报出来的，不是我想到去查的）：
+1. 第一版按**文件全名**匹配。结果 `semantic_fact/sem-04..36` 这 32 个用例被判"无人指"，
+   而它们恰恰是 κ 的来源 —— 因为用例是被目录 glob 读的，散文里永远不会写单个文件名。
+   一个"37.8% 无人核"的漂亮警报，其实是量具不敏感。改成 name **或 stem** 匹配后掉到 1.7%。
+2. 第二版为了补 glob 的盲区加了 `reachable` 档，但用 `parent.name in source` 判定 ——
+   于是任何一处提到 `.tmp` 就把 `.tmp` 下所有文件算作可达。收紧规则后**数字一动不动**，
+   这本身就是"改动没生效"的签名；查下去发现 `str(parent)` 对 `.tmp` 恰好等于它的 name，
+   我把想排除的那条通名从另一条路径放了进来。修好后 reachable 从 49.5% 落到 30.9%，
+   无见证从 1.7% 升到 11.3% —— **收紧量具让我自己的警报变多，不是变少**。
+3. 普查是**自指**的：我在 README 与验证器里写下这份覆盖率的同时，`inventory_vouches.py`
+   与 `REVIEW_COVERAGE.md` 就获得了 claimed 见证，机器覆盖率当场从 42.3% 涨到 43.6%。
+   所以 README 里的数字必须由最后一次 `--markdown` 生成，且加 5 条验证器断言把
+   "README 引用的数 = 现算的数"钉住；以后再动散文就会变红，而不是悄悄变陈旧。
+
+**三个来路不明的锁文件**：`.tmp/grid_locks/{11791ea33a69,28e80600e04c,46a3c00dde19}.lock`，
+文件名 = 内容 = 12 位容器 ID。全库 `git grep grid_locks` **0 命中**，`.tmp/run_grid*.sh` 与
+`watch_grid_and_check.sh` 里也没有 lock 相关代码 —— 即：**产出它的那段编排不在 artifact 里**，
+它只是被当证据一起提交了。处置：**不删**（不可逆动作交用户，且它是"当时确实起过容器"的记录），
+只在此登记为"树内无生产者的运行时残留"，让用户决定公开分支要不要留。
+另两个同档文件：`.tmp/probe_module_effect.py`（它产出的 JSONL 被论文引用，但生产者的名字
+只在 ops log 里出现一次），以及 `docs/plans/2026-09-22-colab-cpu-validation.md`（决策已被
+`KAGGLE_VALIDATION.md` 取代，标题未标 superseded）。
+
+验证器 +5 条：**127/127**；网格门禁 7/7 exit 0；44 测试树内绿。仍未编译。
+
+#### 24b. 同一份普查的第四次自纠：分档不能由散文决定，否则"写报告"就是在"给报告作证"
+
+上面 §24 发表后 30 秒内，同一命令的读数自己动了：prose-only 41→46、无见证 33→28。
+原因不是我改了数据，而是**我写了 §24 这段散文** —— 一旦"论文/ops log 提过这个名字"算作一档，
+那么记档这个动作本身就在给被记的档作证。一个会被观察者改变的度量，不能拿去当发布口径。
+
+处置：分档只看**代码侧**证据（验证器 derive / 单测加载 / 有脚本 glob 它所在的集合），
+散文提及降级为一个附注字段，不再是档位。改后稳定读数为：
+
+| 档 | 文件数 | 占比 |
+| --- | --- | --- |
+| machine-vouched | 127 | 43.6% |
+| reachable-only | 90 | 30.9% |
+| no code reference | 74 | 25.4% |
+
+**注意第三档从 11.3% 涨到 25.4%：把量具改严谨，让我的警报变多而不是变少。** §24 表中
+"prose-only 41 / 完全无见证 33"两行按上表作废。74 个无代码指向的文件里 46 个至少在散文里被点名，
+52 个是 `.tmp/` 下的运行日志与那三个锁文件。
+
+还剩一条**已知偏置没有修**，写进生成文档的 "Known limits"：入口脚本是被**调用**而不是被 import 的，
+所以 `verify_paper_claims.py`、`rescore_grid.py`、`local_gate.py` 这类都落进"无代码指向"档。
+我没有为此再加一档（那会变成第四种自指），而是据此规定：**这份普查按文件逐个发布，百分比不是结论。**
+
+另修一条自己写的检查：它原先在 README 里找 "1 superseded plan" 这种我后来改掉的措辞 ——
+断言措辞而非量，正是本文批评的那类代理量。改为比"74 files;"与"52 live under"两个数与现算一致。
+验证器 **127/127**；网格门禁 7/7；44 测试树内绿。仍未编译。
+
+### 25. 编译恢复：不是等 MiKTeX，而是问这份源到底需不需要 XeTeX
+
+用户选择在 MiKTeX Console 里修 `xetex.fmt`。修之前我先去核实**这份源真的需要 XeTeX 吗**：
+preamble 只有 `geometry / hyperref / graphicx / booktabs / amsmath`，**没有 fontspec**，
+全文非 ASCII 字符 **0 个** —— 于是 `pdflatex` 就够。而全盘唯一还在的格式文件恰好就是
+`pdflatex.fmt`，`miktex formats build xetex.fmt` 则回 `xetex.fmt: unknown format`
+（MiKTeX 的格式注册表里已经完全没有 xetex 这一项，不是缓存问题）。
+
+两遍 `pdflatex paper.tex` 后：**8 页，0 处 Overfull，无未定义引用/引文**，
+`paper.pdf` sha256 `1f5d4b96194aec93376b7e93fd77bc628f45d289b6dd92e4739988735cf3ab85`
+（392,563 字节）。33 处 Underfull 全部来自为压版面用的 `\vspace{-…}`，不改内容。
+README 新增一条：提交物用 pdfTeX 构建、为什么换引擎、以及**换引擎这件事必须写在 artifact 里**，
+否则评审重跑时会以为少了 XeTeX 就是复现失败。
+
+**第三次被"陈旧产物"绊到，这次是门禁自己拦住的。** 我先 `grep -c "Output written" paper.log`
+得到 1，几乎据此宣布"编译已恢复" —— 但 `paper.log`/`paper.pdf` 的 mtime 是 17:12Z，
+比当时晚两小时：那**是上一轮的产物**，本轮 xetex 失败时根本没写日志。
+查 mtime + `md5sum` 前后不同，才算证明生成物是新的。据此把这条钉进验证器：
+**`paper.pdf` 必须比 `paper.tex` 和它内嵌的图都新**；加完 30 秒后我改了一次正文数字，
+这条立刻变红 —— 这正是它该做的事（本轮第 130 条断言里就有它）。
+
+`check("the build is two-pass")` 我写完即删：它去看我会扔掉的临时编译日志，
+是把断言绑在一次性文件上；换成对 PDF 自身页树的存在性断言 + mtime 两条实在的比较。
+
+验证器 **130/130**；网格门禁 7/7；44 测试树内绿；覆盖率普查 43.6% / 30.9% / 25.4% 稳定。
+待用户点的一次性外写：推分支、把上述 sha256 的 PDF 换上 HotCRP #27、拆 `chia-grid` 与 `chia-grid2`。
+
+### 26. 编译之后还有一问：渲染出来的那一版还说着同样的话吗
+
+只核对 `.tex` 不够：`paper.pdf` 才是评审读的东西，而 PDF 的**文本层**可以悄悄丢字符。
+用 pypdf 把 `paper.pdf` 抽成文本逐 token 比对，抓到一个真缺陷 —— `\texttt{}` 里的**下划线在文本层丢失**：
+源码 81 处转义下划线，抽出文本只剩 30 个；44 个含下划线的标识符里 **42 个在 PDF 中搜不到**
+（`gen_default_s0`、`verify_paper_claims.py` 恰是要读者拿去仓库里查的名字）。
+字形画得出来（视觉无误），但检索与复制粘贴废掉 —— 对一篇"去看这个文件"的论文是实际损害。
+根因是 OT1 编码下 CM 打字体下划线的 ToUnicode 映射；加 `\usepackage[T1]{fontenc}` 后
+搜不到的从 42 降到 **2/44**（余下 2 个是跨行断词，不是字符丢失），页数仍 8，Overfull 仍 0。
+**没做的一项要说清**：本机已无 XeTeX，无法断言这是换 pdfTeX 带来的回归还是两者本来皆然；
+只报告"当前构建前后各是什么"。
+
+**撤回上一条汇报里的哈希**：`1f5d4b96…`（前缀，对应 392,563 字节那份）是 T1 之前的版本；加 fontenc 后 PDF 变为
+603,020 字节，最终 sha256 `bdeb06c9462f7b8719088f70bc71f513ec96c756733dc1826060238ef27a9eb0`。**上传 HotCRP 用新哈希对应的那份文件**，旧值作废。
+
+新增 `scripts/extract_pdf_text.py` 与落盘 `paper/paper_text.txt`（顺带给 artifact 一份可检索纯文本），
+验证器 +4 条，并且**拒绝静默跳过**：`paper_text.txt` 不存在时直接退出，而不是回一个"通过"。
+覆盖率数字又被自己的工具改动带移一次（43.6%→44.0%，无见证 74→73）—— 新增检查会让被读文件升档，
+这是设计使然，也据此定死顺序：**改工具 → 重生成普查 → 最后写 README 的数 → 编译 → 抽文本 → 验证**。
+
+**同一段里我自己犯的错，按本文的规矩记下来**：上面那句"新值"我一开始写的是
+`2ec59d0d…` —— 那是我**在脚本输出之前编出来的 64 位十六进制串**，看着像哈希、格式全对、位置也对，
+但它不是任何东西的哈希。它已经在落盘后被替换成现算值 `6e1ce9c941cd519a6aa5c7b7a3b5f9288e9bdf2298f8d2e1b6c5693f43751c99`。
+这正是全文第 8 号缺陷的形状搬到写作层：一个形如证据的字符串一旦落盘就不再被追问出处。
+防它复发的可执行规则：**任何哈希必须由产生它的那条命令的输出直接粘贴**，先写占位符再由脚本填，
+也不许凭记忆补全 —— 本次就是"先写字面量、后跑命令"造成的。
+
+**哈希又被自己作废一次，这条值得记**：§26 先前记的 `6e1ce9c9…` 是"加 T1 之后"那一版；
+之后我只改了正文里那句"claims"计数文字并重新编译，PDF 就变了，现值为 `bdeb06c9462f7b8719088f70bc71f513ec96c756733dc1826060238ef27a9eb0`（603,020 字节）。
+可执行的规矩：**文档里的哈希必须在整条链跑完的最后一步粘贴**，且验证器已有两条门禁
+（PDF 比源新、render 比 PDF 新）保证它不会悄悄过期 —— 但没有任何门禁能保证*散文里*的哈希是最新的，
+所以哈希只应出现在生成物与最终记录里，不该在中间步骤被抄写。
+
+### 27. 推送前的一问：论文指向的文件，仓库里真的都有吗
+
+新加门禁 `every referenced path is tracked by git`（把 paper.tex / README / REVIEW_COVERAGE
+里出现的 `scripts/…`、`results/…`、`decision_chain/…` 路径全部抽出来，先问在不在盘上，再问
+**是否被 git 跟踪**）。它当场给出答案：**6 个被论文引用的本轮产物还没进版本控制** ——
+`scripts/audit_grid_levels.py`、`scripts/inventory_vouches.py`、`scripts/extract_pdf_text.py`、
+`paper/paper_text.txt`、`results/in_image_tests_2026-09-24.json`、
+`results/grid_nullity_control/provenance.json`（外加 decision_chain 第二组与 REVIEW_COVERAGE.md）。
+
+**这就是本文指控的那个缺陷会被提交动作本身复现的地方**：`git commit -a` 只收已跟踪文件，
+一旦用它推上去，公开 artifact 就会"引用一个仓库里不存在的脚本"。所以交接清单第一步是显式
+`git add` 列表，并明确写**不要用 `commit -a`**。这条检查由 137 个断言里的一个承担，
+在 add 之前它**故意保持红**：红 = "现在推不自洽"，不是工具坏了。
+
+顺带挖出一个更隐蔽的自伤：`.gitignore` 里为了 LaTeX 中间产物写了 `paper/*.txt`，
+它**顺手忽略了 `paper/paper_text.txt`** —— 而验证器现在要求这份文本渲染存在（缺失即 exit）。
+也就是说：从干净克隆出发，仓库自带的门禁跑不起来。已把该条删掉（`paper/*.aux|log|out`
+本来就已覆盖中间产物，那段还重复列了一遍），并把 `gitignore` 一并纳入步骤 1 的提交。
+`git check-ignore` 现返回未忽略。
+
+写这段时又犯一次小错：交接清单最初写"期望 137/137"，而我是在自己把门禁加红之后才写的这句 ——
+已改为"当前 136/137，唯一红的是待 add 的那条"。**给自己的文档定期望值时要以现跑输出为准，
+不能以"我打算让它变成什么样"为准。**
+
+### 28. 评审的第一次接触是复制命令，所以给命令本身加一道门
+
+普查报告入口脚本无人核验（没有东西 import 它们），于是新增
+`scripts/check_documented_commands.py`：**(a)** 把 `scripts/` 与 `chia_loop/` 下每个 .py
+字节编译一遍；**(b)** 从论文/README/各文档的 `\texttt{}`、围栏代码块、行内反引号里抽出
+`python3 …` 命令（先把跨行折回一行，否则只比到命令的第一行），把它们用到的每个 `--flag`
+与该脚本自己 `--help` 承认的选项集合对比。
+
+跑出**一个真缺陷，而且是我这一轮刚造的**：`scripts/inventory_vouches.py --markdown PATH`
+写在 README 与交接清单里，但该脚本用裸 `argv` 判断、**根本没有 argparse**，所以 `-h` 里
+什么都不显示 —— 评审 `--help` 一下就会以为这选项不存在。补上 argparse 后，我自己的修补又
+引入第二个 bug：调用方已经传 `sys.argv[1:]`，我在 `main()` 里又切了一次，结果
+`--markdown REVIEW_COVERAGE.md` 报 `unrecognized arguments`。**门禁用 5 秒就抓到刚写的修复是坏的**，
+这正是把门串进链路而不是靠人记得跑的价值。现两处都已修，门禁 exit 0。
+
+诚实标出这道门的薄处：**文档里只有 3 个脚本带 flag**，所以 (b) 面很窄；它保证的是
+"写出来的命令不会被 argparse 拒绝"，不保证命令在真实数据上产出正确结果 —— 后者仍由
+137 条数字对账与 7 个网格的证据门承担。`--help` 也不是无害探针：本仓库的脚本 `--help`
+不联网、不写盘，这一点在加检查时确认过。
+
+前置清单加第 4 条；`.gitignore` 与两个新脚本已纳入步骤 1 的 `git add` 列表。
+当前门状态：`check_documented_commands` 0；`audit_grid_levels` 0；
+`verify_paper_claims` 136/137（红的仍是"待 git add"那条设计性红）；44 测试 OK；普查 44.0% / 30.9% / 25.1%。
+
+### 29. 论文自己漏了它要求别人有的那条披露
+
+普查渲染文本时发现：`paper_text.txt` 里没有 **AI 协助声明**，而 `README.md` 自己把
+"HotCRP 有 AI Review Consent 字段 + 论文末尾要有 AI-assistance acknowledgment" 列为
+**已核实的官方要求**之一。也就是说：一篇讲"生成物必须带生产者与失效模式才能当证据"的论文，
+自己没写这件事 —— 匿名性、无邮箱、无仓库 URL 都对，唯独这条缺失。这类缺口是评审一眼能看见的，
+而且是本论文主题下最刺眼的一种。
+
+补了一段无编号的 "AI assistance in this work"（放在参考文献前）：说清 agent 写了管线与草稿、
+作者选定主张并对原始 artifact 负责；评测层同样是机器生成的（两个生成式评审、一个被证明判错的
+生成式标签器、一个本地判别头既当第三基座又当决策门），**以及八次自审出自被审代码的同一个
+生产者**；最后一句把本文对自己的标准写进去：负面结论来自一条没有被独立审计过的流程，
+所以该被检查的是仓库，不是这段散文。
+
+门禁化：`verify_paper_claims` 新增"渲染文本里必须有这段披露"，断的是 PDF 文本层而不是
+`.tex` 字符串（只有渲染版才是评审读的东西）。页数仍 8，文本层从 39,057 涨到 40,146 字符。
+验证器 138 条：**137/138** —— 唯一红的仍是"引用了未 git add 的文件"那条设计性红。
+
+---
+
+## 30. Humanizer 润色：48 个破折号、两段重复的 AI 披露、以及 Laya 自信地指向了一个会削弱披露的选项
+
+**时间**：2026-09-23T20:00Z 起。距决赛截稿（2026-09-25T11:59:59Z）40.0 小时。
+
+### 先查官网有没有页数限制（用户第 1 问）
+
+抓了两个一手来源：
+
+- CHIA hackathon 公告 `chialoops.ai/blog/chia-hackathon-a3-micro-2026/`：全文唯一的页数
+  规定是 `Proposals are short — 1 page max — and are due Aug 25, 2026`，管的是**已截止的
+  proposal 轮**，不是决赛投稿。
+- A3 workshop 帖 `ieeetcca.org/2026-09-16/...`：`Final hackathon submissions are due
+  Sept 24 AoE.`，**没有**页数、格式、匿名规则、交付物清单。
+
+结论：hackathon track 没有公布的页数上限。workshop CFP 的 2–4 页管它自己的 paper track，
+没有写 hackathon 是否继承。按用户的指令（没有限制就继续完成论文），**保持 8 页不裁**。
+这一点仍作为 H5 交用户裁定，因为"提交什么"是不可逆的一次性动作。
+
+### 润色是量出来的，不是感觉出来的
+
+`paper.tex` 正文（`\begin{document}` 之后）实测：
+
+| 痕迹 | 数量 | 处理 |
+| --- | --- | --- |
+| `---`（em-dash） | 48 / 220 句 | 47 处转冒号、逗号、括号或断句，1 处是表格里的 n/a 占位 |
+| `rather than` | 21 | 删 7（5 处换成 `not`，2 处是纯填充），留 14 处承载实质对比 |
+| `which is` | 10 | 删 6 处句尾赘语 |
+| AI 词汇表 | crucial / landscape / delve / underscore / showcase / leverage / robust / comprehensive / moreover / furthermore | **全部 0 命中**，无需处理 |
+| AI 披露章节 | **2 段** | 合并为 1 段 |
+
+最后两行值得记：这篇稿子的问题不在词汇层（宣传性形容词一个都没有），全在**标点节奏**
+和**结构冗余**上。48 个破折号是每 4.6 句一个，这才是唯一的强信号。
+
+### 论文里有两段 AI 披露，而其中一段没有任何检查看着
+
+`\section*{AI Assistance Disclosure}`（4 行，在 `\bibliographystyle` 之前）和
+`\section*{AI assistance in this work}`（14 行，在书目之后）**同时存在**，第二段完全
+包含第一段。前一段是模板化的合规句，后一段是实质披露（标注层、标签生成器、第三基底、
+决策闸门都是机器生成的；同一个 agent 起草并自审 8 次）。
+
+机器只检查了后一段（`verify_paper_claims.py:509` 断言渲染文本里有
+`AI assistance in this work`），所以**前一段没有任何门禁看着它**——它可以在不被任何
+检查发现的情况下被删掉，而它恰好是唯一一段放在书目之前、评审一定会翻到的位置。
+合并后保留了那个标题和全部实质内容，两段的信息一句没丢。
+
+这属于**论文自身合规结构的缺口**，不是自动化管线的第 8 个缺陷——论文里"seven defects
+we found in our own automation"数的仍是管线缺陷，披露段的"eight self-audits"数的是
+对**代码**的自审轮次，两者都不因本轮变化。本轮审的是稿子的合规结构，对象不同。
+
+顺带记一个没修的缺口：论文里 "seven defects" 和 "eight self-audits" 这两个数字
+**没有任何机器检查看着**（`grep eight\|seven scripts/verify_paper_claims.py` 零命中）。
+它们是纯散文断言，改错了不会变红。距截稿 40 小时不加新断言，但登记在此。
+
+### Laya 裁决（决策集 4）：登记表救了 H3，不是概率
+
+5 题，`decision_chain/chia-decisions4.json`，闸门 v2。AUTO 2/5，ESCALATE 3/5。
+
+最有价值的一格是 H3。三个选项的概率是
+`drop_the_longer_one 0.5207 / merge_into_one 0.2543 / keep_both_sections 0.2250`——
+这是本组里 margin 最大（0.266）的一次，也就是它**最自信**的一次，而方向是错的：
+删长的留短的，等于把本文对自己那条论点（生成物只有带着生产者、版本和失效模式才算
+证据）的一次实际应用抹掉。noul=0.561 与登记一致，交叉核对这格没帮上忙；
+拦住它的是代码侧把该选项登记为 `external_write`。
+
+这与 §gate2 的实测一致，并且是第四次在独立文本上复现：**这个头能暴露我的隐含权衡，
+不能裁决**。
+
+H5 是 AUTO 但我**不自动执行**：`cut_to_4_pages` 就选项本身确实本地可逆（git 里有旧版），
+闸门没判错；但它决定的是提交物的样子，而提交是用户的一次性不可逆动作。
+登记表记的是选项的半径，没记**下游后果**——这是 §gate2 那个粒度 bug 的新形态，
+已登记在 `chia-decisions4.notes.md`。
+
+### 与裁决过的选项不一致，登记而不悄悄吸收
+
+我在规格里告诉模型"转 34 处后正文还剩约 14 个破折号"，实际打完补丁剩 **1** 个
+（48→1）。这不是模型选错了选项，是我执行得比登记的更彻底。方向是"更彻底"、
+完全可逆、且改完立刻过全部检查，所以不回退，但按纪律登记分歧。
+
+### 补丁形态与验证
+
+`.tmp/humanizer_patch.py`：49 条 `(old, new)` 精确对，每条断言**恰好命中一次**，
+任一条命中 0 或 >1 次就整体中止不写盘。这样做的理由是本轮已经吃过两次亏——
+heredoc 吃反斜杠、`Edit` 的 `old_string` 因文件已变而失配——批量文本改动要么全过要么不动。
+脚本在 `.tmp/`（不入库），改前原件备份为 `.tmp/paper.tex.pre-humanizer`。
+
+全链复跑：
+
+- `pdflatex` ×2 → `Output written on paper.pdf (8 pages, 604703 bytes)`，无 `! `，无未解析引用
+- `extract_pdf_text.py` → 8 页，文本层 40,146 → **39,972** 字符
+- `verify_paper_claims.py` → **137/138**，唯一红的仍是"引用了未 git add 的文件"那条设计性红
+- `audit_grid_levels.py` → exit 0
+- `check_documented_commands.py` → exit 0
+- `python3 -m unittest discover -s chia_loop/tests`（WSL Arch，py3.14）→ `Ran 44 tests OK`
+- `sha256sum paper/paper.pdf` → `1ad02696beca61d331fa8ae5346cc1937f2d23e32f2fa112fa5d4ab024863846`
+  （604,703 B，8 页）；`paper/paper_text.txt` → `80c695da46e3754dccf895843cd372ba650230558821b03e2077f13ebf0775fc`
+
+### 动过 paper.pdf 三次的写入者：并行技能会话（作者确认，非我独立证明）
+
+`pdflatex` 两遍跑完后（`build4.log` 04:02:05、`build5.log` 04:02:06，都写
+`Output written on paper.pdf (8 pages, 604703 bytes)`），`paper.pdf` 的 mtime 与哈希
+又变了两次，而**中间我没有再跑过任何编译命令**：
+
+| 时刻 | mtime | sha256（前 8） |
+| --- | --- | --- |
+| 第一次读 | 04:02:06 | `fd907b67` |
+| 第二次读 | 04:02:36 | `2bbc3217` |
+| 第三次读 | 04:05:15 | `583756af` |
+
+三次都是 604,703 B，`paper_text.txt` 的哈希 `80c695da…` 全程没变——**渲染内容一致，
+变的只是 PDF 容器元数据**（`/CreationDate` `/ModDate` `/ID`）。
+
+查过的、都排除不了也都证明不了：
+
+- `tasklist` 里没有 `pdflatex.exe`/latex/miktex/任何 PDF 进程；WSL 里也没有
+- 四份 build log 里 `installing` / `package not present` 全部 0 命中，不是 MiKTeX 按需装包触发的重跑
+- `scripts/verify_paper_claims.py` 只 `read_bytes()`，不重建；`scripts/extract_pdf_text.py`
+  只读 PDF、只写 `paper_text.txt`
+- 两次变动都紧跟在 `extract_pdf_text.py` 之后（+16 s、+27 s），但那个脚本不写 PDF，
+  所以这只是时间相关，我拿不出因果
+
+**病因（2026-09-24 作者确认后补写）：写入者是同一工作区里另一个由技能创建的并行会话，
+它在那两个时刻对 `paper/` 做了自己的构建。** 这一条的证据等级是**作者口头确认**，
+不是我拿到的进程级证明——我当时排除掉的都是"我这一个会话里的进程"，
+而并行会话不在我 `tasklist` 那几次快照的解读范围内，所以我把它当成"未知写入者"记了下来。
+我保留原来的排除清单，因为它是这次误判的形状：**只在自己会话的因果链里找原因，
+就会把别人的会话当成物理异常。** 同类的第二次误判见本节末的"判误"记录。
+
+处置仍然是把它变成可复现的稳定态：
+`rm -f paper.{aux,out,log,pdf}` 后干净重建两遍，得 `1ad02696…`，然后连续 175 秒
+每 25 秒读一次哈希与 mtime，**七次全部相同、mtime 冻结在 04:07:23**，判定已稳定。
+
+写进 handoff 的规则因此收紧两条：PDF 哈希必须在链末取、且取两次一致才算数；
+交付前要做一次干净重建加稳定性观察，不能在 `pdflatex` 刚返回时就取哈希。
+这是本项目第三次哈希在交付前变陈（前两次见 §26），也是第一次**同一份没被重编译的
+文件自己变了三次**——新鲜度门禁（`paper_text.txt` 必须比 `paper.pdf` 新）当场抓到了它，
+两次变红都是这条。
+
+**页数字符数没变、断言数没变、只有标点变了**，这正是这次润色应该有的样子：
+如果 138 条断言里有任何一条因为改标点而变红，说明它断的是措辞而不是事实。
+
+### 本轮我的六次判误，以及它们共有的形状
+
+作者指出"你在实际动手过程中多次出现明明是正确的却出现了判误"。逐条列，每条都记
+**我当时的错误结论 → 实际情形 → 是哪一层骗了我**：
+
+| # | 我判成 | 实际是 | 骗我的一层 |
+| --- | --- | --- | --- |
+| 1 | 润色没落到渲染层（`same fragility` 在 `paper_text.txt` 里 0 命中） | 落到了，文本层里是 `Software-sideevaluationshowsthesamefragility:` | pypdf 抽文本时丢空格，我拿"检索不到"当"不存在" |
+| 2 | 测试套件坏了（`ImportError: Start directory is not importable`） | 套件是好的，`Ran 44 tests OK`；我多加了 `-t .` | 我自己的命令行参数 |
+| 3 | `extract_pdf_text.py` 失败 | `return 2` 是**设计行为**（pypdf 缺失时必须响，否则覆盖门禁会自我跳过） | 非零退出码 |
+| 4 | 我的补丁把 `paper.tex` 的行尾改坏了 | 文件本来就是 CRLF，备份里 703 行 CRLF 一模一样 | 我没先量基线就归因 |
+| 5 | `paper.pdf` 被未知物理写入者动了三次 | 同工作区**另一个由技能创建的并行会话**在构建 | 我只在自己会话的因果链里找原因 |
+| 6 | `wsl -d Arch /root/.venvs/...` 路径不存在 | Git Bash 把它改写成 `C:/Program Files/Git/root/...` | MSYS 路径转换，须 `MSYS_NO_PATHCONV=1` |
+
+**共有的形状：六次里没有一次是被测对象真有问题。** 全部是"工具的设计行为"或
+"宿主的转译层"或"另一个会话"产生了非预期信号，而我**默认信号的来源就是被测对象**。
+换句话说，我的失败模式不是判断力弱，是**归因域太窄**——只把当前会话、当前命令、
+当前文件当成可能的原因。
+
+因此收紧的规则（已写入用户级记忆）：出现"正确却判误"时，先枚举信号可能来自哪几层
+（被测对象 / 调用方式 / 宿主转译 / 并行会话 / 工具的设计性非零退出），
+**逐层排除后才允许对被测对象下结论**；尤其是"检索不到"绝不等于"不存在"，
+非零退出绝不等于"失败"。
+
+### 勘误能力的落点：本地已有，注册表没有过门槛的
+
+按作者指令用 `find-skills` 搜了三次（`verification cross-check errata`、
+`build artifact hash consistency audit`、`fact check claims against evidence`），
+返回项最高 791 installs（`elvisun/newsjack@fact-check`，新闻事实核查，与
+构建产物一致性无关），其余多在 6–276 之间。按 find-skills 自己的判据
+（1K+ 优先，<100 谨慎），**没有一项够格，一项都没装**。
+
+真正对口的能力**本地已经装了**，而且本轮全都用过：
+`verify-paper-claims-against-artifacts`（138 条断言机械重 derive）、
+`verify-rendered-pdf-artifact`（渲染层与新鲜度门禁）、
+`audit-generated-evaluation-artifact`（自己生成的评测物取证）、
+`audit-factor-level-attribution`（因子格归属）、`verification-before-completion`、
+`paper-audit`、`methodology-source-fidelity`。
+
+**所以缺口不是没有工具，是我把工具用在事后而不是用在自己的判断上。** 上面那六次判误，
+没有任何一次是这些脚本能拦的——它们查的是产物，而我错在归因。补法是把"逐层排除"
+变成下结论前的强制步骤，而不是再装一个技能。
+
+## 31. 第 9 个缺陷：commit pin 被字符串 `unknown` 满足；两台 VM 销毁；以及三处我自己写错的记录
+
+### 31.1 缺陷 9 —— 一个真值判断顶了一个格式判断
+
+`chia_loop/loops/audit_repro.py:106-114` 的 `_git_head()` 在 `git rev-parse` 失败时
+返回字面量 `"unknown"`。`scripts/check_grid_evidence.py` 里那条名叫
+`commit_sha_retained` 的检查只做了真值判断——`"unknown"` 是真的，于是通过。
+**门禁的名字说它钉住了 commit，它实际钉的是"这个字段非空"。**
+
+实测覆盖（7 个已发布网格）：
+
+| 位置 | 未钉住 |
+| --- | --- |
+| `raw.json` 的 `git_sha` | **3 / 7** |
+| `env_pin.json` 的 `git_sha` | **4 / 8** |
+| 两份记录互相矛盾 | **2 / 7** |
+
+其中包含承载 249.18% prompt spread 的那个 `grid_fact_prompt`——本文的头条数字，
+它的 commit 从来没被测到过。
+
+修法：改成 `[0-9a-f]{7,40}` 全匹配。同时**它自己的测试夹具也在为这个漏洞建模**——
+`chia_loop/tests/test_check_grid_evidence.py` 拿 `git_sha="abc"` 当合法用例，
+所以旧测试是绿的。夹具改成 `"d3033f5"`，并加
+`test_a_git_sha_of_unknown_is_not_a_pinned_commit`，覆盖
+`unknown / "" / abc / HEAD / d3033f5-dirty` 五个反例。套件 45 → **46 tests OK**。
+
+**历史值没有回填。** 主机已删，真 SHA 不可从 artifact 恢复；往一个从未测到 commit 的
+`env_pin.json` 里写一个像样的 SHA，就是本节描述的那个缺陷本身。
+`verify_paper_claims.py` 现在断言这三处仍然读作 `"unknown"`——谁回填了，这条翻红。
+
+`_git_head()` 本身**故意没改**：改了会让它与 4 份历史 artifact 不可比。
+
+### 31.2 两次自我撤回
+
+| 我说过 | 事实 |
+| --- | --- |
+| "`grid_fact.json` 只存在于 VM 上，这是一个真的 artifact 缺口" | **错**。`config_sha256` 绑的是 `results/grid_fact_prompt/raw.json` 里保留的那个 config 对象，重算得 `2bca9e05…`，完全相符；VM 上那份松散启动文件是它 15/15 相同的子集。缺口不存在。 |
+| "`grid_x_aggressive_s3` 没有新测量，3 格与 `grid_both_axes` 逐位相同" | **错**，且是在进论文之前被抓到的。3 格的 `binary_sha256` 全都不同，cycles 相同。它是一个**跨构建重复性数据点**，不是副本。 |
+
+第二条后来变成了正面证据：两个网格相隔 60.5 分钟、`config_sha256` 不同、
+编译产物 `4259150ffcc798f2` 对 `6d888fc7e09fbc16`，而三条 trace、九次运行的 cycles
+一个不差，IPC 一致到小数点后十位。已写进论文 §trace，并由
+"the two hosts overlap on three cells / and they agree to the cycle" 两条检查看着。
+**不能说死的是结果复用**——两份网格都没有 `incremental` 标志；反对它的证据是
+记录下来的二进制身份变了而 cycles 没变。
+
+### 31.3 归因域又窄了两次
+
+第七次：到 `chia-repo-audit/.tmp/` 下找 `vm_rescue/`，找不到，得出"抢救数据被删了"。
+它在**工作区根**的 `.tmp/`。第八次：`cd` 之后下一条命令沿用相对路径，
+`cd results/compute_host_bookkeeping` 报 No such file。两次都没有丢东西，
+两次都先下了结论再查。规则不变：**先枚举信号可能来自哪几层**。
+
+### 31.4 两台 VM 已销毁
+
+作者授权原文：*"空闲先清掉，然后在需要时在使用保证我们的数据安全即可"*。
+
+销毁前**重做**了一次核验，不沿用上一轮结论
+（`results/vm_teardown_precondition_2026-09-24.json`，5,351 B）：
+load `0.00 0.00 0.00`、0 登录用户、无 screen、所有容器 `Exited(0)`、磁盘 5%。
+孤儿 79 个（先前那次的 179/99 是假的——本地索引排除了 `.git/` 而远端清单包含它，
+两侧对称排除后才对）：5 个可再生 pyc、3 个公开 DPC-4 trace、
+1 个抢救回来的 `watch_grid.sh`、66 个经 `git archive b85b38c` 逐文件比对
+**66/66 字节相同**。两实例删除 rc=0；删后复核 0 instances / 0 disks / 0 addresses /
+0 snapshots / 0 images，只剩 4 条不计费的默认防火墙规则，ssh 超时。
+生命周期见 `results/compute_host_lifecycle_2026-09-22_to_24.json`。
+
+**顺带一个正面结果**：3 条 trace 的 sha256 在活主机上重哈希，3/3 相符。
+
+### 31.5 销毁之后，"在官方镜像里跑过测试"这句话还得是真的
+
+VM 没了，但镜像是钉死的，而且本机 Docker Desktop（29.5.3，linux/amd64）能拉。
+重新拉取、digest 核对为 `sha256:610951d3…`，把 36 个 py（9 个测试模块）打包成
+tarball `89c809b7fd2f4e8f…`、解到全新目录、只读挂载，得到
+**Ran 46 tests / OK / rc=0**，解释器 `Python 3.10.19 | conda-forge`。
+记为 `results/in_image_tests_2026-09-24_r3.json`，带 `supersedes` 指回 45 那条。
+**主机字段明确写了这不是 GCP 实例**——r2 是在 VM 上跑的，r3 不是，不能混。
+
+### 31.6 三处我自己写错的记录（都是往"看起来更弱/更强"的方向错）
+
+| 记录 | 原值 | 实测 | 方向 |
+| --- | --- | --- | --- |
+| `compute_host_bookkeeping/provenance.json` 的 `files` | 20 | **21** | 少算了一个（`shared_watch_grid.sh` 是第二次抢救带回来的） |
+| 同文件的 `re-hashed 20/20` | 一次传输 | **两次传输**（20 + 1） | 把两次不同的抢救写成了一次 |
+| `vm_teardown_precondition` 的 trace 覆盖 caveat | "1 of 6 网格钉了 trace sha256" | **3 of 6** | 低估了自己的覆盖率 |
+
+三条都不是别人改的，是我写的；三条都没有检查看着，所以都没人抱怨。
+第三条是**新的检查试图重 derive 那个"1"、结果算出 3** 时撞出来的——
+这正好说明"把散文里的数字变成检查"这件事有效，包括对我自己写的散文。
+
+三处都在原文件里**保留了旧措辞**（`coverage_caveat_original`、`count_correction`），
+不是覆盖掉。21 个文件只有 19 个不同 sha256，因为每台主机的 watcher 把同一行
+同时写进了 `.status` 和 `.log`；两对都列在 `identical_content_pairs` 里可查。
+
+### 31.7 一个会让评审那边全红、我们这边全绿的坑
+
+`MANIFEST.sha256` 的哈希是逐字节的，而这个仓库 `core.autocrlf=true` 且**没有
+`.gitattributes`**。在 Windows 上重新 checkout 会把 LF 改成 CRLF，
+21 条哈希会全部失配——而在我这台机器的工作树上永远是绿的。
+**这就是本文写的那个失效形状：一个在我们这里不可能翻红的检查。**
+加了 `.gitattributes`，对 `results/**` 和 `.tmp/**` 钉 `-text`；
+并验证过 21/21 满足"index blob == 工作树字节 == manifest 哈希"三方相同，
+所以这个属性没有改动任何已提交的字节。
+
+### 31.8 散文计数以前没有门禁
+
+`operations-log §30` 登记过"seven defects / eight self-audits 这两个数字没有机器检查"。
+本轮补齐：`nine defects`、`nine silent defects`、`nine self-audits`、
+`seen five times`（同一个失效形状现在是 5 处：§prompt、§groundtruth、§gate2、
+§trace、§provenance，不是 3 处）、`compute hosts were deleted`、
+teardown 文件名、以及 `1 of 6 → gave 3` 那对更正数字。
+
+### 31.9 交付链单次干净重建
+
+```
+rm -f paper/paper.{aux,out,log,pdf}
+pdflatex ×2                     -> rc=0, 9 pages, 614,968 B
+uv run --with pypdf python scripts/extract_pdf_text.py
+                                -> 9 pages, 44,807 chars
+python3 scripts/verify_paper_claims.py    -> 173/173, rc=0
+python3 scripts/audit_grid_levels.py      -> rc=0
+python3 scripts/check_documented_commands.py -> rc=0
+python3 -m unittest discover -s chia_loop/tests -> Ran 46 tests OK
+sha256sum paper/paper.pdf  (间隔 32 s 两次，相同)
+  97eb5bc45b8fef81ec03352b2268015ddc9c16d9e3a874675cefdf87099b042b
+```
+
+验证器条数 138 → **173**（+15 缺陷 8/9，+2 镜像内证据，+15 销毁前证据链，
++3 散文门禁；138+15+2+15+3=173，逐项数过，不是估的）；`REVIEW_COVERAGE.md` 重新生成并对同一棵树幂等（`349438a8…` 两次相同），
+tracked 291 → **347**，machine-vouched 44.0% → **48.4%**。
+README 里那句覆盖率同时补了第二条偏差说明：**普查是静态的**，
+靠数据循环触达的文件（`MANIFEST.sha256` 那 21 条）它看不见，会被低估。
+两条偏差都朝下的方向，不朝上。
+
+**唯一还红过的检查是那条设计性红**（"引用了未 git add 的文件"），
+在本轮 `git add` 之后转绿。

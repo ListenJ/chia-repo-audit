@@ -120,13 +120,49 @@ supplies one here.
   (`scripts/real_candidate_generate.py`, SiliconFlow or the funded Vertex AI path).
 - Deterministic stub backend and the pinned source-build smoke, both retained as
   explicitly-labelled protocol validation.
-- 43 unit tests pass in-tree and, re-verified on 2026-09-23, inside the pinned
-  official image (`results/in_image_tests_2026-09-23.json`). The suite is pure Python,
+- 44 unit tests pass in-tree and, re-verified on 2026-09-24, inside the pinned
+  official image (`results/in_image_tests_2026-09-24.json`, which supersedes the
+  43-test run recorded the previous day against the tree before the 44th test).
+  The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (64 claims). Its final check is
+  committed artifact and exits non-zero on drift (138 claims). Its final check is
   self-referential: the paper states the claim count, so editing the verifier without
   updating the prose turns the run red.
+- `paper/paper.pdf` is built with **pdfTeX** (`pdflatex paper.tex`, twice, so that
+  cross-references resolve), not XeLaTeX: the host's `xetex.fmt` disappeared during the
+  2026-09-23 session and the source is pure ASCII and loads no `fontspec`, so pdfTeX
+  compiles it cleanly -- 8 pages, 0 overfull boxes, no undefined references. Any rebuild
+  must follow the chain source -> pdflatex x2 -> `uv run --with pypdf python
+  scripts/extract_pdf_text.py` -> `python3 scripts/verify_paper_claims.py`. The verifier
+  fails if the PDF is older than the source or the figure it embeds, or if the committed
+  text render (`paper/paper_text.txt`) is older than the PDF, and it re-checks the headline
+  numbers, unresolved-reference markers and underscore-bearing identifiers *in the rendered
+  text* -- the text layer is where a typesetting regression shows up, not the source.
+- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 347 tracked
+  files, classified by what *code* vouches for each: **48.4% machine-vouched** (168 files
+  a `verify_paper_claims.py` check re-derives or a unit test loads), 29.1% reachable-only
+  (101 files in a set some script globs), and **22.5% with no code reference at all**
+  (78 files; 44 of those are at least named in prose, 50 live under `.tmp/` as run logs
+  and three container lock files). Regenerate with `python3
+  scripts/inventory_vouches.py --markdown REVIEW_COVERAGE.md`. Read the rate with its
+  stated biases. First, entry-point scripts are invoked rather than imported, so they fall
+  in the unreferenced bucket and must be judged by hand. Second, the census is static: it
+  looks for a path or a glob in code, so a check that reaches files *through data* --- the
+  21 entries of `results/compute_host_bookkeeping/MANIFEST.sha256`, which
+  `verify_paper_claims.py` re-hashes in a loop --- is invisible to it and those files are
+  scored lower than they are actually vouched. Both biases push the rate down, not up,
+  which is why the census is published per file and the percentage is not the headline.
+  Nor is it a correctness claim: a machine vouch means a check reads the file, not that
+  anyone reviewed what it says.
+- `scripts/audit_grid_levels.py` audits the harness rather than the data: for every
+  published grid it asks whether each factor level's own witnesses (the
+  `generator_seed` copied from the candidate, pool membership where the pool is
+  recorded, and the digest of the compiled design) agree that this level measured the
+  design it is labelled with. A level that fails is reported by name, and a grid with
+  undisclosed failures exits non-zero. It is what caught defect 8, and the reason the
+  nullity-control grid's variance axes are discarded in
+  `results/grid_nullity_control/provenance.json` while its nullity finding is kept.
 - `scripts/rescore_grid.py` and `scripts/relabel_semantic_cases.py` recompute verdicts
   and labels from retained `raw.json` / retained annotator replies, so a gate or label
   fix is a rescore rather than a re-run. Three published corrections used them.
@@ -135,11 +171,11 @@ supplies one here.
 - [`CANDIDATES.md`](CANDIDATES.md) is a generated index of every candidate directory:
   which config or script consumes it, the source digest of each module inside it, and
   which measurements are keyed to each name. **9 of 15 module names carry more than one
-  distinct source on disk**, which is why section 3.7 of the paper was misattributed and
+  distinct source on disk**, which is why the paper's `sec:attribution` subsection was misattributed and
   why the join key for anything load-bearing is `candidate_sha256`, never the module name.
 - [`decision_chain/`](decision_chain/) ships the Laya gate, the blast-radius
   falsification ladder that retired its approval score, the decision spec and the
-  recorded routing verdicts behind §3.8.
+  recorded routing verdicts behind the paper's `sec:gate2` subsection.
 - Public artifact: <https://github.com/ListenJ/chia-repo-audit>; HotCRP `#27`.
 
 See [ROADMAP.md](ROADMAP.md) for the execution plan and claim boundaries,
@@ -309,19 +345,27 @@ Verified against the submission system and the organizers' messages:
 - A **public artifact URL in the HotCRP form** — this is a required field; the form
   refuses review while it is incomplete.
 - An **AI Review Consent / Acknowledgement** field on the form, and an
-  AI-assistance acknowledgment at the end of the paper.
+  AI-assistance acknowledgment at the end of the paper — **both now satisfied**: the field
+  is set on #27, and `paper.tex` carries an unnumbered "AI assistance in this work"
+  section before the bibliography. It is gated: `verify_paper_claims.py` fails if the
+  phrase disappears from the *rendered* text, because the paper's own standard is that a
+  generated object is evidence only with its producer attached.
 - Final deadline: Friday Sep 25, 2026, 4:59:59 AM PDT.
 
 Not verified — and previously stated here as if it were:
 
-- ~~"A PDF of at most four pages in two-column ACM/IEEE style."~~ The only page
-  limit we can source is the **1-page maximum on the Aug 25 proposal**, from the
-  hackathon announcement. We could not find a documented limit for the final
-  submission PDF in the announcement, the submission system text we captured, or the
-  organizers' messages, and we did not receive an answer confirming one. Treat the
-  final length as **unconfirmed** rather than as compliant: the paper is currently
-  longer than a typical workshop short paper, and this is an open question for the
-  organizers, not a satisfied requirement.
+- ~~"A PDF of at most four pages in two-column ACM/IEEE style."~~ was never sourced
+  and is **not** a documented hackathon requirement. Re-checked against primary
+  sources on 2026-09-24: the hackathon announcement states only
+  "Proposals are short -- 1 page max -- and are due Aug 25, 2026" and gives **no**
+  final-submission length; the co-located A3 workshop call states
+  "Paper length: 2-4 pages with IEEE or ACM format, excluding references", which is
+  written for the **workshop paper track** and never mentions the hackathon. So the
+  open question is not whether a limit exists but **whether the workshop's 2-4 pages
+  govern hackathon submissions** -- our paper is 8 pages plus 6 references, so if it
+  does, this is desk-reject scale. Asked of the organizers on 2026-09-24
+  (`docs/organizer-email-2026-09-24.md`); unanswered as of this writing, and we have
+  not cut content on a guess.
 
 The final submission does not require prior registration or use of hackathon
 funding. The short-term funding request was a separate Sep 18 opportunity for

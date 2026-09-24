@@ -1,0 +1,904 @@
+Does Agentic Architecture Discovery Reproduce?
+An Audit Gate That Blocked Its Own Headline Result
+Anonymous Submission
+Abstract
+Agents alreadydiscover and exploit loopholes in microar-
+chitectural simulators[1], so we measure evaluation va-
+lidity rather than design discovery. We release a CHIA
+audit loop that separates four variance sources an aggre-
+gate score hides (repeated-run, generation-seed, prompt
+and trace) and gates publication on both a pre-registered
+threshold and a double-blind annotation layer scored by
+same-provider models and by a third, architecturally dif-
+ferent one. Run in the officialchia-champsimimage, the
+loopfailedits own gate: cross-seed CV78.16%against a
+5%threshold within one generated series, while repeated-
+run CV is0.0000%over 45 runs, so the publish gate reads
+Blocked. Two candidates differing only in a struct
+name and indentation carry distinct source, design and
+binary digests yet bit-identical cycles on all three traces:
+the seed moved the artifact, not the design. Ranking is
+unstable (top-10.667, Kendallτ= 0.556) and prompt
+response reaches249.18%. Annotation givesκ= 0.859
+on specification diffs and0.636on real generated C++,
+below our own 0.7 gate on both external sets; there both
+models are correct on all 33 labellable pairs and share
+no error. On the six measurement-grounded pairs they
+never disagree yet each is right on only 3 of 6, and the
+three they miss together are all measured simulator es-
+capes. Auditingthatκfoundthedefectinsideit: ourown
+label generator read#includeangle brackets as compar-
+ison operators and mislabelled three rename-only pairs,
+so the annotators we were scoring were correct and the
+ground truth was not. We report the negatives and the
+self-repairs instead of moving the thresholds.
+1 Introduction
+Architecture 2.0 pipelines (ArchAgent [1], CHIA [2],
+QuArch) let agents propose and evaluate designs with no
+humanintheloop. Theriskisnotunclaimed: ArchAgent
+reports its pipeline discovered and exploited a loophole
+in a popular microarchitectural simulator, inflating re-
+ported performance without changing hardware logic [1].
+Software-sideevaluationshowsthesamefragility: thetop
+three Terminal-Bench 2 submissions were all found guilty
+of cheating via harness-level tricks [3], OpenAI stopped
+evaluating on SWE-bench Verified and its audit of SWE-
+bench Pro found roughly30%of that suite’s tasks bro-
+ken [4], and an automated audit of 168 agent benchmarks
+flags issues in over25.7%of the evaluatedtasks[5].
+What is missing is an instrument, not another warn-
+ing: a loop that runs against a real simulator, sepa-
+rates the variance sources an aggregate score hides, and
+refuses to publish when the separation fails. We con-
+tribute that loop plus what it said about us: aBlocked
+verdict on our own headline claim (§3.1), evidence that
+generation seeds move artifacts without moving designs,
+trace-dependent reordering (§3.2) and prompt response
+at249.18%(§3.3), a failure mode that text-reading au-
+ditors cannot catch (§3.5), and nine defects we found in
+our own automation: a vacuous gate axis (§3.3), a gen-
+erated ground truth that was wrong while the annota-
+tors were right (§3.6), a nullity rule that could not tell
+an inert design from an ineffective one (§3.1), a screen-
+ing file whose incremental rows cannot be attributed to
+the module they name, a measurement attributed to a
+source that cannot compile (§3.7), an escalation signal
+whose approval score does not separate a local reversible
+edit from destroying an instance (§3.11), a harness that
+invented the factor levels it was missing (§3.8), a ranking
+statistic that printed its own fill value as a measurement
+(§3.2), and a commit-pinning gate that the literal string
+unknownsatisfies (§3.9).
+2 The Audit Loop
+Prepare.Pin git SHA, interpreter and image di-
+gest; load the pre-registered configuration. Thresholds
+are frozen before any measured cell exists, and that
+is what makes the §3 verdicts binding.Run.Exe-
+cute a|seeds|×|prompts|×|traces|grid,nrepeats per
+cell, through CHIA’sChampSimNodein the official image,
+recording the candidate digest, delivered binary digest
+and raw simulator JSON per cell.Audit.Two anno-
+tators classify candidate against reference using E0–E4
+(Table 1). The payload is built from an allowlist ofid,
+design,reference; the script refuses to run if any ex-
+pected label survives. We report the deterministic in-
+loop self-test and the independent-model layer separately
+and never merge them.Act.Emit the scorecard and
+gate:publishablerequiresreproducibilityPassandau-
+ditPass. A nullity check compares each candidate with
+a no-op reference measured on the same trace and in-
+struction budget.
+Setup.ghcr.io/ucb-bar/chia-champsimat digest
+sha256:610951d3..., ChampSim164fdb1e..., Python
+3.10.19, Ray 2.54.0; 46 unit tests pass in-tree and inside
+the pinned image. Grids ran on twoc2d-standard-8
+VMsinus-east1-b, andonthethree(design, trace)cells
+where those two hosts overlap they agree to the cycle.
+1
+Class Description
+E0 Equivalent
+E1 Parameter mislink
+E2 Direction error (LRU↔MRU)
+E3 Missing component
+E4 Added or fabricated component
+Table 1: Taxonomy. §3.5 reports a failure mode it cannot
+express.
+Three DPC-4 traces (fotonik3d, ligra BFSCC, imagick)
+with SHA-256 inresults/grid_v6/provenance.json,
+1M warmup + 4M simulated instructions, L2C. Candi-
+dates are three real LLM-generated prefetcher modules
+retainedwithrawpromptsandresponses, loadedthrough
+directory mode; seeds and prompts select the artifact and
+the simulator is never handed a seed. A separate3×3
+prompt-by-seed factorial was generated to exercise the
+prompt axis:6 of 9candidates compile, taking every
+generated candidate as the denominator, and all three
+failures abort the build within≈13s against≈800s for a
+cold success.Calibration.5 gold + 5 adversarial speci-
+fication cases plus 4 semantic cases built from the gener-
+ated C++ itself. Pre-registered metrics: cross-seed CV
+<5%; repeated-run CV, prompt spread, trace CV, top-
+1 stability and leave-one-trace-out Kendallτreported;
+annotation gateκ≥0.7.
+3 Results
+3.1 The gate blocked our own headline
+claim
+Across 3 designs×3 traces×5 repeats (45 runs,
+on a second physical host) the loop reports cross-seed
+CV78.16%against the 5% threshold, verdictNon-
+Reproducible, publish gateBlocked. Repeated-run
+CV is0.0000%: no cell varies across its five runs. The
+simulator is deterministic, and determinism is not repro-
+ducibility (Fig. 1a).
+The replication is exact on measurement and total on
+artifact. Cycles, IPC and instruction counts match the
+earlier run on all nine cells, yet0 of 9cells share a de-
+livered binary digest: a rebuild on another host produces
+byte-different binaries while the simulated measurement
+stays bit-identical. A binary digest therefore evidences
+that a distinct build was delivered, not design identity,
+and a replication gate that demanded digest equality
+across hosts would reject a faithful reproduction. The
+converse failure is present in our own screening data and
+is easier to miss: modulenamesare not design identi-
+fiers either.gen_fill_only_conservative_s2occurs in
+both screening batches under different delivered binaries
+(digestsace3ea88...andb83f003a...) and measures
+1,132,568in one and1,129,110in the other. Any join
+keyed on the module name silently discards one of those
+measurements. That is what an earlier version of Fig. 1
+did before we keyed it on the digest.
+The seed axis explains the gap.s1ands3differ only
+in the struct name and two lines of continuation inden-
+tation, yet each carries a different source, design and
+binary digest while all three traces return bit-identical
+cycles.s2keeps a fill history, is 10.6% faster than the
+no-op reference on BFSCC, and reproduces the no-op
+cycle count exactly on imagick. The seed moved the
+artifact and not the design, and nullity is a per-trace
+property: our evidence checker used to report a de-
+sign that is inert on one workload under the same flag
+as one that is inert everywhere, so it now separates
+null_on_every_measured_trace(a null design) from a
+note recording trace-dependent inertness, a normal result
+and not a gate failure.
+That78.16%is scoped to one generated series, and a
+second series says why. A replication of the same prompt
+at seeds{2,3}drawn from adifferentcandidate directory
+measures cross-seed CV0.0000%: those two seeds repro-
+duce each other bit-exactly on all three traces. The two
+directories hold different programs under the same mod-
+ule name:gen_fill_only_conservative_s2is 1,210
+source characters in one and 1,107 in the other, and its
+BFSCC cycle count is 6,420,195 versus 95,624,440. The
+15×gap between the two grids is an input difference, not
+a measurement disagreement, and the tworaw.jsonfiles
+record distinctcandidate_sha256values that are what
+made this checkable. A seed label is not a design iden-
+tifier across series, and the seed effect reported here is a
+property of one series rather than of agentic generation
+in general.
+3.2 Trace choice reorders the candidates
+Trace CV is163.33%, top-1 stability0.667, mean Kendall
+τ= 0.556: the ranking is not stable under the trace sub-
+set that produced it. The no-op/next-line control pair
+separates by 23.15% on BFSCC but only 0.42% on fo-
+tonik3d, so a ranking that moves only on fotonik3d is
+weak evidence and the grid must be read per trace, not
+averaged.
+The stability number is not stable either.A
+second rectangle,2seeds×2prompts×3traces (12 cells,
+36 runs), same harness, same pinned image, same three
+traces, reports top-1 stability1.0and mean Kendall
+τ=0.778over four designs. Nothing in the instrument
+changed and the simulator is deterministic; only the can-
+didate set did. Sotau=0.556 andtau=0.778 are both
+correct readings of the same code, and “the ranking is
+unstable” is a claim about a design set, not about agen-
+tic architecture discovery. We report both rather than
+the one that reads better.
+A third reading ofτwas not a reading at
+all.A one-candidate grid,1seed×1prompt×3traces
+(3 cells, 9 runs), has nothing to rank. The ranking
+statistic returned0.0for top-1 stability and0.0forτ
+2
+0 1 10 100 250
+max relative spread across the axis (%)
+repeated run
+(N=5, 45 runs)
+generation seed
+(3 seeds x 1 prompt)
+trace choice
+(same designs)
+prompt variant
+(1 seed x 3 prompts)
+gate 5%
+exactly 0.0000%
+78.16%
+163.3%
+249.2%
+(a) one aggregate score hides four axes
+no-op ref
+aggressive_o
+ffset_s1·B
+aggressive_o
+ffset_s1_r1·A
+aggressive_o
+ffset_s3·B
+default_s0·Adefault_s1·B
+fill_only_conservative_s0·Afill_only_conservative_s1·Bfill_only_conservative_s1·Afill_only_conservative_s2·Afill_only_conservative_s2·Bfill_only_conservative_s3·Bfill_only_conservative_s3·A
+−1.0
+−0.5
+0.0
+0.5
+Δ cycles vs no-op reference (%)
+-0.96%
+-0.77%
+-0.79%
+-0.85%
+-0.85%
+-0.54%
+-0.85%
+-0.85%
+-0.85%
+red tick = design measured bit-identical to the no-op
+(b) three designs sit exactly on the no-op (1,138,748 cycles)
+Figure 1: Two claims of this paper, drawn from the committed artifacts byscripts/make_figures.py.(a)
+Maximum relative spread per variance axis on one scale, with the pre-registered5%gate: repeated execution is
+exactlydeterministic while the seed, trace and prompt axes move by78.16%,163.33%and249.18%. Determinism
+is not reproducibility.(b)Every design that compiled and ran, as deviation from the cold no-op reference under
+the same instruction budget (2,000,001 instructions; the trace is recorded in the audit case, not per screening row).
+Three designs land on exactly0.000%: they compile, run, emit metrics and do nothing measurable, while every
+functioning prefetcher is0.54–0.96%faster. The grey bar is the reference itself.fill_only_conservative_s2
+appears twice because the two screening batches reuse modulenameswhile delivering different binaries; it measures
+−0.54%in one batch and−0.85%in the other, which is why bars are keyed on binary digest (§3.1).
+as fill values, and the scorecard printed both without
+qualification, so an unmeasurable quantity appeared
+as the most unstable ranking possible. We report this
+one because the bias runs toward our own thesis: a fill
+value that flatters the claim is not caught by reading
+the number. That artifact also carried noaxis_levels
+field and recordedgit_sha="unknown"(§3.9), and
+as delivered it readVerdict: REPRODUCIBLE,
+Publish gate: PASS,PUBLISHABLE. Rescored un-
+der current code it readsBLOCKEDandunrankable
+(fewer_than_two_candidates). The two fixes are
+independent and we do not merge their credit: the axis
+fix moved the verdict, the ranking fix moved only the
+two printed lines. A test now asserts the printed form
+and not just the returned value, because the returned
+value was already correct in the sense that nothing had
+crashed.
+That grid is not a duplicate of the2×2rect-
+angle, and the difference is the useful part. Both
+hold the cell (seed 3,aggressive_offset) with the
+samecandidate_sha256and the samedesign_sha256,
+measured 60.5 minutes apart under two different
+config_sha256values. The compiled binaries differ,
+4259150ffcc798f2against6d888fc7e09fbc16; the cy-
+cle counts do not, on all three traces and all nine runs,
+and IPC agrees to ten decimals. Where the design really
+is the same, the measurement reproduces exactly across
+a rebuild, a config change and a harness commit change.
+We cannot exclude result reuse from the retained configs
+alone, since neither grid records anincrementalflag;
+what argues against it is that the recorded binary iden-
+tity moved while the cycles did not.
+3.3 Prompt sensitivity is 249%, and the
+gate could not see it
+A separate1seed×3prompt grid over three traces
+gives maximum prompt spread249.18%, computed as
+(max−min)/mean; the spread is almost entirely one
+trace. The two axes do not mask each other: a2×2
+seed-by-promptrectangle(12cells, 36runs,Unexercised
+axes: none) measures cross-seed CV23.50%and
+prompt spread179.67%simultaneously, both far above
+the5%gate. Within that rectangle the seed effect is
+confined to one prompt:fill_only_conservativere-
+produces bit-exactly across seeds 1 and 3 on all three
+traces, whileaggressive_offsetdiffers by28.5%on
+BFSCC. The same two cells reproduce grid v6’s val-
+ues to the cycle, so the grids agree wherever they over-
+lap. The same grid carries a second, worse story. Be-
+cause it holds the seed constant, cross-seed CV was com-
+puted over a single value, and our variance helper re-
+turns0.0for fewer than two samples, so the gate printed
+cross-seed CV= 0.0000%, watched it satisfy the<5%
+threshold, and returnedReproducible/Publishable.
+An axis that never varied cannot fail a threshold
+on that axis, and our gate had no way to know the
+difference between a measured0%and an unmeasured
+one.
+The fix counts factor levels: an axis with fewer
+than two levels isunexercised, can never satisfy
+the gate, and is named inpublish_blockersas
+axis_not_exercised:seed. Every retainedraw.json
+was then rescored without re-running the simulator
+(scripts/rescore_grid.py), and the scorecard above
+3
+now prints its axis levels next to its verdict. The rescored
+verdict isNon-Reproducible/Blocked.
+3.4 Independent annotators, and where
+they agree and are wrong
+On the 10 specification cases the two models give Cohen’s
+κ=0.859(0.900 agreement, verdict accuracy 10/10 for
+both, error-class exactness 7/10 and 8/10). Widening
+to pairs of the nine factorial candidates, built from real
+generatedC++ratherthandictionarydiffs, initiallygave
+κ= 0.7235over 36 pairs withκ=1.0on the verdict axis.
+§3.6 shows why that number cannot be quoted: the gold
+labels for that set were themselves generated, and three
+of its pairs were mislabeled by our own structural rule.
+After relabeling,33 of 36pairs carry a derivable verdict,
+both annotators are correct onall 33(verdict accuracy
+1.0each), they never disagree (κ= 1.0on verdict), and
+combined-labelκfalls to0.636. That is nowbelowour
+own 0.7 gate too, so both external sets are red, not just
+the measured one: the pre-correction 0.7235 was the only
+value that passed, and it passed on labels that had to
+be withdrawn. On thesixmeasurement-grounded cases
+(threerealnullityescapes, addedtotheoriginalfourafter
+we found the escape case had cited a source that cannot
+compile) the two models do not disagree (κ= 1.0on
+verdict, 0 disagreements), and each is right on only 3
+of 6 (verdict accuracy0.5); combined-labelκis0.455.
+The three cases they miss together areexactlythe three
+escapes, and no escape is missed by only one of them.
+One caveat we cannot resolve:all 33 labellable gold
+labels in that set arenot_equivalent: no pair of gen-
+erated candidates was ever labelled equivalent. A rater
+that always answersnot_equivalentwould also reach
+κ= 1.0on the verdict axis, and ourκhelper returns
+exactly 1.0 by convention whenever the marginals are
+degenerate. The verdict-only row is thereforenotevi-
+dence of reliability on this set; the combined-label 0.636
+is the statistic that means something. On the specifica-
+tion and measured sets, where both classes occur, verdict
+κis non-degenerate.
+Read with §3.5, the high verdict agreement is still the
+warning, not the reassurance:κmeasures correlation be-
+tween annotators, not correctness against measurement,
+andκ= 1.0is what a shared blind spot looks like from
+the inside. It is also what a sharedcorrectreading looks
+like when the ground truth is the defective party. Agree-
+ment statistics cannot tell those two apart, which is the
+point of §3.6.
+3.5 A nullity escape both auditors
+missed
+Compile-and-run is not evidence of a design. Against a
+cold no-op reference (Fig. 1b) measuring 1,138,748 cy-
+cles, twodistinctbinaries (a generated stride prefetcher
+and a repaired aggressive-offset candidate) return ex-
+actly 1,138,748, while every genuine prefetcher differs
+(1,129,110 / 1,129,706 / 1,132,568) and the next-line
+control returns 1,129,305, from a cold-build row carry-
+ing its own binary digest; the control pair’s distinct bi-
+naries are recorded separately inreference_designs.1
+Two of the 13 distinct designs in that screening batch
+therefore compile, execute, emit metrics and do noth-
+ing; one is not a lazy stub but a plausible stride
+prefetcher whose issue path never fires. Screening the
+factorial separately (9 distinct candidates, 6 compiling)
+added a third:gen_aggressive_offset_s1also returns
+1,138,748. Three nullities across two screening batches:
+any verifier accepting “builds, runs, produces numbers”
+passes all three.
+Both independent annotators classified this case
+not_equivalent/E4; measurement saysequivalent.
+They agree with each other and disagree with the simu-
+lator, and this is no longer a single observation. Three of
+the six measurement-grounded cases are nullity escapes,
+drawn from two screening batches and three distinct de-
+livered binaries, and both raters missall threein the
+samedirectionwhilemissingnoneofthethreenon-escape
+cases. That is a systematic blind spot, not independent
+noise, though the denominator is still six and we do not
+claim more than that. This result was re-obtained after
+we found and fixed an attribution error in the case it-
+self: the source it embedded was a same-named file that
+does not compile against the pinned image, while the
+measurement came from a second file in another candi-
+date directory (§3.7). Re-annotating the corrected source
+leaves the outcome and theκ= 0.455unchanged, with
+both rationales still naming the added stride mechanism.
+Nor is the failure an artefact of how the pair is framed:
+exchanging which design is labelled candidate and which
+is reference leaves all twelve verdicts unchanged (0/12
+flips,scripts/annotation_role_swap.py), so the blind
+spot is symmetric, not a reading of narrative direction.
+E0–E4 also has no slot for “claims to work, measurably
+does nothing”: it audits pairwise specification difference,
+whereastheescapeisaclaim-to-measurementgap. What
+catches it is the nullity check, not the taxonomy. Reading
+a candidate is a poor proxy for running it, and more tex-
+tual auditors buy agreement rather than independence
+when they share a failure mode.
+3.6 Ground truth is generated too
+Five of the defects in this paper (§3.3, this section, §3.11,
+§3.2 and §3.9) are one failure mode seen five times: a
+quantity whose name claims a measurement stops re-
+ferring to the thing measured, and still returns a value
+1The same screening file also carries threeincrementalrows that
+name three different modules while recording one shared binary
+digest and one shared cycle count. Those rows are not attributable
+to a design and none of our claims rest on them; the escape case
+cites that file only as context.
+4
+that reads as a result. In three of the five that value
+was a pass; in the ranking statistic it was merely flatter-
+ing, which is worse to catch because nothing downstream
+complained.
+Every number in §3.4 is scored against a label we did
+not hand-write. The 36 semantic pairs were labelled by
+a structural rule: compare class members, numeric liter-
+als, and comparison operators between the two sources.
+That rule read#include <vector>as two comparison
+operators. Three candidate pairs whose designs differ
+in nothing but local variable names, comments, header
+count and an explicitthis->were therefore labelled
+not_equivalent/E2, “direction error”. Both generative
+annotators called all threeequivalent, with rationales
+naming exactly the cosmetic differences involved.The
+annotators were right and our ground truth was
+wrong, and the artifact had been reporting their three
+correct answers as three shared errors.
+Two things follow. First, the fix is not
+to re-query the models: their replies are re-
+tained, so a label defect is rescored, not re-run
+(scripts/relabel_semantic_cases.py), and is now
+locked by four regression tests. Second,classify()
+had a second, quieter hole: it returnednot_equivalent
+whenever normalized text differed at all, so a pair with
+no shared trace measurement and no derivable error
+class was asserted to be a behavioral difference. It now
+abstains with an explicitunlabellableverdict (3 of 36
+pairs land there) and defers to measurement whenever
+cycles agree on shared traces; that is the rule that earns
+the escape case itsequivalentlabel in the first place.
+Anunlabellablepair is scored as no evidence at all,
+not as a wrong answer.
+3.7 A measurement attributed to a file
+that cannot produce it
+Building a positive control for the nullity check, the
+grid path rejectedgen_default_s0withinvalid
+static_cast from champsim::address to int64_t,
+and the escape case’s embedded source is byte-for-byte
+that rejected file, matching its own declared hash. The
+screening log holds two rows for that module name: a
+failed build with the identical error, then a successful
+cold build measuring 1,138,748. The runner had swept
+four candidate directories holding 5, 6, 3 and 3 files,
+which map in sorted order onto the 17 screening rows
+and place the successful row inside the second directory:
+the measurement belongs to adifferentfile that happens
+to share the name.
+Screening rows record a module name and a delivered-
+binary digest butno source digest, so “which file pro-
+duced this measurement” is unanswerable from the ar-
+tifact after the fact. It is the same object this pa-
+per audits, reached from the other side. We now
+carryscripts/audit_case_attribution.py, which re-
+derives every embedded source hash against every can-
+didate file on disk (80 assertions, all self-consistent, 63
+name collisions across 11 module names: the reason no
+internal check could find this), and a generated index
+(CANDIDATES.md) mapping each candidate directory to
+its consumers and per-module digests; 9 of 15 module
+names carry more than one distinct source. The escape
+case records the correction with both hashes.
+3.8 The harness filled in the missing cells
+itself
+Building that control is also where the loop’s own code
+betrayed it, and this is the one defect that manufactures
+its evidence instead of merely misreading it. The grid
+declared three prompts×two seeds; the candidate di-
+rectory held three files.generate_candidate()looked
+for a candidate carrying the cell’s(generator_seed,
+prompt)pairand, findingnone, fellbacktothe whole pool
+(pool = matching or candidates), thensetdefault-
+stamped the missing labels onto whatever a hash of the
+prompt picked, and recomputedcandidate_sha256. So
+each cell arrived with a provenance hash and labels that
+no generation event produced: three of its six factor lev-
+els weregen_default_s0, measured under four names.
+The damage runs both ways at once, so neither a
+pass nor a fail from this grid is quotable. Its only
+nonzero cross-seed CV (8.3812%, the number that made
+the verdictBlocked) compares twodifferentdesigns,
+c57d6ee71b1aand332147378a88, under two seed la-
+bels: a design difference wearing a seed’s name. The
+0.0%CVs on the other levels are the mirror error: one
+binary measured twice cannot disagree, so the same bug
+manufactures reassurance as easily. Only the repeated-
+run axis survives, because it compares trials inside a cell
+and never touches a label.
+What is usable is the reason the grid was built.
+Two designs equal the cold no-op referenceex-
+actlyon all three traces:gen_default_s0and
+gen_aggressive_offset_s1_r1, both at 2,261,770 /
+7,183,123 / 1,561,323 cycles. Neither delivered binary
+is the image default (688278205d6c9fa4), so these are
+compiled, executed modules that change nothing mea-
+surable. That is the first real positive control for the
+nullity branch, which until now had only a synthetic one.
+The third design (gen_fill_only_conservative_s0) is
+live on all three traces andfasterthan the no-op on
+every one (−0.40%,−11.19%,−4.10%): the only design
+here that measurably does something removes work.
+Two witnesses catch the substitution and share no
+failure mode. Thegenerator_seeda cell copied
+from its candidate disagrees with the seed the cell
+is labelled with; anddesign_sha256shows three dis-
+tinct compiled designs behind six levels. The evi-
+dence gate finds it a third time from binary digests
+alone(one_design_per_binary:3189efdc1e54e5b5be-
+hind four labels). Stamped labels are self-consistent,
+so a label-only check would have missed the stub fix-
+5
+ture’s version of the same bug: its four-entry cata-
+log carried no labels at all, so all nine levels were
+stamped. The digest witness did catch it. The har-
+ness now raises on a missing level, a test locks that, and
+scripts/audit_grid_levels.pyre-checks every pub-
+lished grid: the other five are clean, one distinct design
+per level and no label disagreement. This was the only
+grid launched withoutscripts/make_grid_config.py,
+whose largest-rectangle rule would have refused it, a
+guard that already existed and was routed around.
+3.9 The commit pin accepted the word
+“unknown”
+§2 says the loop pins the git SHA. It does, in the sense
+that the field is always present._git_head()runsgit
+rev-parse --short HEADand returns the literal string
+"unknown"when that call raises, which it does inside
+a container whose working copy has no.git. The ev-
+idence gate then testedif not raw.get("git_sha"),
+and"unknown"is truthy, so an artifact that never
+recorded its own harness commit passed a check named
+commit_sha_retained.
+Measured over the seven grid artifacts: three
+recordgit_sha="unknown"inraw.jsonand four in
+env_pin.json, and two of the seven record a dif-
+ferent commit inenv_pin.jsonthan inraw.json,
+01f9980againstd3033f5in one grid and"unknown"
+againstb85b38cin another. One of the three is
+grid_fact_prompt, the grid behind the249.18%prompt
+spread of §3.3. That number still re-derives from its re-
+tained config and its retained cells, which is what §3.3
+leans on; what it does not have is a pinned harness com-
+mit, and we had been writing as though every grid did.
+The gate now rejects any value that is not a lowercase
+hex string of 7 to 40 characters, and a test locks the
+sentinel case. The fixture that used to pass this check
+carriedgit_sha="abc": three characters, which only a
+truthiness test would accept, so the test suite had been
+modelling the loophole rather than the mechanism.
+The three historical values are not repaired. The com-
+pute hosts are deleted, the true commits are not recover-
+able from the artifacts, and writing a plausible SHA into
+anenv_pin.jsonthat never measured one would be the
+defect this section describes. They stay"unknown"and
+the gate now fails them, which is the correct state for an
+artifact that cannot prove its own provenance.
+3.10 A third substrate buys agreement,
+not independence
+Both generative annotators come from one provider, so
+we added an architecturally distinct rater: a 421M Mod-
+ernBERTdiscriminativehead, non-autoregressive, which
+cannot generate the rationale an audit prompt asks for.
+Run on the same three case sets as a third annotator, it is
+accurate on 0.5 of the 10 specification cases and 0.667 of
+the 6 measurement-grounded cases, and on0 of 33real
+generated pairs: it answersequivalenton 35 of 36 while
+every labellable gold label in that set isnot_equivalent.
+Its single non-default answer falls on one of the three
+pairs whose label §3.6 had to withdraw, so even that hit
+is unscoreable. Its agreement with the two generative
+raters isκ= 0.138,−0.364and−0.057across the three
+sets: on two of three sets it is anti-correlated with them,
+not merely uninformative.
+On the escape case itself it answersequivalent, which
+iscorrectand matches measurement where both genera-
+tive raters failed, at a top-1 minus top-2 margin of0.010.
+It is right for no reason a verifier can detect. A scoring
+rule that rewards agreement with measurement would
+bank that hit and never see that the same default loses
+33 of 33 elsewhere. Changing substrate does not buy in-
+dependence: independence is a property of theevidence
+channel, and only the simulator provides one here.
+3.11 An approval score that cannot sep-
+arate the safe action from the de-
+structive one
+We ran the loop’s own decisions through a local discrim-
+inative decision head under a gate that escalated when-
+ever itsneeds-approvalscore exceeded0.5. It escalated
+6 of 6, including a local, reversible rewrite of a commit-
+ted scorecard that scoredhigher(0.895) than an actual
+push to the public artifact (0.848). To measure it in-
+stead of assuming it, we built ten scenarios of known
+blast radius (local reversible; pre-authorised spend; out-
+side write; irreversible destroy) and measured the score
+against the tier: Spearmanρ= +0.406overn= 10,
+withmin(tier3)−max(tier0) =−0.169, i.e.nothresh-
+old separates the safest action from the most destructive.
+Editing a conference submission scored0.126, below the
+safe local rewrite at0.160.
+A rule built on that score is not conservative, it is con-
+stant: it escalates everything, so the automation delivers
+nothing and the human sees no more signal than before.
+The fix removes the model from that judgement: blast
+radius is declared peroptionin code and the model only
+chooses among options, with the score kept as an advi-
+sory cross-check (it now agrees with the register on 3 of 4
+decisions). This also exposed a granularity bug: the reg-
+ister had been attached to the whole question, so an op-
+tion meaningleave the instances runningwas reported as
+irreversible. Re-running the same six decisions under the
+register moves the automatic share from 0/6 to 2/6, and
+every remaining escalation is correctly motivated: two
+outside writes, two margins below 0.15. The ladder, the
+gate and the recorded verdicts ship indecision_chain/.
+Asecondset, writtenlaterandaboutdecisionsthisses-
+sion actually faced, repeats the result on different text:
+the head’s top-1 choice equalled the action taken4 of 4
+times, the margin rule escalated the two genuinely close
+6
+calls (0.3842vs0.3745;0.4271vs0.3086) and automated
+the two with a clear winner, and the approval head, given
+per-decision wording, spread over0.627–0.835while still
+exceeding the0.5“needs approval” hint onall four, so a
+rule keyed on that threshold would escalate everything.
+The ladder probe above already showed that, now on
+independently written text. Two ratios from two differ-
+ent decision sets are not comparable and we do not add
+them. The first cut of that spec had also reused onenoul
+question verbatim across all four entries, which made the
+head return a single constant four times and turned the
+advisorycross-checkintoareadingabouttheoptionlabel
+rather than about the model; rule (1) applied to a check
+written to audit the pipeline, not only to the pipeline.
+Metric Gate Measured
+Cross-seed CV (max)<5% 78.16%
+same,2×2grid<5% 23.50%
+Repeated-run CV (max) report0.0000%
+Prompt spread (max) report249.18%
+same,2×2grid report179.67%
+Trace CV (max) report163.33%
+Trace top-1 stability report0.667
+same,2×2grid report1.000
+Mean Kendallτreport0.556
+same,2×2grid report0.778
+κ, spec cases≥0.7 0.859
+κ, real pairs (33 label.)≥0.7 0.636
+κ, verdict only† ≥0.7 1.000
+κ, 6 measured≥0.7 0.455
+Verdict acc., 6 measured≥0.7 0.500
+Third-substrateκ—0.138/−0.364/−0.057
+Unlabellable pairs 03of36
+Publish gate both passBlocked
+Table 2: Pre-registered gates against measured values.
+†degenerate: all 33 labellable gold labels in that set are
+not_equivalent, so a constant rater also reaches 1.0 and
+the combined-label row is the informative one. Prompt
+spread comes from a grid that held the seed constant and
+cross-seed CV from a grid that held the prompt constant;
+§3.3 reports what each unexercised axis wrongly passed.
+The third-substrate row is discriminative-headκagainst
+the two generative raters on the spec / measured / real-
+pair sets in turn.
+Artifact.A harness that only ever returnsPass
+cannot be distinguished from one that is not look-
+ing, so the release ships the blocked scorecard, raw
+cells and digests: loop, cases, generators, gate and
+scripts/independent_audit.pyas CHIA-compatible
+blocks (BSD-3-Clause). The repository URL is filed
+in this submission’s required open-source-artifact field
+rather than printed here, so the paper stays anonymous
+while the artifact stays reachable. Every number
+quoted in this paper is re-derived from the commit-
+ted artifacts byscripts/verify_paper_claims.py
+(173 claims, non-zero exit on drift); the defects above
+were found by reading primary evidence, and this
+script is what turns that into a check, not a coinci-
+dence.scripts/audit_grid_levels.pyis the same
+idea aimed at the harness: it refuses a published
+grid in which some factor level’s compiled design be-
+longs to another level. Reproduce the headline grid
+withpython3 chia_loop/loops/audit_repro.py
+–version 6 –config .tmp/cfg/grid_gcp.json
+–backend champsim_node –output-dir /tmp/repro,
+passing an output directory outsideresults/so a
+replication cannot overwrite the committed evidence.
+Both compute hosts were deleted on 2026-09-
+24, so a replication runs against the pinned image
+and the retained configs rather than against our
+machines. The deletion was gated on a fresh whole-
+home content-hash sweep of each host, recorded in
+results/vm_teardown_precondition_2026-09-24.json;
+the files that existed only there are committed under
+results/compute_host_bookkeeping/with a byte-
+level manifest, and the two packed result archives among
+them are byte-identical to the result sets already in
+results/. We note one correction that sweep produced:
+its trace-hash caveat first claimed that 1 of 6 grid prove-
+nance records pinned a trace SHA-256, and re-deriving
+the number from the files gave 3. The error understated
+our own coverage, so nothing downstream complained,
+and it survived until a check tried to recompute it.
+4 What this should change
+Each rule below is stated as a check an author can run,
+because every one of them was violated by us and caught
+by reading primary evidence rather than by a green gate.
+(1) Report factor levels next to every variance
+statistic.A spread computed over fewer than two lev-
+els of its own axis must be emitted asunexercised, never
+as a value that can satisfy a threshold.(2) T reat la-
+bels as generated artifacts.Where a verdict can be
+grounded in measurement, ground it; where it cannot,
+abstain rather than infer, and fuzz structural labelers
+against non-design syntax such as preprocessor lines and
+comments.(3) Key identity on the delivered di-
+gest, and report the label marginal with every
+agreement statistic.κwithout the class distribution
+isuninterpretable, andκ= 1.0onasingle-classsetmeans
+nothing. Count distinct digests behind the factor labels
+too: a level whose design is another level’s design mea-
+sures nothing, however consistent its own bookkeeping is.
+(4) Do not let a learned score decide what needs
+human approvalunless it is shown to separate the safe
+action from the destructive one; a rule that escalates ev-
+erything automates nothing.(5) Make a nullity check
+a gate, not a diagnostic.“Compiles, runs, produces
+numbers” passed three designs that do nothing; any ver-
+ifier weaker than a comparison against a no-op reference
+will pass them too. Two designs in the artifact equal
+that reference exactly on all three traces (§3.8), so the
+branch is now exercised by a real control rather than a
+7
+synthetic one.(6) Record a source digest beside
+every measurement.A delivered-binary digest says a
+build happened, not which source produced it; a module
+name says even less. Our screening rows carried both and
+still let a cycle count be attributed to a file that cannot
+compile, because the one thing missing was the hash of
+the input.(7) F ail closed when a factor level has
+no artifact.A harness that substitutes a nearby can-
+didate to keep a grid rectangular destroys the axis it is
+reporting, and destroys it in both directions: false alarms
+from comparing two designs under one axis’s name, and
+false passes from measuring one design twice. Refusing
+the cell costs one run; the substitution costs the axis, and
+leaves no trace in the labels.
+5 Limitations
+Axes do compose, but each grid is one design set.
+The2×2rectangle shows cross-seed CV and prompt
+spread surviving simultaneous variation, so the single-
+axis grids were not each other’s artefacts. What does
+not transfer is the magnitude: the same code reports
+τ= 0.556on one candidate set and0.778on another,
+78.16%and23.50%cross-seed CV,249.18%and179.67%
+prompt spread. Every number here is therefore a state-
+ment about a specific set of generated designs, and we
+give the set for each.Repeats:0.0000%isN= 5per
+cell (45 runs), but it establishes only that execution is
+deterministic; it says nothing about generation variance,
+which is the axis that fails.Labels:the 33-pairκrests
+on structural labels that survive our own header-parsing
+defect only because we could re-derive them; only the 4-
+casesethasameasurement-groundedlabel, andthethree
+shared errors are the three escapes, so the failure is sys-
+tematic on this set rather than a single coincidence. That
+set carries noequivalentgold case at all, so its verdict-
+axis agreement is reported as degenerate rather than as
+reliability.One series per axis.Each grid draws can-
+didates from a single directory, and the same module
+name denotes different programs across directories, so no
+number here is a cross-series estimate: the78.16%and
+0.0000%cross-seed CVs are bothcorrect and describe dif-
+ferent generated series.Annotators:both generative
+models come from one provider, and §3.10 shows that
+the architecturally different rater we could reach is worse
+than independent rather than better.Annotation va-
+lidity:the raters are large models, and we tested one
+threat and not the other. Exchanging candidate and ref-
+erence leaves every verdict unchanged (0/8), so the layer
+is not reading narrative direction; but we did not test
+whether their verdicts are inflated by exposure to sim-
+ilar C++ prefetcher code in training, which systematic
+reviews of contamination detection treat as the domi-
+nant risk [6]. We name that as uncontrolled rather than
+claim to have ruled it out, and it bears most on the 33-
+pair result since those inputs are real generated source.
+Checker:the cell-level nullity rule conflated per-trace
+with global nullity until this revision; the split is locked
+by four tests. The replicated grids contain no design that
+is inert oneverytrace, so the stricter branch had only a
+synthetic control until a purpose-built one delivered two
+designs equal to the no-op reference on all three traces
+(§3.8). That grid’s factor axes are discarded in the same
+section, sothecontroliscitedasabsoluteequalityagainst
+areferenceandneverasavariancemeasurement.Prove-
+nance:raw.jsonrecords HEAD at write time, not stage
+entry. One supporting screening file carries a binary at-
+tribution defect: three of its incremental rows name three
+different modules yet record onebinary_sha256and one
+cycle count, so those rows cannot evidence which design
+was measured. Every nullity cited here comes from a
+cold-build row whose digest differs per design, and the
+escape case records the unattributable file only as cor-
+roborating context.Scope:one simulator, one design
+family, three traces; no RTL flow and no gem5 result is
+claimed.
+6 Conclusion
+We released an audit loop that separates four variance
+sources, gates publication on measurementandannota-
+tion, and keeps its evidence. Against the official CHIA
+ChampSim image it blocked its own reproducibility claim
+at78.16%cross-seed CV, showed seeds moving artifacts
+without moving designs, showed trace choice reordering
+candidates (τ= 0.556) and prompt response at249.18%,
+and showed two same-provider language-model auditors
+agreeing and both wrong on a measured simulator es-
+cape, a result that survived re-annotation after we found
+the case had cited a source that cannot compile. It
+also caught nine silent defects in our own automation:
+a gate that passed an unexercised axis, a labeler that
+read#includebrackets as comparison operators, a nul-
+lityrulethatcouldnottellaninertdesignfromanineffec-
+tive one, a screening file whose incremental rows cannot
+be attributed to the module they name, a measurement
+attributed to a file that cannot produce it, an escalation
+rule built on an approval score we then measured not to
+separate safe from destructive, a harness that filled an
+absent factor level with some other design and stamped
+the label on it, a ranking statistic that printed its own
+fill value as an instability measurement, and a commit
+pin that the stringunknownsatisfied. The instrument,
+the negative verdicts, the seven protocol rules we would
+ask of any such loop (§4) and the self-reports are the
+contribution.
+AI assistance in this work
+AI coding and writing tools assisted with implementa-
+tion, experiment plumbing, and the drafting and editing
+8
+of this paper. An AI agent ran the audit loop, wrote and
+revised the scripts and the evidence pipeline, and drafted
+this text under the author’s direction; the author selected
+the claims, checked them against the primary artifacts,
+and is responsible for all code, measurements, citations,
+claims and the final content here. The evaluation layer is
+machine-generated as well: two generative raters, a gen-
+erative labeler that we then showed to be wrong while
+the raters were right (§3.6), a local discriminative head
+used both as a third annotation substrate and as a deci-
+siongate(§3.10, §3.11), andnineself-auditsperformedby
+the same agent that produced the code it was reviewing.
+We state this because the standard this paper applies to
+artifacts is the one it must apply to itself: a generated
+object counts as evidence only with its producer, its ver-
+sion and its failure modes attached. Applied here, that
+means the negative verdicts above were produced by a
+process that was not independently audited, the reposi-
+tory is the thing to check, and this prose is a summary
+of it rather than a substitute for it.
+References
+[1] R. Gupta et al. ArchAgent: Agentic AI-driven Computer Archi-
+tecture Discovery. arXiv:2602.22425, 2026.
+[2] A. Cui, F. Hermida-Rivera, J. Toubes et al. CHIA: An open-source
+framework for principled, agentic AI-driven hardware/software
+co-design research. arXiv:2606.27350, 2026.https://github.com/
+ucb-bar/chia.
+[3] MeerkatResearch.FindingWidespreadCheatingonPopularAgent
+Benchmarks.https://debugml.github.io/cheating-agents/, 2026.
+[4] OpenAI. Why SWE-bench Verified no longer measures
+frontier coding ability, 2026.https://openai.com/index/
+why-we-no-longer-evaluate-swe-bench-verified/; and Ope-
+nAI, An audit of SWE-Bench Pro, 2026.
+[5] J. Wang, F. Bianchi, S. Zhu et al. Automated Benchmark Auditing
+forAIAgentsandLargeLanguageModels.arXiv:2605.26079, 2026.
+[6] E. Nourbakhsh, M. S. Sirjani, A. Mousavi et al. Are LLM Bench-
+marks Already Contaminated? A Systematic Review of Con-
+tamination Detection Methods. Proc. 5th Generation, Evalua-
+tion and Metrics (GEM) Workshop, Outstanding Paper.https:
+//aclanthology.org/2026.gem-main.50/, 2026.
+9

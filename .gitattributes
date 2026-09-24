@@ -1,0 +1,7 @@
+# Evidence bytes are load-bearing in this repository: MANIFEST.sha256, the
+# provenance.json files and verify_paper_claims.py all re-derive sha256 over file
+# *content*. With core.autocrlf=true and no attributes, a fresh Windows checkout
+# rewrites LF to CRLF and every one of those hashes silently stops matching, while
+# the files still look identical in an editor. -text pins the bytes as committed.
+results/** -text
+.tmp/** -text

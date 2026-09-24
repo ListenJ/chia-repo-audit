@@ -52,30 +52,47 @@ from sim.backends import get_backend  # noqa: E402
 
 
 # Frozen before real measurements. CLI overrides are recorded in raw.json.
+_STUB_DESIGNS = [
+    ("lru_reference", "lru"),
+    ("mru_variant", "mru"),
+    ("fifo_variant", "fifo"),
+    ("srrip_variant", "srrip"),
+]
+_STUB_SEEDS = [0, 1, 2]
+_STUB_PROMPTS = ["default", "cot", "adversarial"]
+
+
+def _stub_catalog() -> list[dict]:
+    """Enumerate every (seed, prompt) cell the stub grid asks for, one per entry.
+
+    generate_candidate() refuses a pair that is absent from the pool, so a fixture
+    that wants a 3x3 rectangle has to declare 9 labelled candidates rather than 4
+    designs the harness would be free to reinterpret. The seed and prompt spreads
+    this produces are fixture arithmetic -- StubBackend adds 37 counts per seed and
+    a fixed bias per prompt -- so they exercise the bookkeeping and the gate, and
+    are not evidence about any generator's variance.
+    """
+    catalog = []
+    for prompt_index, prompt in enumerate(_STUB_PROMPTS):
+        for seed in _STUB_SEEDS:
+            name, replacement = _STUB_DESIGNS[(prompt_index + seed) % len(_STUB_DESIGNS)]
+            catalog.append({
+                "candidate_id": f"{name}-{prompt}-s{seed}",
+                "generator_seed": seed,
+                "prompt": prompt,
+                "design": {"llc_replacement": replacement,
+                           "branch_predictor": "bimodal"},
+            })
+    return catalog
+
+
 CONFIG = {
     "version": 5,
     "backend": "stub",
     "generator_mode": "catalog",
-    "candidate_catalog": [
-        {
-            "candidate_id": "lru_reference",
-            "design": {"llc_replacement": "lru", "branch_predictor": "bimodal"},
-        },
-        {
-            "candidate_id": "mru_variant",
-            "design": {"llc_replacement": "mru", "branch_predictor": "bimodal"},
-        },
-        {
-            "candidate_id": "fifo_variant",
-            "design": {"llc_replacement": "fifo", "branch_predictor": "bimodal"},
-        },
-        {
-            "candidate_id": "srrip_variant",
-            "design": {"llc_replacement": "srrip", "branch_predictor": "bimodal"},
-        },
-    ],
-    "seeds": [0, 1, 2],
-    "prompts": ["default", "cot", "adversarial"],
+    "candidate_catalog": _stub_catalog(),
+    "seeds": _STUB_SEEDS,
+    "prompts": _STUB_PROMPTS,
     "traces": ["spec_gcc", "spec_mcf", "web_cloud"],
     "acceptance_threshold": 0.05,
     "n_repeat": 5,
@@ -149,12 +166,21 @@ def generate_candidate(config: dict, *, seed: int, prompt: str) -> dict:
         if candidate.get("generator_seed") == seed
         and candidate.get("prompt") == prompt
     ]
-    pool = matching or candidates
+    if not matching:
+        # This used to fall back to the whole pool and pick one by a hash of the prompt,
+        # then stamp the missing seed/prompt labels onto it. The cell looked like a real
+        # factor level, the recomputed candidate_sha256 looked like provenance, and a
+        # grid reported a cross-seed CV measured partly by re-running one design under
+        # several names. A missing candidate is a missing cell, not a free choice.
+        raise ValueError(
+            f"no candidate in the pool for seed={seed} prompt={prompt!r}; pool offers "
+            + ", ".join(sorted({f"{c.get('generator_seed')}/{c.get('prompt')}"
+                                for c in candidates})))
     prompt_offset = int(
         hashlib.sha256(prompt.encode()).hexdigest()[:8],
         16,
     )
-    candidate = copy.deepcopy(pool[(seed + prompt_offset) % len(pool)])
+    candidate = copy.deepcopy(matching[(seed + prompt_offset) % len(matching)])
     candidate.setdefault("candidate_id", f"candidate-{seed}-{prompt}")
     candidate.setdefault("generator_seed", seed)
     candidate.setdefault("prompt", prompt)
@@ -466,6 +492,9 @@ def _trace_ranking_stability(cells: dict) -> dict:
             "n_candidates": len(by_candidate_trace),
             "n_traces": 0,
             "full_top_candidate": None,
+            # tau=0.0 here is a fill value: one candidate has nothing to rank.
+            "rankable": False,
+            "unrankable_reason": "fewer_than_two_candidates",
             "top1_stability": 0.0,
             "mean_kendall_tau": 0.0,
             "leave_one_out": [],
@@ -484,6 +513,8 @@ def _trace_ranking_stability(cells: dict) -> dict:
             "n_candidates": len(eligible),
             "n_traces": len(common_traces),
             "full_top_candidate": None,
+            "rankable": False,
+            "unrankable_reason": "fewer_than_two_rankable",
             "top1_stability": 0.0,
             "mean_kendall_tau": 0.0,
             "leave_one_out": [],
@@ -515,6 +546,7 @@ def _trace_ranking_stability(cells: dict) -> dict:
     return {
         "n_candidates": len(eligible),
         "n_traces": len(common_traces),
+        "rankable": True,
         "full_ranking": full_order,
         "full_top_candidate": full_order[0],
         "full_scores": _rounded_map(full_scores),
@@ -649,6 +681,15 @@ def _format_scorecard(report: dict, config: dict) -> str:
     )
     threshold = report["acceptance_threshold"]
     ranking_stability = report.get("ranking_stability", {})
+    if ranking_stability.get("rankable", True):
+        top1_line = (f"Trace top-1 stability: "
+                     f"{ranking_stability.get('top1_stability', 'N/A')}")
+        tau_line = (f"Trace ranking Kendall tau: "
+                    f"{ranking_stability.get('mean_kendall_tau', 'N/A')}")
+    else:
+        why = ranking_stability.get("unrankable_reason", "unknown")
+        top1_line = f"Trace top-1 stability: unrankable ({why})"
+        tau_line = f"Trace ranking Kendall tau: unrankable ({why})"
     lines = [
         f"CHIA reproducibility audit (config v{report['version']})",
         "=" * 56,
@@ -664,10 +705,8 @@ def _format_scorecard(report: dict, config: dict) -> str:
         f"repeat>={report.get('axis_levels', {}).get('repeat_min')}",
         f"Unexercised axes: "
         f"{','.join(report.get('unexercised_axes', [])) or 'none'}",
-        f"Trace top-1 stability: "
-        f"{ranking_stability.get('top1_stability', 'N/A')}",
-        f"Trace ranking Kendall tau: "
-        f"{ranking_stability.get('mean_kendall_tau', 'N/A')}",
+        top1_line,
+        tau_line,
         "=" * 56,
         "Double-blind protocol self-test:",
         f"  Cohen's kappa: {report.get('cohen_kappa', 'N/A')} "

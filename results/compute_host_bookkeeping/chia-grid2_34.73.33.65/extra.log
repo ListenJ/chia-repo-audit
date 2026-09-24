@@ -1,0 +1,243 @@
+2026-09-23 05:58:53,681	INFO usage_lib.py:447 -- Usage stats collection is disabled.
+2026-09-23 05:58:53,681	INFO scripts.py:936 -- [37mLocal node IP[39m: [1m172.17.0.2[22m
+2026-09-23 05:58:56,843	SUCC scripts.py:975 -- [32m--------------------[39m
+2026-09-23 05:58:56,843	SUCC scripts.py:976 -- [32mRay runtime started.[39m
+2026-09-23 05:58:56,843	SUCC scripts.py:977 -- [32m--------------------[39m
+2026-09-23 05:58:56,843	INFO scripts.py:979 -- [36mNext steps[39m
+2026-09-23 05:58:56,843	INFO scripts.py:982 -- To add another node to this Ray cluster, run
+2026-09-23 05:58:56,844	INFO scripts.py:985 -- [1m  ray start --address='172.17.0.2:6379'[22m
+2026-09-23 05:58:56,844	INFO scripts.py:996 -- To connect to this Ray cluster:
+2026-09-23 05:58:56,844	INFO scripts.py:998 -- [35mimport[39m[26m ray
+2026-09-23 05:58:56,844	INFO scripts.py:999 -- ray[35m.[39m[26minit()
+2026-09-23 05:58:56,844	INFO scripts.py:1013 -- To submit a Ray job using the Ray Jobs CLI:
+2026-09-23 05:58:56,844	INFO scripts.py:1014 -- [1m  RAY_API_SERVER_ADDRESS='http://127.0.0.1:8265' ray job submit --working-dir . -- python my_script.py[22m
+2026-09-23 05:58:56,844	INFO scripts.py:1023 -- See https://docs.ray.io/en/latest/cluster/running-applications/job-submission/index.html 
+2026-09-23 05:58:56,844	INFO scripts.py:1027 -- for more information on submitting Ray jobs to the Ray cluster.
+2026-09-23 05:58:56,844	INFO scripts.py:1032 -- To terminate the Ray runtime, run
+2026-09-23 05:58:56,844	INFO scripts.py:1033 -- [1m  ray stop[22m
+2026-09-23 05:58:56,844	INFO scripts.py:1036 -- To view the status of the cluster, use
+2026-09-23 05:58:56,844	INFO scripts.py:1037 --   [1mray status[22m[26m
+2026-09-23 05:58:56,844	INFO scripts.py:1041 -- To monitor and debug Ray, view the dashboard at 
+2026-09-23 05:58:56,844	INFO scripts.py:1042 --   [1m127.0.0.1:8265[22m[26m
+2026-09-23 05:58:56,844	INFO scripts.py:1049 -- [4mIf connection to the dashboard fails, check your firewall settings and network configuration.[24m
+2026-09-23 05:58:57,328	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 05:58:57,339	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+fatal: detected dubious ownership in repository at '/workspace'
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory /workspace
+fatal: detected dubious ownership in repository at '/workspace'
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory /workspace
+{
+  "pin": {
+    "config_version": 6,
+    "timestamp": 1790168337.8829868,
+    "git_sha": "unknown",
+    "python": "3.10.19",
+    "cwd": "/workspace",
+    "config_sha256": "589b98454c78e104083ab663a4f149ff535a22a848dbd723851cc7aa5ad05ab1",
+    "backend": "champsim_node",
+    "audit_protocol": "double-blind semantics adapted from Axiom (kappa=0.954, N=100, 20% re-audit)",
+    "pre_registered": true
+  },
+  "run": {
+    "backend": "champsim_node",
+    "n_cells": 6,
+    "n_candidates": 2,
+    "config_sha256": "589b98454c78e104083ab663a4f149ff535a22a848dbd723851cc7aa5ad05ab1"
+  },
+  "dblind": {
+    "cohen_kappa": 1.0,
+    "adversarial_detection_rate": 1.0,
+    "publish_gate": "PASS"
+  },
+  "audit": {
+    "version": 6,
+    "backend": "champsim_node",
+    "config_sha256": "589b98454c78e104083ab663a4f149ff535a22a848dbd723851cc7aa5ad05ab1",
+    "acceptance_threshold": 0.05,
+    "max_seed_cv": 0.0,
+    "max_repeat_cv": 0.0,
+    "max_prompt_spread": 0.0,
+    "max_trace_cv": 1.633321,
+    "seed_cv": {
+      "fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+      "fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+      "fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+    },
+    "repeatability_cv": {
+      "2/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+      "2/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+      "2/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
+      "3/fill_only_conservative/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+      "3/fill_only_conservative/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+      "3/fill_only_conservative/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+    },
+    "prompt_spread": {
+      "2/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+      "2/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+      "2/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0,
+      "3/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+      "3/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+      "3/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+    },
+    "trace_cv": {
+      "2/fill_only_conservative": 1.633321,
+      "3/fill_only_conservative": 1.633321
+    },
+    "ranking_stability": {
+      "n_candidates": 2,
+      "n_traces": 3,
+      "full_ranking": [
+        "gen_fill_only_conservative_s2",
+        "gen_fill_only_conservative_s3"
+      ],
+      "full_top_candidate": "gen_fill_only_conservative_s2",
+      "full_scores": {
+        "gen_fill_only_conservative_s2": 33134423.666667,
+        "gen_fill_only_conservative_s3": 33134423.666667
+      },
+      "top1_stability": 1.0,
+      "mean_kendall_tau": 1.0,
+      "leave_one_out": [
+        {
+          "held_out_trace": "638.imagick_s-4128B.champsimtrace.xz",
+          "ranking": [
+            "gen_fill_only_conservative_s2",
+            "gen_fill_only_conservative_s3"
+          ],
+          "top_candidate": "gen_fill_only_conservative_s2",
+          "top1_matches_full": true,
+          "kendall_tau": 1.0
+        },
+        {
+          "held_out_trace": "SPEC17-649.fotonik3d_s-1B.champsimtrace.xz",
+          "ranking": [
+            "gen_fill_only_conservative_s2",
+            "gen_fill_only_conservative_s3"
+          ],
+          "top_candidate": "gen_fill_only_conservative_s2",
+          "top1_matches_full": true,
+          "kendall_tau": 1.0
+        },
+        {
+          "held_out_trace": "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz",
+          "ranking": [
+            "gen_fill_only_conservative_s2",
+            "gen_fill_only_conservative_s3"
+          ],
+          "top_candidate": "gen_fill_only_conservative_s2",
+          "top1_matches_full": true,
+          "kendall_tau": 1.0
+        }
+      ]
+    },
+    "verdict": "REPRODUCIBLE",
+    "cohen_kappa": 1.0,
+    "publish_gate": "PASS",
+    "publish_blockers": [],
+    "adversarial_detection": 1.0,
+    "gold_calibration": "5/5",
+    "error_distribution": {
+      "E0": 0,
+      "E1": 2,
+      "E2": 2,
+      "E3": 2,
+      "E4": 3
+    }
+  },
+  "scorecard": "CHIA reproducibility audit (config v6)\n========================================================\nBackend: champsim_node\nVerdict: REPRODUCIBLE\nMax cross-seed CV: 0.0000% (gate < 5%)\nMax repeated-run CV: 0.0000%\nMax prompt spread: 0.0000%\nMax trace CV: 163.3321%\nTrace top-1 stability: 1.0\nTrace ranking Kendall tau: 1.0\n========================================================\nDouble-blind protocol self-test:\n  Cohen's kappa: 1.0 (gate 0.7)\n  Adversarial detection: 1.0\n  Gold calibration: 5/5\n  Error distribution: {'E0': 0, 'E1': 2, 'E2': 2, 'E3': 2, 'E4': 3}\n  Publish gate: PASS\n  Publish blockers: []\n========================================================\nPUBLISHABLE"
+}
+cfg=grid_x_a.json rc=0 cells=6 expected=6
+2026-09-23 08:13:20,625	INFO worker.py:1810 -- Connecting to existing Ray cluster at address: 172.17.0.2:6379...
+2026-09-23 08:13:20,636	INFO worker.py:2004 -- Connected to Ray cluster. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/ray/anaconda3/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+fatal: detected dubious ownership in repository at '/workspace'
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory /workspace
+fatal: detected dubious ownership in repository at '/workspace'
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory /workspace
+{
+  "pin": {
+    "config_version": 6,
+    "timestamp": 1790176400.6878288,
+    "git_sha": "unknown",
+    "python": "3.10.19",
+    "cwd": "/workspace",
+    "config_sha256": "25edfa11c869c7211d96f22434068d32fcce81379a70b97699cb14fb29b7f03f",
+    "backend": "champsim_node",
+    "audit_protocol": "double-blind semantics adapted from Axiom (kappa=0.954, N=100, 20% re-audit)",
+    "pre_registered": true
+  },
+  "run": {
+    "backend": "champsim_node",
+    "n_cells": 3,
+    "n_candidates": 1,
+    "config_sha256": "25edfa11c869c7211d96f22434068d32fcce81379a70b97699cb14fb29b7f03f"
+  },
+  "dblind": {
+    "cohen_kappa": 1.0,
+    "adversarial_detection_rate": 1.0,
+    "publish_gate": "PASS"
+  },
+  "audit": {
+    "version": 6,
+    "backend": "champsim_node",
+    "config_sha256": "25edfa11c869c7211d96f22434068d32fcce81379a70b97699cb14fb29b7f03f",
+    "acceptance_threshold": 0.05,
+    "max_seed_cv": 0.0,
+    "max_repeat_cv": 0.0,
+    "max_prompt_spread": 0.0,
+    "max_trace_cv": 0.645866,
+    "seed_cv": {
+      "aggressive_offset/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+      "aggressive_offset/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+      "aggressive_offset/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+    },
+    "repeatability_cv": {
+      "3/aggressive_offset/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+      "3/aggressive_offset/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+      "3/aggressive_offset/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+    },
+    "prompt_spread": {
+      "3/638.imagick_s-4128B.champsimtrace.xz": 0.0,
+      "3/SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 0.0,
+      "3/ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 0.0
+    },
+    "trace_cv": {
+      "3/aggressive_offset": 0.645866
+    },
+    "ranking_stability": {
+      "n_candidates": 1,
+      "n_traces": 0,
+      "full_top_candidate": null,
+      "top1_stability": 0.0,
+      "mean_kendall_tau": 0.0,
+      "leave_one_out": []
+    },
+    "verdict": "REPRODUCIBLE",
+    "cohen_kappa": 1.0,
+    "publish_gate": "PASS",
+    "publish_blockers": [],
+    "adversarial_detection": 1.0,
+    "gold_calibration": "5/5",
+    "error_distribution": {
+      "E0": 0,
+      "E1": 2,
+      "E2": 2,
+      "E3": 2,
+      "E4": 3
+    }
+  },
+  "scorecard": "CHIA reproducibility audit (config v6)\n========================================================\nBackend: champsim_node\nVerdict: REPRODUCIBLE\nMax cross-seed CV: 0.0000% (gate < 5%)\nMax repeated-run CV: 0.0000%\nMax prompt spread: 0.0000%\nMax trace CV: 64.5866%\nTrace top-1 stability: 0.0\nTrace ranking Kendall tau: 0.0\n========================================================\nDouble-blind protocol self-test:\n  Cohen's kappa: 1.0 (gate 0.7)\n  Adversarial detection: 1.0\n  Gold calibration: 5/5\n  Error distribution: {'E0': 0, 'E1': 2, 'E2': 2, 'E3': 2, 'E4': 3}\n  Publish gate: PASS\n  Publish blockers: []\n========================================================\nPUBLISHABLE"
+}
+cfg=grid_x_b.json rc=0 cells=3 expected=3
+EXTRA_MEASUREMENTS_OK

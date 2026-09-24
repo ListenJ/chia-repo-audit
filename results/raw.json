@@ -8,30 +8,83 @@
     "generator_mode": "catalog",
     "candidate_catalog": [
       {
-        "candidate_id": "lru_reference",
+        "candidate_id": "lru_reference-default-s0",
+        "generator_seed": 0,
+        "prompt": "default",
         "design": {
           "llc_replacement": "lru",
           "branch_predictor": "bimodal"
         }
       },
       {
-        "candidate_id": "mru_variant",
+        "candidate_id": "mru_variant-default-s1",
+        "generator_seed": 1,
+        "prompt": "default",
         "design": {
           "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         }
       },
       {
-        "candidate_id": "fifo_variant",
+        "candidate_id": "fifo_variant-default-s2",
+        "generator_seed": 2,
+        "prompt": "default",
         "design": {
           "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         }
       },
       {
-        "candidate_id": "srrip_variant",
+        "candidate_id": "mru_variant-cot-s0",
+        "generator_seed": 0,
+        "prompt": "cot",
+        "design": {
+          "llc_replacement": "mru",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "fifo_variant-cot-s1",
+        "generator_seed": 1,
+        "prompt": "cot",
+        "design": {
+          "llc_replacement": "fifo",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "srrip_variant-cot-s2",
+        "generator_seed": 2,
+        "prompt": "cot",
         "design": {
           "llc_replacement": "srrip",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "fifo_variant-adversarial-s0",
+        "generator_seed": 0,
+        "prompt": "adversarial",
+        "design": {
+          "llc_replacement": "fifo",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "srrip_variant-adversarial-s1",
+        "generator_seed": 1,
+        "prompt": "adversarial",
+        "design": {
+          "llc_replacement": "srrip",
+          "branch_predictor": "bimodal"
+        }
+      },
+      {
+        "candidate_id": "lru_reference-adversarial-s2",
+        "generator_seed": 2,
+        "prompt": "adversarial",
+        "design": {
+          "llc_replacement": "lru",
           "branch_predictor": "bimodal"
         }
       }
@@ -58,101 +111,113 @@
     "champsim": {},
     "champsim_node": {}
   },
-  "config_sha256": "f4864a0a2c541d907584a82d80eae0120798aae3bfaf563ec27cd7e82c1466db",
-  "git_sha": "d2cedfa",
+  "config_sha256": "e06798fc7b4dfd35e61566854099b4dfb750c5585a46f7a574e9451b873bc235",
+  "git_sha": "feab008",
   "n_cells": 27,
-  "n_candidates": 4,
+  "n_candidates": 9,
   "cells": {
     "0/default/spec_gcc": {
       "seed": 0,
       "prompt": "default",
       "trace": "spec_gcc",
-      "candidate_id": "mru_variant",
-      "candidate_sha256": "c124bfbc1c7a1a2e96b4ba9bde1c31b4ed40861fd37533bc536a185cf772806e",
+      "candidate_id": "lru_reference-default-s0",
+      "candidate_sha256": "e1a661b20772c648a0758577fe6277457bad31d28146e6c1ca8239a7a3fd2ff2",
       "generator_seed": 0,
       "design": {
-        "llc_replacement": "mru",
+        "llc_replacement": "lru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
       "median": {
-        "cycles": 1028.5738517369311,
-        "ipc": 0.9588929692503112,
-        "l1_miss_rate": 0.051434629342327634,
+        "cycles": 1024.500928178649,
+        "ipc": 0.9975016166598352,
+        "l1_miss_rate": 0.051252320446622805,
         "seed": 0,
         "prompt": "default",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "mru",
+          "llc_replacement": "lru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1028.7287335477554,
-          "ipc": 0.9581814472813901,
-          "l1_miss_rate": 0.05182183386938872,
+          "cycles": 1023.0459826788924,
+          "ipc": 0.995252559098716,
+          "l1_miss_rate": 0.052385043302768906,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1028.0117952260443,
-          "ipc": 0.9614839378827632,
-          "l1_miss_rate": 0.050029488065110574,
+          "cycles": 1024.6765175476069,
+          "ipc": 0.9966288155890173,
+          "l1_miss_rate": 0.05169129386901702,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1028.5252646506633,
-          "ipc": 0.9591163945292408,
-          "l1_miss_rate": 0.05131316162665839,
+          "cycles": 1024.500928178649,
+          "ipc": 0.9975016166598352,
+          "l1_miss_rate": 0.051252320446622805,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1028.5738517369311,
-          "ipc": 0.9588929692503112,
-          "l1_miss_rate": 0.051434629342327634,
+          "cycles": 1024.9191351525415,
+          "ipc": 0.9954253478552775,
+          "l1_miss_rate": 0.05229783788135338,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1029.6842436998859,
-          "ipc": 0.9538151101436755,
-          "l1_miss_rate": 0.054210609249714846,
+          "cycles": 1024.18712567278,
+          "ipc": 0.999065246218252,
+          "l1_miss_rate": 0.050467814181949726,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -160,92 +225,104 @@
       "seed": 0,
       "prompt": "default",
       "trace": "spec_mcf",
-      "candidate_id": "mru_variant",
-      "candidate_sha256": "c124bfbc1c7a1a2e96b4ba9bde1c31b4ed40861fd37533bc536a185cf772806e",
+      "candidate_id": "lru_reference-default-s0",
+      "candidate_sha256": "e1a661b20772c648a0758577fe6277457bad31d28146e6c1ca8239a7a3fd2ff2",
       "generator_seed": 0,
       "design": {
-        "llc_replacement": "mru",
+        "llc_replacement": "lru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
       "median": {
-        "cycles": 1028.805358878999,
-        "ipc": 0.9578298233040006,
-        "l1_miss_rate": 0.05201339719749741,
+        "cycles": 1023.9019657812612,
+        "ipc": 0.9995100690562928,
+        "l1_miss_rate": 0.050245085546846875,
         "seed": 0,
         "prompt": "default",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "mru",
+          "llc_replacement": "lru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1028.8550545038706,
-          "ipc": 0.9576019142801907,
-          "l1_miss_rate": 0.05213763625967638,
+          "cycles": 1025.6676269745917,
+          "ipc": 0.9917308147092849,
+          "l1_miss_rate": 0.05416906743647926,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1027.6024630153981,
-          "ipc": 0.9597042407213178,
-          "l1_miss_rate": 0.05099384246150442,
+          "cycles": 1024.1882375978366,
+          "ipc": 0.9990596970126943,
+          "l1_miss_rate": 0.0504705939945918,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1028.2640219504897,
-          "ipc": 0.9603194931458,
-          "l1_miss_rate": 0.05066005487622409,
+          "cycles": 1023.7844683674319,
+          "ipc": 0.9989235019340875,
+          "l1_miss_rate": 0.05053882908142024,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1028.805358878999,
-          "ipc": 0.9578298233040006,
-          "l1_miss_rate": 0.05201339719749741,
+          "cycles": 1023.3273169439041,
+          "ipc": 0.996647859360569,
+          "l1_miss_rate": 0.05168170764023996,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1029.2698622319394,
-          "ipc": 0.9557037877644065,
-          "l1_miss_rate": 0.053174655579848504,
+          "cycles": 1023.9019657812612,
+          "ipc": 0.9995100690562928,
+          "l1_miss_rate": 0.050245085546846875,
           "seed": 0,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -253,92 +330,104 @@
       "seed": 0,
       "prompt": "default",
       "trace": "web_cloud",
-      "candidate_id": "mru_variant",
-      "candidate_sha256": "c124bfbc1c7a1a2e96b4ba9bde1c31b4ed40861fd37533bc536a185cf772806e",
+      "candidate_id": "lru_reference-default-s0",
+      "candidate_sha256": "e1a661b20772c648a0758577fe6277457bad31d28146e6c1ca8239a7a3fd2ff2",
       "generator_seed": 0,
       "design": {
-        "llc_replacement": "mru",
+        "llc_replacement": "lru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
       "median": {
-        "cycles": 1030.4634691080473,
-        "ipc": 0.9590645780121103,
-        "l1_miss_rate": 0.051341327229881675,
+        "cycles": 1027.7019271662118,
+        "ipc": 0.9965026386337064,
+        "l1_miss_rate": 0.0517548179155295,
         "seed": 0,
         "prompt": "default",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "mru",
+          "llc_replacement": "lru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1031.5276609232797,
-          "ipc": 0.9591053729489777,
-          "l1_miss_rate": 0.051319152308198855,
+          "cycles": 1028.7987574335943,
+          "ipc": 0.9910863800329087,
+          "l1_miss_rate": 0.05449689358398575,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1030.149736004143,
-          "ipc": 0.9576238792974062,
-          "l1_miss_rate": 0.052125659989642546,
+          "cycles": 1027.306501952105,
+          "ipc": 0.9984698352319171,
+          "l1_miss_rate": 0.050766254880262575,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1032.5936432091084,
-          "ipc": 0.9542274132830589,
-          "l1_miss_rate": 0.053984108022771274,
+          "cycles": 1026.7145368383665,
+          "ipc": 0.9985747185186225,
+          "l1_miss_rate": 0.05071365790408354,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1030.4634691080473,
-          "ipc": 0.9590645780121103,
-          "l1_miss_rate": 0.051341327229881675,
+          "cycles": 1027.7019271662118,
+          "ipc": 0.9965026386337064,
+          "l1_miss_rate": 0.0517548179155295,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1029.8524001663645,
-          "ipc": 0.9562624680325671,
-          "l1_miss_rate": 0.05286899958408873,
+          "cycles": 1028.0137142659785,
+          "ipc": 0.9949569895284002,
+          "l1_miss_rate": 0.05253428566494629,
           "seed": 0,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -346,92 +435,104 @@
       "seed": 0,
       "prompt": "cot",
       "trace": "spec_gcc",
-      "candidate_id": "srrip_variant",
-      "candidate_sha256": "b1a4e1f9eba87191f8f5df995ea5c84b37a3c6157e524ef7d408b87b16712622",
+      "candidate_id": "mru_variant-cot-s0",
+      "candidate_sha256": "7976a2aa14155472c9f5f470d5893062e23e916edc43681342ab299d8c052e62",
       "generator_seed": 0,
       "design": {
-        "llc_replacement": "srrip",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1026.5227675079864,
-        "ipc": 0.9672244743275824,
-        "l1_miss_rate": 0.051443081230033647,
+        "cycles": 1029.2550954918422,
+        "ipc": 0.9387692254913416,
+        "l1_miss_rate": 0.052112261270394214,
         "seed": 0,
         "prompt": "cot",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "srrip",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1026.479928204308,
-          "ipc": 0.9670241300253049,
-          "l1_miss_rate": 0.05155017948922965,
+          "cycles": 1029.2550954918422,
+          "ipc": 0.9387692254913416,
+          "l1_miss_rate": 0.052112261270394214,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1027.4812142667247,
-          "ipc": 0.9681422423133429,
-          "l1_miss_rate": 0.0509530356668118,
+          "cycles": 1029.5949719986959,
+          "ipc": 0.9402692633987658,
+          "l1_miss_rate": 0.05126257000326009,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1025.914857128569,
-          "ipc": 0.9643892384518155,
-          "l1_miss_rate": 0.05296285717857682,
+          "cycles": 1029.640808166202,
+          "ipc": 0.940471927290632,
+          "l1_miss_rate": 0.05114797958449439,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1027.5413843458916,
-          "ipc": 0.9678603375267032,
-          "l1_miss_rate": 0.05110346086472941,
+          "cycles": 1027.9721740501939,
+          "ipc": 0.933149949679602,
+          "l1_miss_rate": 0.05531956487451514,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1026.5227675079864,
-          "ipc": 0.9672244743275824,
-          "l1_miss_rate": 0.051443081230033647,
+          "cycles": 1028.789387163024,
+          "ipc": 0.9367215865410312,
+          "l1_miss_rate": 0.05327653209243997,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -439,92 +540,104 @@
       "seed": 0,
       "prompt": "cot",
       "trace": "spec_mcf",
-      "candidate_id": "srrip_variant",
-      "candidate_sha256": "b1a4e1f9eba87191f8f5df995ea5c84b37a3c6157e524ef7d408b87b16712622",
+      "candidate_id": "mru_variant-cot-s0",
+      "candidate_sha256": "7976a2aa14155472c9f5f470d5893062e23e916edc43681342ab299d8c052e62",
       "generator_seed": 0,
       "design": {
-        "llc_replacement": "srrip",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1027.0745058062175,
-        "ipc": 0.9698121989324335,
-        "l1_miss_rate": 0.05006373548445623,
+        "cycles": 1030.4344174086716,
+        "ipc": 0.9410240583078365,
+        "l1_miss_rate": 0.050836043521679475,
         "seed": 0,
         "prompt": "cot",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "srrip",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1026.6858427506477,
-          "ipc": 0.967987879739674,
-          "l1_miss_rate": 0.051035393123380464,
+          "cycles": 1029.9746211911054,
+          "ipc": 0.9419505153927541,
+          "l1_miss_rate": 0.05031344702223643,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1028.4125971047222,
-          "ipc": 0.9637969105994514,
-          "l1_miss_rate": 0.05328149276180576,
+          "cycles": 1029.847366695689,
+          "ipc": 0.9413863075706194,
+          "l1_miss_rate": 0.05063158326077713,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1025.281550466765,
-          "ipc": 0.9614531809499252,
-          "l1_miss_rate": 0.05454612383308689,
+          "cycles": 1031.6435000129306,
+          "ipc": 0.9357009686278208,
+          "l1_miss_rate": 0.05385875003232706,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1027.0745058062175,
-          "ipc": 0.9698121989324335,
-          "l1_miss_rate": 0.05006373548445623,
+          "cycles": 1030.4344174086716,
+          "ipc": 0.9410240583078365,
+          "l1_miss_rate": 0.050836043521679475,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1027.265925610634,
-          "ipc": 0.9691522445297236,
-          "l1_miss_rate": 0.050414814026585236,
+          "cycles": 1030.6817123522437,
+          "ipc": 0.9399303999815328,
+          "l1_miss_rate": 0.05145428088060963,
           "seed": 0,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -532,92 +645,104 @@
       "seed": 0,
       "prompt": "cot",
       "trace": "web_cloud",
-      "candidate_id": "srrip_variant",
-      "candidate_sha256": "b1a4e1f9eba87191f8f5df995ea5c84b37a3c6157e524ef7d408b87b16712622",
+      "candidate_id": "mru_variant-cot-s0",
+      "candidate_sha256": "7976a2aa14155472c9f5f470d5893062e23e916edc43681342ab299d8c052e62",
       "generator_seed": 0,
       "design": {
-        "llc_replacement": "srrip",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1029.8771837509978,
-        "ipc": 0.968885143775703,
-        "l1_miss_rate": 0.050557040622505524,
+        "cycles": 1033.0197509653003,
+        "ipc": 0.9421507696050786,
+        "l1_miss_rate": 0.050200622586749115,
         "seed": 0,
         "prompt": "cot",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "srrip",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1029.5746980597057,
-          "ipc": 0.9674674465236167,
-          "l1_miss_rate": 0.05131325485073526,
+          "cycles": 1033.0197509653003,
+          "ipc": 0.9421507696050786,
+          "l1_miss_rate": 0.050200622586749115,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1029.8771837509978,
-          "ipc": 0.968885143775703,
-          "l1_miss_rate": 0.050557040622505524,
+          "cycles": 1032.5526600216513,
+          "ipc": 0.9400822591735059,
+          "l1_miss_rate": 0.05136834994587189,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1031.2388261737344,
-          "ipc": 0.9646046700023999,
-          "l1_miss_rate": 0.052847065434336,
+          "cycles": 1033.6935503601278,
+          "ipc": 0.9398781103164248,
+          "l1_miss_rate": 0.05148387590031981,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1029.9628097022267,
-          "ipc": 0.9692872124088352,
-          "l1_miss_rate": 0.05034297574443319,
+          "cycles": 1035.1043146589323,
+          "ipc": 0.9336880086586994,
+          "l1_miss_rate": 0.05501078664733095,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1029.2807334614781,
-          "ipc": 0.9660936556491199,
-          "l1_miss_rate": 0.05204816634630447,
+          "cycles": 1032.3686925992258,
+          "ipc": 0.9392700511792987,
+          "l1_miss_rate": 0.05182826850193511,
           "seed": 0,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -625,92 +750,104 @@
       "seed": 0,
       "prompt": "adversarial",
       "trace": "spec_gcc",
-      "candidate_id": "mru_variant",
-      "candidate_sha256": "653fd56afa4240dd88f40c84bcb2ac503041ca5ba5c4c54c27fc2dcc3c36ce03",
+      "candidate_id": "fifo_variant-adversarial-s0",
+      "candidate_sha256": "ffc43b1d96337d3b242cbcf3aeb423873681bc83deebb652d193cbb790e7d257",
       "generator_seed": 0,
       "design": {
-        "llc_replacement": "mru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1025.2117073655324,
-        "ipc": 0.9924981660604448,
-        "l1_miss_rate": 0.052279268413831244,
+        "cycles": 1022.7959622135086,
+        "ipc": 0.980892401344226,
+        "l1_miss_rate": 0.05123990553377151,
         "seed": 0,
         "prompt": "adversarial",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "mru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1026.2154530311932,
-          "ipc": 0.9875789575879633,
-          "l1_miss_rate": 0.054788632577983214,
+          "cycles": 1020.9397561484493,
+          "ipc": 0.9767521088957007,
+          "l1_miss_rate": 0.053400609628876605,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1025.2117073655324,
-          "ipc": 0.9924981660604448,
-          "l1_miss_rate": 0.052279268413831244,
+          "cycles": 1023.3700427128364,
+          "ipc": 0.9781383979113544,
+          "l1_miss_rate": 0.05267510678209108,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1024.9067780664043,
-          "ipc": 0.9940022991372286,
-          "l1_miss_rate": 0.05151694516601082,
+          "cycles": 1023.8076656163961,
+          "ipc": 0.9760493800872065,
+          "l1_miss_rate": 0.05376916404099032,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1025.5353374833805,
-          "ipc": 0.9909067584186957,
-          "l1_miss_rate": 0.05308834370845121,
+          "cycles": 1020.3845550095625,
+          "ipc": 0.9741108371526314,
+          "l1_miss_rate": 0.05478861247609357,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1023.6892272005338,
-          "ipc": 0.9939825647373617,
-          "l1_miss_rate": 0.051526931998665586,
+          "cycles": 1022.7959622135086,
+          "ipc": 0.980892401344226,
+          "l1_miss_rate": 0.05123990553377151,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -718,92 +855,104 @@
       "seed": 0,
       "prompt": "adversarial",
       "trace": "spec_mcf",
-      "candidate_id": "mru_variant",
-      "candidate_sha256": "653fd56afa4240dd88f40c84bcb2ac503041ca5ba5c4c54c27fc2dcc3c36ce03",
+      "candidate_id": "fifo_variant-adversarial-s0",
+      "candidate_sha256": "ffc43b1d96337d3b242cbcf3aeb423873681bc83deebb652d193cbb790e7d257",
       "generator_seed": 0,
       "design": {
-        "llc_replacement": "mru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1023.4451326029867,
-        "ipc": 0.9927781968447252,
-        "l1_miss_rate": 0.052137168492533116,
+        "cycles": 1022.1930919711253,
+        "ipc": 0.9827676216849751,
+        "l1_miss_rate": 0.05026727007218645,
         "seed": 0,
         "prompt": "adversarial",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "mru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1024.136497428473,
-          "ipc": 0.9961970051242005,
-          "l1_miss_rate": 0.05040875642881778,
+          "cycles": 1022.1930919711253,
+          "ipc": 0.9827676216849751,
+          "l1_miss_rate": 0.05026727007218645,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1025.8474512983753,
-          "ipc": 0.9893768074512813,
-          "l1_miss_rate": 0.0538686282459385,
+          "cycles": 1022.5240344722316,
+          "ipc": 0.9822023245849896,
+          "l1_miss_rate": 0.05056008618057926,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1022.6928938400705,
-          "ipc": 0.9890849228701994,
-          "l1_miss_rate": 0.054017765399823586,
+          "cycles": 1020.9035712798648,
+          "ipc": 0.9765795294863772,
+          "l1_miss_rate": 0.053491071800338075,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1022.1770671421714,
-          "ipc": 0.9865682050893663,
-          "l1_miss_rate": 0.05530733214457134,
+          "cycles": 1022.9823151129253,
+          "ipc": 0.9799967228386912,
+          "l1_miss_rate": 0.051705787782313585,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1023.4451326029867,
-          "ipc": 0.9927781968447252,
-          "l1_miss_rate": 0.052137168492533116,
+          "cycles": 1021.9977803542863,
+          "ipc": 0.981825334784507,
+          "l1_miss_rate": 0.050755549114284225,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -811,92 +960,104 @@
       "seed": 0,
       "prompt": "adversarial",
       "trace": "web_cloud",
-      "candidate_id": "mru_variant",
-      "candidate_sha256": "653fd56afa4240dd88f40c84bcb2ac503041ca5ba5c4c54c27fc2dcc3c36ce03",
+      "candidate_id": "fifo_variant-adversarial-s0",
+      "candidate_sha256": "ffc43b1d96337d3b242cbcf3aeb423873681bc83deebb652d193cbb790e7d257",
       "generator_seed": 0,
       "design": {
-        "llc_replacement": "mru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1028.3587833935485,
-        "ipc": 0.9917743062531952,
-        "l1_miss_rate": 0.052646958483871485,
+        "cycles": 1024.6647238849969,
+        "ipc": 0.9802226546711043,
+        "l1_miss_rate": 0.05158819028750754,
         "seed": 0,
         "prompt": "adversarial",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "mru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1028.3587833935485,
-          "ipc": 0.9917743062531952,
-          "l1_miss_rate": 0.052646958483871485,
+          "cycles": 1023.1549436259095,
+          "ipc": 0.9730226721483461,
+          "l1_miss_rate": 0.0553626409352263,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1028.5092963312663,
-          "ipc": 0.9910346234580962,
-          "l1_miss_rate": 0.053023240828166215,
+          "cycles": 1023.5868278078688,
+          "ipc": 0.9750714586611647,
+          "l1_miss_rate": 0.054282930480327965,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1027.9646113613428,
-          "ipc": 0.9937166730266737,
-          "l1_miss_rate": 0.05166152840335699,
+          "cycles": 1024.6647238849969,
+          "ipc": 0.9802226546711043,
+          "l1_miss_rate": 0.05158819028750754,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1029.0240183335097,
-          "ipc": 0.9885133838648915,
-          "l1_miss_rate": 0.05431004583377427,
+          "cycles": 1025.5535418445288,
+          "ipc": 0.9820600132389649,
+          "l1_miss_rate": 0.05063385461132198,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1027.3413330196743,
-          "ipc": 0.9968035847348994,
-          "l1_miss_rate": 0.050103332549185545,
+          "cycles": 1025.152493602631,
+          "ipc": 0.9825716047317056,
+          "l1_miss_rate": 0.05036876599342258,
           "seed": 0,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -904,92 +1065,104 @@
       "seed": 1,
       "prompt": "default",
       "trace": "spec_gcc",
-      "candidate_id": "fifo_variant",
-      "candidate_sha256": "95a908b381015c48347a33334dc259bdaf3ee12bbeadd5339ab93ed5df15515c",
+      "candidate_id": "mru_variant-default-s1",
+      "candidate_sha256": "c52c3cfd418a77ead6cdd5c79dbcba2e2ee58b41708d1861c4b38014e4867007",
       "generator_seed": 1,
       "design": {
-        "llc_replacement": "fifo",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1062.8087614418403,
-        "ipc": 0.9794739549661626,
-        "l1_miss_rate": 0.050478096395399574,
+        "cycles": 1064.853041091257,
+        "ipc": 0.9608595823284891,
+        "l1_miss_rate": 0.05036739727185752,
         "seed": 1,
         "prompt": "default",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "fifo",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1061.2512436528964,
-          "ipc": 0.972059338539061,
-          "l1_miss_rate": 0.054371890867759134,
+          "cycles": 1064.853041091257,
+          "ipc": 0.9608595823284891,
+          "l1_miss_rate": 0.05036739727185752,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1063.6160174584556,
-          "ipc": 0.9774405859531853,
-          "l1_miss_rate": 0.051540043646138865,
+          "cycles": 1064.6417981479199,
+          "ipc": 0.9598854195429573,
+          "l1_miss_rate": 0.05089550463020009,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.9901034055324,
-          "ipc": 0.9803445976817566,
-          "l1_miss_rate": 0.050024741486168714,
+          "cycles": 1064.066969851133,
+          "ipc": 0.9572445288210193,
+          "l1_miss_rate": 0.05233257537216742,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.8087614418403,
-          "ipc": 0.9794739549661626,
-          "l1_miss_rate": 0.050478096395399574,
+          "cycles": 1065.9114030842088,
+          "ipc": 0.9573436253232344,
+          "l1_miss_rate": 0.05227850771052206,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.720525273136,
-          "ipc": 0.9790508824609723,
-          "l1_miss_rate": 0.050698686817159826,
+          "cycles": 1065.0938785467556,
+          "ipc": 0.9611046773538946,
+          "l1_miss_rate": 0.05023469636688883,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -997,92 +1170,104 @@
       "seed": 1,
       "prompt": "default",
       "trace": "spec_mcf",
-      "candidate_id": "fifo_variant",
-      "candidate_sha256": "95a908b381015c48347a33334dc259bdaf3ee12bbeadd5339ab93ed5df15515c",
+      "candidate_id": "mru_variant-default-s1",
+      "candidate_sha256": "c52c3cfd418a77ead6cdd5c79dbcba2e2ee58b41708d1861c4b38014e4867007",
       "generator_seed": 1,
       "design": {
-        "llc_replacement": "fifo",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1062.9632216270804,
-        "ipc": 0.9802154376034039,
-        "l1_miss_rate": 0.05009194593229867,
+        "cycles": 1064.4698786846106,
+        "ipc": 0.959094056716688,
+        "l1_miss_rate": 0.05132530328847366,
         "seed": 1,
         "prompt": "default",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "fifo",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1064.3032793093814,
-          "ipc": 0.9741685601553906,
-          "l1_miss_rate": 0.053258198273453336,
+          "cycles": 1063.693122038957,
+          "ipc": 0.9555347724274251,
+          "l1_miss_rate": 0.053267194902607326,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.8944645026995,
-          "ipc": 0.9798852319840449,
-          "l1_miss_rate": 0.05026383874325124,
+          "cycles": 1065.7436612965075,
+          "ipc": 0.9581129254790268,
+          "l1_miss_rate": 0.051859153241269,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1063.0038434639039,
-          "ipc": 0.9803736861231627,
-          "l1_miss_rate": 0.05000960865975945,
+          "cycles": 1063.7962230728663,
+          "ipc": 0.9560056846854177,
+          "l1_miss_rate": 0.05300944231783457,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.9632216270804,
-          "ipc": 0.9802154376034039,
-          "l1_miss_rate": 0.05009194593229867,
+          "cycles": 1064.7663352134423,
+          "ipc": 0.9604594924888953,
+          "l1_miss_rate": 0.0505841619663943,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.8616349909971,
-          "ipc": 0.9797276469377995,
-          "l1_miss_rate": 0.05034591252250715,
+          "cycles": 1064.4698786846106,
+          "ipc": 0.959094056716688,
+          "l1_miss_rate": 0.05132530328847366,
           "seed": 1,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1090,92 +1275,104 @@
       "seed": 1,
       "prompt": "default",
       "trace": "web_cloud",
-      "candidate_id": "fifo_variant",
-      "candidate_sha256": "95a908b381015c48347a33334dc259bdaf3ee12bbeadd5339ab93ed5df15515c",
+      "candidate_id": "mru_variant-default-s1",
+      "candidate_sha256": "c52c3cfd418a77ead6cdd5c79dbcba2e2ee58b41708d1861c4b38014e4867007",
       "generator_seed": 1,
       "design": {
-        "llc_replacement": "fifo",
+        "llc_replacement": "mru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
+      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
       "median": {
-        "cycles": 1065.3751808751679,
-        "ipc": 0.9773985426371431,
-        "l1_miss_rate": 0.05156204781208046,
+        "cycles": 1067.2969822543691,
+        "ipc": 0.958299511719384,
+        "l1_miss_rate": 0.05175754436407713,
         "seed": 1,
         "prompt": "default",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "fifo",
+          "llc_replacement": "mru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1063.8028685611978,
-          "ipc": 0.9699455981974148,
-          "l1_miss_rate": 0.05549282859700567,
+          "cycles": 1067.2026842318865,
+          "ipc": 0.9578667200018816,
+          "l1_miss_rate": 0.051993289420283674,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1065.3751808751679,
-          "ipc": 0.9773985426371431,
-          "l1_miss_rate": 0.05156204781208046,
+          "cycles": 1069.0827411613564,
+          "ipc": 0.9565591061657887,
+          "l1_miss_rate": 0.05270685290339094,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1063.9500274026107,
-          "ipc": 0.9706383236982483,
-          "l1_miss_rate": 0.055124931493473424,
+          "cycles": 1067.2507158401895,
+          "ipc": 0.9580871177833007,
+          "l1_miss_rate": 0.05187321039952604,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1066.3643641102105,
-          "ipc": 0.9786442018440309,
-          "l1_miss_rate": 0.050910910275526626,
+          "cycles": 1067.5480451267506,
+          "ipc": 0.9594537029965072,
+          "l1_miss_rate": 0.051129887183123605,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1067.1146268646833,
-          "ipc": 0.9750645434561938,
-          "l1_miss_rate": 0.05278656716170836,
+          "cycles": 1067.2969822543691,
+          "ipc": 0.958299511719384,
+          "l1_miss_rate": 0.05175754436407713,
           "seed": 1,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "mru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1183,92 +1380,104 @@
       "seed": 1,
       "prompt": "cot",
       "trace": "spec_gcc",
-      "candidate_id": "lru_reference",
-      "candidate_sha256": "06aa3666229ee7846534e0f936d851cb607e646b4b9a69d42f53691db0a9acb7",
+      "candidate_id": "fifo_variant-cot-s1",
+      "candidate_sha256": "9d6ca20598828d4b0c5756c7a7a8238273838b238e58a6e4f17aea3d8318e6d6",
       "generator_seed": 1,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1063.4199156795896,
-        "ipc": 0.9778998751071715,
-        "l1_miss_rate": 0.05079978919897432,
+        "cycles": 1064.578083956517,
+        "ipc": 0.9582127444553271,
+        "l1_miss_rate": 0.05130479010870701,
         "seed": 1,
         "prompt": "cot",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1064.2132235928707,
-          "ipc": 0.9741213765977071,
-          "l1_miss_rate": 0.052783058982176695,
+          "cycles": 1065.2660524694681,
+          "ipc": 0.9598492538956457,
+          "l1_miss_rate": 0.05041513117367058,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1063.4199156795896,
-          "ipc": 0.9778998751071715,
-          "l1_miss_rate": 0.05079978919897432,
+          "cycles": 1064.5348312386775,
+          "ipc": 0.9580142184956939,
+          "l1_miss_rate": 0.051412921903306215,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1061.8554452911023,
-          "ipc": 0.9734986662624758,
-          "l1_miss_rate": 0.053111386772243876,
+          "cycles": 1062.6689299690083,
+          "ipc": 0.9495275315772389,
+          "l1_miss_rate": 0.05607767507747901,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1064.1233520169455,
-          "ipc": 0.974547964617037,
-          "l1_miss_rate": 0.05255838004236396,
+          "cycles": 1064.99782170492,
+          "ipc": 0.9601435838884073,
+          "l1_miss_rate": 0.05025544573769978,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.6924290704574,
-          "ipc": 0.9774809362693176,
-          "l1_miss_rate": 0.051018927323856184,
+          "cycles": 1064.578083956517,
+          "ipc": 0.9582127444553271,
+          "l1_miss_rate": 0.05130479010870701,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1276,92 +1485,104 @@
       "seed": 1,
       "prompt": "cot",
       "trace": "spec_mcf",
-      "candidate_id": "lru_reference",
-      "candidate_sha256": "06aa3666229ee7846534e0f936d851cb607e646b4b9a69d42f53691db0a9acb7",
+      "candidate_id": "fifo_variant-cot-s1",
+      "candidate_sha256": "9d6ca20598828d4b0c5756c7a7a8238273838b238e58a6e4f17aea3d8318e6d6",
       "generator_seed": 1,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1062.9078462978919,
-        "ipc": 0.9785111432970693,
-        "l1_miss_rate": 0.05048038425526996,
+        "cycles": 1064.5760108383656,
+        "ipc": 0.9582032271581463,
+        "l1_miss_rate": 0.05130997290408594,
         "seed": 1,
         "prompt": "cot",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1061.4750786251093,
-          "ipc": 0.9716996302683816,
-          "l1_miss_rate": 0.054062303437226795,
+          "cycles": 1064.5760108383656,
+          "ipc": 0.9582032271581463,
+          "l1_miss_rate": 0.05130997290408594,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1065.2168348714772,
-          "ipc": 0.9693828432594347,
-          "l1_miss_rate": 0.05529208717869349,
+          "cycles": 1061.201136452817,
+          "ipc": 0.9429564904552569,
+          "l1_miss_rate": 0.05974715886795733,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1063.182674141454,
-          "ipc": 0.9790355488567346,
-          "l1_miss_rate": 0.05020668535363535,
+          "cycles": 1065.383740428444,
+          "ipc": 0.9593074241137002,
+          "l1_miss_rate": 0.0507093510711103,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.9078462978919,
-          "ipc": 0.9785111432970693,
-          "l1_miss_rate": 0.05048038425526996,
+          "cycles": 1066.331400622308,
+          "ipc": 0.9549666354028888,
+          "l1_miss_rate": 0.053078501555770166,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1060.8891240924556,
-          "ipc": 0.9689411913042029,
-          "l1_miss_rate": 0.05552718976886092,
+          "cycles": 1064.168213722603,
+          "ipc": 0.9563347760761517,
+          "l1_miss_rate": 0.052329465693492366,
           "seed": 1,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1369,92 +1590,104 @@
       "seed": 1,
       "prompt": "cot",
       "trace": "web_cloud",
-      "candidate_id": "lru_reference",
-      "candidate_sha256": "06aa3666229ee7846534e0f936d851cb607e646b4b9a69d42f53691db0a9acb7",
+      "candidate_id": "fifo_variant-cot-s1",
+      "candidate_sha256": "9d6ca20598828d4b0c5756c7a7a8238273838b238e58a6e4f17aea3d8318e6d6",
       "generator_seed": 1,
       "design": {
-        "llc_replacement": "lru",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1065.2426918708284,
-        "ipc": 0.9753370988075887,
-        "l1_miss_rate": 0.05214327032292907,
+        "cycles": 1067.5272961560597,
+        "ipc": 0.9579796415794956,
+        "l1_miss_rate": 0.05143175960985051,
         "seed": 1,
         "prompt": "cot",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "lru",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1062.0008499036812,
-          "ipc": 0.960157542205616,
-          "l1_miss_rate": 0.06024787524079667,
+          "cycles": 1066.5149621676273,
+          "ipc": 0.9533568364384916,
+          "l1_miss_rate": 0.05396259458093152,
           "seed": 1,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1064.8631316110323,
-          "ipc": 0.9735350892388329,
-          "l1_miss_rate": 0.05309217097241917,
+          "cycles": 1067.2096377452149,
+          "ipc": 0.9565242407313442,
+          "l1_miss_rate": 0.05222590563696263,
           "seed": 1,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1065.7717867530278,
-          "ipc": 0.9778602023892699,
-          "l1_miss_rate": 0.05082053311743053,
+          "cycles": 1067.663711504586,
+          "ipc": 0.95860600973256,
+          "l1_miss_rate": 0.05109072123853497,
           "seed": 1,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1067.8151453425542,
-          "ipc": 0.9712738694732043,
-          "l1_miss_rate": 0.05428786335638584,
+          "cycles": 1067.5272961560597,
+          "ipc": 0.9579796415794956,
+          "l1_miss_rate": 0.05143175960985051,
           "seed": 1,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1065.2426918708284,
-          "ipc": 0.9753370988075887,
-          "l1_miss_rate": 0.05214327032292907,
+          "cycles": 1069.2686870141376,
+          "ipc": 0.95525268296923,
+          "l1_miss_rate": 0.0529217175353442,
           "seed": 1,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "lru",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1462,92 +1695,104 @@
       "seed": 1,
       "prompt": "adversarial",
       "trace": "spec_gcc",
-      "candidate_id": "fifo_variant",
-      "candidate_sha256": "6ca5aca6db8fff007b19d91a37abab85d1fcd6b5abc5917659e7bceeafa3ead8",
+      "candidate_id": "srrip_variant-adversarial-s1",
+      "candidate_sha256": "f6b0be7d85dfa053df1f9f7dafc45629202e26786ecde76f74d2cb1663637e35",
       "generator_seed": 1,
       "design": {
-        "llc_replacement": "fifo",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1059.671723493801,
-        "ipc": 0.9814904471084985,
-        "l1_miss_rate": 0.05092930873450236,
+        "cycles": 1058.4074291537981,
+        "ipc": 0.9732008269653531,
+        "l1_miss_rate": 0.05026857288449523,
         "seed": 1,
         "prompt": "adversarial",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "fifo",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1058.799089975283,
-          "ipc": 0.980868599241445,
-          "l1_miss_rate": 0.0512522750617924,
+          "cycles": 1058.1856274998495,
+          "ipc": 0.9731679471704768,
+          "l1_miss_rate": 0.05028593125037592,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1058.3687523429692,
-          "ipc": 0.9788028130464861,
-          "l1_miss_rate": 0.05232811914257715,
+          "cycles": 1058.0387597930626,
+          "ipc": 0.9724729842082013,
+          "l1_miss_rate": 0.05065310051734323,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1060.7954257679362,
-          "ipc": 0.9761076863986179,
-          "l1_miss_rate": 0.053738564419840665,
+          "cycles": 1059.3889105269316,
+          "ipc": 0.9685750168840892,
+          "l1_miss_rate": 0.05272227631732911,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1059.671723493801,
-          "ipc": 0.9814904471084985,
-          "l1_miss_rate": 0.05092930873450236,
+          "cycles": 1059.5657001954535,
+          "ipc": 0.9677464611246592,
+          "l1_miss_rate": 0.053164250488634046,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1060.1889790563505,
-          "ipc": 0.9790053331503145,
-          "l1_miss_rate": 0.052222447640876184,
+          "cycles": 1058.4074291537981,
+          "ipc": 0.9732008269653531,
+          "l1_miss_rate": 0.05026857288449523,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1555,92 +1800,104 @@
       "seed": 1,
       "prompt": "adversarial",
       "trace": "spec_mcf",
-      "candidate_id": "fifo_variant",
-      "candidate_sha256": "6ca5aca6db8fff007b19d91a37abab85d1fcd6b5abc5917659e7bceeafa3ead8",
+      "candidate_id": "srrip_variant-adversarial-s1",
+      "candidate_sha256": "f6b0be7d85dfa053df1f9f7dafc45629202e26786ecde76f74d2cb1663637e35",
       "generator_seed": 1,
       "design": {
-        "llc_replacement": "fifo",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1060.2404948994026,
-        "ipc": 0.9787585182196049,
-        "l1_miss_rate": 0.052351237248506544,
+        "cycles": 1057.5646471868242,
+        "ipc": 0.970236290236269,
+        "l1_miss_rate": 0.05183838203293918,
         "seed": 1,
         "prompt": "adversarial",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "fifo",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1059.2458163537895,
-          "ipc": 0.9830223021994128,
-          "l1_miss_rate": 0.050135459115526367,
+          "cycles": 1057.9274629654099,
+          "ipc": 0.9719469997416621,
+          "l1_miss_rate": 0.05093134258647552,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1058.967135494063,
-          "ipc": 0.9816776516886988,
-          "l1_miss_rate": 0.05083216126484233,
+          "cycles": 1059.0139997942583,
+          "ipc": 0.9703368048732194,
+          "l1_miss_rate": 0.05178499948564585,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.367302626719,
-          "ipc": 0.9686763834057953,
-          "l1_miss_rate": 0.05766825656679746,
+          "cycles": 1057.235357008746,
+          "ipc": 0.9686888616976038,
+          "l1_miss_rate": 0.05266160747813507,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1060.5680025750462,
-          "ipc": 0.9771923186999655,
-          "l1_miss_rate": 0.05317000643761577,
+          "cycles": 1057.5519068631465,
+          "ipc": 0.9701763278849642,
+          "l1_miss_rate": 0.05187023284213354,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1060.2404948994026,
-          "ipc": 0.9787585182196049,
-          "l1_miss_rate": 0.052351237248506544,
+          "cycles": 1057.5646471868242,
+          "ipc": 0.970236290236269,
+          "l1_miss_rate": 0.05183838203293918,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1648,92 +1905,104 @@
       "seed": 1,
       "prompt": "adversarial",
       "trace": "web_cloud",
-      "candidate_id": "fifo_variant",
-      "candidate_sha256": "6ca5aca6db8fff007b19d91a37abab85d1fcd6b5abc5917659e7bceeafa3ead8",
+      "candidate_id": "srrip_variant-adversarial-s1",
+      "candidate_sha256": "f6b0be7d85dfa053df1f9f7dafc45629202e26786ecde76f74d2cb1663637e35",
       "generator_seed": 1,
       "design": {
-        "llc_replacement": "fifo",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1062.3155735081002,
-        "ipc": 0.9832088888318856,
-        "l1_miss_rate": 0.05003893377025066,
+        "cycles": 1062.1763218427652,
+        "ipc": 0.9695732317374293,
+        "l1_miss_rate": 0.052190804606913284,
         "seed": 1,
         "prompt": "adversarial",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "fifo",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1061.5303953271768,
-          "ipc": 0.9795777403815584,
-          "l1_miss_rate": 0.05192401168205749,
+          "cycles": 1062.4688725373096,
+          "ipc": 0.9682000852470004,
+          "l1_miss_rate": 0.052922181343274276,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1063.5180294744075,
-          "ipc": 0.9774309747470946,
-          "l1_miss_rate": 0.053045073686019094,
+          "cycles": 1062.9386990536777,
+          "ipc": 0.9660029787385159,
+          "l1_miss_rate": 0.05409674763419474,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.782414092349,
-          "ipc": 0.9809575822925543,
-          "l1_miss_rate": 0.05120603523087235,
+          "cycles": 1061.5836720301752,
+          "ipc": 0.9723669264843664,
+          "l1_miss_rate": 0.05070918007543834,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1061.706687688632,
-          "ipc": 0.9804242979040764,
-          "l1_miss_rate": 0.05148328077842022,
+          "cycles": 1062.1763218427652,
+          "ipc": 0.9695732317374293,
+          "l1_miss_rate": 0.052190804606913284,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1062.3155735081002,
-          "ipc": 0.9832088888318856,
-          "l1_miss_rate": 0.05003893377025066,
+          "cycles": 1060.7820315900465,
+          "ipc": 0.9712605536289498,
+          "l1_miss_rate": 0.05129492102488375,
           "seed": 1,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "fifo",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1741,92 +2010,104 @@
       "seed": 2,
       "prompt": "default",
       "trace": "spec_gcc",
-      "candidate_id": "srrip_variant",
-      "candidate_sha256": "9005a8e80276923e1f48092999ee4e016d25e59e3cb97e081b5788852bbc8df2",
+      "candidate_id": "fifo_variant-default-s2",
+      "candidate_sha256": "e9805191c2d6807fdee591a93ab26d786a981bd938fb3693b14c266353f90615",
       "generator_seed": 2,
       "design": {
-        "llc_replacement": "srrip",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1099.3870098680943,
-        "ipc": 0.9882057160207567,
-        "l1_miss_rate": 0.050967524670235506,
+        "cycles": 1100.5580304603257,
+        "ipc": 0.9777176654953674,
+        "l1_miss_rate": 0.051395076150814414,
         "seed": 2,
         "prompt": "default",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "srrip",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1099.7039277388196,
-          "ipc": 0.9866607037713466,
-          "l1_miss_rate": 0.051759819347049124,
+          "cycles": 1100.5738175591355,
+          "ipc": 0.9776422143668828,
+          "l1_miss_rate": 0.05143454389783897,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1099.3870098680943,
-          "ipc": 0.9882057160207567,
-          "l1_miss_rate": 0.050967524670235506,
+          "cycles": 1100.1874465137307,
+          "ipc": 0.9794921451576647,
+          "l1_miss_rate": 0.05046861628432669,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1098.1510682436224,
-          "ipc": 0.9859554017282223,
-          "l1_miss_rate": 0.05212232939094395,
+          "cycles": 1101.5410809654782,
+          "ipc": 0.9730414915624154,
+          "l1_miss_rate": 0.05385270241369526,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1099.7522673379467,
-          "ipc": 0.9864254670288873,
-          "l1_miss_rate": 0.05188066834486696,
+          "cycles": 1100.5580304603257,
+          "ipc": 0.9777176654953674,
+          "l1_miss_rate": 0.051395076150814414,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1099.2407269355413,
-          "ipc": 0.9889204960371036,
-          "l1_miss_rate": 0.05060181733885344,
+          "cycles": 1100.4818372036407,
+          "ipc": 0.9780819789917224,
+          "l1_miss_rate": 0.051204593009101455,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1834,92 +2115,104 @@
       "seed": 2,
       "prompt": "default",
       "trace": "spec_mcf",
-      "candidate_id": "srrip_variant",
-      "candidate_sha256": "9005a8e80276923e1f48092999ee4e016d25e59e3cb97e081b5788852bbc8df2",
+      "candidate_id": "fifo_variant-default-s2",
+      "candidate_sha256": "e9805191c2d6807fdee591a93ab26d786a981bd938fb3693b14c266353f90615",
       "generator_seed": 2,
       "design": {
-        "llc_replacement": "srrip",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1098.4232390092657,
-        "ipc": 0.9872800760653286,
-        "l1_miss_rate": 0.051441902476835576,
+        "cycles": 1099.83023167424,
+        "ipc": 0.9795769551978574,
+        "l1_miss_rate": 0.05042442081440018,
         "seed": 2,
         "prompt": "default",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "srrip",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1099.0728118778527,
-          "ipc": 0.989742252514873,
-          "l1_miss_rate": 0.05018202969463147,
+          "cycles": 1102.5931397555782,
+          "ipc": 0.9680863567716791,
+          "l1_miss_rate": 0.056482849388945405,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1098.369698698745,
-          "ipc": 0.9870192104321831,
-          "l1_miss_rate": 0.05157575325313734,
+          "cycles": 1099.6542288277753,
+          "ipc": 0.978733246363283,
+          "l1_miss_rate": 0.050864427930561625,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1098.1532640631192,
-          "ipc": 0.9859660747128481,
-          "l1_miss_rate": 0.052116839842202015,
+          "cycles": 1099.8068688070173,
+          "ipc": 0.9794648763722623,
+          "l1_miss_rate": 0.05048282798245691,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1098.4232390092657,
-          "ipc": 0.9872800760653286,
-          "l1_miss_rate": 0.051441902476835576,
+          "cycles": 1101.9828140468755,
+          "ipc": 0.9709547902112167,
+          "l1_miss_rate": 0.054957035117188587,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1101.0121746820146,
-          "ipc": 0.98033365073301,
-          "l1_miss_rate": 0.055030436705036635,
+          "cycles": 1099.83023167424,
+          "ipc": 0.9795769551978574,
+          "l1_miss_rate": 0.05042442081440018,
           "seed": 2,
           "prompt": "default",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -1927,92 +2220,104 @@
       "seed": 2,
       "prompt": "default",
       "trace": "web_cloud",
-      "candidate_id": "srrip_variant",
-      "candidate_sha256": "9005a8e80276923e1f48092999ee4e016d25e59e3cb97e081b5788852bbc8df2",
+      "candidate_id": "fifo_variant-default-s2",
+      "candidate_sha256": "e9805191c2d6807fdee591a93ab26d786a981bd938fb3693b14c266353f90615",
       "generator_seed": 2,
       "design": {
-        "llc_replacement": "srrip",
+        "llc_replacement": "fifo",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
+      "design_sha256": "a1cd1c7c7d9b9066e2c2ad4f6463a6893735cacdbb7e1463fb3252088ca51f48",
       "median": {
-        "cycles": 1102.102923008322,
-        "ipc": 0.9895947917179038,
-        "l1_miss_rate": 0.05025730752080505,
+        "cycles": 1102.930538379029,
+        "ipc": 0.9800584487818694,
+        "l1_miss_rate": 0.050173654052427276,
         "seed": 2,
         "prompt": "default",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "srrip",
+          "llc_replacement": "fifo",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1102.2982685916802,
-          "ipc": 0.9886392078010369,
-          "l1_miss_rate": 0.05074567147920025,
+          "cycles": 1103.6637553043945,
+          "ipc": 0.9772125978170483,
+          "l1_miss_rate": 0.051659388260986115,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1101.8004018045349,
-          "ipc": 0.9891216490285067,
-          "l1_miss_rate": 0.05049899548866299,
+          "cycles": 1102.930538379029,
+          "ipc": 0.9800584487818694,
+          "l1_miss_rate": 0.050173654052427276,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1101.7074926246485,
-          "ipc": 0.988667363882648,
-          "l1_miss_rate": 0.050731268438379065,
+          "cycles": 1106.047297044703,
+          "ipc": 0.9659628638224552,
+          "l1_miss_rate": 0.05761824261175776,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1102.102923008322,
-          "ipc": 0.9895947917179038,
-          "l1_miss_rate": 0.05025730752080505,
+          "cycles": 1102.510565529157,
+          "ipc": 0.9780456409278047,
+          "l1_miss_rate": 0.05122358617710757,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1102.7216797731337,
-          "ipc": 0.9865743033691338,
-          "l1_miss_rate": 0.051804199432834284,
+          "cycles": 1102.9108253886086,
+          "ipc": 0.9799637848544508,
+          "l1_miss_rate": 0.05022293652847851,
           "seed": 2,
           "prompt": "default",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "fifo",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -2020,92 +2325,104 @@
       "seed": 2,
       "prompt": "cot",
       "trace": "spec_gcc",
-      "candidate_id": "mru_variant",
-      "candidate_sha256": "a5bc94fe98f30432fa2a47939a471125581e2668700aa94b077fee3846c728e4",
+      "candidate_id": "srrip_variant-cot-s2",
+      "candidate_sha256": "9c31d4348848ca5f5969ad1e02c567923762afe92d117327266a3bb5200d7e22",
       "generator_seed": 2,
       "design": {
-        "llc_replacement": "mru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1102.86296407554,
-        "ipc": 0.9370444971452117,
-        "l1_miss_rate": 0.05309258981114974,
+        "cycles": 1101.4140644643815,
+        "ipc": 0.9684570419875447,
+        "l1_miss_rate": 0.05078516116095377,
         "seed": 2,
         "prompt": "cot",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "mru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1104.128129413931,
-          "ipc": 0.9423821458178084,
-          "l1_miss_rate": 0.050070323534827925,
+          "cycles": 1101.4140644643815,
+          "ipc": 0.9684570419875447,
+          "l1_miss_rate": 0.05078516116095377,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1102.2174420547408,
-          "ipc": 0.9342190317584861,
-          "l1_miss_rate": 0.05470639486314791,
+          "cycles": 1101.4264008180653,
+          "ipc": 0.9683991935548493,
+          "l1_miss_rate": 0.0508160020451633,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1102.6854283165944,
-          "ipc": 0.9362657164438041,
-          "l1_miss_rate": 0.053536429208513814,
+          "cycles": 1099.4787009188444,
+          "ipc": 0.9623652671033434,
+          "l1_miss_rate": 0.05405324770288872,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1104.4145398219096,
-          "ipc": 0.9411120771670634,
-          "l1_miss_rate": 0.05078634955477415,
+          "cycles": 1102.4845175714809,
+          "ipc": 0.9634629901101887,
+          "l1_miss_rate": 0.05346129392870227,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1102.86296407554,
-          "ipc": 0.9370444971452117,
-          "l1_miss_rate": 0.05309258981114974,
+          "cycles": 1101.243209349507,
+          "ipc": 0.9692589382054112,
+          "l1_miss_rate": 0.05035802337376741,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -2113,92 +2430,104 @@
       "seed": 2,
       "prompt": "cot",
       "trace": "spec_mcf",
-      "candidate_id": "mru_variant",
-      "candidate_sha256": "a5bc94fe98f30432fa2a47939a471125581e2668700aa94b077fee3846c728e4",
+      "candidate_id": "srrip_variant-cot-s2",
+      "candidate_sha256": "9c31d4348848ca5f5969ad1e02c567923762afe92d117327266a3bb5200d7e22",
       "generator_seed": 2,
       "design": {
-        "llc_replacement": "mru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1103.6251600085773,
-        "ipc": 0.9404027293875764,
-        "l1_miss_rate": 0.05118709997855681,
+        "cycles": 1099.846456482542,
+        "ipc": 0.9640712643848834,
+        "l1_miss_rate": 0.05313385879364463,
         "seed": 2,
         "prompt": "cot",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "mru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1103.603406759421,
-          "ipc": 0.9403065510023566,
-          "l1_miss_rate": 0.05124148310144753,
+          "cycles": 1100.0293997300507,
+          "ipc": 0.9649221825937693,
+          "l1_miss_rate": 0.05267650067487282,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1102.470543721015,
-          "ipc": 0.9353248307336034,
-          "l1_miss_rate": 0.05407364069746231,
+          "cycles": 1099.6528831353291,
+          "ipc": 0.963172535308282,
+          "l1_miss_rate": 0.05361779216167676,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1104.1571000526583,
-          "ipc": 0.9422535215565582,
-          "l1_miss_rate": 0.0501427501316458,
+          "cycles": 1101.3146380331234,
+          "ipc": 0.9689235313239063,
+          "l1_miss_rate": 0.05053659508280899,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1104.2664951545876,
-          "ipc": 0.941768144049344,
-          "l1_miss_rate": 0.05041623788646918,
+          "cycles": 1099.846456482542,
+          "ipc": 0.9640712643848834,
+          "l1_miss_rate": 0.05313385879364463,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1103.6251600085773,
-          "ipc": 0.9404027293875764,
-          "l1_miss_rate": 0.05118709997855681,
+          "cycles": 1098.4012433354785,
+          "ipc": 0.9574015814808686,
+          "l1_miss_rate": 0.05674689166130373,
           "seed": 2,
           "prompt": "cot",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -2206,92 +2535,104 @@
       "seed": 2,
       "prompt": "cot",
       "trace": "web_cloud",
-      "candidate_id": "mru_variant",
-      "candidate_sha256": "a5bc94fe98f30432fa2a47939a471125581e2668700aa94b077fee3846c728e4",
+      "candidate_id": "srrip_variant-cot-s2",
+      "candidate_sha256": "9c31d4348848ca5f5969ad1e02c567923762afe92d117327266a3bb5200d7e22",
       "generator_seed": 2,
       "design": {
-        "llc_replacement": "mru",
+        "llc_replacement": "srrip",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "bbbe9c5986cf101beb2258cee313fdf0117f7a256d9d1f2c3d5f64a702c63732",
+      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
       "median": {
-        "cycles": 1107.7093499489895,
-        "ipc": 0.939808331015249,
-        "l1_miss_rate": 0.05152337487247411,
+        "cycles": 1104.592664200778,
+        "ipc": 0.9676202141635902,
+        "l1_miss_rate": 0.05123166050194545,
         "seed": 2,
         "prompt": "cot",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "mru",
+          "llc_replacement": "srrip",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1107.7093499489895,
-          "ipc": 0.939808331015249,
-          "l1_miss_rate": 0.05152337487247411,
+          "cycles": 1104.4107122728003,
+          "ipc": 0.9684727624966988,
+          "l1_miss_rate": 0.050776780682001275,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1106.0053640932026,
-          "ipc": 0.9376700879031644,
-          "l1_miss_rate": 0.05273658976699306,
+          "cycles": 1104.592664200778,
+          "ipc": 0.9676202141635902,
+          "l1_miss_rate": 0.05123166050194545,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1108.1994715448955,
-          "ipc": 0.9376488303108794,
-          "l1_miss_rate": 0.05274867886223881,
+          "cycles": 1105.6596907612711,
+          "ipc": 0.9626506434773839,
+          "l1_miss_rate": 0.05389922690317799,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1106.9297421921844,
-          "ipc": 0.9417514583468186,
-          "l1_miss_rate": 0.05042564451953856,
+          "cycles": 1104.8565894419069,
+          "ipc": 0.9663862384828309,
+          "l1_miss_rate": 0.05189147360476734,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1107.7127940924845,
-          "ipc": 0.9397931212400867,
-          "l1_miss_rate": 0.051531985231211545,
+          "cycles": 1102.8502821110176,
+          "ipc": 0.9640890430471976,
+          "l1_miss_rate": 0.05312429472245568,
           "seed": 2,
           "prompt": "cot",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "mru",
+            "llc_replacement": "srrip",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -2299,92 +2640,104 @@
       "seed": 2,
       "prompt": "adversarial",
       "trace": "spec_gcc",
-      "candidate_id": "srrip_variant",
-      "candidate_sha256": "15b440c561fe7d8146c1039ccccf07bc9bdf7f73c07e3333c21c1c4de16dcfe1",
+      "candidate_id": "lru_reference-adversarial-s2",
+      "candidate_sha256": "86c1673f5198bdad5eb15ee29849c69daed438d4c6dd92230b6c2cc53aac95cc",
       "generator_seed": 2,
       "design": {
-        "llc_replacement": "srrip",
+        "llc_replacement": "lru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
       "median": {
-        "cycles": 1095.006380226325,
-        "ipc": 0.9723199009286742,
-        "l1_miss_rate": 0.05073404943418747,
+        "cycles": 1094.2650420042282,
+        "ipc": 0.9641576421466854,
+        "l1_miss_rate": 0.05008739498942933,
         "seed": 2,
         "prompt": "adversarial",
         "trace": "spec_gcc",
         "design": {
-          "llc_replacement": "srrip",
+          "llc_replacement": "lru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1096.2208007607298,
-          "ipc": 0.9693642098255519,
-          "l1_miss_rate": 0.0523020019018246,
+          "cycles": 1092.866103751714,
+          "ipc": 0.95769893486169,
+          "l1_miss_rate": 0.05358474062071455,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1094.5028334324643,
-          "ipc": 0.9699454329528537,
-          "l1_miss_rate": 0.05199291641883901,
+          "cycles": 1095.7822243888675,
+          "ipc": 0.9574773563674244,
+          "l1_miss_rate": 0.05370556097216875,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1095.006380226325,
-          "ipc": 0.9723199009286742,
-          "l1_miss_rate": 0.05073404943418747,
+          "cycles": 1094.04447951364,
+          "ipc": 0.9631335566305694,
+          "l1_miss_rate": 0.050638801215900066,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1096.0429846028067,
-          "ipc": 0.9702003703175114,
-          "l1_miss_rate": 0.05185746150701649,
+          "cycles": 1094.2650420042282,
+          "ipc": 0.9641576421466854,
+          "l1_miss_rate": 0.05008739498942933,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1094.261262305031,
-          "ipc": 0.9688104191739311,
-          "l1_miss_rate": 0.05259684423742226,
+          "cycles": 1095.84337008103,
+          "ipc": 0.9571971578827236,
+          "l1_miss_rate": 0.05385842520257499,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_gcc",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -2392,92 +2745,104 @@
       "seed": 2,
       "prompt": "adversarial",
       "trace": "spec_mcf",
-      "candidate_id": "srrip_variant",
-      "candidate_sha256": "15b440c561fe7d8146c1039ccccf07bc9bdf7f73c07e3333c21c1c4de16dcfe1",
+      "candidate_id": "lru_reference-adversarial-s2",
+      "candidate_sha256": "86c1673f5198bdad5eb15ee29849c69daed438d4c6dd92230b6c2cc53aac95cc",
       "generator_seed": 2,
       "design": {
-        "llc_replacement": "srrip",
+        "llc_replacement": "lru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
       "median": {
-        "cycles": 1094.9571533954027,
-        "ipc": 0.97208725990054,
-        "l1_miss_rate": 0.05085711651149302,
+        "cycles": 1094.1353154202666,
+        "ipc": 0.9635550498628899,
+        "l1_miss_rate": 0.05041171144933355,
         "seed": 2,
         "prompt": "adversarial",
         "trace": "spec_mcf",
         "design": {
-          "llc_replacement": "srrip",
+          "llc_replacement": "lru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1094.8395097233747,
-          "ipc": 0.9715317384664236,
-          "l1_miss_rate": 0.051151225691563156,
+          "cycles": 1093.5100037339696,
+          "ipc": 0.9606609519529217,
+          "l1_miss_rate": 0.051974990665076166,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1095.728581916084,
-          "ipc": 0.9716823491576088,
-          "l1_miss_rate": 0.0510714547902105,
+          "cycles": 1094.6776755859094,
+          "ipc": 0.9625673183416981,
+          "l1_miss_rate": 0.05094418896477323,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1096.7570501256248,
-          "ipc": 0.9668512621568347,
-          "l1_miss_rate": 0.05364262531406216,
+          "cycles": 1094.3280320611257,
+          "ipc": 0.9641898349643662,
+          "l1_miss_rate": 0.050070080152814146,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1094.7495875170282,
-          "ipc": 0.9711075476313319,
-          "l1_miss_rate": 0.051376031207429534,
+          "cycles": 1094.1353154202666,
+          "ipc": 0.9635550498628899,
+          "l1_miss_rate": 0.05041171144933355,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1094.9571533954027,
-          "ipc": 0.97208725990054,
-          "l1_miss_rate": 0.05085711651149302,
+          "cycles": 1093.209419380267,
+          "ipc": 0.95927595100702,
+          "l1_miss_rate": 0.05272645154933211,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "spec_mcf",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     },
@@ -2485,92 +2850,104 @@
       "seed": 2,
       "prompt": "adversarial",
       "trace": "web_cloud",
-      "candidate_id": "srrip_variant",
-      "candidate_sha256": "15b440c561fe7d8146c1039ccccf07bc9bdf7f73c07e3333c21c1c4de16dcfe1",
+      "candidate_id": "lru_reference-adversarial-s2",
+      "candidate_sha256": "86c1673f5198bdad5eb15ee29849c69daed438d4c6dd92230b6c2cc53aac95cc",
       "generator_seed": 2,
       "design": {
-        "llc_replacement": "srrip",
+        "llc_replacement": "lru",
         "branch_predictor": "bimodal"
       },
-      "design_sha256": "d352ae96631820f0271a877712272ed3fbf077b42c997b7fa5786c089e9d3776",
+      "design_sha256": "be129d59094f8c33e574e229d4c652f818d287a32a8990333b14f981fc6077ad",
       "median": {
-        "cycles": 1098.997224632544,
-        "ipc": 0.9704157848636005,
-        "l1_miss_rate": 0.05174306158136013,
+        "cycles": 1096.2999799678378,
+        "ipc": 0.9596928060234076,
+        "l1_miss_rate": 0.05250005008040529,
         "seed": 2,
         "prompt": "adversarial",
         "trace": "web_cloud",
         "design": {
-          "llc_replacement": "srrip",
+          "llc_replacement": "lru",
           "branch_predictor": "bimodal"
         },
-        "backend": "stub"
+        "backend": "stub",
+        "binary_sha256": "",
+        "instructions": NaN
       },
       "trials": [
         {
-          "cycles": 1098.1882333834137,
-          "ipc": 0.9731802869133559,
-          "l1_miss_rate": 0.0502794165414656,
+          "cycles": 1097.926085370364,
+          "ipc": 0.9614178897032334,
+          "l1_miss_rate": 0.05156521342590999,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1099.8183785927915,
-          "ipc": 0.9665646974433008,
-          "l1_miss_rate": 0.05379594648197912,
+          "cycles": 1096.804111849084,
+          "ipc": 0.962019988845647,
+          "l1_miss_rate": 0.05123972037728986,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1098.997224632544,
-          "ipc": 0.9704157848636005,
-          "l1_miss_rate": 0.05174306158136013,
+          "cycles": 1095.5540602170129,
+          "ipc": 0.95627005815902,
+          "l1_miss_rate": 0.05436484945746784,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1102.0211105609187,
-          "ipc": 0.9563835973496243,
-          "l1_miss_rate": 0.05930277640229694,
+          "cycles": 1096.2999799678378,
+          "ipc": 0.9596928060234076,
+          "l1_miss_rate": 0.05250005008040529,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         },
         {
-          "cycles": 1098.638675631976,
-          "ipc": 0.9721069671788819,
-          "l1_miss_rate": 0.050846689079940235,
+          "cycles": 1096.1664182151185,
+          "ipc": 0.9590781412190746,
+          "l1_miss_rate": 0.0528339544622037,
           "seed": 2,
           "prompt": "adversarial",
           "trace": "web_cloud",
           "design": {
-            "llc_replacement": "srrip",
+            "llc_replacement": "lru",
             "branch_predictor": "bimodal"
           },
-          "backend": "stub"
+          "backend": "stub",
+          "binary_sha256": "",
+          "instructions": NaN
         }
       ]
     }

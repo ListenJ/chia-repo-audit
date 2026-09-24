@@ -1,0 +1,73 @@
+{
+  "grid": "grid_nullity_control",
+  "written": "2026-09-23",
+  "purpose": "Build a positive control for the cell-level nullity branch: generate designs that are expected to do nothing, measure them, and check that the gate fires red on exact equality with the cold no-op reference.",
+  "launch_path_defect": {
+    "finding": "This is the only grid in the repository that was not launched through scripts/make_grid_config.py.",
+    "evidence": ".tmp/cfg/grid_nullity_control.json carries acceptance_threshold, re_audit_ratio, purpose and version -- keys the pre-flight never writes -- and points candidates_dir at /workspace/.tmp/cand_nullctl (3 files) instead of the pre-flight's /workspace/.tmp/grid_cand. The other 9 configs in .tmp/cfg/ are exactly the 8-key pre-flight shape.",
+    "consequence": "make_grid_config.py restricts seeds x prompts to the largest rectangle actually present in the candidate pool. On this pool it would have found a 2-cell rectangle, refused the 6-level grid, and exited non-zero. Declaring 3 prompts x 2 seeds against a 3-file pool instead let the harness fill the missing cells itself."
+  },
+  "harness_substitution": {
+    "defect_id": 8,
+    "mechanism": "generate_candidate() used `pool = matching or candidates`: when no candidate carried the requested (generator_seed, prompt) pair it selected one from the whole pool by a hash of the prompt, then setdefault-stamped the missing labels onto it and recomputed candidate_sha256. The stamped labels are the candidate's own, so the raw evidence stays internally consistent and only the design identity is false.",
+    "affected_levels": 3,
+    "affected_level_names": ["aggressive_offset/0", "default/1", "fill_only_conservative/1"],
+    "substituted_onto": {
+      "module_name": "gen_default_s0",
+      "design_sha256_prefix": "ee6081546365",
+      "candidate_sha256_prefix": "332147378a88",
+      "levels_sharing_this_design": ["aggressive_offset/0", "default/0", "default/1", "fill_only_conservative/1"]
+    },
+    "levels": 6,
+    "distinct_compiled_designs": 3,
+    "fix": "chia_loop/loops/audit_repro.py now raises ValueError listing the levels the pool actually offers; chia_loop/tests/test_audit_repro.py::test_missing_cell_is_refused_instead_of_substituted locks it; scripts/audit_grid_levels.py gates published grids on three witnesses (generator_seed vs cell seed, pool membership where recorded, and design_sha256 distinctness per level).",
+    "independent_confirmation": "scripts/check_grid_evidence.py reaches the same conclusion from binary digests alone: one_design_per_binary fails with binary 3189efdc1e54e5b5 recorded for 4 design labels, and it reports 3 distinct binaries for 6 designs. It never reads the labels, so the two methods do not share a failure mode."
+  },
+  "discarded": {
+    "max_seed_cv": 0.083812,
+    "max_prompt_spread": 0.116232,
+    "verdict": "NON-REPRODUCIBLE",
+    "publish_gate": "BLOCKED",
+    "reason": "Every variance axis of this grid is uninterpretable, in both directions. The nonzero cross-seed CV appears only under prompt=fill_only_conservative, whose two 'seeds' are two different designs (c57d6ee71b1a and 332147378a88), so it is a design difference mislabelled as a seed effect -- and it is what drove the BLOCKED verdict. The 0.0 CVs on the other levels are the opposite error: the same binary measured twice, which is a manufactured pass. One bug therefore supplied both the false alarm and the false reassurance, so no threshold decision from this grid can be quoted.",
+    "also_discarded": "n_designs_null_on_every_trace = 5 from check_grid_evidence.py: four of those five labels are the same design counted once per name. The true count is 2."
+  },
+  "kept": {
+    "positive_control": {
+      "claim": "Two delivered designs are bit-identical to the cold no-op reference on every trace they were measured on, which is the exact-equality condition the null_on_every_measured_trace branch is written to reject. Before this grid that branch had only a synthetic control.",
+      "designs": {
+        "gen_default_s0": {
+          "level": "default/0",
+          "level_is_genuine_match": true,
+          "binary_sha256_prefix": "3189efdc1e54e5b5",
+          "cycles": {"SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 2261770, "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 7183123, "638.imagick_s-4128B.champsimtrace.xz": 1561323}
+        },
+        "gen_aggressive_offset_s1_r1": {
+          "level": "aggressive_offset/1",
+          "level_is_genuine_match": true,
+          "cycles": {"SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 2261770, "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 7183123, "638.imagick_s-4128B.champsimtrace.xz": 1561323}
+        }
+      },
+      "reference": "results/reference_designs_2026-09-22.jsonl, record with design=noop",
+      "note": "Neither binary equals the image default binary 688278205d6c9fa4, so these are compiled, delivered modules that change nothing measurable -- not a build that silently fell back to the default."
+    },
+    "negative_control": {
+      "design": "gen_fill_only_conservative_s0",
+      "level": "fill_only_conservative/0",
+      "level_is_genuine_match": true,
+      "cycles": {"SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": 2252741, "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": 6379358, "638.imagick_s-4128B.champsimtrace.xz": 1497247},
+      "delta_vs_noop": {"SPEC17-649.fotonik3d_s-1B.champsimtrace.xz": -0.003992, "ligra_BFSCC.com-lj.ungraph.gcc_6.3.0_O3.drop_15500M.length_250M.champsimtrace.xz": -0.111896, "638.imagick_s-4128B.champsimtrace.xz": -0.041039},
+      "note": "Live on all three traces, and faster than the no-op on all three: the only design in this grid that measurably does something removes work rather than adding it."
+    },
+    "repeat_determinism": {
+      "max_repeat_cv": 0.0,
+      "why_it_survives": "Repeated-run CV compares trials inside one cell, so it never touches a factor label. Two trials of each of the 3 real designs on each trace agreed exactly."
+    },
+    "ranking_tie": "The two null designs share mean cycles 3668738.666667 across the three traces and rank below gen_fill_only_conservative_s0 at 3376448.666667, i.e. the ranking agrees with the nullity finding rather than with the labels."
+  },
+  "clean_grids": {
+    "claim": "Defect 8 is confined to this grid. Every other published grid carries one distinct compiled design per factor level and no label disagreement.",
+    "grids": ["grid_v6", "grid_v7_gcp", "grid_fact_prompt", "grid_both_axes", "grid_x_fill_only_s2s3"],
+    "stub_backend": "The stub fixture had the same class of problem for a different reason: its 4-entry catalog carried no generator_seed or prompt at all, so all 9 of its levels were stamped rather than matched. Its design pool is a fixture (cycles come from StubBackend arithmetic), so this was invisible to the label witnesses and only the digest witness found it. The catalog now enumerates all 9 labelled cells explicitly.",
+    "reproduced_by": "python3 scripts/audit_grid_levels.py"
+  }
+}
