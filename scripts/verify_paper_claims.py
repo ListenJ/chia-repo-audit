@@ -839,6 +839,25 @@ check("and every referenced path is tracked by git", [],
       sorted(r for r in _refs if (REPO / r).exists() and not r.startswith(".tmp")
              and not _is_tracked(r)))
 
+# 本轮开始向第三方推理端点发请求，凭据存在仓库之外。风险不在"引用了不存在的路径"这一类，
+# 而在另一次 `git add -p` 手滑：一个 bearer token 一旦进了被跟踪的文件，它就随公开
+# artifact 永久分发，而上面所有门禁只会看到"路径存在、摘要自洽"，全都管不着秘密本身。
+# 所以按形态扫全部被跟踪文件。刻意不写死真值：这条不需要知道密钥是什么，
+# 也不需要谁去读它 —— 一个检查若要求作者先把凭据加载进上下文才能通过，
+# 它本身就成了泄漏路径。
+_TOK_SHAPE = re.compile(rb"\batr_[A-Za-z0-9]{16,}")
+_tok_hits = []
+for _f in sorted(_tracked):
+    _p = REPO / _f
+    if not _p.is_file():
+        continue
+    try:
+        if _TOK_SHAPE.search(_p.read_bytes()):
+            _tok_hits.append(_f)
+    except OSError:
+        continue
+check("no API-token-shaped string exists in any tracked file", [], _tok_hits)
+
 # ---- 覆盖率必须是重算出来的，否则 README 里那句又是一个陈旧字符串 -------
 _inv = json.loads(subprocess.run(
     [sys.executable, str(REPO / "scripts/inventory_vouches.py"), "--json"],

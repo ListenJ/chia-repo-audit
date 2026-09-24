@@ -126,7 +126,7 @@ supplies one here.
   The suite is pure Python,
   so an in-image run establishes compatibility, not that any measurement reproduced.
 - `scripts/verify_paper_claims.py` re-derives every number in the paper from its
-  committed artifact and exits non-zero on drift (190 claims). Its final check is
+  committed artifact and exits non-zero on drift (191 claims). Its final check is
   self-referential: the paper states the claim count, so editing the verifier without
   updating the prose turns the run red. This sentence is gated too, and the reason is
   that it used not to be --- it read "138 claims" for two rounds after the count had
@@ -154,11 +154,11 @@ supplies one here.
   passing here. The verifier also re-checks the headline numbers, unresolved-reference
   markers and underscore-bearing identifiers *in the rendered text* -- the text layer is
   where a typesetting regression shows up, not the source.
-- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 358 tracked
-  files, classified by what *code* vouches for each: **45.2% machine-vouched** (162 files
-  a `verify_paper_claims.py` check re-derives or a unit test loads), 30.2% reachable-only
-  (108 files in a set some script globs), and **24.6% with no code reference at all**
-  (88 files; 54 of those are at least named in prose, 51 live under `.tmp/` as run logs
+- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 359 tracked
+  files, classified by what *code* vouches for each: **45.1% machine-vouched** (162 files
+  a `verify_paper_claims.py` check re-derives or a unit test loads), 30.1% reachable-only
+  (108 files in a set some script globs), and **24.8% with no code reference at all**
+  (89 files; 57 of those are at least named in prose, 51 live under `.tmp/` as run logs
   and three container lock files). Regenerate with `python3
   scripts/inventory_vouches.py --markdown REVIEW_COVERAGE.md`. The `--json` and
   `--markdown` flags are mutually exclusive -- `--json` returns before the markdown
@@ -201,6 +201,50 @@ See [ROADMAP.md](ROADMAP.md) for the execution plan and claim boundaries,
 decision, [PRECOMPUTE.md](PRECOMPUTE.md) for the GO/NO-GO gate, and
 [docs/operations-log.md](docs/operations-log.md) for the dated record of what was
 run, what failed, and what was corrected.
+
+## Annotation raters: two providers and a human
+
+Every published agreement statistic in this repository is a **model-model** number, and
+the paper says so. Three tools here extend or challenge that layer. None of them merges
+into a published number without being named first.
+
+```text
+python3 scripts/make_annotator_page.py --sets measured6 spec10
+python3 scripts/atria_audit.py --sets measured6 spec10 fact36
+python3 scripts/score_human_annotations.py --answers web/annotator_result.json
+python3 scripts/rubric_precedence_probe.py
+```
+
+`make_annotator_page.py` writes a self-contained local page (`web/annotator.html`) and a
+**separate** answer key. The page shows only what a model rater is shown, reusing the same
+allowlist as `scripts/independent_audit.py` rather than a copy of it, and it shows opaque
+slot labels (`Q1`…`Qn`) because a case id such as `sem-esc-01` announces that the case is
+a simulator escape. `score_human_annotations.py` refuses an export whose recorded display
+digest does not match the key it is scored against, and when the export says the rater
+authored the cases it reports the accuracy but refuses to call the result an inter-rater
+reliability estimate. The key is committed, so the blindness is procedural -- do not open
+it before answering -- not technically enforced; the rater in this submission is the
+author, and `rater_authored_cases` records that rather than describing it away.
+
+`atria_audit.py` labels the registered case sets with `Atria-Dawn-Preview` via
+`https://api.atria-asi.ai` at `temperature 0`, recording the model string the service
+returned and a per-case prompt digest. It exists because both published raters are Google
+models that agree perfectly on the shared cases, which leaves "same provider" as an
+available alternative explanation for any agreement between them. Its output is **not**
+pooled with the published kappa.
+
+`rubric_precedence_probe.py` is the causal version: it re-asks the same rater under three
+conditions -- original contract, contract plus the reported cycle counts, and cycle counts
+plus an explicit "behaviour governs" precedence rule -- against three escape cases and
+three non-escape controls. Only the third condition can distinguish "the raters are weak
+at this" from "our rubric asks a behavioural question while showing only source".
+Conditions B and C show the rater information the published protocol never exposes, so
+their labels are recorded as a protocol deviation and are not comparable with the
+published numbers.
+
+The API credential is read from `~/.config/atria/token` at run time and is never stored
+in this repository; `verify_paper_claims.py` scans every tracked file for a token-shaped
+string, which is mutation-tested by planting one and confirming the check names it.
 
 ## Protocol validation on the stub backend
 
