@@ -3899,3 +3899,49 @@ DSW 事故那段）不再参与本次比对；那次的逐字命中仍只在扫�
 
 `paper/paper_short_acmart.pdf` 那个残留本轮只重确认了"不是门禁的指称物"，没有动它；HEAD 现在
 是本次日志提交，克隆记录照旧滞后（这次滞后两个提交，都是运维日志与记录自身）。
+
+## §63 把"评审今天克隆会绿"和"HotCRP 上就是这份"重新量一遍，四要素改从控件状态读
+
+§61/§62 之后 HEAD 到了 `0792717`，而克隆记录说的还是 `eeef2f0`。§62 已经量出"措辞不动普查"，
+但"评审今天 pasted clone 拿到的是哪棵树"这句话得跟着动，所以整条链在**新克隆**里重跑
+（`.tmp/fc_final2/repo`：HTTPS、无 SSH key、`core.autocrlf=true`，克隆出的 HEAD 就是 `0792717`，
+与本机 HEAD 相同）。五道门各自 rc=0：`verify_paper_claims.py` 241/241、`audit_grid_levels.py`
+`0/9 levels substituted`、`check_documented_commands.py` 比对 6 个脚本的 advertised options、
+`unittest` `Ran 46 tests in 0.414s -- OK`、`mutation_test_gates.py` 10 mutations 0 problems。
+
+这次额外落一个以前没记的量：`git status --short` 在克隆里**跑门前 0 行、跑门后 0 行**。后一个
+数才是变异测试的诚实性证据 —— 它会就地改 `scripts/verify_paper_claims.py` 再还原，如果还原失败，
+"这条链可以从推上去的字节重跑"就只对一棵被消费过的树成立。记录本体按同样规矩前滚：新的
+`cloned_head`、7 行 `git ls-files --eol paper .gitattributes` 由克隆自己报、`pin_at_clone` 取自
+克隆里的 BUILD_PIN.json blob，被取代的 `eeef2f0` 那次连结果带"这之后落了哪些东西"插进
+`prior_clone_records` 头部而不是删掉。写入用 `write_bytes` 显式给 LF：`results/**` 在
+.gitattributes 里是 `-text`，文本模式写一次就会把整份记录的行尾翻掉而它自己仍然自洽。
+条数没动（仍 241），所以投稿 PDF、pin、HotCRP 上那份继续有效，**不触发换件**。
+
+Task 6 那一格换了读法。19:33Z 重开 `/paper/27`，带 cache-buster 请求
+`/doc/a3-chia-hackathon-26-paper27.pdf`，对**响应字节**在页内算 sha256：HTTP 200、592,258 字节、
+`de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6`、从字节里数出的页对象 4 ——
+与 `paper/BUILD_PIN.json` 的 `outputs["paper/paper.pdf"]` 逐字节相同。四要素这次不读散文、读控件：
+`textarea#open-source-artifact-url` 的 `.value` 精确等于
+`https://github.com/ListenJ/chia-repo-audit/tree/codex/colab-cpu-validation`；
+`#sf-ai-review-consent-acknowledgement` `checked=true`；`input[name="status:submit"]` `checked=true`
+且页面同时给出 "This submission is ready for review"；标题与 `paper/paper.tex:12` 的 `\title{…}`
+逐字一致（页面上多的 `#27 ` 是 HotCRP 自己编号）。全程只读，没有点任何提交按钮。
+
+**这里差点误判一次。**第一版脚本用 `document.body.innerText` 正则找 github 链接，返回空 —— 看着
+完全像"表单里的 artifact URL 没了"。真实原因在那句话住在 `textarea` 里，而 `innerText` 只反映
+**渲染可见**的文本：那个框高 29.6px，装不下整条 URL，于是可见文本为空；同一文档的 `innerHTML`
+和 `.value` 都完好。这是本轮第三次同一形状：§55 的空 fetch 哈希成 `e3b0c442…`、§62 的
+`--markdown` 用错参数留下 0 字节文件、这次的 textarea。**读数之前先问这个读法能不能看见被测
+对象**；表单字段的权威读法是 `.value`，不是页面文本。
+
+凭据终扫按"每个收尾提交之后重跑"的规矩再数一次：`git rev-list --all` 这次 122 个提交，九类
+值形状模式 **0 命中**（`git grep` 无匹配时 rc=1，那是通过方向）。仍然只能引用、不能在本机重
+derive 的三条照旧：GCP 空列表（赞助账号已删，`gcloud` 返回 `invalid_grant`）、HotCRP 服务端哈希
+（需要已登录会话，本轮由投稿人演示、评审下载后可自行 `sha256sum`）、ModelScope DSW
+`dsw-2203230` 是否已回收。第三条本轮试着改成实测：浏览器里确实开着魔搭页面，但首页给不出可
+判定的登录态线索，我没有去猜它的接口 —— 猜端点正是这篇论文点名的缺陷形状，所以它仍然是作者的
+一次登录 + 一次点击。
+
+本条所在的提交是记录前滚之后的第二个跟踪提交，所以记录照旧滞后（滞后量 = 本条与它自己那一次），
+性质与 §60 说的同一条，由门禁从另一侧闭合。
