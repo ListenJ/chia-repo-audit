@@ -154,11 +154,11 @@ supplies one here.
   passing here. The verifier also re-checks the headline numbers, unresolved-reference
   markers and underscore-bearing identifiers *in the rendered text* -- the text layer is
   where a typesetting regression shows up, not the source.
-- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 356 tracked
-  files, classified by what *code* vouches for each: **45.5% machine-vouched** (162 files
-  a `verify_paper_claims.py` check re-derives or a unit test loads), 30.3% reachable-only
-  (108 files in a set some script globs), and **24.2% with no code reference at all**
-  (86 files; 54 of those are at least named in prose, 51 live under `.tmp/` as run logs
+- [`REVIEW_COVERAGE.md`](REVIEW_COVERAGE.md) is a generated census of all 358 tracked
+  files, classified by what *code* vouches for each: **45.2% machine-vouched** (162 files
+  a `verify_paper_claims.py` check re-derives or a unit test loads), 30.2% reachable-only
+  (108 files in a set some script globs), and **24.6% with no code reference at all**
+  (88 files; 54 of those are at least named in prose, 51 live under `.tmp/` as run logs
   and three container lock files). Regenerate with `python3
   scripts/inventory_vouches.py --markdown REVIEW_COVERAGE.md`. The `--json` and
   `--markdown` flags are mutually exclusive -- `--json` returns before the markdown
