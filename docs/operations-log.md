@@ -3558,3 +3558,31 @@ Consent 勾选、"Save and resubmit" 之后 ready for review 仍然成立。Summ
 时间盒（计划要求 ≤ 08:00 UTC）没有达成：接管时上一会话已停在写盘之前，实际收口发生在
 17:00–18:05 UTC。按计划最后一条的处置执行——优先保证 Task 6 换件已确认（已确认，见 §51），
 其余项逐条标明是重测过还是只能引用。
+
+## §53 终态之后的三项补充测量：克隆跟到最后一个提交、表单三个字段逐数比对、Task 9 的前提改成实测
+
+§52 之后 HEAD 又到了 `a160970`，而那次克隆量的是 `8c93f15`。用 `git pull --ff-only` 把同一份
+HTTPS 克隆快进到 `a160970`（快进只含本节的 ops-log 改动，无合并提交），18:08Z 重跑五道门禁：
+`verify_paper_claims.py` 241/241 rc=0、`audit_grid_levels.py` rc=0、
+`check_documented_commands.py` rc=0、`unittest discover` Ran 46 tests OK、
+`mutation_test_gates.py` rc=0；三个纸面工件在 `core.autocrlf=true` 下仍是
+`i/lf w/lf attr/-text`，跑完跟踪文件仍 0 行脏，克隆里的 `paper/paper.pdf` 字节摘要
+`de2a990efa628da0…` 与 `paper/BUILD_PIN.json` 的 outputs 相同。
+
+Task 6 Step 3 原先只查了四要素，这次把表单里三个自由文本字段（Summary / Artifact statement /
+Abstract）出现的每个数字回代到钉住的渲染文本层：`78.16`、`5%`、`0.0000`、`45 runs`、`0.859`、
+`0.636`、`0.7`、`3 of 6`、`46 unit tests`、`241`、`ten defects`、`struct name`、`E0`/`E4`、
+`cross-seed`/`repeated-run` 全部命中；`BUILD_PIN.pages` == 4 支撑字段里"4-page submission"
+这句话；现场数 `chia_loop/tests` 的 `def test_` 得 46，与 `results/in_image_tests_2026-09-24_r3.json`
+的 `ran` 一致。改完 Summary 之后，表单里已经没有任何一个数字落在证据之外。
+
+两条前提从"记得"变成"量过"：`gcloud compute instances list` 在 18:07Z 重跑，真实退出码
+`rc=1`、`invalid_grant: Account has been deleted`（本机仍把 `devstar7744@gcplab.me` 列为活动账号，
+坏在令牌刷新那一步），所以 §52 那句引用是当前事实而不是历史记录。`web/` 下只有
+`annotator.html`，整盘 depth-4 内不存在任何 `*annotator*result*` / `*annotation*result*` 文件，
+因此 Task 9 的跳过条件由前提缺失实测成立。
+
+本节没有动任何门禁期望值，也没有新增 check：`REVIEW_COVERAGE.md` 与 README 的分层计数在
+本节写入后重算仍逐字节复现。仍然敞开的四项如实列在这里——空实例清单不可产出（账号已删）、
+08:00 UTC 时间盒未达成、人工标注与 Atria 密钥作废在作者手里、
+以及 `paper/paper_short_acmart.pdf` 这个上一会话留下的未跟踪文件（既不属于我生成，也不由我删）。
