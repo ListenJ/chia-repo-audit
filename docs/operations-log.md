@@ -4057,3 +4057,110 @@ HotCRP 上那份字节都不受影响；五道门在本条写入之前于 `5c259
    artifact 发布，从未承诺一份渲染 PDF；而 `verify_paper_claims.py` 已经把扩展报告的文本抽进主张
    提取面、也已经门禁它的存在与被跟踪状态。钉渲染等于新造一个没人承诺的工件，代价是重启整条冻结
    链换 +3 条检查（241→244）。维持现状，截止后再议。
+
+## §67 截止前 2.7 小时：把解冻的两处改动走完最小链条，六个 ref 收敛到同一个 SHA
+
+§66 宣布冻结之后只允许两类动作。本轮的第一步是只读复验，它读出来的不是"全绿"，而是"盘上有两处
+已验证但没有入库的改动"——作者 03:02Z 落的门禁 cwd 与 nullity reason 更正。所以走的是第二类：最小
+修复链（提交 → 五个门禁 → 推送 → 四路字节复验），不重编译、不重 pin、不重上传、不碰 `paper/**`、
+不动主张计数。HEAD 从 `2327e86` 走到 `2ef5c13`。
+
+**两处改动，以及为什么它们不动 241。** `bcc0004` 把 `git ls-files` 钉到 `cwd=REPO`，并让 rc≠0 或空
+stdout 直接 `SystemExit`：空 stdout 的意思是这个进程够不到 git，不是"仓库里没有跟踪文件"，否则门禁
+的红会变成噪声，真正未跟踪的那个路径正好藏在噪声里。`adf32db` 更正
+`results/grid_nullity_control/provenance.json` 的 reason——原来把两个 `candidate_sha256`
+（`c57d6ee71b1a`、`332147378a88`）当成了两个设计身份，设计摘要其实是 `50378a32b274` 与
+`ee6081546365`；同时把 0.0 CV 拆成两种错（`prompt=default` 下是同一个二进制量两次，是造出来的通过；
+`prompt=aggressive_offset` 下是两个确实不同但都惰性的设计，它们的相等是真的，但"谁坐在那个级别上"
+是替换 bug 决定的）。处置一个字没动：每条 prompt 轴仍至少含一个被替换的级别，verdict 仍
+NON-REPRODUCIBLE，publish gate 仍 BLOCKED。两处都不新增 check，所以 241/241 与那条自指计数都保持。
+
+**门禁在提交前后各跑一遍**（提交前是带着这两处改动的工作树，内容与提交后的树逐字节相同）：
+`verify_paper_claims.py` rc=0 / 241/241，prose 绑定仍是 74 / 43 / 0（共 117）；
+`audit_grid_levels.py` rc=0；`check_documented_commands.py` rc=0（6 个脚本的选项被比对）；
+`mutation_test_gates.py` rc=0（10 mutations, 0 problems）；`unittest` Ran 46 tests, OK。
+
+**我自己造的一个假红，值得记。** `python3 -m unittest discover -s chia_loop/tests -t .` 报
+`ImportError: Start directory is not importable`。仓库文档里那一行没有 `-t .`
+（`README.md:346`、`docs/handoff-2026-09-24.md:24`）；加上它把 top-level dir 抬到仓库根，而
+`chia_loop/tests` 不是包，于是导不进来。去掉即 rc=0。形状是"门禁跑不出来先怀疑自己的命令行，而不是
+先怀疑仓库"，这也正是 `check_documented_commands.py` 存在的理由。
+
+**凭据终扫在 130 revs 上重跑**（这条规矩是每个收尾提交之后重跑，不是数固定次数）。三个读数分开取，
+不用管道吞 rc：全历史 `git grep` 扫 16 类形状（`atr_`、`sk-`、`AIza`、`ghp_`、`github_pat_`、
+`gh[soru]_`、`AKIA`、`glpat-`、`xox*`、`hf_`、`ms-`、`ya29.`、PEM 私钥头、`OSSAccessKeyId=`、
+`accessKeySecret =`、JWT 三段），rc=1、stdout 0 行、stderr 0 字节；对象库
+`git cat-file --batch-all-objects --batch` 扫 1430 个对象、34,745,050 blob 字节，命中恰好 1 个
+= `20cc63b09feec63ed34a72edcf731538a6ef2fb1`（69 字节），内容是 §39 变异测试留下的夹具：一句无害
+说明加一个 `atr_` 前缀的假钥匙。它不可达——`git log --all --find-object` 0 行、
+`git rev-list --all --objects` 里 0 处、`git fsck --unreachable` 把它列在 67 个不可达对象之中——所以
+它不在任何推送里。两个新提交的 diff 增量（3,689 与 541 字节）形状命中 0。被跟踪文件里最长的 `atr_`
+串仍是 8 个字符。对象数从 §64 的 1405 涨到 1430 而不可达数仍是 67：涨的 25 个是这两个提交自己的
+可达对象。这一节刻意没有把夹具逐字贴进来——它正好满足 `_TOK_SHAPE`
+（`scripts/verify_paper_claims.py:957`），贴进一个被跟踪文件就会让"no API-token-shaped string
+exists in any tracked file"变红，§64 已经量过这条近乎自伤的路径。
+
+**推送与 ref 收敛。** 先推 branch（两个远端各 `2327e86..adf32db`），再用 `git branch -f main` 把
+main 快进到同一个提交并推两个远端——是快进，不是合并提交，Task 5 Step 2b 那条守住了。顺序有实质
+意义：克隆默认落在 main，main 落后时量到的就不是要发布的那棵树，所以快进必须在克隆复验之前。推送后
+`git ls-remote` 在两个远端各三个 ref（HEAD、main、`codex/colab-cpu-validation`）全部 = `adf32db`，
+共六个。
+
+**四路字节复验，每条都比 rc + 字节数 + 摘要**（§65 量到过 http=200 却只有 354,112 字节的断流）：
+本地 `paper/paper.pdf` = `de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6`、
+592,258 字节、4 个 `/Type /Page`；`raw.githubusercontent.com` 四次（main 与 branch × `README.md`
+与 `paper/paper.pdf`），走 `HTTPS_PROXY=http://127.0.0.1:7897`，全部 rc=0 http=200，README
+25,892 字节 / `f2cceaadd4c419bc`，PDF 592,258 字节 / `de2a990efa628da0`；HotCRP 服务端
+`/doc/a3-chia-hackathon-26-paper27.pdf` 带 cookie 在浏览器里 fetch，200 / 592,258 字节 /
+`de2a990efa628da0520c494b53b1ed71598a60c462d9964fcdbe7f4381162ea6` / 4 页。三个来源同一份字节，
+`paper/**` 一个字节没动，所以 BUILD_PIN 不需要重钉。
+
+**HotCRP 表单侧只读复验。** `/paper/27` 写的是"This submission is ready for review. You do not need
+to take further action, but you can still make changes if you wish."；全文没有 draft 字样；控件是
+Save and resubmit 与 Withdraw（Withdraw 只出现在已提交的论文上）；`opt1` =
+`https://github.com/ListenJ/chia-repo-audit/tree/codex/colab-cpu-validation`；页面倒计时 2.7 小时，
+截止 Friday Sep 25, 2026 4:59:59 AM PDT = 11:59:59 UTC。没有点任何按钮。
+
+**ORCID。** 作者说在 Firefox 里登录了 ORCID 并在 HotCRP 提交了对应账号。本会话控制的浏览器不是那个
+Firefox（它只有一个 HotCRP 标签），所以只能读 HotCRP 侧的结果：`/profile` 的 `orcid` 控件值 =
+`0009-0009-9840-9245`，与邮件里那个 iD 一致；它落在**个人资料**上，不在论文表单里——`/paper/27`
+的 92 个控件没有任何 ORCID 字段，页面文本里 has_orcid 为 false。因此被评审的那份 PDF 不受影响：
+`paper/paper.tex` 里没有这个号，130 个提交与整个对象库对 ORCID 与 `0009-` 形状的命中都是 0，
+IDENTITY 门禁（`scripts/verify_paper_claims.py:426-434`）仍绿。边界照旧说清：那条门禁是枚举式的、
+只扫 `paper/paper.tex`，它绿表示"论文源码里没有这 8 个被点名的串"，不表示"仓库里没有身份信息"，
+更不会去抓一个 ORCID iD 的形状。把它扩成形状式的代价是 241→242 加整条重 pin / 重上传链，截止前
+不做，进 Phase D。
+
+**克隆记录滚到 `adf32db`**（在 `2ef5c13` 里）：cloned_head 是它自己那个提交的父，即 HEAD~1；本节
+提交之后 HEAD 领先两个，与 §66 的终态同形。克隆里五个门禁 rc=0、dirty 0/0、`core.autocrlf=true`，
+`paper` 路径全是 `i/lf w/lf attr/-text`（`.gitattributes` 自己仍是 `i/lf w/crlf attr/`，它钉不住
+自己，这一点 §60 起就写在表里）。
+
+**反计划清单逐条守住**：没有重编译、没有重 pin、没有重上传 HotCRP、没有改 `paper/**`、没有跑新实验、
+主张计数仍是 241。仍然无法验证的三项（GCP 实例列表、Atria 密钥停用、魔搭 DSW 停止）还是作者口述，
+§66 已记，本轮没有新证据。
+
+**这一节自己触发了一条门禁，触发的方式正是那条门禁注释里预言的。** 上面引用
+`docs/handoff-2026-09-24.md:24` 作为"文档里那行 unittest 命令"的出处，而那个文件此前是
+code-unreferenced 且没有被散文点名过；点名之后 `unvouched_named_in_prose` 从 57 变 58，README 里
+那个字面量当场陈旧，`verify_paper_claims.py` rc=1：
+`FAIL and the prose-named orphan count, stale the moment a log line named a file expect=58
+actual=57`。这就是 `scripts/verify_paper_claims.py:991-999` 上面那段注释写下的情形（上一次是
+46→47）。方向容易读反，所以写清楚：这条 check 的 expect 是**重算值**、actual 是 **README 里的
+字面量**，"expect=58 actual=57"的意思是重算出 58 而 README 还写着 57，不是重算值掉了。
+
+按仓库规矩修事实而不是改门禁：`python3 scripts/inventory_vouches.py --markdown
+REVIEW_COVERAGE.md` 重新生成（那份文件自己写着"re-run instead of editing"），diff 只有那一行的
+57→58；README:174 的同一个数字按字节改。三层计数（173 / 108 / 89）与两个比率一个都没动，这本身
+就是证据：写一句话只能动"散文点名"这个附属计数，动不了 machine / reachable / code-unreferenced
+的分层，正是 REVIEW_COVERAGE.md 自己声明的性质。反方向的修法也考虑过并否掉了——把这一节的引用撤掉
+让计数回到 57，等于为了让一个陈旧字符串继续为真而删掉一条真实出处，那正是这篇论文在审计的动作。
+
+连带后果要在推送前说清：README 的字节变了，所以本轮前面那两次 README 抓取（25,892 字节 /
+`f2cceaadd4c419bc`）在推送之后必须重比；PDF 不受影响，BUILD_PIN 的 inputs 只有 `paper/paper.tex`，
+README 不在钉里，因此不需要重编译、重 pin 或重上传 HotCRP。
+
+顺带记一个没有门禁的陈旧期望：`docs/handoff-2026-09-24.md:24` 那行注释写"期望 Ran 44 tests / OK"，
+而今天的套件是 Ran 46 tests, OK。那是一份带日期的交接记录，44 在它写下时为真，改它等于篡改历史
+记录；`check_documented_commands.py` 比的是脚本自己声明的选项而不是散文里的测试计数，所以它绿。
+留在这里作为已知的、有意不修的一处。

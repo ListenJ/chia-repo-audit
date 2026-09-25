@@ -171,7 +171,7 @@ supplies one here.
   files, classified by what *code* vouches for each: **46.8% machine-vouched** (173 files
   a `verify_paper_claims.py` check re-derives or a unit test loads), 29.2% reachable-only
   (108 files in a set some script globs), and **24.1% with no code reference at all**
-  (89 files; 57 of those are at least named in prose, 51 live under `.tmp/` as run logs
+  (89 files; 58 of those are at least named in prose, 51 live under `.tmp/` as run logs
   and three container lock files). Regenerate with `python3
   scripts/inventory_vouches.py --markdown REVIEW_COVERAGE.md`. The `--json` and
   `--markdown` flags are mutually exclusive -- `--json` returns before the markdown
