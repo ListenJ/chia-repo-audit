@@ -10,9 +10,9 @@
     "dirty_lines_before_gates": 0,
     "note": "`git status --short` counted inside the clone. The after-count is what makes the mutation suite honest: it edits scripts/verify_paper_claims.py in place, so a nonzero here would mean the documented chain consumes the tree it claims to reproduce."
   },
-  "clone_command": "git clone https://github.com/ListenJ/chia-repo-audit.git .tmp/fc_final3/repo && git checkout codex/colab-cpu-validation -- over HTTPS, the same URL a reviewer can paste, with no SSH key and no local state on the path. The clone lands on main by default and main is now the same commit as that branch, so the checkout reports 'main': both names resolve to one tree, which is the state Task 5 was for.",
-  "cloned_head": "724e507032b9b9775f84aa26313b7ee6af692a1e",
-  "cloned_utc": "2026-09-24T20:07:47Z",
+  "clone_command": "git clone https://github.com/ListenJ/chia-repo-audit.git .tmp/fc_final4/repo && git checkout codex/colab-cpu-validation -- over HTTPS, the same URL a reviewer can paste, with no SSH key and no local state on the path. The clone lands on main by default and main is again the same commit as that branch (both were fast-forwarded to this record's cloned_head before the clone ran), so the checkout reports 'main': both names resolve to one tree, which is the state Task 5 was for.",
+  "cloned_head": "adf32db402d9057075a05079b15344c95e8f9ee0",
+  "cloned_utc": "2026-09-25T09:16:23Z",
   "core_autocrlf": "true",
   "eol_note": "Produced by `git ls-files --eol paper .gitattributes` inside the clone. The submission is now two documents, so the table is one row longer than the 9/24 record: paper_extended.tex arrived with the format split and checks out i/lf w/lf attr/-text like the other text sources. The awkward first line is unchanged -- .gitattributes cannot pin itself, and that still does not disturb the artifacts below it.",
   "eol_table_paper": [
@@ -63,6 +63,13 @@
     "regenerate": "recompile paper/paper.tex, run scripts/extract_pdf_text.py, then scripts/pin_paper_build.py; verify_paper_claims.py compares the 3 hashes below against the bytes on disk"
   },
   "prior_clone_records": [
+    {
+      "cloned_head": "724e507032b9b9775f84aa26313b7ee6af692a1e",
+      "cloned_utc": "2026-09-24T20:07:47Z",
+      "result": "241/241 claims re-derived from artifacts, five gates rc=0, dirty 0 before and after the gates",
+      "what_changed_since": "three commits, none of them under paper/**. 2327e86 is the freeze declaration (docs/operations-log.md section 66). bcc0004 makes the tracked-path gate pin cwd=REPO and treat an unusable `git ls-files` as fatal instead of reading an empty stdout as 'nothing is tracked'. adf32db corrects results/grid_nullity_control/provenance.json: the only nonzero cross-seed CV was attributed to two candidate_sha256 values (c57d6ee71b1a, 332147378a88) that are not design identities -- the design digests are 50378a32b274 and ee6081546365 -- and the 0.0 CVs were split into a manufactured pass under prompt=default (one design measured twice) and two genuinely distinct but inert designs under prompt=aggressive_offset. The disposition did not move: every prompt axis still holds a substituted level, verdict NON-REPRODUCIBLE, publish gate BLOCKED. paper/** untouched is why the pin below is byte-identical to that record's.",
+      "why_it_is_not_this_one": "it measured the tree before those three commits, so its gate lines are not this commit's"
+    },
     {
       "cloned_head": "079271733ff70aa345d4297937567c03bc5cc768",
       "cloned_utc": "2026-09-24T19:31:52Z",
@@ -129,5 +136,5 @@
   },
   "what_this_is": "The documented verification chain run in a fresh clone of the pushed public branch, on the configuration that broke it before: Windows, core.autocrlf=true, no local state. Four pages, two documents, five gates.",
   "what_this_record_cannot_show": "It shows the gate chain reproduces from the pushed bytes. It cannot show that HotCRP serves those bytes -- that is a separate comparison against the PDF the site returns, and it is recorded in the operations log, not here.",
-  "why_the_record_lags_head_by_one_commit": "This file is tracked, so the commit it describes cannot also contain it. The lag is now back to its structural minimum of exactly one: cloned_head is the commit one before this file's own, and the intervening commit changed nothing the gates read except this record. The gate closes the other side: cloned_head must be an ancestor of HEAD and pin_at_clone must equal the BUILD_PIN.json blob at cloned_head."
+  "why_the_record_lags_head_by_one_commit": "This file is tracked, so the commit it describes cannot also contain it. cloned_head is the commit immediately before this file's own, which is the structural minimum; the docs commit appended after this one puts HEAD two ahead, the same shape the accepted terminal state at 2327e86 had. The gate closes the other side: cloned_head must be an ancestor of HEAD and pin_at_clone must equal the BUILD_PIN.json blob at cloned_head."
 }
