@@ -908,8 +908,14 @@ check("every 64-hex hash quoted in the docs is a real digest of something", [],
 # A `git commit -a` silently skips untracked files, and the pushed artifact would then
 # cite a script that is not in the repository -- which is this paper's own defect class,
 # applied to the submission itself.
-_tracked = set(subprocess.run(["git", "ls-files"], capture_output=True, text=True,
-                              encoding="utf-8", errors="replace").stdout.split())
+# An empty stdout means git was unreachable from this process cwd, NOT that nothing
+# is tracked -- so both rc and emptiness have to be fatal, or the gate's red output
+# becomes noise and the real untracked path hides in it.
+_ls = subprocess.run(["git", "ls-files"], cwd=REPO, capture_output=True, text=True,
+                     encoding="utf-8", errors="replace")
+if _ls.returncode != 0 or not _ls.stdout.strip():
+    raise SystemExit(f"git ls-files unusable (rc={_ls.returncode}): {_ls.stderr.strip()}")
+_tracked = set(_ls.stdout.split())
 _refs = set()
 for _m in re.finditer(r"(?:scripts|chia_loop|results|decision_chain|docs|paper|\.tmp)/"
                       r"[A-Za-z0-9_.\\\-/]+",
